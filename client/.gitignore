@@ -4,3 +4,4 @@ build
 bundle.js
 bundle.js.map
 .idea
+.vscode

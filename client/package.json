@@ -3,20 +3,26 @@
   "version": "0.0.1",
   "description": "A next-gen graphics framework",
   "repository": {
-    "type" : "git",
-    "url" : "https://github.com/TypeFox/sprotte"
+    "type": "git",
+    "url": "https://github.com/TypeFox/sprotte"
   },
   "main": "index.js",
   "scripts": {
     "prepublish": "typings install --overwrite --save",
-    "watch": "webpack --watch"
+    "watch": "webpack --watch",
+    "test": "mocha -r ts-node/register test/*.ts"
   },
   "keywords": [],
   "author": "TypeFox",
   "license": "ISC",
   "devDependencies": {
+    "@types/chai": "^3.4.35",
     "@types/core-js": "^0.9.35",
+    "@types/mocha": "^2.2.39",
+    "chai": "^3.5.0",
+    "mocha": "^3.2.0",
     "ts-loader": "^2.0.0",
+    "ts-node": "^2.1.0",
     "typescript": "^2.2.1",
     "typings": "^2.1.0",
     "webpack": "^2.2.1"
