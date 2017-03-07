@@ -11,13 +11,13 @@ export class GGraphView implements View {
 
     render(model: GGraph, context: RenderingContext): VNode {
         const virtualShapes = model.children.map((shape) => this.renderShape(shape, context))
-        const vNode = h('svg', {}, [
-            h('g', {
-                key: model.id,
-                attrs: {
-                    id: model.id
-                }
-            }, virtualShapes)]
+        const vNode = h('svg', {
+            key: model.id,
+            attrs: {
+                id: model.id
+            }
+        }, [
+            h('g', {}, virtualShapes)]
         );
         return vNode
     }
