@@ -1,0 +1,28 @@
+{
+  "name": "malzeit",
+  "version": "1.0.0",
+  "description": "",
+  "main": "index.js",
+  "scripts": {
+    "prepublish": "typings install --overwrite --save",
+    "watch": "webpack --watch"
+  },
+  "keywords": [],
+  "author": "TypeFox",
+  "license": "ISC",
+  "devDependencies": {
+    "@types/core-js": "^0.9.35",
+    "@types/d3": "^4.4.1",
+    "immutable": "^3.8.1",
+    "ts-loader": "^2.0.0",
+    "typescript": "^2.2.1",
+    "typings": "^2.1.0",
+    "webpack": "^2.2.1"
+  },
+  "dependencies": {
+    "@types/rx": "^4.1.1",
+    "d3": "^4.4.1",
+    "d3-transform": "^1.0.4",
+    "snabbdom": "^0.6.4"
+  }
+}

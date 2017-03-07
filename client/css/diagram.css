@@ -1,0 +1,16 @@
+.node {
+    fill: #aae;
+    stroke: #66b;
+    stroke-width: 3;
+}
+
+.edge {
+    fill: #8cc;
+    stroke: #488;
+    stroke-width: 2;
+}
+
+.selected {
+    stroke: #dd8;
+    stroke-width: 6;
+}
