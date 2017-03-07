@@ -19,7 +19,7 @@ const graph = new GGraph({id: 'graph', type: 'graph', shapes: [node0, node1, edg
 const eventLoop = new EventLoop(
     new ActionDispatcher(),
     new CommandStack(),
-    new Viewer()
+    new Viewer('sprotte')
 );
 
 eventLoop.dispatcher.commandRegistry.register(MoveKind, MoveCommand)

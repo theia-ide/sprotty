@@ -26,7 +26,7 @@ export class Viewer extends EventSource<ViewerCallback> implements CommandStackC
     lastVDOM: undefined
     decorators: VNodeDecorator[] = []
 
-    constructor() {
+    constructor(private baseDiv: string) {
         super()
         this.patcher = this.createPatcher()
         this.decorators = this.createDecorators()
@@ -68,7 +68,7 @@ export class Viewer extends EventSource<ViewerCallback> implements CommandStackC
         const context = this.createRenderingContext(model)
         const newVDOM = h('div', {
             attrs: {
-                id: 'malzeit'
+                id: this.baseDiv
             }
         }, [
             this.decorate(this.viewComponentRegistry.get(model.type, model).render(model, context), model)
@@ -76,7 +76,7 @@ export class Viewer extends EventSource<ViewerCallback> implements CommandStackC
         if (this.lastVDOM) {
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
         } else {
-            const placeholder = document.getElementById('malzeit')
+            const placeholder = document.getElementById(this.baseDiv)
             this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
     }

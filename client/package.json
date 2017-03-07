@@ -1,7 +1,11 @@
 {
-  "name": "malzeit",
-  "version": "1.0.0",
-  "description": "",
+  "name": "sprotte",
+  "version": "0.0.1",
+  "description": "A next-gen graphics framework",
+  "repository": {
+    "type" : "git",
+    "url" : "https://github.com/TypeFox/sprotte"
+  },
   "main": "index.js",
   "scripts": {
     "prepublish": "typings install --overwrite --save",
@@ -12,8 +16,6 @@
   "license": "ISC",
   "devDependencies": {
     "@types/core-js": "^0.9.35",
-    "@types/d3": "^4.4.1",
-    "immutable": "^3.8.1",
     "ts-loader": "^2.0.0",
     "typescript": "^2.2.1",
     "typings": "^2.1.0",
@@ -21,8 +23,6 @@
   },
   "dependencies": {
     "@types/rx": "^4.1.1",
-    "d3": "^4.4.1",
-    "d3-transform": "^1.0.4",
     "snabbdom": "^0.6.4"
   }
 }
