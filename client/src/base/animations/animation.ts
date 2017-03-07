@@ -1,6 +1,6 @@
-import {GModelRoot} from "../model/GModel"
-import {CommandExecutionContext} from "../intent/Commands"
-import {easeInOut} from "./Easing"
+import {GModelRoot} from "../model"
+import {CommandExecutionContext} from "../intent"
+import {easeInOut} from "./easing"
 
 export abstract class Animation {
 

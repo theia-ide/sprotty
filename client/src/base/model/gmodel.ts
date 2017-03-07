@@ -1,4 +1,4 @@
-import {Map} from "../../utils/Utils"
+import {Map} from "../../utils"
 
 /**
  * Base interface for all elements the diagram model.

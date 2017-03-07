@@ -1,12 +1,10 @@
-import {VNodeDecorator} from "./VNodeDecorators"
-import {Point} from "../../utils/Geometry"
-import {Viewer} from "./Viewer"
-import {GModelElement} from "../model/GModel"
 import {VNode} from "snabbdom/vnode"
-import {SelectAction} from "../intent/Select"
-import {isMoveable, isSelectable} from "../model/Behavior"
 import {h} from "snabbdom"
-import {ElementMove, MoveAction} from "../intent/Move"
+import {Point} from "../../utils"
+import {SelectAction, ElementMove, MoveAction} from "../intent"
+import {GModelElement, isMoveable, isSelectable} from "../model"
+import {VNodeDecorator} from "./vnode-decorators"
+import {Viewer} from "./viewer"
 
 export class MouseTool implements VNodeDecorator {
 

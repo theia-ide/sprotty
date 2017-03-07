@@ -1,8 +1,8 @@
-import {VNodeDecorator} from "./VNodeDecorators"
 import {VNode} from "snabbdom/vnode"
-import {GModelElement, GModelRoot} from "../model/GModel"
-import {Viewer} from "./Viewer"
-import {RedoAction, UndoAction} from "../intent/Actions"
+import {GModelElement, GModelRoot} from "../model"
+import {RedoAction, UndoAction} from "../intent"
+import {VNodeDecorator} from "./vnode-decorators"
+import {Viewer} from "./viewer"
 
 export class KeyTool implements VNodeDecorator {
 

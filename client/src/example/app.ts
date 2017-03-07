@@ -1,13 +1,11 @@
-import {EventLoop} from "../base/EventLoop"
-import {GGraphView, StraightEdgeView} from "../graph/Views"
-import {CircleNodeView} from "./Views"
-import {CommandStack} from "../base/intent/CommandStack"
-import {ActionDispatcher} from "../base/intent/ActionDispatcher"
-import {GGraph, GNode, GEdge} from "../graph/GModel"
-import {MoveAction, MoveCommand, MoveKind, ElementMove} from "../base/intent/Move"
-import {SetModelAction} from "../base/intent/SetModel"
-import {SelectKind, SelectCommand} from "../base/intent/Select"
-import {Viewer} from "../base/view/Viewer"
+import {EventLoop} from "../base"
+import {GGraphView, StraightEdgeView, GGraph, GNode, GEdge} from "../graph"
+import {
+    CommandStack, ActionDispatcher, MoveAction, MoveCommand, MoveKind, ElementMove, SetModelAction, SelectKind,
+    SelectCommand
+} from "../base/intent"
+import {Viewer} from "../base/view"
+import {CircleNodeView} from "./views"
 
 // init gmodel
 const node0 = {id: 'node0', type: 'circle', x: 100, y: 100};

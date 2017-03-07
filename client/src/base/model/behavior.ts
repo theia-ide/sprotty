@@ -1,6 +1,6 @@
-///<reference path="GModel.ts"/>
-import {Point} from "../../utils/Geometry"
-import {GModelElement} from "./GModel"
+///<reference path="gmodel.ts"/>
+import {Point} from "../../utils"
+import {GModelElement} from "./gmodel"
 
 export interface Behavior {
 }

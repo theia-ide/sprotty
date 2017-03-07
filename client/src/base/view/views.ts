@@ -1,8 +1,8 @@
-import {GModelElement, GModelRoot, EMPTY_ROOT} from "../model/GModel"
 import {VNode} from "snabbdom/vnode"
-import {Viewer} from "./Viewer"
-import {Registry} from "../../utils/Utils"
 import {h} from "snabbdom"
+import {GModelElement, GModelRoot, EMPTY_ROOT} from "../model"
+import {Registry} from "../../utils"
+import {Viewer} from "./viewer"
 
 /**
  * Base interface for the components that turn GModelElements into virtual DOM elements.

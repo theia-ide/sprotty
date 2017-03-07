@@ -1,7 +1,7 @@
-import {Action, UndoKind, RedoKind} from "./Actions"
-import {EventSource} from "../../utils/Utils"
-import {CommandRegistry, Command} from "./Commands"
-import {ViewerCallback} from "../view/Viewer"
+import {EventSource} from "../../utils"
+import {ViewerCallback} from "../view"
+import {Action, UndoKind, RedoKind} from "./actions"
+import {CommandRegistry, Command} from "./commands"
 
 /**
  * Collects actions, converts them to commands and dispatches them.

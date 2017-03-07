@@ -1,5 +1,5 @@
 import {VNode} from "snabbdom/vnode"
-import {GModelElement} from "../model/GModel"
+import {GModelElement} from "../model"
 
 /**
  * Manipulates a created VNode after it has been created.

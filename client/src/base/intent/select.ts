@@ -1,7 +1,6 @@
-import {GModelRoot, GModelElement} from "../model/GModel"
-import {Command} from "./Commands"
-import {Action} from "./Actions"
-import {isSelectable, Selectable} from "../model/Behavior"
+import {GModelRoot, GModelElement, isSelectable, Selectable} from "../model"
+import {Command} from "./commands"
+import {Action} from "./actions"
 
 export const SelectKind = 'Select'
 

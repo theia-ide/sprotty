@@ -1,8 +1,8 @@
-import {GModelRoot} from "../model/GModel"
-import {Action} from "./Actions"
-import {Registry} from "../../utils/Utils"
-import {CommandStackCallback} from "./CommandStack"
-import {SetModelCommand, SetModelKind} from "./SetModel"
+import {GModelRoot} from "../model"
+import {Registry} from "../../utils"
+import {Action} from "./actions"
+import {CommandStackCallback} from "./command-stack"
+import {SetModelCommand, SetModelKind} from "./set-model"
 
 /**
  * A command holds the behaviour of an action.

@@ -1,6 +1,5 @@
-import {ActionDispatcher} from "./intent/ActionDispatcher"
-import {CommandStack} from "./intent/CommandStack"
-import {Viewer} from "./view/Viewer"
+import {ActionDispatcher, CommandStack} from "./intent"
+import {Viewer} from "./view"
 
 /**
  * Plugs the base components together.

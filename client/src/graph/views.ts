@@ -1,8 +1,8 @@
-import {View, RenderingContext} from "../base/view/Views"
-import {GGraph, GNode, GEdge, GShape} from "./GModel"
 import {h} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
-import {Point} from "../utils/Geometry"
+import {View, RenderingContext} from "../base/view"
+import {Point} from "../utils"
+import {GGraph, GNode, GEdge, GShape} from "./gmodel"
 
 /**
  * View component that turns a GGraph element and its children into a tree of virtual DOM.

@@ -1,6 +1,5 @@
-import {GModelElement, GModelRoot, ChildrenList, GModelIndex} from "../base/model/GModel"
-import {GGraphSchema, GNodeSchema, isGNodeSchema, GEdgeSchema} from "./GModelSchema"
-import {Moveable, Selectable} from "../base/model/Behavior"
+import {GModelElement, GModelRoot, ChildrenList, GModelIndex, Moveable, Selectable} from "../base/model"
+import {GGraphSchema, GNodeSchema, isGNodeSchema, GEdgeSchema} from "./gmodel-schema"
 
 export class GGraph extends GModelRoot {
     readonly children: ChildrenList<GShape>

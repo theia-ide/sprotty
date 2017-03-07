@@ -1,7 +1,7 @@
-import {DispatcherCallback} from "./ActionDispatcher"
-import {Command, CommandExecutionContext} from "./Commands"
-import {GModelRoot, EMPTY_ROOT} from "../model/GModel"
-import {EventSource} from "../../utils/Utils"
+import {DispatcherCallback} from "./action-dispatcher"
+import {Command, CommandExecutionContext} from "./commands"
+import {GModelRoot, EMPTY_ROOT} from "../model"
+import {EventSource} from "../../utils"
 
 /**
  * The component that holds the model and applies the commands to change it.

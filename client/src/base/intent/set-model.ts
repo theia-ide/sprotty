@@ -1,6 +1,6 @@
-import {GModelRoot} from "../model/GModel"
-import {Command} from "./Commands"
-import {Action} from "./Actions"
+import {GModelRoot} from "../model"
+import {Command} from "./commands"
+import {Action} from "./actions"
 
 export const SetModelKind = 'SetModel'
 

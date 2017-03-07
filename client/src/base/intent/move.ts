@@ -1,10 +1,8 @@
-import {Action} from "./Actions"
-import {Point} from "../../utils/Geometry"
-import {Command, CommandExecutionContext} from "./Commands"
-import {Animation} from "../animations/Animation"
-import {GModelElement, GModelRoot} from "../model/GModel"
-import {Moveable} from "../model/Behavior"
-import {Map} from "../../utils/Utils"
+import {Point, Map} from "../../utils"
+import {Animation} from "../animations"
+import {GModelElement, GModelRoot, Moveable} from "../model"
+import {Action} from "./actions"
+import {Command, CommandExecutionContext} from "./commands"
 
 export const MoveKind = 'Move'
 

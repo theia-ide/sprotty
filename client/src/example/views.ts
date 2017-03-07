@@ -1,9 +1,8 @@
-import {GNode} from "../graph/GModel"
-import {GNodeView} from "../graph/Views"
 import {h} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
-import {Point} from "../utils/Geometry"
-import {RenderingContext} from "../base/view/Views"
+import {GNode, GNodeView} from "../graph"
+import {Point} from "../utils"
+import {RenderingContext} from "../base/view"
 
 /**
  * A very simple example node consisting of a plain circle.
