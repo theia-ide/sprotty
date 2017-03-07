@@ -36,7 +36,7 @@ const action = new SetModelAction(graph);
 eventLoop.dispatcher.dispatch(action);
 
 let count = 2
-function addNode(e) {
+function addNode() {
     graph.children.add(
         new GNode({
             id: 'node' + count,
@@ -55,12 +55,12 @@ function addNode(e) {
 }
 
 for (let i = 0; i < 200; ++i) {
-    addNode(null)
+    addNode()
 }
 
 // button behavior
 document.getElementById('addNode').addEventListener('click', () => {
-    this.addNode()
+    addNode()
     document.getElementById('graph').focus()
 })
 
