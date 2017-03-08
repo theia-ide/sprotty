@@ -1,0 +1,30 @@
+buildscript {
+	repositories.jcenter()
+	dependencies {
+		classpath 'org.xtext:xtext-gradle-plugin:1.0.15'
+	}
+}
+
+ext.versions = [
+    xtext: '2.11.0',
+    lsp4j: '0.1.0',
+    guice: '3.0',
+    slf4j: '1.7.24',
+    websocket: '1.1',
+    log4j: '1.2.16'
+]
+
+repositories.jcenter()
+
+apply plugin: 'org.xtext.xtend'
+apply plugin: 'eclipse'
+
+sourceCompatibility = '1.8'
+
+dependencies {
+    compile project(':diagram-api')
+    compile "org.eclipse.xtend:org.eclipse.xtend.lib:$versions.xtext"
+    compile "com.google.inject:guice:$versions.guice"
+    compile "javax.websocket:javax.websocket-api:$versions.websocket"
+    compile "log4j:log4j:$versions.log4j"
+}

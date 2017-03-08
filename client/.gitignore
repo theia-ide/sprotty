@@ -1,7 +1,9 @@
-node_modules
+/.idea
+/node_modules
+/build
 typings
-build
 bundle.js
 bundle.js.map
 .idea
 .vscode
+npm-debug.log

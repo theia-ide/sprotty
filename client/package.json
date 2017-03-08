@@ -17,6 +17,7 @@
   "license": "ISC",
   "devDependencies": {
     "@types/chai": "^3.4.35",
+    "@types/node": "^6.0.42",
     "@types/core-js": "^0.9.35",
     "@types/mocha": "^2.2.39",
     "chai": "^3.5.0",
@@ -25,10 +26,12 @@
     "ts-node": "^2.1.0",
     "typescript": "^2.2.1",
     "typings": "^2.1.0",
-    "webpack": "^2.2.1"
+    "webpack": "^2.2.1",
+    "vscode-jsonrpc": "^3.1.0"
   },
   "dependencies": {
     "@types/rx": "^4.1.1",
-    "snabbdom": "^0.6.4"
+    "snabbdom": "^0.6.4",
+    "reconnecting-websocket": "^3.0.3"
   }
 }
