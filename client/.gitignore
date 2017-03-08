@@ -4,4 +4,6 @@
 typings
 bundle.js
 bundle.js.map
+.idea
+.vscode
 npm-debug.log
