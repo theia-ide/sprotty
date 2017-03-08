@@ -1,6 +1,7 @@
 import {h} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
-import {GNode, GNodeView} from "../graph"
+import {GNode} from "../graph/model"
+import {GNodeView} from "../graph/view"
 import {Point} from "../utils"
 import {RenderingContext} from "../base/view"
 

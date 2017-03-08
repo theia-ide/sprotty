@@ -32,6 +32,9 @@ export class Registry<T, U> {
     }
 
     get(key: string, arg: U): T {
-        return new this.elements[key](arg)
+        if (this.elements.hasOwnProperty(key))
+            return new this.elements[key](arg)
+        else
+            throw new Error('Unknown registry key: ' + key)
     }
 }

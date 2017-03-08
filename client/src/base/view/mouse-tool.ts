@@ -19,7 +19,7 @@ export class MouseTool implements VNodeDecorator {
         if (isSelectable(element)) {
             let deselectIds = []
             if (!event.metaKey) {
-                deselectIds = element.getRoot()
+                deselectIds = element.root
                     .index
                     .all()
                     .filter(element => isSelectable(element) && element.selected)
@@ -45,7 +45,7 @@ export class MouseTool implements VNodeDecorator {
             this.hasDragged = true
             const dx = event.clientX - this.lastDragPosition.x
             const dy = event.clientY - this.lastDragPosition.y
-            const root = element.getRoot()
+            const root = element.root
             const nodeMoves: ElementMove[] = []
             root
                 .index

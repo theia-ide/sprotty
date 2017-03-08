@@ -1,5 +1,6 @@
 import {EventLoop} from "../base"
-import {GGraphView, StraightEdgeView, GGraph, GNode, GEdge} from "../graph"
+import {GGraph, GNode, GEdge} from "../graph/model"
+import {GGraphView, StraightEdgeView} from "../graph/view"
 import {
     CommandStack, ActionDispatcher, MoveAction, MoveCommand, MoveKind, ElementMove, SetModelAction, SelectKind,
     SelectCommand
@@ -8,10 +9,10 @@ import {Viewer} from "../base/view"
 import {CircleNodeView} from "./views"
 
 // init gmodel
-const node0 = {id: 'node0', type: 'circle', x: 100, y: 100};
-const node1 = {id: 'node1', type: 'circle', x: 200, y: 150, selected: true};
-const edge0 = {id: 'edge0', type: 'straight', sourceId: 'node0', targetId: 'node1'};
-const graph = new GGraph({id: 'graph', type: 'graph', shapes: [node0, node1, edge0]});
+const node0 = {id: 'node0', type: 'node:circle', x: 100, y: 100};
+const node1 = {id: 'node1', type: 'node:circle', x: 200, y: 150, selected: true};
+const edge0 = {id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1'};
+const graph = new GGraph({id: 'graph', type: 'graph', children: [node0, node1, edge0]});
 
 // setup event loop
 const eventLoop = new EventLoop(
@@ -26,8 +27,8 @@ eventLoop.dispatcher.commandRegistry.register(SelectKind, SelectCommand)
 // register views
 const viewComponentRegistry = eventLoop.viewer.viewComponentRegistry
 viewComponentRegistry.register('graph', GGraphView)
-viewComponentRegistry.register('circle', CircleNodeView)
-viewComponentRegistry.register('straight', StraightEdgeView)
+viewComponentRegistry.register('node:circle', CircleNodeView)
+viewComponentRegistry.register('edge:straight', StraightEdgeView)
 
 // run
 const action = new SetModelAction(graph);
@@ -38,14 +39,14 @@ function addNode() {
     graph.children.add(
         new GNode({
             id: 'node' + count,
-            type: 'circle',
+            type: 'node:circle',
             x: Math.random() * 1024,
             y: Math.random() * 768
         }))
     graph.children.add(
         new GEdge({
             id: 'edge' + count,
-            type: 'straight',
+            type: 'edge:straight',
             sourceId: 'node0',
             targetId: 'node' + count++
         }))

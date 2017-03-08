@@ -1,8 +1,8 @@
 import {h} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
-import {View, RenderingContext} from "../base/view"
-import {Point} from "../utils"
-import {GGraph, GNode, GEdge, GShape} from "./gmodel"
+import {View, RenderingContext} from "../../base/view"
+import {Point} from "../../utils"
+import {GGraph, GNode, GEdge, GGraphElement} from "../model"
 
 /**
  * View component that turns a GGraph element and its children into a tree of virtual DOM.
@@ -22,7 +22,7 @@ export class GGraphView implements View {
         return vNode
     }
 
-    renderShape(shape: GShape, context: RenderingContext) {
+    renderShape(shape: GGraphElement, context: RenderingContext) {
         const vNode = context.viewRegistry.get(shape.type, shape).render(shape, context)
         return context.viewer.decorate(vNode, shape)
     }
