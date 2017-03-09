@@ -96,12 +96,11 @@ export class MoveAnimation extends Animation {
         this.elementsMoves.forEach(
             elementMove => {
                 if (this.reverse) {
-                    elementMove.element.x = (1 - t) * elementMove.toPosition.x + t * elementMove.fromPosition.x
-                    elementMove.element.y = (1 - t) * elementMove.toPosition.y + t * elementMove.fromPosition.y
+                    elementMove.element!.x = (1 - t) * elementMove.toPosition.x + t * elementMove.fromPosition!.x
+                    elementMove.element!.y = (1 - t) * elementMove.toPosition.y + t * elementMove.fromPosition!.y
                 } else {
-                    elementMove.element.x = (1 - t) * elementMove.fromPosition.x + t * elementMove.toPosition.x
-                    elementMove.element.y = (1 - t) * elementMove.fromPosition.y + t * elementMove.toPosition.y
-
+                    elementMove.element!.x = (1 - t) * elementMove.fromPosition!.x + t * elementMove.toPosition.x
+                    elementMove.element!.y = (1 - t) * elementMove.fromPosition!.y + t * elementMove.toPosition.y
                 }
             })
         return this.context.root

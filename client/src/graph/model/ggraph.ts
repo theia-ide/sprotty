@@ -12,6 +12,8 @@ export class GGraph extends GModelRoot {
             return new GNode(json)
         else if (GGraphSchema.isGEdgeSchema(json))
             return new GEdge(json)
+        else
+            return super.createChild(json)
     }
 
 }
@@ -36,12 +38,14 @@ export class GEdge extends GModelElement {
         super(json)
     }
 
-    get source(): GNode {
-        return this.root.index.getById(this.sourceId) as GNode
+    get source(): GNode | undefined {
+        const root = this.root
+        return root ? root.index.getById(this.sourceId) as GNode : undefined
     }
 
-    get target(): GNode {
-        return this.root.index.getById(this.targetId) as GNode
+    get target(): GNode | undefined {
+        const root = this.root
+        return root ? root.index.getById(this.targetId) as GNode : undefined
     }
 }
 

@@ -53,7 +53,7 @@ export class SelectCommand implements Command {
             const selection = this.selected[i]
             const element = selection.element
             element.selected = false
-            element.parent.children.move(element, selection.index)
+            element.parent!.children.move(element, selection.index)
         }
         this.deselected.reverse().forEach(selection => {
             selection.element.selected = true
@@ -65,7 +65,7 @@ export class SelectCommand implements Command {
         for (let i = 0; i < this.selected.length; ++i) {
             const selection = this.selected[i]
             const element = selection.element
-            const siblings = element.parent.children
+            const siblings = element.parent!.children
             siblings.move(element, siblings.length() - 1)
         }
         this.selected.forEach(selection => selection.element.selected = true)
