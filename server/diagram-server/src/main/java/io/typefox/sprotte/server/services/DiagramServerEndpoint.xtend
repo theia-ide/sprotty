@@ -6,58 +6,52 @@ import com.google.inject.Singleton
 import io.typefox.sprotte.api.DiagramClient
 import io.typefox.sprotte.api.DiagramServer
 import java.util.LinkedHashMap
-import javax.websocket.OnError
-import javax.websocket.OnOpen
+import javax.websocket.Endpoint
+import javax.websocket.EndpointConfig
 import javax.websocket.Session
-import javax.websocket.server.ServerEndpoint
-import org.apache.log4j.Logger
 import org.eclipse.lsp4j.jsonrpc.RemoteEndpoint
 import org.eclipse.lsp4j.jsonrpc.json.JsonRpcMethod
 import org.eclipse.lsp4j.jsonrpc.json.MessageJsonHandler
+import org.eclipse.lsp4j.jsonrpc.messages.Message
 import org.eclipse.lsp4j.jsonrpc.services.ServiceEndpoints
 
 @Singleton
-@ServerEndpoint(value='/languageServer', configurator=GuiceEndpointConfigurator)
-class DiagramServerEndpoint {
-    
-    final val LOG = Logger.getLogger(DiagramServerEndpoint)
+class DiagramServerEndpoint extends Endpoint {
     
     static val DIAGRAM_SERVER = "DIAGRAM_SERVER"
 
     @Inject
     Provider<DiagramServer> diagramServerProvider
 
-    @OnOpen
-    def void onOpen(Session session) {
+    override onOpen(Session session, EndpointConfig config) {
         val diagramServer = diagramServerProvider.get
         session.userProperties.put(DIAGRAM_SERVER, diagramServer)
         
-        val supportedMethods = new LinkedHashMap<String, JsonRpcMethod>()
+        val supportedMethods = new LinkedHashMap<String, JsonRpcMethod>
         supportedMethods.putAll(ServiceEndpoints.getSupportedMethods(diagramServer.class))
         supportedMethods.putAll(ServiceEndpoints.getSupportedMethods(DiagramClient))
         
         val jsonHandler = new MessageJsonHandler(supportedMethods)
         val reader = new WebSocketMessageProducer(session, jsonHandler)
         val writer = new WebSocketMessageConsumer(session, jsonHandler)
-        val endpoint = new RemoteEndpoint([
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Server : " + it)
-            }
-            writer.consume(it)
+        val endpoint = new RemoteEndpoint([ m |
+            logServerMessage(m)
+            writer.consume(m)
         ], ServiceEndpoints.toEndpoint(diagramServer))
         jsonHandler.setMethodProvider(endpoint)
         
-        reader.listen[
-            if (LOG.isInfoEnabled()) {
-                LOG.info("Client : " + it)
-            }
-            endpoint.consume(it)
+        reader.listen[ m |
+            logClientMessage(m)
+            endpoint.consume(m)
         ]
     }
-
-    @OnError
-    def void onError(Session session, Throwable t) {
-    	LOG.error('''Unhandled error occurred. [Session ID: «session.id»]''', t);
+    
+    protected def void logServerMessage(Message message) {
+    	// override to log server messages
+    }
+    
+    protected def void logClientMessage(Message message) {
+    	// override to log client messages
     }
 
 }

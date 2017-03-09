@@ -1,4 +1,4 @@
-import {GModelRoot, GModelRootSchema} from "../model"
+import {GModelRoot, GModelRootSchema, GModelFactory} from "../model"
 import {Command} from "./commands"
 import {Action} from "./actions"
 import {SourceDelegateActionHandler} from "./source-delegate";
@@ -52,8 +52,8 @@ export class FetchModelHandler extends SourceDelegateActionHandler {
         return this.source.getDiagram({options: action.options})
     }
 
-    protected getFollowActions(action: Action, result: GModelRootSchema): Action[] {
-        const newRoot = new GModelRoot(result)
+    protected getFollowActions(action: FetchModelAction, result: GModelRootSchema): Action[] {
+        const newRoot = GModelFactory.createModel(result)
         return [new SetModelAction(newRoot)]
     }
 }

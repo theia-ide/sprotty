@@ -8,21 +8,20 @@ import {
 
 export class WebSocketMessageReader extends AbstractStreamMessageReader {
 
-    protected socket: WebSocket;
-
-    constructor(socket: WebSocket) {
+    constructor(protected socket: WebSocket) {
         super();
-        this.socket = socket;
     }
 
     listen(callback: DataCallback): void {
-        this.socket.onmessage = event => this.readMessage(event.data, callback);
-        this.socket.onerror = event => {
+        this.socket.addEventListener('message', event => {
+            this.readMessage(event.data, callback)
+        });
+        this.socket.addEventListener('error', event => {
             if (event instanceof ErrorEvent) {
                 this.fireError(event.message);
             }
-        }
-        this.socket.onclose = event => {
+        });
+        this.socket.addEventListener('close', event => {
             if (event.code !== 1000) {
                 const error: Error = {
                     name: '' + event.code,
@@ -31,7 +30,7 @@ export class WebSocketMessageReader extends AbstractStreamMessageReader {
                 this.fireError(error);
             }
             this.fireClose();
-        }
+        });
     }
 
 }

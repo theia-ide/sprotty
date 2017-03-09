@@ -1,31 +1,33 @@
 const WebSocket = require('reconnecting-websocket');
 
-import {
-    createMessageConnection, MessageConnection
-} from 'vscode-jsonrpc';
+import {createMessageConnection, MessageConnection} from 'vscode-jsonrpc';
+import {DiagramServer} from "../protocol";
+import {ConsoleLogger} from '../common';
+import {WebSocketMessageReader} from './reader';
+import {WebSocketMessageWriter} from './writer';
 
-import {
-    ConsoleLogger
-} from '../common';
+export function connectDiagramServer(url: string): Promise<DiagramServer> {
+    return new Promise<DiagramServer>((resolve, reject) => {
+        createWebSocketConnection(url).then((connection: MessageConnection) => {
+            connection.listen();
+            resolve(new DiagramServer(connection));
+        }).catch(reject);
+    });
+}
 
-import {
-    WebSocketMessageReader
-} from './reader';
-
-import {
-    WebSocketMessageWriter
-} from './writer';
-
-export function createWebSocketConnection(url: string, onConnect: (connection: MessageConnection) => void): void {
+export function createWebSocketConnection(url: string): Promise<MessageConnection> {
     const socket = createWebSocket(url);
-    socket.onopen = () => {
-        const logger = new ConsoleLogger();
-        const messageReader = new WebSocketMessageReader(socket);
-        const messageWriter = new WebSocketMessageWriter(socket);
-        const connection = createMessageConnection(messageReader, messageWriter, logger);
-        connection.onClose(() => connection.dispose());
-        onConnect(connection);
-    }
+    return new Promise<MessageConnection>((resolve, reject) => {
+        socket.addEventListener('open', event => {
+            const logger = new ConsoleLogger();
+            const messageReader = new WebSocketMessageReader(socket);
+            const messageWriter = new WebSocketMessageWriter(socket);
+            const connection = createMessageConnection(messageReader, messageWriter, logger);
+            connection.onClose(() => connection.dispose());
+            resolve(connection);
+        })
+        socket.addEventListener('error', reject)
+    });
 }
 
 function createWebSocket(url: string): WebSocket {
@@ -35,8 +37,7 @@ function createWebSocket(url: string): WebSocket {
         reconnectionDelayGrowFactor: 1.3,
         connectionTimeout: 4000,
         maxRetries: Infinity,
-        debug: false,
+        debug: false
     }
     return new WebSocket(url, undefined, options);
 }
-

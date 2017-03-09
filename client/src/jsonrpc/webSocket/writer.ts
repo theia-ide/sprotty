@@ -4,11 +4,8 @@ import {
 
 export class WebSocketMessageWriter extends AbstractStreamMessageWriter {
 
-    protected socket: WebSocket;
-
-    constructor(socket: WebSocket) {
+    constructor(protected socket: WebSocket) {
         super();
-        this.socket = socket;
     }
 
     protected send(content: string): void {

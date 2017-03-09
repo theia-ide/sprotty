@@ -14,20 +14,15 @@ class WebSocketMessageProducer implements MessageProducer {
 
     val Session session
     val MessageJsonHandler jsonHandler
-    var buffer = new StringBuilder
 
     override listen(MessageConsumer messageConsumer) {
-        session.addMessageHandler(String, new MessageHandler.Partial<String>() {
-
-            override onMessage(String partialMessage, boolean last) {
-                buffer.append(partialMessage);
-                if (last) {
-                    process(buffer.toString, messageConsumer)
-                    buffer = new StringBuilder
-                }
-            }
-
-        })
+    	// This cannot be a lambda because the server wants to use reflection on it
+    	val messageHandler = new MessageHandler.Whole<String> {
+			override onMessage(String message) {
+    			process(message, messageConsumer)
+			}
+    	}
+        session.addMessageHandler(messageHandler)
     }
 
     protected def void process(String content, MessageConsumer messageConsumer) {

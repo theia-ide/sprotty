@@ -22,7 +22,7 @@ class WebSocketMessageConsumer implements MessageConsumer {
             output.close
 
             val content = output.toString
-            synchronized (session) {        	
+            synchronized (session) {
                 session.basicRemote.sendText(content)
             }
         }

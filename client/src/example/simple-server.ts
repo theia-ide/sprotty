@@ -1,12 +1,12 @@
-import { createMessageConnection } from 'vscode-jsonrpc'
+import {MessageConnection} from "vscode-jsonrpc";
 import {EventLoop} from "../base"
 import {GGraphView, StraightEdgeView} from "../graph/view"
 import {
-    CommandStack, ActionDispatcher, MoveCommand, MoveKind, SelectKind, SelectCommand, CommandActionHandler,
-    FetchModelKind, FetchModelAction, FetchModelHandler
+    CommandStack, ActionDispatcher, MoveCommand, MoveKind, SelectKind, SelectCommand, FetchModelKind, FetchModelAction,
+    FetchModelHandler
 } from "../base/intent"
 import {Viewer} from "../base/view"
-import {DiagramServer, WebSocketMessageReader, WebSocketMessageWriter, ConsoleLogger} from "../jsonrpc"
+import {DiagramServer, connectDiagramServer} from "../jsonrpc"
 import {CircleNodeView} from "./views"
 
 export default function runSimpleServer() {
@@ -26,18 +26,13 @@ export default function runSimpleServer() {
     viewComponentRegistry.register('node:circle', CircleNodeView)
     viewComponentRegistry.register('edge:straight', StraightEdgeView)
 
-    // Create WebSocket connection
-    const webSocket = new WebSocket('ws://localhost:62000')
-    const connection = createMessageConnection(
-        new WebSocketMessageReader(webSocket),
-        new WebSocketMessageWriter(webSocket),
-        new ConsoleLogger()
-    )
-    const diagramServer = new DiagramServer(connection)
-    eventLoop.dispatcher.registerSourceDelegate(FetchModelKind, FetchModelHandler, diagramServer)
+    // Connect to the diagram server
+    connectDiagramServer('ws://localhost:62000').then((diagramServer: DiagramServer) => {
+        eventLoop.dispatcher.registerSourceDelegate(FetchModelKind, FetchModelHandler, diagramServer)
 
-    // Run
-    const action = new FetchModelAction({});
-    eventLoop.dispatcher.dispatch(action);
+        // Run
+        const action = new FetchModelAction({});
+        eventLoop.dispatcher.dispatch(action);
+    })
 
 }
