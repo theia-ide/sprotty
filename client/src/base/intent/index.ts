@@ -5,4 +5,5 @@ export * from './commands';
 export * from './index';
 export * from './move';
 export * from './select';
-export * from './set-model';
+export * from './model-manipulation';
+export * from './source-delegate';

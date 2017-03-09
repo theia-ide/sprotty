@@ -1,6 +1,7 @@
-import {GModelRoot} from "../model"
+import {GModelRoot, GModelRootSchema} from "../model"
 import {Command} from "./commands"
 import {Action} from "./actions"
+import {SourceDelegateActionHandler} from "./source-delegate";
 
 export const SetModelKind = 'SetModel'
 
@@ -34,5 +35,25 @@ export class SetModelCommand implements Command {
 
     merge(command: Command): boolean {
         return false
+    }
+}
+
+export const FetchModelKind = 'FetchModel'
+
+export class FetchModelAction implements Action {
+    kind = FetchModelKind
+
+    constructor(public readonly options: any) {
+    }
+}
+
+export class FetchModelHandler extends SourceDelegateActionHandler {
+    protected callSource(action: FetchModelAction): PromiseLike<any> {
+        return this.source.getDiagram({options: action.options})
+    }
+
+    protected getFollowActions(action: Action, result: GModelRootSchema): Action[] {
+        const newRoot = new GModelRoot(result)
+        return [new SetModelAction(newRoot)]
     }
 }

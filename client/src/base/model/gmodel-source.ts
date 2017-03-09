@@ -3,7 +3,7 @@ import {
 } from 'vscode-jsonrpc';
 import {GModelRootSchema} from "./gmodel-schema";
 
-export interface IDiagramServer extends Disposable {
+export interface IModelSource extends Disposable {
 
     getDiagram(params: GetDiagramParams, token?: CancellationToken): Thenable<GModelRootSchema>;
 

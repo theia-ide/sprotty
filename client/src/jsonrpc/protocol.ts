@@ -1,9 +1,9 @@
 import {
-    CancellationToken, Disposable, GenericNotificationHandler, MessageConnection, NotificationType1, RequestType1
+    CancellationToken, MessageConnection, NotificationType1, RequestType1
 } from 'vscode-jsonrpc';
-import {IDiagramServer, GetDiagramParams, SelectionParams, GModelRootSchema} from "../base/model";
+import {IModelSource, GetDiagramParams, SelectionParams, GModelRootSchema} from "../base/model";
 
-export class DiagramServer implements IDiagramServer {
+export class DiagramServer implements IModelSource {
 
     protected connection: MessageConnection;
 
@@ -23,30 +23,6 @@ export class DiagramServer implements IDiagramServer {
         return this.connection.sendNotification(ElementSelectedNotification.type, params);
     }
 
-}
-
-export namespace DiagramServer {
-    export function connect(connection: MessageConnection, target: IDiagramServer): void {
-        connection.onRequest("getDiagram", 
-            (params, cancelToken) => {
-                return target.getDiagram(params, cancelToken)
-            });
-    }
-
-    export function connectNotifications(connection: IConnection, target: IDiagramServer): Disposable {
-        const notificationsHandler: NotificationsHandler = {}
-        notificationsHandler["elementSelected"] = (params) => target.elementSelected(params);
-        const registration = connection.addNotificationHandler(notificationsHandler);
-        return registration;
-    }
-
-    export interface IConnection {
-        addNotificationHandler(handler: NotificationsHandler) : Disposable
-    }
-
-    export interface NotificationsHandler {
-        [method: string]: GenericNotificationHandler
-    }
 }
 
 // RPC method definitions

@@ -1,7 +1,7 @@
 import {VNode} from "snabbdom/vnode"
 import {h} from "snabbdom"
 import {GModelElement, GModelRoot, EMPTY_ROOT} from "../model"
-import {Registry} from "../../utils"
+import {ProviderRegistry} from "../../utils"
 import {Viewer} from "./viewer"
 
 /**
@@ -23,7 +23,7 @@ export interface RenderingContext {
 /**
  * Allows to look up the View for a given GModelElement based on its type.
  */
-export class ViewRegistry extends Registry<View, GModelElement> {
+export class ViewRegistry extends ProviderRegistry<View, GModelElement> {
     constructor() {
         super()
         this.register(EMPTY_ROOT.type, EmptyView)
