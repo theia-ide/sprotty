@@ -10,7 +10,8 @@
   "scripts": {
     "prepublish": "typings install --overwrite --save",
     "watch": "webpack --watch",
-    "test": "mocha -r ts-node/register test/*.ts"
+    "test": "mocha --opts ./mocha.opts",
+    "test:debug": "mocha -w --opts ./mocha.opts"
   },
   "keywords": [],
   "author": "TypeFox",
