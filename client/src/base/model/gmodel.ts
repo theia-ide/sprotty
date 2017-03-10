@@ -192,6 +192,10 @@ export class ChildrenList<T extends GModelElement> {
     length(): number {
         return this.children.length
     }
+
+    get(i: number): T {
+        return this.children[i]
+    }
 }
 
 export const EMPTY_ROOT = new GModelRoot({

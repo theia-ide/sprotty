@@ -1,7 +1,7 @@
 import {EventLoop} from "../../../src/base"
 import {CommandStack, ActionDispatcher, SetModelAction, SelectKind, SelectCommand} from "../../../src/base/intent"
 import {Viewer} from "../../../src/base/view"
-import {GChip} from "./gmodel"
+import {GChip, GCore} from "./gmodel"
 import {GChipView, GCoreView, GChannelView, GCrossbarView} from "./views"
 import {GCoreSchema, GChannelSchema, GCrossbarSchema} from "./schema"
 import {Direction} from "../../../src/utils/geometry"
@@ -9,7 +9,7 @@ import XUnit = Mocha.reporters.XUnit
 
 export default function runMulticore() {
     // init gmodel
-    const dim = 4
+    const dim = 8
     const cores: GCoreSchema[] = []
     const channels: GChannelSchema[] = []
     for (let i = 0; i < dim; ++i) {
@@ -55,20 +55,23 @@ export default function runMulticore() {
     const crossbars = [{
         id: 'cb_up',
         type: 'crossbar',
+        load: Math.random(),
         direction: Direction.up
     }, {
         id: 'cb_down',
         type: 'crossbar',
+        load: Math.random(),
         direction: Direction.down
     }, {
         id: 'cb_left',
         type: 'crossbar',
+        load: Math.random(),
         direction: Direction.left
     }, {
         id: 'cb_right',
         type: 'crossbar',
+        load: Math.random(),
         direction: Direction.right
-
     }]
 
     let children: (GCrossbarSchema | GChannelSchema | GCoreSchema)[] = []
@@ -103,4 +106,13 @@ export default function runMulticore() {
     // run
     const action = new SetModelAction(chip);
     eventLoop.dispatcher.dispatch(action);
+
+    function changeModel() {
+        for(let i=0; i<chip.children.length(); ++i) {
+            (chip.children.get(i) as GCore).load = Math.max(0,Math.min(1,(chip.children.get(i) as GCore).load + Math.random()*0.2-0.1))
+        }
+        const action = new SetModelAction(chip);
+        eventLoop.dispatcher.dispatch(action);
+    }
+    setInterval(changeModel.bind(this), 50)
 }

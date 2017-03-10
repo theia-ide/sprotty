@@ -18,7 +18,7 @@ export class ColorMap {
     }
 
     getColor(t: number): RGBColor {
-        t = Math.max(0, Math.min(1, t))
+        t = Math.max(0, Math.min(0.99999999, t))
         const i = Math.floor(t * this.stops.length)
         return this.stops[i]
     }

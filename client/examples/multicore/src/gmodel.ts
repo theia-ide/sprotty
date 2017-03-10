@@ -59,6 +59,7 @@ export class GCore extends GModelElement implements Selectable {
 
 export class GCrossbar extends GModelElement implements Selectable {
     readonly direction: Direction
+    load: number
     selected: boolean
 
     constructor(json: GCrossbarSchema) {

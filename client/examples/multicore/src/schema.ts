@@ -25,6 +25,7 @@ export interface GChannelSchema extends GModelElementSchema {
 export interface GCrossbarSchema extends GModelElementSchema {
     selected?: boolean
     direction: Direction
+    load: number
 }
 
 export namespace GChipSchema {

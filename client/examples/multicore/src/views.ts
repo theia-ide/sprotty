@@ -15,7 +15,7 @@ export class GChipView implements View {
             }, [
                 h('g', {
                     attrs: {
-                        transform: 'translate(100,100)'
+                        transform: 'translate(' + GCoreView.width + ',' + GCoreView.width + ')'
                     }
                 }, context.viewer.renderChildren(model, context))]
         );
@@ -24,7 +24,7 @@ export class GChipView implements View {
 }
 
 export class GCoreView implements View {
-    static readonly width = 50
+    static readonly width = 45
     static readonly dist = 20
 
     render(model: GCore, context: RenderingContext): VNode {
