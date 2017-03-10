@@ -19,13 +19,12 @@ export class GGraph extends GModelRoot {
 export class GNode extends GModelElement implements Moveable, Selectable {
     x: number
     y: number
-    selected: boolean = false
+    selected: boolean
 
     constructor(json: GNodeSchema) {
         super(json)
-        this.x = json.x
-        this.y = json.y
-        this.selected = json.selected
+        if(this.selected === undefined)
+            this.selected = false
     }
 }
 
@@ -35,8 +34,6 @@ export class GEdge extends GModelElement {
 
     constructor(json: GEdgeSchema) {
         super(json)
-        this.sourceId = json.sourceId
-        this.targetId = json.targetId
     }
 
     get source(): GNode {

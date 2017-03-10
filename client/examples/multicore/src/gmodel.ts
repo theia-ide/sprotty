@@ -1,7 +1,8 @@
-import {GModelElement, GModelRoot, ChildrenList} from "../../../src/base/model/gmodel"
+import {GModelElement, GModelRoot} from "../../../src/base/model/gmodel"
 import {Selectable} from "../../../src/base/model/behavior"
 import {GCoreSchema, GChipSchema, GChannelSchema, GCrossbarSchema} from "./schema"
 import {Direction} from "../../../src/utils/geometry"
+import {GModelElementSchema} from "../../../src/base/model/gmodel-schema"
 
 export class GChip extends GModelRoot {
     readonly rows: number
@@ -9,26 +10,18 @@ export class GChip extends GModelRoot {
 
     constructor(json: GChipSchema) {
         super(json)
-        this.rows = json.rows
-        this.columns = json.columns
-        this.children = new ChildrenList<GChannel>(this)
-        json.cores.forEach(
-            coreJson => {
-                if (this.isValidIndex(coreJson)) {
-                    this.children.add(new GCore(coreJson))
-                }
-            }
-        )
-        json.channels.forEach(
-            channelJson => {
-                if (this.isValidIndex(channelJson)) {
-                    this.children.add(new GChannel(channelJson))
-                }
-            }
-        )
-        json.crossbars.forEach(
-            crossbarJson => this.children.add(new GCrossbar(crossbarJson))
-        )
+    }
+
+    createChild(json: GModelElementSchema) {
+        if (GChipSchema.isGChannelSchema(json)) {
+            if (this.isValidIndex(json))
+                return new GChannel(json)
+        } else if (GChipSchema.isGCoreSchema(json)) {
+            if (this.isValidIndex(json))
+                return new GCore(json)
+        } else if (GChipSchema.isGCrossbarSchema(json))
+            return new GCrossbar(json)
+        throw Error('Illegal json element ' + json)
     }
 
     private isValidIndex(coreOrChannel: GCoreSchema | GChannelSchema): boolean {
@@ -59,21 +52,19 @@ export class GCore extends GModelElement implements Selectable {
 
     constructor(json: GCoreSchema) {
         super(json)
-        this.column = json.column
-        this.row = json.row
-        this.load = json.load
-        this.selected = json.selected || false
+        if(this.selected === undefined)
+            this.selected = false
     }
 }
 
 export class GCrossbar extends GModelElement implements Selectable {
     readonly direction: Direction
-    selected: boolean;
+    selected: boolean
 
     constructor(json: GCrossbarSchema) {
         super(json)
-        this.direction = json.direction
-        this.selected = json.selected
+        if(this.selected === undefined)
+            this.selected = false
     }
 }
 
@@ -86,11 +77,8 @@ export class GChannel extends GModelElement implements Selectable {
 
     constructor(json: GChannelSchema) {
         super(json)
-        this.column = json.column
-        this.row = json.row
-        this.direction = json.direction
-        this.load = json.load || 0
-        this.selected = json.selected || false
+        if(this.selected === undefined)
+            this.selected = false
     }
 }
 

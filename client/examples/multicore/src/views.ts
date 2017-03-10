@@ -125,13 +125,13 @@ export class GCrossbarView implements View {
 
 class LoadColor {
     static colorMap = new ColorMap([
-        {red: 0.9, green:0.9, blue: 0.9},
-        {red:0, green:1, blue:0},
-        {red:1, green:1, blue:0},
-        {red:1, green:0, blue:0}
+        {red: 0.9, green: 0.9, blue: 0.9},
+        {red: 0, green: 1, blue: 0},
+        {red: 1, green: 1, blue: 0},
+        {red: 1, green: 0, blue: 0}
     ])
 
-    static getSVG(load: number) : string {
+    static getSVG(load: number): string {
         return RGBColor.toSVG(LoadColor.colorMap.getColor(load))
     }
 }

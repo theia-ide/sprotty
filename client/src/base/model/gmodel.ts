@@ -13,12 +13,19 @@ export class GModelElement {
     parent?: GModelElement
 
     constructor(json: GModelElementSchema) {
-        this.type = json.type
-        this.id = json.id
+        for (let key in json) {
+            if (key != 'children' && json[key] !== undefined) {
+                this[key] = json[key]
+            }
+        }
         if (json.children) {
             this.children = new ChildrenList<GModelElement>(this)
             json.children.forEach(child => {
-                this.children.add(this.createChild(child))
+                try {
+                    this.children.add(this.createChild(child))
+                } catch (e) {
+                    console.log(e.message)
+                }
             })
         }
     }

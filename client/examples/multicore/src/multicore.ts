@@ -3,7 +3,7 @@ import {CommandStack, ActionDispatcher, SetModelAction, SelectKind, SelectComman
 import {Viewer} from "../../../src/base/view"
 import {GChip} from "./gmodel"
 import {GChipView, GCoreView, GChannelView, GCrossbarView} from "./views"
-import {GCoreSchema, GChannelSchema} from "./schema"
+import {GCoreSchema, GChannelSchema, GCrossbarSchema} from "./schema"
 import {Direction} from "../../../src/utils/geometry"
 import XUnit = Mocha.reporters.XUnit
 
@@ -70,14 +70,18 @@ export default function runMulticore() {
         direction: Direction.right
 
     }]
+
+    let children: (GCrossbarSchema | GChannelSchema | GCoreSchema)[] = []
+    children = children.concat(channels)
+    children = children.concat(crossbars)
+    children = children.concat(cores)
+
     const chip = new GChip({
         id: 'chip',
         type: 'chip',
         rows: dim,
         columns: dim,
-        cores: cores,
-        channels: channels,
-        crossbars: crossbars
+        children: children
     })
 
     // setup event loop

@@ -61,12 +61,12 @@ export class Viewer extends EventSource<ViewerCallback> implements CommandStackC
             vnode)
     }
 
-    renderElement(element: GModelElement, context: RenderingContext) : VNode {
+    renderElement(element: GModelElement, context: RenderingContext): VNode {
         const vNode = this.viewRegistry.get(element.type, element).render(element, context)
         return this.decorate(vNode, element)
     }
 
-    renderChildren(element: GModelElement, context: RenderingContext) : VNode[] {
+    renderChildren(element: GModelElement, context: RenderingContext): VNode[] {
         return element.children.map((element) => context.viewer.renderElement(element, context))
     }
 

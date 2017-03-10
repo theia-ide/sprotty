@@ -4,9 +4,7 @@ import {Direction} from "../../../src/utils/geometry"
 export interface GChipSchema extends GModelElementSchema {
     rows: number
     columns: number
-    cores: GCoreSchema[]
-    channels: GChannelSchema[]
-    crossbars: GCrossbarSchema[]
+    children: (GCoreSchema | GChannelSchema | GCrossbarSchema)[]
 }
 
 export interface GCoreSchema extends GModelElementSchema {
@@ -21,7 +19,7 @@ export interface GChannelSchema extends GModelElementSchema {
     column: number
     direction: Direction
     selected?: boolean
-    load?: number
+    load: number
 }
 
 export interface GCrossbarSchema extends GModelElementSchema {
