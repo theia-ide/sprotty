@@ -27,7 +27,6 @@ export interface GCrossbarSchema extends GModelElementSchema {
     direction: Direction
 }
 
-
 export namespace GChipSchema {
     export function isGChipSchema(schema: GModelElementSchema): schema is GChipSchema {
         return GModelSchema.getBasicType(schema) == 'chip'

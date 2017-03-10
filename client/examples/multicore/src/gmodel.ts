@@ -12,19 +12,19 @@ export class GChip extends GModelRoot {
         super(json)
     }
 
-    createChild(json: GModelElementSchema) {
+    protected createChild(json: GModelElementSchema) {
         if (GChipSchema.isGChannelSchema(json)) {
-            if (this.isValidIndex(json))
+            this.validateIndex(json)
                 return new GChannel(json)
         } else if (GChipSchema.isGCoreSchema(json)) {
-            if (this.isValidIndex(json))
-                return new GCore(json)
+            this.validateIndex(json)
+            return new GCore(json)
         } else if (GChipSchema.isGCrossbarSchema(json))
             return new GCrossbar(json)
         throw Error('Illegal json element ' + json)
     }
 
-    private isValidIndex(coreOrChannel: GCoreSchema | GChannelSchema): boolean {
+    private validateIndex(coreOrChannel: GCoreSchema | GChannelSchema) {
         let rowDelta = 0
         let columnDelta = 0
         if (GChipSchema.isGChannelSchema(coreOrChannel)) {
@@ -38,9 +38,9 @@ export class GChip extends GModelRoot {
                     break;
             }
         }
-        return coreOrChannel.row >= 0 && coreOrChannel.row < this.rows + rowDelta
-            && coreOrChannel.column >= 0 && coreOrChannel.column < this.columns + columnDelta
-
+        if(coreOrChannel.row < 0 || coreOrChannel.row >= this.rows + rowDelta
+            || coreOrChannel.column < 0 && coreOrChannel.column >= this.columns + columnDelta)
+            throw Error('Element coordinates are out of bounds ' + coreOrChannel)
     }
 }
 
