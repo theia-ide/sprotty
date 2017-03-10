@@ -12,6 +12,9 @@ export class GGraphView implements View {
     render(model: GGraph, context: RenderingContext): VNode {
         const vNode = h('svg', {
                 key: model.id,
+                class: {
+                    graph: true
+                },
                 attrs: {
                     id: model.id
                 }

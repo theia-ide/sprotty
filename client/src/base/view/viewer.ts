@@ -74,7 +74,8 @@ export class Viewer extends EventSource<ViewerCallback> implements CommandStackC
         const context = this.createRenderingContext(model)
         const newVDOM = h('div', {
             attrs: {
-                id: this.baseDiv
+                id: this.baseDiv,
+                class: this.baseDiv
             }
         }, [
             this.renderElement(model, context)
