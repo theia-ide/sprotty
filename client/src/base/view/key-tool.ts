@@ -10,8 +10,7 @@ export class KeyTool implements VNodeDecorator {
     }
 
     keyPress(element: GModelElement, event: KeyboardEvent): void {
-
-        if (event.metaKey && event.keyCode == 90) {
+        if (event.ctrlKey && event.keyCode == 90) {
             event.preventDefault()
             if (event.shiftKey)
                 this.viewer.fireAction(new RedoAction)

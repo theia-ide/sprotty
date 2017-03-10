@@ -1,15 +1,19 @@
-.node {
-    fill: #aae;
-    stroke: #66b;
-    stroke-width: 3;
+.core {
+    stroke: #666;
+    stroke-width: 1;
     rx: 4;
     ry: 4;
 }
 
-.edge {
-    fill: #8cc;
-    stroke: #488;
-    stroke-width: 2;
+.crossbar{
+    fill: #aaa;
+    stroke: #333;
+    stroke-width: 1;
+}
+
+.channel {
+    stroke: #666;
+    stroke-width: 1;
 }
 
 .selected {

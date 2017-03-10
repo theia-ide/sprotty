@@ -12,6 +12,7 @@ export interface GChipSchema extends GModelElementSchema {
 export interface GCoreSchema extends GModelElementSchema {
     row: number
     column: number
+    load: number
     selected?: boolean
 }
 
@@ -20,7 +21,7 @@ export interface GChannelSchema extends GModelElementSchema {
     column: number
     direction: Direction
     selected?: boolean
-    throughput?: number
+    load?: number
 }
 
 export interface GCrossbarSchema extends GModelElementSchema {

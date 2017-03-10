@@ -2,7 +2,6 @@ export interface GModelElementSchema {
     type: string;
     id: string;
     children?: GModelElementSchema[];
-    parent?: GModelElementSchema;
 }
 
 export interface GModelRootSchema extends GModelElementSchema {

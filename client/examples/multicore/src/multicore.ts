@@ -19,14 +19,15 @@ export default function runMulticore() {
                 id: 'core_' + pos,
                 type: 'core',
                 column: i,
-                row: j
+                row: j,
+                load: Math.random()
             })
             const channelData = {
                 id: 'channel_' + pos,
                 type: 'channel',
                 column: i,
                 row: j,
-                throughput: Math.random(),
+                load: Math.random(),
             }
             channels.push(createChannel(i, j, Direction.up))
             channels.push(createChannel(i, j, Direction.down))
@@ -47,7 +48,7 @@ export default function runMulticore() {
             column: column,
             row: row,
             direction: direction,
-            throughput: Math.random(),
+            load: Math.random(),
         }
     }
 

@@ -3,6 +3,7 @@ import {h} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
 import {GChip, GCore, GChannel, GCrossbar} from "./gmodel"
 import {Direction} from "../../../src/utils/geometry"
+import {ColorMap, RGBColor} from "../../../src/utils/color"
 
 export class GChipView implements View {
     render(model: GChip, context: RenderingContext): VNode {
@@ -34,7 +35,7 @@ export class GCoreView implements View {
         const nodeName = this.padLeft(model.row) + this.padLeft(model.column)
         return h('g', {
             class: {
-                node: true
+                core: true
             },
             attrs: {
                 id: model.id,
@@ -48,6 +49,7 @@ export class GCoreView implements View {
                     height: GCoreView.width,
                     rx: 4,
                     ry: 4,
+                    fill: LoadColor.getSVG(model.load)
                 }
             }),
             h('text', {
@@ -57,7 +59,7 @@ export class GCoreView implements View {
                 attrs: {
                     'text-anchor': 'middle',
                     x: GCoreView.width / 2,
-                    y: GCoreView.width / 2
+                    y: GCoreView.width / 2,
                 }
             }, nodeName)
         ]);
@@ -107,7 +109,7 @@ export class GCrossbarView implements View {
         }
         return h('rect', {
             class: {
-                node: true
+                crossbar: true
             },
             attrs: {
                 id: model.id,
@@ -118,6 +120,19 @@ export class GCrossbarView implements View {
                 y: y,
             }
         });
+    }
+}
+
+class LoadColor {
+    static colorMap = new ColorMap([
+        {red: 0.9, green:0.9, blue: 0.9},
+        {red:0, green:1, blue:0},
+        {red:1, green:1, blue:0},
+        {red:1, green:0, blue:0}
+    ])
+
+    static getSVG(load: number) : string {
+        return RGBColor.toSVG(LoadColor.colorMap.getColor(load))
     }
 }
 
@@ -171,15 +186,17 @@ export class GChannelView implements View {
             x: model.column * (GCoreView.width + GCoreView.dist),
             y: model.row * (GCoreView.width + GCoreView.dist),
         }
+
         return h('polygon', {
             class: {
-                edge: true,
+                channel: true,
             },
             attrs: {
                 id: model.id,
                 key: model.id,
                 points: points,
-                transform: 'translate(' + position.x + ',' + position.y + ')'
+                transform: 'translate(' + position.x + ',' + position.y + ')',
+                fill: LoadColor.getSVG(model.load)
             }
         })
     }

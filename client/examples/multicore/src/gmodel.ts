@@ -54,12 +54,14 @@ export class GChip extends GModelRoot {
 export class GCore extends GModelElement implements Selectable {
     readonly column: number
     readonly row: number
+    load: number
     selected: boolean
 
     constructor(json: GCoreSchema) {
         super(json)
         this.column = json.column
         this.row = json.row
+        this.load = json.load
         this.selected = json.selected || false
     }
 }
@@ -79,7 +81,7 @@ export class GChannel extends GModelElement implements Selectable {
     readonly column: number
     readonly row: number
     readonly direction: Direction
-    throughput: number
+    load: number
     selected: boolean
 
     constructor(json: GChannelSchema) {
@@ -87,7 +89,7 @@ export class GChannel extends GModelElement implements Selectable {
         this.column = json.column
         this.row = json.row
         this.direction = json.direction
-        this.throughput = json.throughput || 0
+        this.load = json.load || 0
         this.selected = json.selected || false
     }
 }
