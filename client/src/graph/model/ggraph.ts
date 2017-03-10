@@ -1,9 +1,5 @@
-import {
-    GModelElement, GModelRoot, GModelElementSchema, ChildrenList, GModelIndex, Moveable, Selectable
-} from "../../base/model"
-import {
-    GGraphSchema, GNodeSchema, GEdgeSchema
-} from "./ggraph-schema"
+import {GModelElement, GModelRoot, GModelElementSchema, Moveable, Selectable} from "../../base/model"
+import {GGraphSchema, GNodeSchema, GEdgeSchema} from "./ggraph-schema"
 
 export class GGraph extends GModelRoot {
 

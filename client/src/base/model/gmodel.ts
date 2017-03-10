@@ -1,5 +1,5 @@
 import {Map} from "../../utils"
-import {GModelElementSchema, GModelRootSchema} from "./gmodel-schema";
+import {GModelElementSchema, GModelRootSchema} from "./gmodel-schema"
 
 /**
  * Base class for all elements of the diagram model.
@@ -17,7 +17,7 @@ export class GModelElement {
         this.id = json.id
         if (json.children) {
             this.children = new ChildrenList<GModelElement>(this)
-            json.children.forEach( child => {
+            json.children.forEach(child => {
                 this.children.add(this.createChild(child))
             })
         }

@@ -1,10 +1,10 @@
 const WebSocket = require('reconnecting-websocket');
 
-import {createMessageConnection, MessageConnection} from 'vscode-jsonrpc';
-import {DiagramServer} from "../protocol";
-import {ConsoleLogger} from '../common';
-import {WebSocketMessageReader} from './reader';
-import {WebSocketMessageWriter} from './writer';
+import {createMessageConnection, MessageConnection} from "vscode-jsonrpc"
+import {DiagramServer} from "../protocol"
+import {ConsoleLogger} from "../common"
+import {WebSocketMessageReader} from "./reader"
+import {WebSocketMessageWriter} from "./writer"
 
 export function connectDiagramServer(url: string): Promise<DiagramServer> {
     return new Promise<DiagramServer>((resolve, reject) => {

@@ -1,10 +1,5 @@
-import {
-    DataCallback
-} from 'vscode-jsonrpc/lib/messageReader';
-
-import {
-    AbstractStreamMessageReader
-} from '../common';
+import {DataCallback} from "vscode-jsonrpc/lib/messageReader"
+import {AbstractStreamMessageReader} from "../common"
 
 export class WebSocketMessageReader extends AbstractStreamMessageReader {
 

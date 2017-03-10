@@ -1,4 +1,4 @@
-import {GModelSchema, GModelElementSchema, GModelRootSchema} from "../../base/model";
+import {GModelSchema, GModelElementSchema, GModelRootSchema} from "../../base/model"
 
 export interface GGraphSchema extends GModelRootSchema {
 }

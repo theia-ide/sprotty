@@ -1,7 +1,7 @@
 import {IModelSource} from "../model"
 import {Action, IActionHandler} from "./actions"
-import {Command} from "./commands";
-import {ActionDispatcher} from "./action-dispatcher";
+import {Command} from "./commands"
+import {ActionDispatcher} from "./action-dispatcher"
 
 export abstract class SourceDelegateActionHandler implements IActionHandler {
 

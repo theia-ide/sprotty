@@ -15,8 +15,6 @@ export interface View {
  * Bundles additional data that is passed to views for VNode creation.
  */
 export interface RenderingContext {
-    viewRegistry: ViewRegistry
-    root: GModelRoot
     viewer: Viewer
 }
 

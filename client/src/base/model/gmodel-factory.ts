@@ -1,6 +1,6 @@
-import {GGraph, GGraphSchema} from "../../graph/model";
-import {GModelRootSchema} from "./gmodel-schema";
-import {GModelRoot} from "./gmodel";
+import {GGraph, GGraphSchema} from "../../graph/model"
+import {GModelRootSchema} from "./gmodel-schema"
+import {GModelRoot} from "./gmodel"
 
 export namespace GModelFactory {
 

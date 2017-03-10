@@ -1,13 +1,13 @@
-import { GGraph, GNode } from "../../graph/model/ggraph"
-import { SelectCommand, SelectAction } from ".//select";
-import { expect } from 'chai';
-import 'mocha'
-import { GModelRoot } from "../model/gmodel";
+import {GGraph, GNode} from "../../graph/model/ggraph"
+import {SelectCommand, SelectAction} from ".//select"
+import {expect} from "chai"
+import "mocha"
+import {GModelRoot} from "../model/gmodel"
 
 
 describe('test select command execution, undo, redo and merge', () => {
-    const myNode0 = { id: 'node0', type: 'node:circle', x: 100, y: 100, selected: true };
-    const myNode1 = { id: 'node1', type: 'node:circle', x: 200, y: 200, selected: false };
+    const myNode0 = {id: 'node0', type: 'node:circle', x: 100, y: 100, selected: true};
+    const myNode1 = {id: 'node1', type: 'node:circle', x: 200, y: 200, selected: false};
 
     // setup the GModel
     const initialModel = new GGraph({

@@ -1,12 +1,18 @@
-import {MessageConnection} from "vscode-jsonrpc";
-import {EventLoop} from "../base"
-import {GGraphView, StraightEdgeView} from "../graph/view"
+import {EventLoop} from "../../base"
+import {GGraphView, StraightEdgeView} from "../../graph/view"
 import {
-    CommandStack, ActionDispatcher, MoveCommand, MoveKind, SelectKind, SelectCommand, FetchModelKind, FetchModelAction,
+    CommandStack,
+    ActionDispatcher,
+    MoveCommand,
+    MoveKind,
+    SelectKind,
+    SelectCommand,
+    FetchModelKind,
+    FetchModelAction,
     FetchModelHandler
-} from "../base/intent"
-import {Viewer} from "../base/view"
-import {DiagramServer, connectDiagramServer} from "../jsonrpc"
+} from "../../base/intent"
+import {Viewer} from "../../base/view"
+import {DiagramServer, connectDiagramServer} from "../../jsonrpc"
 import {CircleNodeView} from "./views"
 
 export default function runSimpleServer() {
@@ -21,7 +27,7 @@ export default function runSimpleServer() {
     eventLoop.dispatcher.registerCommand(SelectKind, SelectCommand)
 
     // Register views
-    const viewComponentRegistry = eventLoop.viewer.viewComponentRegistry
+    const viewComponentRegistry = eventLoop.viewer.viewRegistry
     viewComponentRegistry.register('graph', GGraphView)
     viewComponentRegistry.register('node:circle', CircleNodeView)
     viewComponentRegistry.register('edge:straight', StraightEdgeView)

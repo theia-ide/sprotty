@@ -28,7 +28,7 @@ export class SelectCommand implements Command {
         this.action.selectedElementsIDs.forEach(
             id => {
                 const element = model.index.getById(id)
-                if (isSelectable(element)) {
+                if (element && isSelectable(element)) {
                     this.selected.push({
                         element: element,
                         index: element.parent.children.indexOf(element)
@@ -38,7 +38,7 @@ export class SelectCommand implements Command {
         this.action.deselectedElementsIDs.forEach(
             id => {
                 const element = model.index.getById(id)
-                if (isSelectable(element)) {
+                if (element && isSelectable(element)) {
                     this.deselected.push({
                         element: element,
                         index: element.parent.children.indexOf(element)

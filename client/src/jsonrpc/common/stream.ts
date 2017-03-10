@@ -1,6 +1,4 @@
-import {
-    Readable, Writable
-} from 'stream';
+import {Readable, Writable} from "stream"
 
 export class ReadableStream extends Readable {
 

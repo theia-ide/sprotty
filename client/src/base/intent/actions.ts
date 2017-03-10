@@ -1,5 +1,5 @@
-import {InstanceRegistry} from "../../utils";
-import {Command} from "./commands";
+import {InstanceRegistry} from "../../utils"
+import {Command} from "./commands"
 
 /**
  * An action describes a change to the model declaratively.

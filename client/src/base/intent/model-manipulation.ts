@@ -1,7 +1,7 @@
 import {GModelRoot, GModelRootSchema, GModelFactory} from "../model"
 import {Command} from "./commands"
 import {Action} from "./actions"
-import {SourceDelegateActionHandler} from "./source-delegate";
+import {SourceDelegateActionHandler} from "./source-delegate"
 
 export const SetModelKind = 'SetModel'
 

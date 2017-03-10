@@ -1,10 +1,10 @@
 import {EventSource} from "../../utils"
 import {ViewerCallback} from "../view"
-import {IModelSource} from "../model";
+import {IModelSource} from "../model"
 import {Action, UndoKind, RedoKind, ActionHandlerRegistry} from "./actions"
 import {Command, CommandActionHandler} from "./commands"
-import {SetModelKind, SetModelCommand} from "./model-manipulation";
-import {SourceDelegateActionHandler} from "./source-delegate";
+import {SetModelKind, SetModelCommand} from "./model-manipulation"
+import {SourceDelegateActionHandler} from "./source-delegate"
 
 /**
  * Collects actions, converts them to commands and dispatches them.
@@ -27,8 +27,8 @@ export class ActionDispatcher extends EventSource<DispatcherCallback> implements
     }
 
     registerSourceDelegate(kind: string,
-            sourceDelegateType: new(ActionDispatcher, IModelSource) => SourceDelegateActionHandler,
-            source: IModelSource) {
+                           sourceDelegateType: new(ActionDispatcher, IModelSource) => SourceDelegateActionHandler,
+                           source: IModelSource) {
         this.actionHandlerRegistry.register(kind, new sourceDelegateType(this, source))
     }
 

@@ -1,13 +1,13 @@
-import {EventLoop} from "../base"
-import {GGraph, GNode, GEdge} from "../graph/model"
-import {GGraphView, StraightEdgeView} from "../graph/view"
-import {
-    CommandStack, ActionDispatcher, MoveAction, MoveCommand, MoveKind, ElementMove, SetModelAction, SelectKind,
-    SelectCommand, CommandActionHandler
-} from "../base/intent"
-import {Viewer} from "../base/view"
+import {EventLoop} from "../../base/event-loop"
+import {ActionDispatcher} from "../../base/intent/action-dispatcher"
+import {CommandStack} from "../../base/intent/command-stack"
+import {Viewer} from "../../base/view/viewer"
+import {MoveKind, MoveCommand, ElementMove, MoveAction} from "../../base/intent/move"
+import {SelectCommand, SelectKind} from "../../base/intent/select"
+import {GGraphView, StraightEdgeView} from "../../graph/view/views"
 import {CircleNodeView} from "./views"
-
+import {GGraph, GNode, GEdge} from "../../graph/model/ggraph"
+import {SetModelAction} from "../../base/intent/model-manipulation"
 export default function runStandalone() {
     // Setup event loop
     const eventLoop = new EventLoop(
@@ -20,7 +20,7 @@ export default function runStandalone() {
     eventLoop.dispatcher.registerCommand(SelectKind, SelectCommand)
 
     // Register views
-    const viewComponentRegistry = eventLoop.viewer.viewComponentRegistry
+    const viewComponentRegistry = eventLoop.viewer.viewRegistry
     viewComponentRegistry.register('graph', GGraphView)
     viewComponentRegistry.register('node:circle', CircleNodeView)
     viewComponentRegistry.register('edge:straight', StraightEdgeView)

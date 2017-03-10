@@ -20,7 +20,7 @@ import {MouseTool} from "./mouse-tool"
  */
 export class Viewer extends EventSource<ViewerCallback> implements CommandStackCallback, VNodeDecorator {
 
-    viewComponentRegistry = new ViewRegistry()
+    viewRegistry = new ViewRegistry()
     patcher: Patcher
     lastVDOM: undefined
     decorators: VNodeDecorator[] = []
@@ -51,9 +51,7 @@ export class Viewer extends EventSource<ViewerCallback> implements CommandStackC
 
     createRenderingContext(model: GModelRoot): RenderingContext {
         return {
-            viewRegistry: this.viewComponentRegistry,
             viewer: this,
-            root: model
         }
     }
 
@@ -63,6 +61,15 @@ export class Viewer extends EventSource<ViewerCallback> implements CommandStackC
             vnode)
     }
 
+    renderElement(element: GModelElement, context: RenderingContext) : VNode {
+        const vNode = this.viewRegistry.get(element.type, element).render(element, context)
+        return this.decorate(vNode, element)
+    }
+
+    renderChildren(element: GModelElement, context: RenderingContext) : VNode[] {
+        return element.children.map((element) => context.viewer.renderElement(element, context))
+    }
+
     update(model: GModelRoot): void {
         const context = this.createRenderingContext(model)
         const newVDOM = h('div', {
@@ -70,7 +77,7 @@ export class Viewer extends EventSource<ViewerCallback> implements CommandStackC
                 id: this.baseDiv
             }
         }, [
-            this.decorate(this.viewComponentRegistry.get(model.type, model).render(model, context), model)
+            this.renderElement(model, context)
         ])
         if (this.lastVDOM) {
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)

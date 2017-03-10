@@ -1,7 +1,5 @@
-import {
-    CancellationToken, MessageConnection, NotificationType1, RequestType1
-} from 'vscode-jsonrpc';
-import {IModelSource, GetDiagramParams, SelectionParams, GModelRootSchema} from "../base/model";
+import {CancellationToken, MessageConnection, NotificationType1, RequestType1} from "vscode-jsonrpc"
+import {IModelSource, GetDiagramParams, SelectionParams, GModelRootSchema} from "../base/model"
 
 export class DiagramServer implements IModelSource {
 

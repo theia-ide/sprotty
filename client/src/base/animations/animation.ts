@@ -4,7 +4,7 @@ import {easeInOut} from "./easing"
 
 export abstract class Animation {
 
-    constructor(protected context: CommandExecutionContext, protected ease: (number)=>number = easeInOut) {
+    constructor(protected context: CommandExecutionContext, protected ease: (number) => number = easeInOut) {
     }
 
     start() {

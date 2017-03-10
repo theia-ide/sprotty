@@ -1,6 +1,4 @@
-import {
-    AbstractStreamMessageWriter
-} from '../common';
+import {AbstractStreamMessageWriter} from "../common"
 
 export class WebSocketMessageWriter extends AbstractStreamMessageWriter {
 

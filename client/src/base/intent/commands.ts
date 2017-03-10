@@ -1,6 +1,6 @@
 import {GModelRoot} from "../model"
 import {CommandStackCallback} from "./command-stack"
-import {IActionHandler, Action} from "./actions";
+import {IActionHandler, Action} from "./actions"
 
 /**
  * A command holds the behaviour of an action.

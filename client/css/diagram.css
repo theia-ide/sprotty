@@ -2,6 +2,8 @@
     fill: #aae;
     stroke: #66b;
     stroke-width: 3;
+    rx: 4;
+    ry: 4;
 }
 
 .edge {
@@ -13,4 +15,12 @@
 .selected {
     stroke: #dd8;
     stroke-width: 6;
+}
+
+.text {
+    stroke-width: 1;
+    stroke: #000;
+    fill: #000;
+    font-family: SansSerif;
+    font-size: 10pt;
 }
