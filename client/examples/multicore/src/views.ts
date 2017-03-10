@@ -1,8 +1,8 @@
-import {View, RenderingContext} from "../../base/view/views"
+import {View, RenderingContext} from "../../../src/base/view/views"
 import {h} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
 import {GChip, GCore, GChannel, GCrossbar} from "./gmodel"
-import {Direction} from "../../utils/geometry"
+import {Direction} from "../../../src/utils/geometry"
 
 export class GChipView implements View {
     render(model: GChip, context: RenderingContext): VNode {

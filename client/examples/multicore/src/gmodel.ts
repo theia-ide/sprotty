@@ -1,7 +1,7 @@
-import {GModelElement, GModelRoot, ChildrenList} from "../../base/model/gmodel"
-import {Selectable} from "../../base/model/behavior"
+import {GModelElement, GModelRoot, ChildrenList} from "../../../src/base/model/gmodel"
+import {Selectable} from "../../../src/base/model/behavior"
 import {GCoreSchema, GChipSchema, GChannelSchema, GCrossbarSchema} from "./schema"
-import {Direction} from "../../utils/geometry"
+import {Direction} from "../../../src/utils/geometry"
 
 export class GChip extends GModelRoot {
     readonly rows: number

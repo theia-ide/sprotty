@@ -1,5 +1,5 @@
-import {GModelElementSchema, GModelSchema} from "../../base/model/gmodel-schema"
-import {Direction} from "../../utils/geometry"
+import {GModelElementSchema, GModelSchema} from "../../../src/base/model/gmodel-schema"
+import {Direction} from "../../../src/utils/geometry"
 
 export interface GChipSchema extends GModelElementSchema {
     rows: number

@@ -1,5 +1,5 @@
 module.exports = {
-    entry: './src/example/app.ts',
+    entry: './examples/app.ts',
     devtool: 'source-map',
     output: {
         filename: 'bundle.js',

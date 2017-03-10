@@ -1,10 +1,10 @@
-import {EventLoop} from "../../base"
-import {CommandStack, ActionDispatcher, SetModelAction, SelectKind, SelectCommand} from "../../base/intent"
-import {Viewer} from "../../base/view"
+import {EventLoop} from "../../../src/base"
+import {CommandStack, ActionDispatcher, SetModelAction, SelectKind, SelectCommand} from "../../../src/base/intent"
+import {Viewer} from "../../../src/base/view"
 import {GChip} from "./gmodel"
 import {GChipView, GCoreView, GChannelView, GCrossbarView} from "./views"
 import {GCoreSchema, GChannelSchema} from "./schema"
-import {Direction} from "../../utils/geometry"
+import {Direction} from "../../../src/utils/geometry"
 import XUnit = Mocha.reporters.XUnit
 
 export default function runMulticore() {

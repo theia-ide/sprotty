@@ -1,13 +1,13 @@
-import {EventLoop} from "../../base/event-loop"
-import {ActionDispatcher} from "../../base/intent/action-dispatcher"
-import {CommandStack} from "../../base/intent/command-stack"
-import {Viewer} from "../../base/view/viewer"
-import {MoveKind, MoveCommand, ElementMove, MoveAction} from "../../base/intent/move"
-import {SelectCommand, SelectKind} from "../../base/intent/select"
-import {GGraphView, StraightEdgeView} from "../../graph/view/views"
+import {EventLoop} from "../../../src/base/event-loop"
+import {ActionDispatcher} from "../../../src/base/intent/action-dispatcher"
+import {CommandStack} from "../../../src/base/intent/command-stack"
+import {Viewer} from "../../../src/base/view/viewer"
+import {MoveKind, MoveCommand, ElementMove, MoveAction} from "../../../src/base/intent/move"
+import {SelectCommand, SelectKind} from "../../../src/base/intent/select"
+import {GGraphView, StraightEdgeView} from "../../../src/graph/view/views"
 import {CircleNodeView} from "./views"
-import {GGraph, GNode, GEdge} from "../../graph/model/ggraph"
-import {SetModelAction} from "../../base/intent/model-manipulation"
+import {GGraph, GNode, GEdge} from "../../../src/graph/model/ggraph"
+import {SetModelAction} from "../../../src/base/intent/model-manipulation"
 export default function runStandalone() {
     // Setup event loop
     const eventLoop = new EventLoop(

@@ -1,5 +1,5 @@
-import {EventLoop} from "../../base"
-import {GGraphView, StraightEdgeView} from "../../graph/view"
+import {EventLoop} from "../../../src/base"
+import {GGraphView, StraightEdgeView} from "../../../src/graph/view"
 import {
     CommandStack,
     ActionDispatcher,
@@ -10,9 +10,9 @@ import {
     FetchModelKind,
     FetchModelAction,
     FetchModelHandler
-} from "../../base/intent"
-import {Viewer} from "../../base/view"
-import {DiagramServer, connectDiagramServer} from "../../jsonrpc"
+} from "../../../src/base/intent"
+import {Viewer} from "../../../src/base/view"
+import {DiagramServer, connectDiagramServer} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
 
 export default function runSimpleServer() {

@@ -1,6 +1,6 @@
-import runStandalone from "./circlegraph/standalone"
-import runSimpleServer from "./circlegraph/simple-server"
-import runMulticore from "./multicore/multicore"
+import runStandalone from "./circlegraph/src/standalone"
+import runSimpleServer from "./circlegraph/src/simple-server"
+import runMulticore from "./multicore/src/multicore"
 
 let appMode = document.getElementById('sprotte').getAttribute('data-app')
 
