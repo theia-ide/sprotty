@@ -44,9 +44,9 @@ export class GModelElement {
             if (current instanceof GModelRoot)
                 return current
             else
-                current = current.parent
+                current = current.parent!
         }
-        return null
+        return undefined!
     }
 }
 
@@ -85,7 +85,7 @@ export class GModelIndex {
         delete this.id2element[elementId]
     }
 
-    getById(id: string): GModelElement {
+    getById(id: string): GModelElement | undefined {
         return this.id2element[id]
     }
 
@@ -105,14 +105,14 @@ export class GModelIndex {
  * Note that by manually modifying the parent the corresponding children list is not updated.
  */
 export class ChildrenList<T extends GModelElement> {
-    private _index: GModelIndex = undefined
+    private _index: GModelIndex | undefined = undefined
 
     constructor(private parent: GModelElement) {
     }
 
     private children: T[] = []
 
-    set index(index: GModelIndex) {
+    set index(index: GModelIndex | undefined) {
         if (index) {
             index.add(this.parent)
             this.children.forEach(child => {
@@ -128,7 +128,7 @@ export class ChildrenList<T extends GModelElement> {
         this._index = index
     }
 
-    private addToIndex(child: GModelElement, index: GModelIndex) {
+    private addToIndex(child: GModelElement, index: GModelIndex | undefined) {
         if (child.children)
             child.children.index = index
         else if (index)
@@ -164,7 +164,7 @@ export class ChildrenList<T extends GModelElement> {
         this.removeFromIndex(child)
     }
 
-    indexOf(child: T) {
+    indexOf(child: T): number {
         return this.children.indexOf(child)
     }
 

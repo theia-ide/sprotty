@@ -10,14 +10,14 @@ export class MouseTool implements VNodeDecorator {
 
     hasDragged = false
     wasSelected = false
-    lastDragPosition: Point
+    lastDragPosition: Point | undefined
 
     constructor(private viewer: Viewer) {
     }
 
     mouseDown(element: GModelElement, event: MouseEvent) {
         if (isSelectable(element)) {
-            let deselectIds = []
+            let deselectIds: string[] = []
             if (!event.metaKey) {
                 deselectIds = element.root
                     .index
@@ -35,7 +35,7 @@ export class MouseTool implements VNodeDecorator {
         if (isMoveable(element)) {
             this.lastDragPosition = {x: event.clientX, y: event.clientY}
         } else {
-            this.lastDragPosition = null
+            this.lastDragPosition = undefined
         }
         this.hasDragged = false
     }
@@ -79,20 +79,24 @@ export class MouseTool implements VNodeDecorator {
             }
         }
         this.hasDragged = false
-        this.lastDragPosition = null
+        this.lastDragPosition = undefined
     }
 
     decorate(vnode: VNode, element: GModelElement) {
-        if (!vnode.data.on)
-            vnode.data.on = {}
-        if (isSelectable(element))
-            vnode.data.class.selected = element.selected
+        const data = vnode.data!
+        if (!data.on)
+            data.on = {}
+        if (isSelectable(element)) {
+            if (!data.class)
+                data.class = {}
+            data.class.selected = element.selected
+        }
         if (isSelectable(element) || isMoveable(element)) {
-            vnode.data.on.mousedown = [this.mouseDown.bind(this), element]
-            vnode.data.on.mouseup = [this.mouseUp.bind(this), element]
+            data.on.mousedown = [this.mouseDown.bind(this), element]
+            data.on.mouseup = [this.mouseUp.bind(this), element]
         }
         if (isMoveable(element)) {
-            vnode.data.on.mousemove = [this.mouseMove.bind(this), element]
+            data.on.mousemove = [this.mouseMove.bind(this), element]
             vnode = h('g', {
                 attrs: {
                     transform: 'translate(' + element.x + ', ' + element.y + ')'

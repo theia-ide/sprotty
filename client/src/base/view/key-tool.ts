@@ -24,12 +24,13 @@ export class KeyTool implements VNodeDecorator {
 
     decorate(vnode: VNode, element: GModelElement): VNode {
         if (element instanceof GModelRoot) {
-            if (!vnode.data.on)
-                vnode.data.on = {}
-            vnode.data.on.focus = [this.focus.bind(this), element]
-            vnode.data.on.keypress = [this.keyPress.bind(this), element]
-            vnode.data.on.keydown = [this.keyPress.bind(this), element]
-            vnode.data.on.keyup = [this.keyPress.bind(this), element]
+            const data = vnode.data!
+            if (!data.on)
+                data.on = {}
+            data.on.focus = [this.focus.bind(this), element]
+            data.on.keypress = [this.keyPress.bind(this), element]
+            data.on.keydown = [this.keyPress.bind(this), element]
+            data.on.keyup = [this.keyPress.bind(this), element]
         }
 
         return vnode

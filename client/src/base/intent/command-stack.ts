@@ -65,10 +65,10 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
             model => {
                 return new Promise(
                     (resolve: (model: GModelRoot) => void, reject: (model: GModelRoot) => void) => {
-                        if (this.undoStack.length == 0) {
+                        const command = this.undoStack.pop()
+                        if (command === undefined) {
                             resolve(model)
                         } else {
-                            const command = this.undoStack.pop()
                             const context: CommandExecutionContext = {
                                 modelChanged: this,
                                 duration: this.defaultDuration,
@@ -100,10 +100,10 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
             model => {
                 return new Promise(
                     (resolve: (model: GModelRoot) => void, reject: (model: GModelRoot) => void) => {
-                        if (this.redoStack.length == 0) {
+                        const command = this.redoStack.pop()
+                        if (command === undefined) {
                             resolve(model)
                         } else {
-                            const command = this.redoStack.pop()
                             const context: CommandExecutionContext = {
                                 modelChanged: this,
                                 duration: this.defaultDuration,

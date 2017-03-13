@@ -5,19 +5,17 @@ import {ActionDispatcher} from "./action-dispatcher"
 
 export abstract class SourceDelegateActionHandler implements IActionHandler {
 
-    constructor(public actionDispatcher: ActionDispatcher, public source?: IModelSource) {
+    constructor(public actionDispatcher: ActionDispatcher, public source: IModelSource) {
     }
 
     handle(action: Action): Command[] {
-        if (this.source) {
-            const promise = this.callSource(action)
-            if (promise) {
-                promise.then(result => {
-                    const followActions = this.getFollowActions(action, result)
-                    if (followActions.length > 0)
-                        this.actionDispatcher.execute(followActions)
-                })
-            }
+        const promise = this.callSource(action)
+        if (promise) {
+            promise.then(result => {
+                const followActions = this.getFollowActions(action, result)
+                if (followActions.length > 0)
+                    this.actionDispatcher.execute(followActions)
+            })
         }
         return this.getImmediateCommands(action)
     }

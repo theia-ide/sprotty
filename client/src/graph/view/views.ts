@@ -33,21 +33,35 @@ export abstract class GNodeView implements View {
 
 export class StraightEdgeView implements View {
     render(edge: GEdge, context: RenderingContext) {
-        const sourceView = (context.viewer.viewRegistry.get(edge.source.type, edge.source)) as GNodeView
-        const sourceAnchor = sourceView.getAnchor(edge.source, edge.target, 0)
-        const targetView = (context.viewer.viewRegistry.get(edge.target.type, edge.target)) as GNodeView
-        const targetAnchor = targetView.getAnchor(edge.target, edge.source, 0)
-        const path = `M ${sourceAnchor.x},${sourceAnchor.y} L ${targetAnchor.x},${targetAnchor.y}`
-        return h('path', {
-            key: edge.id,
-            class: {
-                edge: true
-            },
-            attrs: {
-                d: path,
-                id: edge.id,
-            }
-        })
+        const source = edge.source
+        const target = edge.target
+        if (source && target) {
+            const sourceView = (context.viewer.viewRegistry.get(source.type, source)) as GNodeView
+            const sourceAnchor = sourceView.getAnchor(source, target, 0)
+            const targetView = (context.viewer.viewRegistry.get(target.type, target)) as GNodeView
+            const targetAnchor = targetView.getAnchor(target, source, 0)
+            const path = `M ${sourceAnchor.x},${sourceAnchor.y} L ${targetAnchor.x},${targetAnchor.y}`
+            return h('path', {
+                key: edge.id,
+                class: {
+                    edge: true
+                },
+                attrs: {
+                    d: path,
+                    id: edge.id,
+                }
+            })
+        } else {
+            return h('text', {
+                key: edge.id,
+                class: {
+                    'dangling-edge': true
+                },
+                attrs: {
+                    id: edge.id,
+                }
+            }, '?')
+        }
     }
 }
 

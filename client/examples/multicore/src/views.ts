@@ -101,6 +101,7 @@ export class GCrossbarView implements View {
                 height = columns * (GCoreView.width + GCoreView.dist) - GCoreView.dist
                 break;
             case Direction.right:
+            default:
                 x = rows * (GCoreView.width + GCoreView.dist)
                 y = 0
                 width = GCoreView.dist
@@ -173,6 +174,7 @@ export class GChannelView implements View {
                 ]
                 break;
             case Direction.right:
+            default:
                 points = [
                     -GCoreView.dist,
                     0.75 * GCoreView.width - GChannelView.width,
