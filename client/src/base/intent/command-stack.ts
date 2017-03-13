@@ -31,12 +31,12 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
                                 if (modelOrPromise instanceof Promise)
                                     modelOrPromise.then(
                                         newModel => {
-                                            this.mergeOrPush(command)
+                                            this.mergeOrPush(command, context)
                                             resolve(newModel)
                                         }
                                     )
                                 else {
-                                    this.mergeOrPush(command)
+                                    this.mergeOrPush(command, context)
                                     resolve(modelOrPromise)
                                 }
                             })
@@ -48,10 +48,10 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
         )
     }
 
-    private mergeOrPush(command: Command) {
+    private mergeOrPush(command: Command, context: CommandExecutionContext) {
         if (this.undoStack.length > 0) {
             const lastCommand = this.undoStack[this.undoStack.length - 1]
-            if (!lastCommand.merge(command)) {
+            if (!lastCommand.merge(command, context)) {
                 this.undoStack.push(command)
             }
         } else {

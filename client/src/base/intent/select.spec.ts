@@ -3,6 +3,7 @@ import {SelectCommand, SelectAction} from ".//select"
 import {expect} from "chai"
 import "mocha"
 import {GModelRoot} from "../model/gmodel"
+import {CommandExecutionContext} from "./commands"
 
 
 describe('test select command execution, undo, redo and merge', () => {

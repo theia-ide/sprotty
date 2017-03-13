@@ -13,7 +13,7 @@ export interface Command {
 
     redo(element: GModelRoot, context: CommandExecutionContext): GModelRootOrPromise
 
-    merge(command: Command): boolean
+    merge(command: Command, context: CommandExecutionContext): boolean
 }
 
 type GModelRootOrPromise = GModelRoot | Promise<GModelRoot>

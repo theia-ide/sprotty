@@ -3,6 +3,7 @@ import {Animation} from "../animations"
 import {GModelElement, GModelRoot, Moveable} from "../model"
 import {Action} from "./actions"
 import {Command, CommandExecutionContext} from "./commands"
+import {GModelIndex} from "../model/gmodel"
 
 export const MoveKind = 'Move'
 
@@ -17,13 +18,19 @@ export class MoveAction implements Action {
 export type ElementMove = {
     fromPosition?: Point
     elementId: string
-    element?: GModelElement & Moveable
+    toPosition: Point
+}
+
+export type ResolvedElementMove = {
+    fromPosition: Point
+    elementId: string
+    element: GModelElement & Moveable
     toPosition: Point
 }
 
 export class MoveCommand implements Command {
 
-    index: Map<ElementMove>
+    resolvedMoves: Map<ResolvedElementMove>
 
     constructor(public action: MoveAction) {
     }
@@ -31,52 +38,56 @@ export class MoveCommand implements Command {
     execute(model: GModelRoot, context: CommandExecutionContext) {
         this.action.moves.forEach(
             move => {
-                if (!move.element)
-                    move.element = model.index.getById(move.elementId) as (GModelElement & Moveable)
-                if (move.element) {
-                    if (!move.fromPosition)
-                        move.fromPosition = {
-                            x: move.element.x,
-                            y: move.element.y
-                        }
+                const resolvedMove = this.resolve(move, model.index)
+                if (resolvedMove) {
+                    this.resolvedMoves[resolvedMove.elementId] = resolvedMove
                     if (!this.action.animate) {
-                        move.element.x = move.toPosition.x
-                        move.element.y = move.toPosition.y
+                        resolvedMove.element.x = move.toPosition.x
+                        resolvedMove.element.y = move.toPosition.y
                     }
                 }
             }
         )
         if (this.action.animate)
-            return new MoveAnimation(this.action.moves, false, context).start()
+            return new MoveAnimation(this.resolvedMoves, false, context).start()
         else
             return model
     }
 
+    private resolve(move: ElementMove, index: GModelIndex): ResolvedElementMove | undefined {
+        const element = index.getById(move.elementId) as (GModelElement & Moveable)
+        if (element) {
+            const fromPosition = move.fromPosition
+                || {x: element.x, y: element.y}
+            return {
+                fromPosition: fromPosition,
+                elementId: move.elementId,
+                element: element,
+                toPosition: move.toPosition
+            }
+        }
+        return undefined
+    }
+
     undo(model: GModelRoot, context: CommandExecutionContext) {
-        return new MoveAnimation(this.action.moves, true, context).start()
+        return new MoveAnimation(this.resolvedMoves, true, context).start()
     }
 
     redo(model: GModelRoot, context: CommandExecutionContext) {
-        return new MoveAnimation(this.action.moves, false, context).start()
+        return new MoveAnimation(this.resolvedMoves, false, context).start()
     }
 
-    merge(command: Command) {
+    merge(command: Command, context: CommandExecutionContext) {
         if (!this.action.animate && command instanceof MoveCommand) {
-            if (!this.index) {
-                this.index = {}
-                this.action.moves.forEach(
-                    move => this.index[move.elementId] = move
-                )
-            }
-
             command.action.moves.forEach(
                 otherMove => {
-                    const existingMove = this.index[otherMove.elementId]
+                    const existingMove = this.resolvedMoves[otherMove.elementId]
                     if (existingMove) {
                         existingMove.toPosition = otherMove.toPosition
                     } else {
-                        this.action.moves.push(otherMove)
-                        this.index[otherMove.elementId] = otherMove
+                        const resolvedMove = this.resolve(otherMove, context.root.index)
+                        if(resolvedMove)
+                            this.resolvedMoves[resolvedMove.elementId] = resolvedMove
                     }
                 }
             )
@@ -88,22 +99,22 @@ export class MoveCommand implements Command {
 
 export class MoveAnimation extends Animation {
 
-    constructor(private elementsMoves: ElementMove[], private reverse: boolean, context: CommandExecutionContext) {
+    constructor(private elementMoves: Map<ResolvedElementMove>, private reverse: boolean, context: CommandExecutionContext) {
         super(context)
     }
 
     tween(t: number) {
-        this.elementsMoves.forEach(
-            elementMove => {
-                if (this.reverse) {
-                    elementMove.element.x = (1 - t) * elementMove.toPosition.x + t * elementMove.fromPosition.x
-                    elementMove.element.y = (1 - t) * elementMove.toPosition.y + t * elementMove.fromPosition.y
-                } else {
-                    elementMove.element.x = (1 - t) * elementMove.fromPosition.x + t * elementMove.toPosition.x
-                    elementMove.element.y = (1 - t) * elementMove.fromPosition.y + t * elementMove.toPosition.y
+        for(let elementId in this.elementMoves) {
+            const elementMove = this.elementMoves[elementId]
+            if (this.reverse) {
+                elementMove.element.x = (1 - t) * elementMove.toPosition.x + t * elementMove.fromPosition.x
+                elementMove.element.y = (1 - t) * elementMove.toPosition.y + t * elementMove.fromPosition.y
+            } else {
+                elementMove.element.x = (1 - t) * elementMove.fromPosition.x + t * elementMove.toPosition.x
+                elementMove.element.y = (1 - t) * elementMove.fromPosition.y + t * elementMove.toPosition.y
 
-                }
-            })
+            }
+        }
         return this.context.root
     }
 }
