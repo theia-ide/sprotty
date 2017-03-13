@@ -19,7 +19,7 @@ export class AddRemoveAnimationDecorator implements VNodeDecorator {
     }
 
     decorate(vnode: VNode, element: GModelElement) {
-        vnode.data.style = this.appearFadeStyle
+        vnode.data!.style = this.appearFadeStyle
         return vnode
     }
 }

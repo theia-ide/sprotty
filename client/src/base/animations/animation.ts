@@ -12,9 +12,13 @@ export abstract class Animation {
             (resolve: (model: GModelRoot) => void, reject: (model: GModelRoot) => void) => {
                 const lambda = time => {
                     frames++;
-                    if (!start)
+                    let dtime: number
+                    if (start === undefined) {
                         start = time
-                    const dtime = time - start
+                        dtime = 0
+                    } else {
+                        dtime = time - start
+                    }
                     const t = Math.min(1, dtime / this.context.duration)
                     const current = this.tween(this.ease(t), this.context)
                     this.context.modelChanged.update(current)
@@ -25,7 +29,7 @@ export abstract class Animation {
                         requestAnimationFrame(lambda)
                     }
                 }
-                let start: number = undefined
+                let start: number | undefined = undefined
                 let frames = 0
                 requestAnimationFrame(lambda)
             })

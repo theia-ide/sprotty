@@ -68,7 +68,7 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
                         if (this.undoStack.length == 0) {
                             resolve(model)
                         } else {
-                            const command = this.undoStack.pop()
+                            const command = this.undoStack.pop()!
                             const context: CommandExecutionContext = {
                                 modelChanged: this,
                                 duration: this.defaultDuration,
@@ -103,7 +103,7 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
                         if (this.redoStack.length == 0) {
                             resolve(model)
                         } else {
-                            const command = this.redoStack.pop()
+                            const command = this.redoStack.pop()!
                             const context: CommandExecutionContext = {
                                 modelChanged: this,
                                 duration: this.defaultDuration,

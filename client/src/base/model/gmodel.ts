@@ -9,7 +9,7 @@ import {GModelElementSchema, GModelRootSchema} from "./gmodel-schema"
 export class GModelElement {
     readonly type: string
     readonly id: string
-    children?: ChildrenList<GModelElement>
+    childrenList?: ChildrenList<GModelElement>
     parent?: GModelElement
 
     constructor(json: GModelElementSchema) {
@@ -31,6 +31,16 @@ export class GModelElement {
     }
 
     /**
+     * This getter creates the children list if it's not defined yet. Access childrenList directly
+     * in order to avoid this.
+     */
+    get children(): ChildrenList<GModelElement> {
+        if (this.childrenList === undefined)
+            this.childrenList = new ChildrenList<GModelElement>(this)
+        return this.childrenList
+    }
+
+    /**
      * Create a child element for the given schema. Override this method in order to specialize created
      * element types.
      */
@@ -38,15 +48,15 @@ export class GModelElement {
         return new GModelElement(json)
     }
 
-    get root(): GModelRoot {
-        let current: GModelElement = this
+    get root(): GModelRoot | undefined {
+        let current: GModelElement | undefined = this
         while (current) {
             if (current instanceof GModelRoot)
                 return current
             else
                 current = current.parent
         }
-        return null
+        return undefined
     }
 }
 
@@ -85,7 +95,7 @@ export class GModelIndex {
         delete this.id2element[elementId]
     }
 
-    getById(id: string): GModelElement {
+    getById(id: string): GModelElement | undefined {
         return this.id2element[id]
     }
 
@@ -105,14 +115,14 @@ export class GModelIndex {
  * Note that by manually modifying the parent the corresponding children list is not updated.
  */
 export class ChildrenList<T extends GModelElement> {
-    private _index: GModelIndex = undefined
+    private _index: GModelIndex | undefined = undefined
 
     constructor(private parent: GModelElement) {
     }
 
     private children: T[] = []
 
-    set index(index: GModelIndex) {
+    set index(index: GModelIndex | undefined) {
         if (index) {
             index.add(this.parent)
             this.children.forEach(child => {
@@ -128,7 +138,7 @@ export class ChildrenList<T extends GModelElement> {
         this._index = index
     }
 
-    private addToIndex(child: GModelElement, index: GModelIndex) {
+    private addToIndex(child: GModelElement, index: GModelIndex | undefined) {
         if (child.children)
             child.children.index = index
         else if (index)
@@ -164,7 +174,7 @@ export class ChildrenList<T extends GModelElement> {
         this.removeFromIndex(child)
     }
 
-    indexOf(child: T) {
+    indexOf(child: T): number {
         return this.children.indexOf(child)
     }
 

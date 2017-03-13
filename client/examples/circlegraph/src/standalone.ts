@@ -60,12 +60,12 @@ export default function runStandalone() {
     }
 
     // button behavior
-    document.getElementById('addNode').addEventListener('click', () => {
+    document.getElementById('addNode')!.addEventListener('click', () => {
         addNode()
-        document.getElementById('graph').focus()
+        document.getElementById('graph')!.focus()
     })
 
-    document.getElementById('scrambleNodes').addEventListener('click', function (e) {
+    document.getElementById('scrambleNodes')!.addEventListener('click', function (e) {
         const nodeMoves: ElementMove[] = []
         graph.children.forEach(shape => {
             if (shape instanceof GNode) {
@@ -79,7 +79,7 @@ export default function runStandalone() {
             }
         })
         eventLoop.dispatcher.dispatch(new MoveAction(nodeMoves, true))
-        document.getElementById('graph').focus()
+        document.getElementById('graph')!.focus()
     })
 
 }
