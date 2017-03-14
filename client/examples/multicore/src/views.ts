@@ -1,12 +1,12 @@
 import {View, RenderingContext} from "../../../src/base/view/views"
 import {h} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
-import {GChip, GCore, GChannel, GCrossbar} from "./gmodel"
+import {Chip, Core, Channel, Crossbar} from "./chipmodel"
 import {Direction} from "../../../src/utils/geometry"
 import {ColorMap, RGBColor} from "../../../src/utils/color"
 
-export class GChipView implements View {
-    render(model: GChip, context: RenderingContext): VNode {
+export class ChipView implements View {
+    render(model: Chip, context: RenderingContext): VNode {
         const vNode = h('svg', {
                 key: model.id,
                 attrs: {
@@ -15,7 +15,7 @@ export class GChipView implements View {
             }, [
                 h('g', {
                     attrs: {
-                        transform: 'translate(' + GCoreView.width + ',' + GCoreView.width + ')'
+                        transform: 'translate(' + CoreView.width + ',' + CoreView.width + ')'
                     }
                 }, context.viewer.renderChildren(model, context))]
         );
@@ -23,14 +23,14 @@ export class GChipView implements View {
     }
 }
 
-export class GCoreView implements View {
+export class CoreView implements View {
     static readonly width = 45
     static readonly dist = 20
 
-    render(model: GCore, context: RenderingContext): VNode {
+    render(model: Core, context: RenderingContext): VNode {
         const position = {
-            x: model.column * (GCoreView.width + GCoreView.dist),
-            y: model.row * (GCoreView.width + GCoreView.dist),
+            x: model.column * (CoreView.width + CoreView.dist),
+            y: model.row * (CoreView.width + CoreView.dist),
         }
         const nodeName = this.padLeft(model.row) + this.padLeft(model.column)
         return h('g', {
@@ -45,8 +45,8 @@ export class GCoreView implements View {
         }, [
             h('rect', {
                 attrs: {
-                    width: GCoreView.width,
-                    height: GCoreView.width,
+                    width: CoreView.width,
+                    height: CoreView.width,
                     rx: 4,
                     ry: 4,
                     fill: LoadColor.getSVG(model.load)
@@ -58,8 +58,8 @@ export class GCoreView implements View {
                 },
                 attrs: {
                     'text-anchor': 'middle',
-                    x: GCoreView.width / 2,
-                    y: GCoreView.width / 2,
+                    x: CoreView.width / 2,
+                    y: CoreView.width / 2,
                 }
             }, nodeName)
         ]);
@@ -73,39 +73,39 @@ export class GCoreView implements View {
     }
 }
 
-export class GCrossbarView implements View {
-    render(model: GCrossbar, context: RenderingContext): VNode {
-        const rows = (model.parent as GChip).rows
-        const columns = (model.parent as GChip).rows
+export class CrossbarView implements View {
+    render(model: Crossbar, context: RenderingContext): VNode {
+        const rows = (model.parent as Chip).rows
+        const columns = (model.parent as Chip).rows
         let x: number
         let y: number
         let width: number
         let height: number
         switch (model.direction) {
             case Direction.up:
-                width = rows * (GCoreView.width + GCoreView.dist) - GCoreView.dist
-                height = GCoreView.dist
+                width = rows * (CoreView.width + CoreView.dist) - CoreView.dist
+                height = CoreView.dist
                 x = 0
-                y = -2 * GCoreView.dist
+                y = -2 * CoreView.dist
                 break;
             case Direction.down:
-                width = rows * (GCoreView.width + GCoreView.dist) - GCoreView.dist
-                height = GCoreView.dist
+                width = rows * (CoreView.width + CoreView.dist) - CoreView.dist
+                height = CoreView.dist
                 x = 0
-                y = rows * (GCoreView.width + GCoreView.dist)
+                y = rows * (CoreView.width + CoreView.dist)
                 break;
             case Direction.left:
-                x = -2 * GCoreView.dist
+                x = -2 * CoreView.dist
                 y = 0
-                width = GCoreView.dist
-                height = columns * (GCoreView.width + GCoreView.dist) - GCoreView.dist
+                width = CoreView.dist
+                height = columns * (CoreView.width + CoreView.dist) - CoreView.dist
                 break;
             case Direction.right:
             default:
-                x = rows * (GCoreView.width + GCoreView.dist)
+                x = rows * (CoreView.width + CoreView.dist)
                 y = 0
-                width = GCoreView.dist
-                height = columns * (GCoreView.width + GCoreView.dist) - GCoreView.dist
+                width = CoreView.dist
+                height = columns * (CoreView.width + CoreView.dist) - CoreView.dist
                 break;
         }
         return h('rect', {
@@ -137,56 +137,56 @@ class LoadColor {
     }
 }
 
-export class GChannelView implements View {
+export class ChannelView implements View {
     static readonly width = 2
 
-    render(model: GChannel, context: RenderingContext): VNode {
+    render(model: Channel, context: RenderingContext): VNode {
         let points: number[]
         switch (model.direction) {
             case Direction.up:
                 points = [
-                    0.75 * GCoreView.width - GChannelView.width,
+                    0.75 * CoreView.width - ChannelView.width,
                     0,
-                    0.75 * GCoreView.width + GChannelView.width,
+                    0.75 * CoreView.width + ChannelView.width,
                     0,
-                    0.75 * GCoreView.width,
-                    -GCoreView.dist
+                    0.75 * CoreView.width,
+                    -CoreView.dist
                 ]
                 break;
             case Direction.down:
                 points = [
-                    0.25 * GCoreView.width - GChannelView.width,
-                    -GCoreView.dist,
-                    0.25 * GCoreView.width + GChannelView.width,
-                    -GCoreView.dist,
-                    0.25 * GCoreView.width,
+                    0.25 * CoreView.width - ChannelView.width,
+                    -CoreView.dist,
+                    0.25 * CoreView.width + ChannelView.width,
+                    -CoreView.dist,
+                    0.25 * CoreView.width,
                     0
                 ]
                 break;
             case Direction.left:
                 points = [
                     0,
-                    0.25 * GCoreView.width - GChannelView.width,
+                    0.25 * CoreView.width - ChannelView.width,
                     0,
-                    0.25 * GCoreView.width + GChannelView.width,
-                    -GCoreView.dist,
-                    0.25 * GCoreView.width
+                    0.25 * CoreView.width + ChannelView.width,
+                    -CoreView.dist,
+                    0.25 * CoreView.width
                 ]
                 break;
             case Direction.right:
             default:
                 points = [
-                    -GCoreView.dist,
-                    0.75 * GCoreView.width - GChannelView.width,
-                    -GCoreView.dist,
-                    0.75 * GCoreView.width + GChannelView.width,
+                    -CoreView.dist,
+                    0.75 * CoreView.width - ChannelView.width,
+                    -CoreView.dist,
+                    0.75 * CoreView.width + ChannelView.width,
                     0,
-                    0.75 * GCoreView.width
+                    0.75 * CoreView.width
                 ]
         }
         const position = {
-            x: model.column * (GCoreView.width + GCoreView.dist),
-            y: model.row * (GCoreView.width + GCoreView.dist),
+            x: model.column * (CoreView.width + CoreView.dist),
+            y: model.row * (CoreView.width + CoreView.dist),
         }
 
         return h('polygon', {

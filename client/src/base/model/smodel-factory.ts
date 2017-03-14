@@ -55,7 +55,7 @@ export class SModelFactory {
     private initializeIndex(parent: SParentElement, index: SModelIndex): void {
         parent.children.forEach(child => {
             if (index.contains(child)) {
-                throw new Error("Duplicate element in model: " + child)
+                throw new Error("Duplicate ID in model: " + child.id)
             }
             index.add(child)
             if (child.children.length > 0) {

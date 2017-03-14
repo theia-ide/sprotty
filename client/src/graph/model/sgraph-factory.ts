@@ -1,7 +1,13 @@
 import {
-    SModel, SModelFactory, SModelElementSchema, SModelRootSchema, SParentElement, SModelRoot, SChildElement
+    SModel,
+    SModelFactory,
+    SModelElementSchema,
+    SModelRootSchema,
+    SParentElement,
+    SModelRoot,
+    SChildElement
 } from "../../base/model"
-import {SGraph, SGraphSchema, SNodeSchema, SEdgeSchema, SGraphElement, SNode, SEdge} from "./sgraph";
+import {SGraph, SGraphSchema, SNodeSchema, SEdgeSchema, SNode, SEdge} from "./sgraph"
 
 export class SGraphFactory extends SModelFactory {
 

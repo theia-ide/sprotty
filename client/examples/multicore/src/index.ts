@@ -1,1 +1,1 @@
-export * from './gmodel'
+export * from './chipmodel'
