@@ -1,0 +1,6 @@
+dependencies {
+    compile project(':diagram-server')
+    compile "org.eclipse.jetty:jetty-server:$versions.jetty"
+    compile "org.eclipse.jetty.websocket:javax-websocket-server-impl:$versions.jetty"
+	runtime "org.slf4j:slf4j-log4j12:$versions.slf4j"
+}

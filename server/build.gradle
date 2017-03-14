@@ -1,0 +1,30 @@
+buildscript {
+	repositories.jcenter()
+	dependencies {
+		classpath 'org.xtext:xtext-gradle-plugin:1.0.17'
+	}
+}
+
+ext.versions = [
+    guice: '3.0',
+    xtext: '2.11.0',
+    lsp4j: '0.1.0',
+    websocket: '1.0',
+    slf4j: '1.7.24',
+    log4j: '1.2.16',
+    jetty: '9.4.2.v20170220'
+]
+
+subprojects {
+	repositories.jcenter()
+	
+	apply plugin: 'java'
+	apply plugin: 'org.xtext.xtend'
+	apply plugin: 'eclipse'
+	apply plugin: 'idea'
+	
+	group = 'io.typefox.sprotte'
+	version = '0.1.0-SNAPSHOT'
+	
+	sourceCompatibility = '1.8'
+}

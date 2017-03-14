@@ -1,4 +1,4 @@
-package io.typefox.sprotte.server.test
+package io.typefox.sprotte.server.examples
 
 import com.google.inject.Guice
 import io.typefox.sprotte.api.DiagramServer
