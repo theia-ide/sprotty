@@ -15,7 +15,7 @@ ext.versions = [
     jetty: '9.4.2.v20170220'
 ]
 
-subprojects {
+configure(subprojects.findAll {it.file('src').exists()}) {
 	repositories.jcenter()
 	
 	apply plugin: 'java'
