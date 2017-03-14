@@ -30,7 +30,7 @@ export type ResolvedElementMove = {
 
 export class MoveCommand implements Command {
 
-    resolvedMoves: Map<ResolvedElementMove>
+    resolvedMoves: Map<ResolvedElementMove> = {}
 
     constructor(public action: MoveAction) {
     }
