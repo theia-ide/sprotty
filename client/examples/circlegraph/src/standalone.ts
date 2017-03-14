@@ -1,13 +1,13 @@
-import {EventLoop} from "../../../src/base/event-loop"
-import {ActionDispatcher} from "../../../src/base/intent/action-dispatcher"
-import {CommandStack} from "../../../src/base/intent/command-stack"
-import {Viewer} from "../../../src/base/view/viewer"
-import {MoveKind, MoveCommand, ElementMove, MoveAction} from "../../../src/base/intent/move"
-import {SelectCommand, SelectKind} from "../../../src/base/intent/select"
-import {GGraphView, StraightEdgeView} from "../../../src/graph/view/views"
+import {EventLoop} from "../../../src/base"
+import {
+    ActionDispatcher, CommandStack, MoveKind, MoveCommand, ElementMove, MoveAction, SelectCommand, SelectKind,
+    SetModelAction
+} from "../../../src/base/intent"
+import {Viewer} from "../../../src/base/view"
+import {GGraphView, StraightEdgeView} from "../../../src/graph/view"
+import {SGraph, SNode, SEdge, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph/model"
 import {CircleNodeView} from "./views"
-import {SGraph, SNode, SEdge} from "../../../src/graph/model/sgraph"
-import {SetModelAction} from "../../../src/base/intent/model-manipulation"
+
 export default function runStandalone() {
     // Setup event loop
     const eventLoop = new EventLoop(
@@ -26,10 +26,11 @@ export default function runStandalone() {
     viewComponentRegistry.register('edge:straight', StraightEdgeView)
 
     // Initialize gmodel
+    const modelFactory = new SGraphFactory()
     const node0 = {id: 'node0', type: 'node:circle', x: 100, y: 100};
     const node1 = {id: 'node1', type: 'node:circle', x: 200, y: 150, selected: true};
     const edge0 = {id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1'};
-    const graph = new SGraph({id: 'graph', type: 'graph', children: [node0, node1, edge0]});
+    const graph = modelFactory.createRoot({id: 'graph', type: 'graph', children: [node0, node1, edge0]});
 
     // Run
     const action = new SetModelAction(graph);
@@ -38,20 +39,20 @@ export default function runStandalone() {
     let count = 2
 
     function addNode() {
-        graph.children.add(
-            new SNode({
-                id: 'node' + count,
-                type: 'node:circle',
-                x: Math.random() * 1024,
-                y: Math.random() * 768
-            }))
-        graph.children.add(
-            new SEdge({
-                id: 'edge' + count,
-                type: 'edge:straight',
-                sourceId: 'node0',
-                targetId: 'node' + count++
-            }))
+        const newNode: SNodeSchema = {
+            id: 'node' + count,
+            type: 'node:circle',
+            x: Math.random() * 1024,
+            y: Math.random() * 768
+        }
+        graph.add(modelFactory.createElement(newNode))
+        const newEdge: SEdgeSchema = {
+            id: 'edge' + count,
+            type: 'edge:straight',
+            sourceId: 'node0',
+            targetId: 'node' + count++
+        }
+        graph.add(modelFactory.createElement(newEdge))
         eventLoop.dispatcher.dispatch(new SetModelAction(graph))
     }
 

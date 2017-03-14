@@ -37,6 +37,3 @@ export abstract class Animation {
 
     abstract tween(t: number, context: CommandExecutionContext): SModelRoot
 }
-
-
-

@@ -1,5 +1,5 @@
 import {CancellationToken, Disposable} from "vscode-jsonrpc"
-import {SModelRootSchema} from "./smodel-schema"
+import {SModelRootSchema} from "./smodel";
 
 export interface IModelSource extends Disposable {
 

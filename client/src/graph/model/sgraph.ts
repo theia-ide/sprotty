@@ -1,50 +1,45 @@
-import {SModelElement, SModelRoot, SModelElementSchema, Moveable, Selectable} from "../../base/model"
-import {SGraphSchema, SNodeSchema, SEdgeSchema} from "./sgraph-schema"
+import {
+    SModelRootSchema, SModelElementSchema, SParentElementSchema, SChildElement, SModelRoot, Moveable, Selectable
+} from "../../base/model"
 
-export class SGraph extends SModelRoot {
-
-    constructor(json: SGraphSchema) {
-        super(json)
-    }
-
-    protected createChild(json: SModelElementSchema): SModelElement {
-        if (SGraphSchema.isGNodeSchema(json))
-            return new SNode(json)
-        else if (SGraphSchema.isGEdgeSchema(json))
-            return new SEdge(json)
-        else
-            return super.createChild(json)
-    }
-
+export interface SGraphSchema extends SModelRootSchema {
+    children: SGraphElementSchema[]
 }
 
-export class SNode extends SModelElement implements Moveable, Selectable {
+export class SGraph extends SModelRoot implements SGraphSchema {
+    children: SGraphElement[]
+}
+
+export interface SNodeSchema extends SParentElementSchema, Moveable {
     x: number
     y: number
-    selected: boolean
-
-    constructor(json: SNodeSchema) {
-        super(json)
-        if(this.selected === undefined)
-            this.selected = false
-    }
+    children?: SGraphElementSchema[]
 }
 
-export class SEdge extends SModelElement {
+export class SNode extends SChildElement implements SNodeSchema, Selectable {
+    x: number
+    y: number
+    selected: boolean = false
+    children: SGraphElement[]
+}
+
+export interface SEdgeSchema extends SModelElementSchema {
+    sourceId: string
+    targetId: string
+}
+
+export class SEdge extends SChildElement implements SEdgeSchema {
     sourceId: string
     targetId: string
 
-    constructor(json: SEdgeSchema) {
-        super(json)
-    }
-
     get source(): SNode | undefined {
-        return this.root.index.getById(this.sourceId) as SNode
+        return this.index.getById(this.sourceId) as SNode
     }
 
     get target(): SNode | undefined {
-        return this.root.index.getById(this.targetId) as SNode
+        return this.index.getById(this.targetId) as SNode
     }
 }
 
-export type GGraphElement = SNode | SEdge
+export type SGraphElementSchema = SNodeSchema | SEdgeSchema
+export type SGraphElement = SNode | SEdge

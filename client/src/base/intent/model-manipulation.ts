@@ -1,4 +1,5 @@
 import {SModelRoot, SModelRootSchema, SModelFactory} from "../model"
+import {SGraphFactory} from "../../graph/model";
 import {Command} from "./commands"
 import {Action} from "./actions"
 import {SourceDelegateActionHandler} from "./source-delegate"
@@ -48,12 +49,14 @@ export class FetchModelAction implements Action {
 }
 
 export class FetchModelHandler extends SourceDelegateActionHandler {
+    readonly modelFactory = new SGraphFactory()
+
     protected callSource(action: FetchModelAction): PromiseLike<any> {
         return this.source.getDiagram({options: action.options})
     }
 
     protected getFollowActions(action: FetchModelAction, result: SModelRootSchema): Action[] {
-        const newRoot = SModelFactory.createModel(result)
+        const newRoot = this.modelFactory.createRoot(result)
         return [new SetModelAction(newRoot)]
     }
 }

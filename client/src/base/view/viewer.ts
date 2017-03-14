@@ -7,7 +7,7 @@ import {attributesModule} from "snabbdom/modules/attributes"
 import {styleModule} from "snabbdom/modules/style"
 import {eventListenersModule} from "snabbdom/modules/eventlisteners"
 import {CommandStackCallback, Action} from "../intent"
-import {SModelRoot, SModelElement} from "../model"
+import {SModelRoot, SModelElement, SParentElement} from "../model"
 import {EventSource} from "../../utils"
 import {AddRemoveAnimationDecorator, VNodeDecorator} from "./vnode-decorators"
 import {RenderingContext, ViewRegistry} from "./views"
@@ -66,7 +66,7 @@ export class Viewer extends EventSource<ViewerCallback> implements CommandStackC
         return this.decorate(vNode, element)
     }
 
-    renderChildren(element: SModelElement, context: RenderingContext): VNode[] {
+    renderChildren(element: SParentElement, context: RenderingContext): VNode[] {
         return element.children.map((element) => context.viewer.renderElement(element, context))
     }
 

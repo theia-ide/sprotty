@@ -1,6 +1,6 @@
 import {DispatcherCallback} from "./action-dispatcher"
 import {Command, CommandExecutionContext} from "./commands"
-import {SModelRoot, EMPTY_ROOT} from "../model"
+import {SModelRoot, SModel} from "../model"
 import {EventSource} from "../../utils"
 
 /**
@@ -10,7 +10,7 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
 
     defaultDuration = 250
 
-    currentPromise: Promise<SModelRoot> = Promise.resolve(EMPTY_ROOT)
+    currentPromise: Promise<SModelRoot> = Promise.resolve(SModel.EMPTY_ROOT)
 
     undoStack: Command[] = []
     redoStack: Command[] = []

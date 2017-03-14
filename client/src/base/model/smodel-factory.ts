@@ -1,14 +1,67 @@
-import {SGraph, SGraphSchema} from "../../graph/model"
-import {SModelRootSchema} from "./smodel-schema"
-import {SModelRoot} from "./smodel"
+import {
+    SModelElementSchema, SModelElement, SModelRootSchema, SModelRoot, SParentElementSchema, SParentElement,
+    SChildElement, SModelIndex
+} from "./smodel"
 
-export namespace SModelFactory {
+export class SModelFactory {
 
-    export function createModel(schema: SModelRootSchema): SModelRoot {
-        if (SGraphSchema.isGGraphSchema(schema))
-            return new SGraph(schema)
+    createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
+        if (schema instanceof SChildElement) {
+            if (parent !== undefined)
+                schema.parent = parent
+            return schema
+        } else
+            return this.initializeChild(new SChildElement(), schema, parent)
+    }
+
+    createRoot(schema: SModelRootSchema): SModelRoot {
+        if (schema instanceof SModelRoot)
+            return schema
         else
-            return new SModelRoot(schema)
+            return this.initializeRoot(new SModelRoot(), schema)
+    }
+
+    protected initializeElement(elem: SModelElement, schema: SModelElementSchema): SModelElement {
+        for (let key in schema) {
+            if (key != 'children' && key != 'index' && schema[key] !== undefined) {
+                elem[key] = schema[key]
+            }
+        }
+        return elem
+    }
+
+    protected initializeParent(parent: SParentElement, schema: SParentElementSchema): SParentElement {
+        this.initializeElement(parent, schema)
+        if (schema.children) {
+            parent.children = schema.children.map(childSchema => this.createElement(childSchema, parent))
+        }
+        return parent
+    }
+
+    protected initializeChild(child: SChildElement, schema: SModelElementSchema, parent?: SParentElement): SChildElement {
+        this.initializeParent(child, schema)
+        if (parent !== undefined) {
+            child.parent = parent
+        }
+        return child
+    }
+
+    protected initializeRoot(root: SModelRoot, schema: SModelRootSchema): SModelRoot {
+        this.initializeParent(root, schema)
+        this.initializeIndex(root, root.index)
+        return root
+    }
+
+    private initializeIndex(parent: SParentElement, index: SModelIndex): void {
+        parent.children.forEach(child => {
+            if (index.contains(child)) {
+                throw new Error("Duplicate element in model: " + child)
+            }
+            index.add(child)
+            if (child.children.length > 0) {
+                this.initializeIndex(child, index)
+            }
+        })
     }
 
 }

@@ -1,4 +1,4 @@
-import {SModelRoot, SModelElement, isSelectable, Selectable} from "../model"
+import {SModelRoot, SModelElement, SChildElement, Selectable, isSelectable} from "../model"
 import {Command} from "./commands"
 import {Action} from "./actions"
 
@@ -12,7 +12,7 @@ export class SelectAction implements Action {
 }
 
 type ElementSelection= {
-    element: SModelElement & Selectable
+    element: SChildElement & Selectable
     index: number
 }
 
@@ -28,7 +28,7 @@ export class SelectCommand implements Command {
         this.action.selectedElementsIDs.forEach(
             id => {
                 const element = model.index.getById(id)
-                if (element && isSelectable(element)) {
+                if (element instanceof SChildElement && isSelectable(element)) {
                     this.selected.push({
                         element: element,
                         index: element.parent.children.indexOf(element)
@@ -38,7 +38,7 @@ export class SelectCommand implements Command {
         this.action.deselectedElementsIDs.forEach(
             id => {
                 const element = model.index.getById(id)
-                if (element && isSelectable(element)) {
+                if (element instanceof SChildElement && isSelectable(element)) {
                     this.deselected.push({
                         element: element,
                         index: element.parent.children.indexOf(element)
@@ -53,7 +53,7 @@ export class SelectCommand implements Command {
             const selection = this.selected[i]
             const element = selection.element
             element.selected = false
-            element.parent.children.move(element, selection.index)
+            element.parent.move(element, selection.index)
         }
         this.deselected.reverse().forEach(selection => {
             selection.element.selected = true
@@ -65,8 +65,8 @@ export class SelectCommand implements Command {
         for (let i = 0; i < this.selected.length; ++i) {
             const selection = this.selected[i]
             const element = selection.element
-            const siblings = element.parent.children
-            siblings.move(element, siblings.length() - 1)
+            const childrenLength = element.parent.children.length
+            element.parent.move(element, childrenLength - 1)
         }
         this.selected.forEach(selection => selection.element.selected = true)
         this.deselected.forEach(selection => selection.element.selected = false)

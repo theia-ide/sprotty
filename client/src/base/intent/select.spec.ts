@@ -1,17 +1,17 @@
-import {SGraph, SNode} from "../../graph/model/sgraph"
-import {SelectCommand, SelectAction} from ".//select"
 import {expect} from "chai"
 import "mocha"
-import {SModelRoot} from "../model/smodel"
+import {SModelRoot} from "../model"
+import {SGraph, SNode, SGraphFactory} from "../../graph/model"
+import {SelectCommand, SelectAction} from "./select"
 import {CommandExecutionContext} from "./commands"
 
 
 describe('test select command execution, undo, redo and merge', () => {
+    // setup the GModel
+    const modelFactory = new SGraphFactory()
     const myNode0 = {id: 'node0', type: 'node:circle', x: 100, y: 100, selected: true};
     const myNode1 = {id: 'node1', type: 'node:circle', x: 200, y: 200, selected: false};
-
-    // setup the GModel
-    const initialModel = new SGraph({
+    const initialModel = modelFactory.createRoot({
         id: 'graph',
         type: 'graph',
         children: [myNode1, myNode0]  // myNode0 is selected, so put at the end
@@ -23,7 +23,7 @@ describe('test select command execution, undo, redo and merge', () => {
         ['node0']  // deselected list
     )
 
-    const lastIndex = initialModel.children.length() - 1
+    const lastIndex = initialModel.children.length - 1
 
     // create the select command
     const cmd = new SelectCommand(mySelectAction)

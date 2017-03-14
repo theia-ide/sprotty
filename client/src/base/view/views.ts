@@ -1,6 +1,6 @@
 import {VNode} from "snabbdom/vnode"
 import {h} from "snabbdom"
-import {SModelElement, SModelRoot, EMPTY_ROOT} from "../model"
+import {SModelElement, SModelRoot, SModel} from "../model"
 import {ProviderRegistry} from "../../utils"
 import {Viewer} from "./viewer"
 
@@ -24,7 +24,7 @@ export interface RenderingContext {
 export class ViewRegistry extends ProviderRegistry<View, SModelElement> {
     constructor() {
         super()
-        this.register(EMPTY_ROOT.type, EmptyView)
+        this.register(SModel.EMPTY_ROOT.type, EmptyView)
     }
 }
 
