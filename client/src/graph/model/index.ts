@@ -1,2 +1,2 @@
-export * from './ggraph';
-export * from './ggraph-schema';
+export * from './sgraph';
+export * from './sgraph-schema';

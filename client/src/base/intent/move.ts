@@ -1,9 +1,9 @@
 import {Point, Map} from "../../utils"
 import {Animation} from "../animations"
-import {GModelElement, GModelRoot, Moveable} from "../model"
+import {SModelElement, SModelRoot, Moveable} from "../model"
 import {Action} from "./actions"
 import {Command, CommandExecutionContext} from "./commands"
-import {GModelIndex} from "../model/gmodel"
+import {SModelIndex} from "../model/smodel"
 
 export const MoveKind = 'Move'
 
@@ -24,7 +24,7 @@ export type ElementMove = {
 export type ResolvedElementMove = {
     fromPosition: Point
     elementId: string
-    element: GModelElement & Moveable
+    element: SModelElement & Moveable
     toPosition: Point
 }
 
@@ -35,7 +35,7 @@ export class MoveCommand implements Command {
     constructor(public action: MoveAction) {
     }
 
-    execute(model: GModelRoot, context: CommandExecutionContext) {
+    execute(model: SModelRoot, context: CommandExecutionContext) {
         this.action.moves.forEach(
             move => {
                 const resolvedMove = this.resolve(move, model.index)
@@ -54,8 +54,8 @@ export class MoveCommand implements Command {
             return model
     }
 
-    private resolve(move: ElementMove, index: GModelIndex): ResolvedElementMove | undefined {
-        const element = index.getById(move.elementId) as (GModelElement & Moveable)
+    private resolve(move: ElementMove, index: SModelIndex): ResolvedElementMove | undefined {
+        const element = index.getById(move.elementId) as (SModelElement & Moveable)
         if (element) {
             const fromPosition = move.fromPosition
                 || {x: element.x, y: element.y}
@@ -69,11 +69,11 @@ export class MoveCommand implements Command {
         return undefined
     }
 
-    undo(model: GModelRoot, context: CommandExecutionContext) {
+    undo(model: SModelRoot, context: CommandExecutionContext) {
         return new MoveAnimation(this.resolvedMoves, true, context).start()
     }
 
-    redo(model: GModelRoot, context: CommandExecutionContext) {
+    redo(model: SModelRoot, context: CommandExecutionContext) {
         return new MoveAnimation(this.resolvedMoves, false, context).start()
     }
 

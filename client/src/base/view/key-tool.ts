@@ -1,5 +1,5 @@
 import {VNode} from "snabbdom/vnode"
-import {GModelElement, GModelRoot} from "../model"
+import {SModelElement, SModelRoot} from "../model"
 import {RedoAction, UndoAction} from "../intent"
 import {VNodeDecorator} from "./vnode-decorators"
 import {Viewer} from "./viewer"
@@ -9,7 +9,7 @@ export class KeyTool implements VNodeDecorator {
     constructor(private viewer: Viewer) {
     }
 
-    keyPress(element: GModelElement, event: KeyboardEvent): void {
+    keyPress(element: SModelElement, event: KeyboardEvent): void {
         if (event.ctrlKey && event.keyCode == 90) {
             event.preventDefault()
             if (event.shiftKey)
@@ -22,8 +22,8 @@ export class KeyTool implements VNodeDecorator {
     focus() {
     }
 
-    decorate(vnode: VNode, element: GModelElement): VNode {
-        if (element instanceof GModelRoot) {
+    decorate(vnode: VNode, element: SModelElement): VNode {
+        if (element instanceof SModelRoot) {
             const data = vnode.data!
             if (!data.on)
                 data.on = {}

@@ -1,9 +1,9 @@
 import {CancellationToken, Disposable} from "vscode-jsonrpc"
-import {GModelRootSchema} from "./gmodel-schema"
+import {SModelRootSchema} from "./smodel-schema"
 
 export interface IModelSource extends Disposable {
 
-    getDiagram(params: GetDiagramParams, token?: CancellationToken): Thenable<GModelRootSchema>;
+    getDiagram(params: GetDiagramParams, token?: CancellationToken): Thenable<SModelRootSchema>;
 
     elementSelected(params: SelectionParams): void;
 

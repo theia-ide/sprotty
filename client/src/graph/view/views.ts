@@ -2,14 +2,14 @@ import {h} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
 import {View, RenderingContext} from "../../base/view"
 import {Point} from "../../utils"
-import {GGraph, GNode, GEdge} from "../model"
+import {SGraph, SNode, SEdge} from "../model"
 
 /**
- * View component that turns a GGraph element and its children into a tree of virtual DOM.
+ * View component that turns a SGraph element and its children into a tree of virtual DOM.
  */
 export class GGraphView implements View {
 
-    render(model: GGraph, context: RenderingContext): VNode {
+    render(model: SGraph, context: RenderingContext): VNode {
         const vNode = h('svg', {
                 key: model.id,
                 class: {
@@ -26,13 +26,13 @@ export class GGraphView implements View {
 }
 
 export abstract class GNodeView implements View {
-    abstract render(model: GNode, context: RenderingContext): VNode
+    abstract render(model: SNode, context: RenderingContext): VNode
 
-    abstract getAnchor(node: GNode, refPoint: Point, arrowLength: number)
+    abstract getAnchor(node: SNode, refPoint: Point, arrowLength: number)
 }
 
 export class StraightEdgeView implements View {
-    render(edge: GEdge, context: RenderingContext) {
+    render(edge: SEdge, context: RenderingContext) {
         const source = edge.source
         const target = edge.target
         if (source && target) {

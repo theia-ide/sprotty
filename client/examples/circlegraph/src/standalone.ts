@@ -6,7 +6,7 @@ import {MoveKind, MoveCommand, ElementMove, MoveAction} from "../../../src/base/
 import {SelectCommand, SelectKind} from "../../../src/base/intent/select"
 import {GGraphView, StraightEdgeView} from "../../../src/graph/view/views"
 import {CircleNodeView} from "./views"
-import {GGraph, GNode, GEdge} from "../../../src/graph/model/ggraph"
+import {SGraph, SNode, SEdge} from "../../../src/graph/model/sgraph"
 import {SetModelAction} from "../../../src/base/intent/model-manipulation"
 export default function runStandalone() {
     // Setup event loop
@@ -29,7 +29,7 @@ export default function runStandalone() {
     const node0 = {id: 'node0', type: 'node:circle', x: 100, y: 100};
     const node1 = {id: 'node1', type: 'node:circle', x: 200, y: 150, selected: true};
     const edge0 = {id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1'};
-    const graph = new GGraph({id: 'graph', type: 'graph', children: [node0, node1, edge0]});
+    const graph = new SGraph({id: 'graph', type: 'graph', children: [node0, node1, edge0]});
 
     // Run
     const action = new SetModelAction(graph);
@@ -39,14 +39,14 @@ export default function runStandalone() {
 
     function addNode() {
         graph.children.add(
-            new GNode({
+            new SNode({
                 id: 'node' + count,
                 type: 'node:circle',
                 x: Math.random() * 1024,
                 y: Math.random() * 768
             }))
         graph.children.add(
-            new GEdge({
+            new SEdge({
                 id: 'edge' + count,
                 type: 'edge:straight',
                 sourceId: 'node0',
@@ -68,7 +68,7 @@ export default function runStandalone() {
     document.getElementById('scrambleNodes')!.addEventListener('click', function (e) {
         const nodeMoves: ElementMove[] = []
         graph.children.forEach(shape => {
-            if (shape instanceof GNode) {
+            if (shape instanceof SNode) {
                 nodeMoves.push({
                     elementId: shape.id,
                     toPosition: {

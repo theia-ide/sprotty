@@ -1,6 +1,6 @@
 import {VNode} from "snabbdom/vnode"
 import {h} from "snabbdom"
-import {GModelElement, GModelRoot, EMPTY_ROOT} from "../model"
+import {SModelElement, SModelRoot, EMPTY_ROOT} from "../model"
 import {ProviderRegistry} from "../../utils"
 import {Viewer} from "./viewer"
 
@@ -8,7 +8,7 @@ import {Viewer} from "./viewer"
  * Base interface for the components that turn GModelElements into virtual DOM elements.
  */
 export interface View {
-    render(model: GModelElement, context: RenderingContext): VNode
+    render(model: SModelElement, context: RenderingContext): VNode
 }
 
 /**
@@ -19,9 +19,9 @@ export interface RenderingContext {
 }
 
 /**
- * Allows to look up the View for a given GModelElement based on its type.
+ * Allows to look up the View for a given SModelElement based on its type.
  */
-export class ViewRegistry extends ProviderRegistry<View, GModelElement> {
+export class ViewRegistry extends ProviderRegistry<View, SModelElement> {
     constructor() {
         super()
         this.register(EMPTY_ROOT.type, EmptyView)
@@ -29,7 +29,7 @@ export class ViewRegistry extends ProviderRegistry<View, GModelElement> {
 }
 
 export class EmptyView implements View {
-    render(model: GModelRoot, context: RenderingContext): VNode {
+    render(model: SModelRoot, context: RenderingContext): VNode {
         return h('g', {
             key: model.id,
             attrs: {

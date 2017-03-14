@@ -1,4 +1,4 @@
-import {GModelRoot, GModelRootSchema, GModelFactory} from "../model"
+import {SModelRoot, SModelRootSchema, SModelFactory} from "../model"
 import {Command} from "./commands"
 import {Action} from "./actions"
 import {SourceDelegateActionHandler} from "./source-delegate"
@@ -8,28 +8,28 @@ export const SetModelKind = 'SetModel'
 export class SetModelAction implements Action {
     kind = SetModelKind
 
-    constructor(public readonly newRoot: GModelRoot) {
+    constructor(public readonly newRoot: SModelRoot) {
     }
 }
 
 export class SetModelCommand implements Command {
-    oldRoot: GModelRoot
-    newRoot: GModelRoot
+    oldRoot: SModelRoot
+    newRoot: SModelRoot
 
     constructor(public action: SetModelAction) {
     }
 
-    execute(element: GModelRoot) {
+    execute(element: SModelRoot) {
         this.oldRoot = element
         this.newRoot = this.action.newRoot
         return this.newRoot
     }
 
-    undo(element: GModelRoot) {
+    undo(element: SModelRoot) {
         return this.oldRoot
     }
 
-    redo(element: GModelRoot) {
+    redo(element: SModelRoot) {
         return this.newRoot
     }
 
@@ -52,8 +52,8 @@ export class FetchModelHandler extends SourceDelegateActionHandler {
         return this.source.getDiagram({options: action.options})
     }
 
-    protected getFollowActions(action: FetchModelAction, result: GModelRootSchema): Action[] {
-        const newRoot = GModelFactory.createModel(result)
+    protected getFollowActions(action: FetchModelAction, result: SModelRootSchema): Action[] {
+        const newRoot = SModelFactory.createModel(result)
         return [new SetModelAction(newRoot)]
     }
 }

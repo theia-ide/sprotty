@@ -1,4 +1,4 @@
-import {GModelRoot} from "../model"
+import {SModelRoot} from "../model"
 import {CommandStackCallback} from "./command-stack"
 import {IActionHandler, Action} from "./actions"
 
@@ -7,19 +7,19 @@ import {IActionHandler, Action} from "./actions"
  * It is executed on a command stack and can be undone / redone.
  */
 export interface Command {
-    execute(element: GModelRoot, context: CommandExecutionContext): GModelRootOrPromise
+    execute(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
 
-    undo(element: GModelRoot, context: CommandExecutionContext): GModelRootOrPromise
+    undo(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
 
-    redo(element: GModelRoot, context: CommandExecutionContext): GModelRootOrPromise
+    redo(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
 
     merge(command: Command, context: CommandExecutionContext): boolean
 }
 
-type GModelRootOrPromise = GModelRoot | Promise<GModelRoot>
+type GModelRootOrPromise = SModelRoot | Promise<SModelRoot>
 
 export interface CommandExecutionContext {
-    root: GModelRoot
+    root: SModelRoot
     modelChanged: CommandStackCallback
     duration: number
 }

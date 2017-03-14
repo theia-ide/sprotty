@@ -1,8 +1,8 @@
-import {GGraph, GNode} from "../../graph/model/ggraph"
+import {SGraph, SNode} from "../../graph/model/sgraph"
 import {SelectCommand, SelectAction} from ".//select"
 import {expect} from "chai"
 import "mocha"
-import {GModelRoot} from "../model/gmodel"
+import {SModelRoot} from "../model/smodel"
 import {CommandExecutionContext} from "./commands"
 
 
@@ -11,7 +11,7 @@ describe('test select command execution, undo, redo and merge', () => {
     const myNode1 = {id: 'node1', type: 'node:circle', x: 200, y: 200, selected: false};
 
     // setup the GModel
-    const initialModel = new GGraph({
+    const initialModel = new SGraph({
         id: 'graph',
         type: 'graph',
         children: [myNode1, myNode0]  // myNode0 is selected, so put at the end
@@ -30,7 +30,7 @@ describe('test select command execution, undo, redo and merge', () => {
 
     // global so we can carry-over the model, as it's updated, 
     // from test case to test case (i,e, select, undo, redo, merge)
-    var newModel: GModelRoot
+    var newModel: SModelRoot
 
     it('select command', () => {
         // execute command
@@ -50,8 +50,8 @@ describe('test select command execution, undo, redo and merge', () => {
         newModel = cmd.undo(newModel);
 
         // check result
-        const nodes = <GNode[]>newModel.index.all().filter(
-            element => (element instanceof GNode)
+        const nodes = <SNode[]>newModel.index.all().filter(
+            element => (element instanceof SNode)
         )
 
         // confirm selection is as expected
@@ -95,7 +95,7 @@ describe('test select command execution, undo, redo and merge', () => {
 
 
 function getNode(nodeId, model) {
-    return <GNode>model.index.getById(nodeId)
+    return <SNode>model.index.getById(nodeId)
 }
 
 function isNodeSelected(nodeId, model) {

@@ -1,6 +1,6 @@
 import {DispatcherCallback} from "./action-dispatcher"
 import {Command, CommandExecutionContext} from "./commands"
-import {GModelRoot, EMPTY_ROOT} from "../model"
+import {SModelRoot, EMPTY_ROOT} from "../model"
 import {EventSource} from "../../utils"
 
 /**
@@ -10,7 +10,7 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
 
     defaultDuration = 250
 
-    currentPromise: Promise<GModelRoot> = Promise.resolve(EMPTY_ROOT)
+    currentPromise: Promise<SModelRoot> = Promise.resolve(EMPTY_ROOT)
 
     undoStack: Command[] = []
     redoStack: Command[] = []
@@ -21,7 +21,7 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
                 this.currentPromise = this.currentPromise.then(
                     model => {
                         return new Promise(
-                            (resolve: (model: GModelRoot) => void, reject: (model: GModelRoot) => void) => {
+                            (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
                                 const context: CommandExecutionContext = {
                                     modelChanged: this,
                                     duration: this.defaultDuration,
@@ -64,7 +64,7 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
         this.currentPromise = this.currentPromise.then(
             model => {
                 return new Promise(
-                    (resolve: (model: GModelRoot) => void, reject: (model: GModelRoot) => void) => {
+                    (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
                         const command = this.undoStack.pop()
                         if (command === undefined) {
                             resolve(model)
@@ -99,7 +99,7 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
         this.currentPromise = this.currentPromise.then(
             model => {
                 return new Promise(
-                    (resolve: (model: GModelRoot) => void, reject: (model: GModelRoot) => void) => {
+                    (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
                         const command = this.redoStack.pop()
                         if (command === undefined) {
                             resolve(model)
@@ -130,11 +130,11 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
         )
     }
 
-    update(model: GModelRoot) {
+    update(model: SModelRoot) {
         this.callbacks.forEach((callback) => callback.update(model))
     }
 }
 
 export interface CommandStackCallback {
-    update(model: GModelRoot): void
+    update(model: SModelRoot): void
 }

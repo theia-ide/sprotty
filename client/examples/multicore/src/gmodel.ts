@@ -1,10 +1,10 @@
-import {GModelElement, GModelRoot} from "../../../src/base/model/gmodel"
+import {SModelElement, SModelRoot} from "../../../src/base/model/smodel"
 import {Selectable} from "../../../src/base/model/behavior"
 import {GCoreSchema, GChipSchema, GChannelSchema, GCrossbarSchema} from "./schema"
 import {Direction} from "../../../src/utils/geometry"
-import {GModelElementSchema} from "../../../src/base/model/gmodel-schema"
+import {SModelElementSchema} from "../../../src/base/model/smodel-schema"
 
-export class GChip extends GModelRoot {
+export class GChip extends SModelRoot {
     readonly rows: number
     readonly columns: number
 
@@ -12,7 +12,7 @@ export class GChip extends GModelRoot {
         super(json)
     }
 
-    protected createChild(json: GModelElementSchema) {
+    protected createChild(json: SModelElementSchema) {
         if (GChipSchema.isGChannelSchema(json)) {
             this.validateIndex(json)
                 return new GChannel(json)
@@ -44,7 +44,7 @@ export class GChip extends GModelRoot {
     }
 }
 
-export class GCore extends GModelElement implements Selectable {
+export class GCore extends SModelElement implements Selectable {
     readonly column: number
     readonly row: number
     load: number
@@ -57,7 +57,7 @@ export class GCore extends GModelElement implements Selectable {
     }
 }
 
-export class GCrossbar extends GModelElement implements Selectable {
+export class GCrossbar extends SModelElement implements Selectable {
     readonly direction: Direction
     load: number
     selected: boolean
@@ -69,7 +69,7 @@ export class GCrossbar extends GModelElement implements Selectable {
     }
 }
 
-export class GChannel extends GModelElement implements Selectable {
+export class GChannel extends SModelElement implements Selectable {
     readonly column: number
     readonly row: number
     readonly direction: Direction

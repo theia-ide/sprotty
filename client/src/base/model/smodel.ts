@@ -1,25 +1,25 @@
 import {Map} from "../../utils"
-import {GModelElementSchema, GModelRootSchema} from "./gmodel-schema"
+import {SModelElementSchema, SModelRootSchema} from "./smodel-schema"
 
 /**
  * Base class for all elements of the diagram model.
  * The diagram model forms a tree using the parent property.
  * Each model element must have a unique ID and a type that is used to look up its view.
  */
-export class GModelElement {
+export class SModelElement {
     readonly type: string
     readonly id: string
-    children?: ChildrenList<GModelElement>
-    parent?: GModelElement
+    children?: ChildrenList<SModelElement>
+    parent?: SModelElement
 
-    constructor(json: GModelElementSchema) {
+    constructor(json: SModelElementSchema) {
         for (let key in json) {
             if (key != 'children' && json[key] !== undefined) {
                 this[key] = json[key]
             }
         }
         if (json.children) {
-            this.children = new ChildrenList<GModelElement>(this)
+            this.children = new ChildrenList<SModelElement>(this)
             json.children.forEach(child => {
                 try {
                     this.children.add(this.createChild(child))
@@ -34,14 +34,14 @@ export class GModelElement {
      * Create a child element for the given schema. Override this method in order to specialize created
      * element types.
      */
-    protected createChild(json: GModelElementSchema): GModelElement {
-        return new GModelElement(json)
+    protected createChild(json: SModelElementSchema): SModelElement {
+        return new SModelElement(json)
     }
 
-    get root(): GModelRoot {
-        let current: GModelElement = this
+    get root(): SModelRoot {
+        let current: SModelElement = this
         while (current) {
-            if (current instanceof GModelRoot)
+            if (current instanceof SModelRoot)
                 return current
             else
                 current = current.parent!
@@ -53,10 +53,10 @@ export class GModelElement {
 /**
  * Base interface for the root elements of the diagram model tree.
  */
-export class GModelRoot extends GModelElement {
-    readonly index = new GModelIndex()
+export class SModelRoot extends SModelElement {
+    readonly index = new SModelIndex()
 
-    constructor(json: GModelRootSchema) {
+    constructor(json: SModelRootSchema) {
         super(json)
         if (this.children)
             this.children.index = this.index
@@ -66,18 +66,18 @@ export class GModelRoot extends GModelElement {
 /**
  * Used to speed up model element lookup by id.
  */
-export class GModelIndex {
+export class SModelIndex {
 
     constructor() {
     }
 
-    id2element: Map<GModelElement> = {}
+    id2element: Map<SModelElement> = {}
 
-    add(element: GModelElement) {
+    add(element: SModelElement) {
         this.id2element[element.id] = element
     }
 
-    remove(element: GModelElement) {
+    remove(element: SModelElement) {
         delete this.id2element[element.id]
     }
 
@@ -85,12 +85,12 @@ export class GModelIndex {
         delete this.id2element[elementId]
     }
 
-    getById(id: string): GModelElement | undefined {
+    getById(id: string): SModelElement | undefined {
         return this.id2element[id]
     }
 
-    all(): GModelElement[] {
-        const all: GModelElement[] = []
+    all(): SModelElement[] {
+        const all: SModelElement[] = []
         for (let key in this.id2element) {
             all.push(this.id2element[key])
         }
@@ -104,15 +104,15 @@ export class GModelIndex {
  * Mini EMF, if you want so.
  * Note that by manually modifying the parent the corresponding children list is not updated.
  */
-export class ChildrenList<T extends GModelElement> {
-    private _index: GModelIndex | undefined = undefined
+export class ChildrenList<T extends SModelElement> {
+    private _index: SModelIndex | undefined = undefined
 
-    constructor(private parent: GModelElement) {
+    constructor(private parent: SModelElement) {
     }
 
     private children: T[] = []
 
-    set index(index: GModelIndex | undefined) {
+    set index(index: SModelIndex | undefined) {
         if (index) {
             index.add(this.parent)
             this.children.forEach(child => {
@@ -128,14 +128,14 @@ export class ChildrenList<T extends GModelElement> {
         this._index = index
     }
 
-    private addToIndex(child: GModelElement, index: GModelIndex | undefined) {
+    private addToIndex(child: SModelElement, index: SModelIndex | undefined) {
         if (child.children)
             child.children.index = index
         else if (index)
             index.add(child)
     }
 
-    private removeFromIndex(child: GModelElement) {
+    private removeFromIndex(child: SModelElement) {
         if (child.children)
             child.children.index = undefined
         else if (this._index)
@@ -198,7 +198,7 @@ export class ChildrenList<T extends GModelElement> {
     }
 }
 
-export const EMPTY_ROOT = new GModelRoot({
+export const EMPTY_ROOT = new SModelRoot({
     id: 'EMPTY',
     type: 'NONE'
 })

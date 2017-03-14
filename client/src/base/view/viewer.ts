@@ -7,7 +7,7 @@ import {attributesModule} from "snabbdom/modules/attributes"
 import {styleModule} from "snabbdom/modules/style"
 import {eventListenersModule} from "snabbdom/modules/eventlisteners"
 import {CommandStackCallback, Action} from "../intent"
-import {GModelRoot, GModelElement} from "../model"
+import {SModelRoot, SModelElement} from "../model"
 import {EventSource} from "../../utils"
 import {AddRemoveAnimationDecorator, VNodeDecorator} from "./vnode-decorators"
 import {RenderingContext, ViewRegistry} from "./views"
@@ -49,28 +49,28 @@ export class Viewer extends EventSource<ViewerCallback> implements CommandStackC
         return init(this.createModules())
     }
 
-    createRenderingContext(model: GModelRoot): RenderingContext {
+    createRenderingContext(model: SModelRoot): RenderingContext {
         return {
             viewer: this,
         }
     }
 
-    decorate(vnode: VNode, element: GModelElement): VNode {
+    decorate(vnode: VNode, element: SModelElement): VNode {
         return this.decorators.reduce(
             (vnode: VNode, decorator: VNodeDecorator) => decorator.decorate(vnode, element),
             vnode)
     }
 
-    renderElement(element: GModelElement, context: RenderingContext): VNode {
+    renderElement(element: SModelElement, context: RenderingContext): VNode {
         const vNode = this.viewRegistry.get(element.type, element).render(element, context)
         return this.decorate(vNode, element)
     }
 
-    renderChildren(element: GModelElement, context: RenderingContext): VNode[] {
+    renderChildren(element: SModelElement, context: RenderingContext): VNode[] {
         return element.children.map((element) => context.viewer.renderElement(element, context))
     }
 
-    update(model: GModelRoot): void {
+    update(model: SModelRoot): void {
         const context = this.createRenderingContext(model)
         const newVDOM = h('div', {
             attrs: {

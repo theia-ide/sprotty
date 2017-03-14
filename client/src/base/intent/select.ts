@@ -1,4 +1,4 @@
-import {GModelRoot, GModelElement, isSelectable, Selectable} from "../model"
+import {SModelRoot, SModelElement, isSelectable, Selectable} from "../model"
 import {Command} from "./commands"
 import {Action} from "./actions"
 
@@ -12,7 +12,7 @@ export class SelectAction implements Action {
 }
 
 type ElementSelection= {
-    element: GModelElement & Selectable
+    element: SModelElement & Selectable
     index: number
 }
 
@@ -24,7 +24,7 @@ export class SelectCommand implements Command {
     constructor(public action: SelectAction) {
     }
 
-    execute(model: GModelRoot): GModelRoot {
+    execute(model: SModelRoot): SModelRoot {
         this.action.selectedElementsIDs.forEach(
             id => {
                 const element = model.index.getById(id)
@@ -48,7 +48,7 @@ export class SelectCommand implements Command {
         return this.redo(model)
     }
 
-    undo(model: GModelRoot): GModelRoot {
+    undo(model: SModelRoot): SModelRoot {
         for (let i = this.selected.length - 1; i >= 0; --i) {
             const selection = this.selected[i]
             const element = selection.element
@@ -61,7 +61,7 @@ export class SelectCommand implements Command {
         return model
     }
 
-    redo(model: GModelRoot): GModelRoot {
+    redo(model: SModelRoot): SModelRoot {
         for (let i = 0; i < this.selected.length; ++i) {
             const selection = this.selected[i]
             const element = selection.element

@@ -1,5 +1,5 @@
 import {CancellationToken, MessageConnection, NotificationType1, RequestType1} from "vscode-jsonrpc"
-import {IModelSource, GetDiagramParams, SelectionParams, GModelRootSchema} from "../base/model"
+import {IModelSource, GetDiagramParams, SelectionParams, SModelRootSchema} from "../base/model"
 
 export class DiagramServer implements IModelSource {
 
@@ -12,7 +12,7 @@ export class DiagramServer implements IModelSource {
     dispose() {
     }
 
-    getDiagram(params: GetDiagramParams, token?: CancellationToken): Thenable<GModelRootSchema> {
+    getDiagram(params: GetDiagramParams, token?: CancellationToken): Thenable<SModelRootSchema> {
         token = token || CancellationToken.None;
         return this.connection.sendRequest(GetDiagramRequest.type, params, token);
     }
@@ -26,7 +26,7 @@ export class DiagramServer implements IModelSource {
 // RPC method definitions
 
 export namespace GetDiagramRequest {
-    export const type = new RequestType1<GetDiagramParams, GModelRootSchema, void, void>('getDiagram');
+    export const type = new RequestType1<GetDiagramParams, SModelRootSchema, void, void>('getDiagram');
 }
 
 export namespace ElementSelectedNotification {

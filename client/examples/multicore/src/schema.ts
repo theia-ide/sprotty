@@ -1,20 +1,20 @@
-import {GModelElementSchema, GModelSchema} from "../../../src/base/model/gmodel-schema"
+import {SModelElementSchema, SModelSchema} from "../../../src/base/model/smodel-schema"
 import {Direction} from "../../../src/utils/geometry"
 
-export interface GChipSchema extends GModelElementSchema {
+export interface GChipSchema extends SModelElementSchema {
     rows: number
     columns: number
     children: (GCoreSchema | GChannelSchema | GCrossbarSchema)[]
 }
 
-export interface GCoreSchema extends GModelElementSchema {
+export interface GCoreSchema extends SModelElementSchema {
     row: number
     column: number
     load: number
     selected?: boolean
 }
 
-export interface GChannelSchema extends GModelElementSchema {
+export interface GChannelSchema extends SModelElementSchema {
     row: number
     column: number
     direction: Direction
@@ -22,27 +22,27 @@ export interface GChannelSchema extends GModelElementSchema {
     load: number
 }
 
-export interface GCrossbarSchema extends GModelElementSchema {
+export interface GCrossbarSchema extends SModelElementSchema {
     selected?: boolean
     direction: Direction
     load: number
 }
 
 export namespace GChipSchema {
-    export function isGChipSchema(schema: GModelElementSchema): schema is GChipSchema {
-        return GModelSchema.getBasicType(schema) == 'chip'
+    export function isGChipSchema(schema: SModelElementSchema): schema is GChipSchema {
+        return SModelSchema.getBasicType(schema) == 'chip'
     }
 
-    export function isGCoreSchema(schema: GModelElementSchema): schema is GCoreSchema {
-        return GModelSchema.getBasicType(schema) == 'core'
+    export function isGCoreSchema(schema: SModelElementSchema): schema is GCoreSchema {
+        return SModelSchema.getBasicType(schema) == 'core'
     }
 
-    export function isGChannelSchema(schema: GModelElementSchema): schema is GChannelSchema {
-        return GModelSchema.getBasicType(schema) == 'channel'
+    export function isGChannelSchema(schema: SModelElementSchema): schema is GChannelSchema {
+        return SModelSchema.getBasicType(schema) == 'channel'
     }
 
-    export function isGCrossbarSchema(schema: GModelElementSchema): schema is GCrossbarSchema {
-        return GModelSchema.getBasicType(schema) == 'crossbar'
+    export function isGCrossbarSchema(schema: SModelElementSchema): schema is GCrossbarSchema {
+        return SModelSchema.getBasicType(schema) == 'crossbar'
     }
 }
 

@@ -2,7 +2,7 @@ import {VNode} from "snabbdom/vnode"
 import {h} from "snabbdom"
 import {Point} from "../../utils"
 import {SelectAction, ElementMove, MoveAction} from "../intent"
-import {GModelElement, isMoveable, isSelectable} from "../model"
+import {SModelElement, isMoveable, isSelectable} from "../model"
 import {VNodeDecorator} from "./vnode-decorators"
 import {Viewer} from "./viewer"
 
@@ -15,7 +15,7 @@ export class MouseTool implements VNodeDecorator {
     constructor(private viewer: Viewer) {
     }
 
-    mouseDown(element: GModelElement, event: MouseEvent) {
+    mouseDown(element: SModelElement, event: MouseEvent) {
         if (isSelectable(element)) {
             let deselectIds: string[] = []
             if (!event.metaKey) {
@@ -40,7 +40,7 @@ export class MouseTool implements VNodeDecorator {
         this.hasDragged = false
     }
 
-    mouseMove(element: GModelElement, event: MouseEvent) {
+    mouseMove(element: SModelElement, event: MouseEvent) {
         if (this.lastDragPosition) {
             this.hasDragged = true
             const dx = event.clientX - this.lastDragPosition.x
@@ -72,7 +72,7 @@ export class MouseTool implements VNodeDecorator {
         }
     }
 
-    mouseUp(element: GModelElement, event: MouseEvent) {
+    mouseUp(element: SModelElement, event: MouseEvent) {
         if (!this.hasDragged) {
             if (isSelectable(element) && this.wasSelected) {
                 this.viewer.fireAction(new SelectAction([element.id], []))
@@ -82,7 +82,7 @@ export class MouseTool implements VNodeDecorator {
         this.lastDragPosition = undefined
     }
 
-    decorate(vnode: VNode, element: GModelElement) {
+    decorate(vnode: VNode, element: SModelElement) {
         const data = vnode.data!
         if (!data.on)
             data.on = {}

@@ -1,4 +1,4 @@
-import {GModelRoot} from "../model"
+import {SModelRoot} from "../model"
 import {CommandExecutionContext} from "../intent"
 import {easeInOut} from "./easing"
 
@@ -8,8 +8,8 @@ export abstract class Animation {
     }
 
     start() {
-        return new Promise<GModelRoot>(
-            (resolve: (model: GModelRoot) => void, reject: (model: GModelRoot) => void) => {
+        return new Promise<SModelRoot>(
+            (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
                 const lambda = time => {
                     frames++;
                     let dtime: number
@@ -35,7 +35,7 @@ export abstract class Animation {
             })
     }
 
-    abstract tween(t: number, context: CommandExecutionContext): GModelRoot
+    abstract tween(t: number, context: CommandExecutionContext): SModelRoot
 }
 
 
