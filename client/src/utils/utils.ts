@@ -73,3 +73,7 @@ export class InstanceRegistry<T> {
         throw new Error('Unknown registry key: ' + key)
     }
 }
+
+export function isMac(): boolean {
+    return window.navigator.userAgent.indexOf("Mac") != -1
+}

@@ -12,13 +12,20 @@ export class KeyTool implements VNodeDecorator {
     }
 
     keyPress(element: SModelElement, event: KeyboardEvent): void {
-        if (event.ctrlKey && event.keyCode == 90) {
+        if (this.isCtrlOrCmd(event) && event.keyCode == 90) {
             event.preventDefault()
             if (event.shiftKey)
                 this.viewer.fireAction(new RedoAction)
             else
                 this.viewer.fireAction(new UndoAction)
         }
+    }
+
+    private isCtrlOrCmd(event: KeyboardEvent) {
+        if(isMac())
+            return event.metaKey
+        else
+            return event.ctrlKey
     }
 
     focus() {
