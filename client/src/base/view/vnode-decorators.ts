@@ -1,5 +1,6 @@
 import {VNode} from "snabbdom/vnode"
 import {SModelElement} from "../model"
+import {VNodeUtils} from "./vnode-utils"
 
 /**
  * Manipulates a created VNode after it has been created.
@@ -21,7 +22,7 @@ export class AddRemoveAnimationDecorator implements VNodeDecorator {
     }
 
     decorate(vnode: VNode, element: SModelElement) {
-        vnode.data!.style = this.appearFadeStyle
+        VNodeUtils.mergeStyle(vnode, this.appearFadeStyle)
         return vnode
     }
 

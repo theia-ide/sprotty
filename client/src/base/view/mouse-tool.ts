@@ -6,6 +6,7 @@ import {SModelElement, isMoveable, isSelectable} from "../model"
 import {VNodeDecorator} from "./vnode-decorators"
 import {Viewer} from "./viewer"
 import {SModelRoot} from "../model/smodel"
+import {VNodeUtils} from "./vnode-utils"
 
 export class MouseTool implements VNodeDecorator {
 
@@ -84,20 +85,15 @@ export class MouseTool implements VNodeDecorator {
     }
 
     decorate(vnode: VNode, element: SModelElement) {
-        const data = vnode.data!
-        if (!data.on)
-            data.on = {}
         if (isSelectable(element)) {
-            if (!data.class)
-                data.class = {}
-            data.class.selected = element.selected
+            VNodeUtils.setClass(vnode, 'selected', element.selected)
         }
         if (isSelectable(element) || isMoveable(element)) {
-            data.on.mousedown = [this.mouseDown.bind(this), element]
-            data.on.mouseup = [this.mouseUp.bind(this), element]
+            VNodeUtils.on(vnode, 'mousedown', this.mouseDown.bind(this), element)
+            VNodeUtils.on(vnode, 'mouseup',  this.mouseUp.bind(this), element)
         }
         if (element instanceof SModelRoot) {
-            data.on.mousemove = [this.mouseMove.bind(this), element]
+            VNodeUtils.on(vnode, 'mousemove', this.mouseMove.bind(this), element)
         }
         if (isMoveable(element)) {
             vnode = h('g', {

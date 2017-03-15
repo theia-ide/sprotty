@@ -3,6 +3,8 @@ import {SModelElement, SModelRoot} from "../model"
 import {RedoAction, UndoAction} from "../intent"
 import {VNodeDecorator} from "./vnode-decorators"
 import {Viewer} from "./viewer"
+import {VNodeUtils} from "./vnode-utils"
+import {isMac} from "../../utils/utils"
 
 export class KeyTool implements VNodeDecorator {
 
@@ -24,15 +26,11 @@ export class KeyTool implements VNodeDecorator {
 
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (element instanceof SModelRoot) {
-            const data = vnode.data!
-            if (!data.on)
-                data.on = {}
-            data.on.focus = [this.focus.bind(this), element]
-            data.on.keypress = [this.keyPress.bind(this), element]
-            data.on.keydown = [this.keyPress.bind(this), element]
-            data.on.keyup = [this.keyPress.bind(this), element]
+            VNodeUtils.on(vnode, 'focus', this.focus.bind(this), element)
+            VNodeUtils.on(vnode, 'keypress', this.keyPress.bind(this), element)
+            VNodeUtils.on(vnode, 'keydown', this.keyPress.bind(this), element)
+            VNodeUtils.on(vnode, 'keyup', this.keyPress.bind(this), element)
         }
-
         return vnode
     }
 
