@@ -12,20 +12,14 @@ export class DiagramServer {
     dispose() {
     }
 
-    request(params: Action, token?: CancellationToken): Thenable<Action[]> {
+    request(action: Action, token?: CancellationToken): Thenable<Action[]> {
         token = token || CancellationToken.None;
-        return this.connection.sendRequest(ActionRequest.type, params, token);
+        const requestType = new RequestType1<Action, Action[], void, void>(action.kind)
+        return this.connection.sendRequest(requestType, action, token);
     }
 
-    notify(params: Action): void {
-        return this.connection.sendNotification(ActionNotification.type, params);
+    notify(action: Action): void {
+        const notificationType = new NotificationType1<Action, void>(action.kind)
+        return this.connection.sendNotification(notificationType, action);
     }
-}
-
-export namespace ActionRequest {
-    export const type = new RequestType1<Action, Action[], void, void>('requestAction');
-}
-
-export namespace ActionNotification {
-    export const type = new NotificationType1<Action, void>('notifyAction');
 }

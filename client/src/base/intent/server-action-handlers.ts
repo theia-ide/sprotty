@@ -1,11 +1,10 @@
 import {Action, IActionHandler} from "./actions"
 import {Command} from "./commands"
 import {ActionDispatcher} from "./action-dispatcher"
-import {DiagramServer} from "../../jsonrpc/protocol"
 
 export class RequestActionHandler implements IActionHandler {
 
-    constructor(public actionDispatcher: ActionDispatcher) {
+    constructor(protected actionDispatcher: ActionDispatcher, protected immediateHandler?: IActionHandler) {
     }
 
     handle(action: Action): Command[] {
@@ -19,17 +18,16 @@ export class RequestActionHandler implements IActionHandler {
                     this.actionDispatcher.execute(result)
             })
         }
-        return this.getImmediateCommands(action);
-    }
-
-    protected getImmediateCommands(action: Action): Command[] {
-        return []
+        if(this.immediateHandler)
+            return this.immediateHandler.handle(action)
+        else
+            return [];
     }
 }
 
 export class NotificationActionHandler implements IActionHandler {
 
-    constructor(public actionDispatcher: ActionDispatcher) {
+    constructor(protected actionDispatcher: ActionDispatcher, protected immediateHandler?: IActionHandler) {
     }
 
     handle(action: Action): Command[] {
@@ -37,10 +35,9 @@ export class NotificationActionHandler implements IActionHandler {
         if(!server)
             throw Error('Cannot send notification. No server connection.')
         server.notify(action)
-        return this.getImmediateCommands(action)
-    }
-
-    protected getImmediateCommands(action: Action): Command[] {
-        return []
+        if(this.immediateHandler)
+            return this.immediateHandler.handle(action)
+        else
+            return [];
     }
 }

@@ -5,7 +5,7 @@ import {Action} from "./actions"
 
 
 export class SetModelAction implements Action {
-    static readonly KIND = 'SetModel'
+    static readonly KIND = 'setModel'
     kind = SetModelAction.KIND
 
     constructor(public readonly newRoot: SModelRoot) {
@@ -38,9 +38,8 @@ export class SetModelCommand implements Command {
     }
 }
 
-
 export class RequestModelAction implements Action {
-    static readonly KIND = 'RequestModel'
+    static readonly KIND = 'requestModel'
     kind = RequestModelAction.KIND
 }
 

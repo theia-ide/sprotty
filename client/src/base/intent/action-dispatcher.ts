@@ -44,12 +44,16 @@ export class ActionDispatcher extends EventSource<DispatcherCallback> implements
         this.actionHandlerRegistry.register(kind, new CommandActionHandler(commandType))
     }
 
-    registerServerRequest(kind: string) {
-        this.actionHandlerRegistry.register(kind, new RequestActionHandler(this))
+    registerServerRequest(kind: string, handler?: RequestActionHandler) {
+        if(!handler)
+            handler = new RequestActionHandler(this)
+        this.actionHandlerRegistry.register(kind, handler)
     }
 
-    registerServerNotification(kind: string) {
-        this.actionHandlerRegistry.register(kind, new NotificationActionHandler(this))
+    registerServerNotification(kind: string, handler?: NotificationActionHandler) {
+        if(!handler)
+            handler = new NotificationActionHandler(this)
+        this.actionHandlerRegistry.register(kind, handler)
     }
 
     execute(actions: Action[]): void {

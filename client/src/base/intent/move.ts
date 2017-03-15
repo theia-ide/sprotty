@@ -7,7 +7,7 @@ import {SModelIndex} from "../model/smodel"
 
 
 export class MoveAction implements Action {
-    static readonly KIND = 'Move'
+    static readonly KIND = 'move'
     kind = MoveAction.KIND
 
     constructor(public readonly moves: ElementMove[],

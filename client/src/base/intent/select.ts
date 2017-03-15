@@ -3,7 +3,7 @@ import {Command} from "./commands"
 import {Action} from "./actions"
 
 export class SelectAction implements Action {
-    static readonly KIND = 'Select'
+    static readonly KIND = 'select'
     kind = SelectAction.KIND
 
     constructor(public readonly selectedElementsIDs: string[], public readonly deselectedElementsIDs: string[]) {
