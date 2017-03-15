@@ -1,5 +1,5 @@
 ///<reference path="smodel.ts"/>
-import {Point} from "../../utils"
+import {Point, Dimension} from "../../utils"
 import {SModelElement} from "./smodel"
 
 export interface Behavior {
@@ -22,3 +22,12 @@ export function isSelectable(element: SModelElement | Selectable): element is Se
     return 'selected' in element
 }
 
+export interface Sizeable extends Behavior, Point, Dimension {
+    autosize: boolean
+}
+
+export function isSizeable(element: SModelElement | Sizeable): element is Sizeable {
+    return 'autosize' in element
+        && 'width' in element
+        && 'height' in element
+}

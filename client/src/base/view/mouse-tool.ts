@@ -108,4 +108,6 @@ export class MouseTool implements VNodeDecorator {
         }
         return vnode
     }
+
+    postUpdate() {}
 }

@@ -13,6 +13,7 @@ import {AddRemoveAnimationDecorator, VNodeDecorator} from "./vnode-decorators"
 import {RenderingContext, ViewRegistry} from "./views"
 import {KeyTool} from "./key-tool"
 import {MouseTool} from "./mouse-tool"
+import {Autosizer} from "./autosizer"
 
 /**
  * The component that turns the model into an SVG DOM.
@@ -32,7 +33,7 @@ export class Viewer extends EventSource<ViewerCallback> implements CommandStackC
     }
 
     createDecorators(): VNodeDecorator[] {
-        return [new AddRemoveAnimationDecorator(), new KeyTool(this), new MouseTool(this)]
+        return [new AddRemoveAnimationDecorator(), new KeyTool(this), new MouseTool(this), new Autosizer(this)]
     }
 
     createModules(): Module[] {
@@ -61,6 +62,10 @@ export class Viewer extends EventSource<ViewerCallback> implements CommandStackC
             vnode)
     }
 
+    postUpdate() {
+        this.decorators.forEach(decorator => decorator.postUpdate())
+    }
+
     renderElement(element: SModelElement, context: RenderingContext): VNode {
         const vNode = this.viewRegistry.get(element.type, element).render(element, context)
         return this.decorate(vNode, element)
@@ -86,6 +91,7 @@ export class Viewer extends EventSource<ViewerCallback> implements CommandStackC
             const placeholder = document.getElementById(this.baseDiv)
             this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
+        this.postUpdate()
     }
 
     fireAction(action: Action) {

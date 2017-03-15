@@ -7,6 +7,8 @@ import {SModelElement} from "../model"
  */
 export interface VNodeDecorator {
     decorate(vnode: VNode, element: SModelElement): VNode
+
+    postUpdate(): void
 }
 
 export class AddRemoveAnimationDecorator implements VNodeDecorator {
@@ -22,4 +24,6 @@ export class AddRemoveAnimationDecorator implements VNodeDecorator {
         vnode.data!.style = this.appearFadeStyle
         return vnode
     }
+
+    postUpdate() {}
 }

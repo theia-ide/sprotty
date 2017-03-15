@@ -13,6 +13,7 @@ import {GGraphView, StraightEdgeView} from "../../../src/graph/view"
 import {SNode, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph/model"
 import {CircleNodeView} from "./views"
 import {SelectAction} from "../../../src/base/intent/select"
+import {ResizeAction, ResizeCommand} from "../../../src/base/intent/resize"
 
 export default function runStandalone() {
     // Setup event loop
@@ -24,6 +25,7 @@ export default function runStandalone() {
 
     eventLoop.dispatcher.registerCommand(MoveAction.KIND, MoveCommand)
     eventLoop.dispatcher.registerCommand(SelectAction.KIND, SelectCommand)
+    eventLoop.dispatcher.registerCommand(ResizeAction.KIND, ResizeCommand)
 
     // Register views
     const viewComponentRegistry = eventLoop.viewer.viewRegistry
@@ -49,7 +51,8 @@ export default function runStandalone() {
             id: 'node' + count,
             type: 'node:circle',
             x: Math.random() * 1024,
-            y: Math.random() * 768
+            y: Math.random() * 768,
+            width: 40
         }
         graph.add(modelFactory.createElement(newNode))
         const newEdge: SEdgeSchema = {
@@ -59,16 +62,17 @@ export default function runStandalone() {
             targetId: 'node' + count++
         }
         graph.add(modelFactory.createElement(newEdge))
-        eventLoop.dispatcher.dispatch(new SetModelAction(graph))
     }
 
     for (let i = 0; i < 200; ++i) {
         addNode()
     }
+    eventLoop.dispatcher.dispatch(new SetModelAction(graph))
 
     // button behavior
     document.getElementById('addNode')!.addEventListener('click', () => {
         addNode()
+        eventLoop.dispatcher.dispatch(new SetModelAction(graph))
         document.getElementById('graph')!.focus()
     })
 

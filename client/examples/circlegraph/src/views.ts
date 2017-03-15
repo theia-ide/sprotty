@@ -17,9 +17,13 @@ export class CircleNodeView extends GNodeView {
             attrs: {
                 id: node.id,
                 key: node.id,
-                r: 40
+                r: this.getRadius(node)
             }
         });
+    }
+
+    private getRadius(node: SNode) {
+        return 40
     }
 
     getAnchor(node: SNode, refPoint: Point, arrowLength: number) {
@@ -29,8 +33,8 @@ export class CircleNodeView extends GNodeView {
         const normX = dx / distance;
         const normY = dy / distance;
         return {
-            x: node.x - normX * (40 + arrowLength),
-            y: node.y - normY * (40 + arrowLength)
+            x: node.x - normX * (this.getRadius(node) + arrowLength),
+            y: node.y - normY * (this.getRadius(node) + arrowLength)
         }
     }
 }
