@@ -7,6 +7,7 @@ import {VNodeDecorator} from "./vnode-decorators"
 import {Viewer} from "./viewer"
 import {SModelRoot} from "../model/smodel"
 import {VNodeUtils} from "./vnode-utils"
+import {isCtrlOrCmd} from "../../utils/utils"
 
 export class MouseTool implements VNodeDecorator {
 
@@ -20,7 +21,8 @@ export class MouseTool implements VNodeDecorator {
     mouseDown(element: SModelElement, event: MouseEvent) {
         if (isSelectable(element)) {
             let deselectIds: string[] = []
-            if (!event.metaKey) {
+            // multi-selection?
+            if (!isCtrlOrCmd(event)) {
                 deselectIds = element.root
                     .index
                     .all()
