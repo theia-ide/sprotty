@@ -1,12 +1,18 @@
 import {EventLoop} from "../../../src/base"
 import {
-    ActionDispatcher, CommandStack, MoveKind, MoveCommand, ElementMove, MoveAction, SelectCommand, SelectKind,
+    ActionDispatcher,
+    CommandStack,
+    MoveCommand,
+    ElementMove,
+    MoveAction,
+    SelectCommand,
     SetModelAction
 } from "../../../src/base/intent"
 import {Viewer} from "../../../src/base/view"
 import {GGraphView, StraightEdgeView} from "../../../src/graph/view"
-import {SGraph, SNode, SEdge, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph/model"
+import {SNode, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph/model"
 import {CircleNodeView} from "./views"
+import {SelectAction} from "../../../src/base/intent/select"
 
 export default function runStandalone() {
     // Setup event loop
@@ -16,8 +22,8 @@ export default function runStandalone() {
         new Viewer('sprotte')
     );
 
-    eventLoop.dispatcher.registerCommand(MoveKind, MoveCommand)
-    eventLoop.dispatcher.registerCommand(SelectKind, SelectCommand)
+    eventLoop.dispatcher.registerCommand(MoveAction.KIND, MoveCommand)
+    eventLoop.dispatcher.registerCommand(SelectAction.KIND, SelectCommand)
 
     // Register views
     const viewComponentRegistry = eventLoop.viewer.viewRegistry

@@ -2,10 +2,9 @@ import {SModelRoot, SModelElement, SChildElement, Selectable, isSelectable} from
 import {Command} from "./commands"
 import {Action} from "./actions"
 
-export const SelectKind = 'Select'
-
 export class SelectAction implements Action {
-    kind = SelectKind
+    static readonly KIND = 'Select'
+    kind = SelectAction.KIND
 
     constructor(public readonly selectedElementsIDs: string[], public readonly deselectedElementsIDs: string[]) {
     }

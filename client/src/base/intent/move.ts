@@ -5,10 +5,10 @@ import {Action} from "./actions"
 import {Command, CommandExecutionContext} from "./commands"
 import {SModelIndex} from "../model/smodel"
 
-export const MoveKind = 'Move'
 
 export class MoveAction implements Action {
-    kind = MoveKind
+    static readonly KIND = 'Move'
+    kind = MoveAction.KIND
 
     constructor(public readonly moves: ElementMove[],
                 public readonly animate: boolean) {

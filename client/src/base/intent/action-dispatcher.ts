@@ -1,8 +1,8 @@
 import {EventSource} from "../../utils"
 import {ViewerCallback} from "../view"
-import {Action, UndoKind, RedoKind, ActionHandlerRegistry} from "./actions"
+import {Action, ActionHandlerRegistry, UndoAction, RedoAction} from "./actions"
 import {Command, CommandActionHandler} from "./commands"
-import {SetModelKind, SetModelCommand} from "./model-manipulation"
+import {SetModelCommand, SetModelAction} from "./model-manipulation"
 import {RequestActionHandler, NotificationActionHandler} from "./server-action-handlers"
 import {DiagramServer} from "../../jsonrpc/protocol"
 
@@ -21,7 +21,7 @@ export class ActionDispatcher extends EventSource<DispatcherCallback> implements
     }
 
     protected registerDefaults() {
-        this.registerCommand(SetModelKind, SetModelCommand)
+        this.registerCommand(SetModelAction.KIND, SetModelCommand)
     }
 
     connect(server: DiagramServer):  void {
@@ -58,9 +58,9 @@ export class ActionDispatcher extends EventSource<DispatcherCallback> implements
 
     dispatch(action: Action) {
         this.callbacks.forEach(callback => {
-            if (action.kind == UndoKind)
+            if (action.kind == UndoAction.KIND)
                 callback.undo()
-            else if (action.kind == RedoKind)
+            else if (action.kind == RedoAction.KIND)
                 callback.redo()
             else if (this.actionHandlerRegistry.hasKey(action.kind))
                 this.handleAction(action, callback)

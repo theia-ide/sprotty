@@ -1,18 +1,11 @@
 import {EventLoop} from "../../../src/base"
 import {GGraphView, StraightEdgeView} from "../../../src/graph/view"
-import {
-    CommandStack,
-    ActionDispatcher,
-    MoveCommand,
-    MoveKind,
-    SelectKind,
-    SelectCommand,
-    RequestModelAction
-} from "../../../src/base/intent"
+import {CommandStack, ActionDispatcher, MoveCommand, SelectCommand, RequestModelAction} from "../../../src/base/intent"
 import {Viewer} from "../../../src/base/view"
 import {DiagramServer, connectDiagramServer} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
-import {RequestModelKind} from "../../../src/base/intent/model-manipulation"
+import {MoveAction} from "../../../src/base/intent/move"
+import {SelectAction} from "../../../src/base/intent/select"
 
 export default function runSimpleServer() {
     // Setup event loop
@@ -22,9 +15,9 @@ export default function runSimpleServer() {
         new Viewer('sprotte')
     );
 
-    eventLoop.dispatcher.registerCommand(MoveKind, MoveCommand)
-    eventLoop.dispatcher.registerCommand(SelectKind, SelectCommand)
-    eventLoop.dispatcher.registerServerRequest(RequestModelKind)
+    eventLoop.dispatcher.registerCommand(MoveAction.KIND, MoveCommand)
+    eventLoop.dispatcher.registerCommand(SelectAction.KIND, SelectCommand)
+    eventLoop.dispatcher.registerServerRequest(RequestModelAction.KIND)
 
     // Register views
     const viewComponentRegistry = eventLoop.viewer.viewRegistry

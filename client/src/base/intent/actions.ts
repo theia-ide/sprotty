@@ -24,14 +24,12 @@ export class ActionHandlerRegistry extends InstanceRegistry<IActionHandler> {
     }
 }
 
-export const UndoKind = 'Undo'
-
 export class UndoAction implements Action {
-    kind = UndoKind
+    static readonly KIND = 'Undo'
+    kind = UndoAction.KIND
 }
 
-export const RedoKind = 'Redo'
-
 export class RedoAction implements Action {
-    kind = RedoKind
+    static readonly KIND = 'Redo'
+    kind = RedoAction.KIND
 }

@@ -1,10 +1,11 @@
 import {EventLoop} from "../../../src/base"
-import {CommandStack, ActionDispatcher, SetModelAction, SelectKind, SelectCommand} from "../../../src/base/intent"
+import {CommandStack, ActionDispatcher, SetModelAction, SelectCommand} from "../../../src/base/intent"
 import {Viewer} from "../../../src/base/view"
 import {Core, ChipSchema, Crossbar, Channel, CoreSchema, ChannelSchema, CrossbarSchema} from "./chipmodel"
 import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
 import {Direction} from "../../../src/utils/geometry"
 import {ChipModelFactory} from "./chipmodel-factory"
+import {SelectAction} from "../../../src/base/intent/select"
 import XUnit = Mocha.reporters.XUnit
 
 export default function runMulticore() {
@@ -89,7 +90,7 @@ export default function runMulticore() {
         new Viewer('sprotte')
     );
 
-    eventLoop.dispatcher.registerCommand(SelectKind, SelectCommand)
+    eventLoop.dispatcher.registerCommand(SelectAction.KIND, SelectCommand)
 
     // register views
     const viewComponentRegistry = eventLoop.viewer.viewRegistry
