@@ -3,6 +3,7 @@ import {h} from "snabbdom"
 import {SModelElement, SModelRoot, SModel} from "../model"
 import {ProviderRegistry} from "../../utils"
 import {Viewer} from "./viewer"
+import {isMoveable} from "../model/behavior"
 
 /**
  * Base interface for the components that turn GModelElements into virtual DOM elements.
@@ -26,6 +27,10 @@ export class ViewRegistry extends ProviderRegistry<View, SModelElement> {
         super()
         this.register(SModel.EMPTY_ROOT.type, EmptyView)
     }
+
+    missing(key: string, element: SModelElement) {
+        return new MissingView()
+    }
 }
 
 export class EmptyView implements View {
@@ -36,5 +41,22 @@ export class EmptyView implements View {
                 id: model.id
             }
         });
+    }
+}
+
+export class MissingView implements View {
+    render(model: SModelElement, context: RenderingContext): VNode {
+        const x = (model as any).x || 0
+        const y = (model as any).y || 0
+        return h('text', {
+            class: {
+                missing: true
+            },
+            attrs: {
+                'text-anchor': 'middle',
+                x: x,
+                y: y,
+            }
+        }, '?' + model.id + '?')
     }
 }

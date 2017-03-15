@@ -28,3 +28,11 @@
     font-family: SansSerif;
     font-size: 10pt;
 }
+
+.missing {
+    stroke-width: 1;
+    stroke: #f00;
+    fill: #f00;
+    font-family: SansSerif;
+    font-size: 14pt;
+}

@@ -39,7 +39,11 @@ export class ProviderRegistry<T, U> {
         if (this.hasKey(key))
             return new this.elements[key](arg)
         else
-            throw new Error('Unknown registry key: ' + key)
+            return this.missing(key, arg)
+    }
+
+    missing(key: string, arg: U): T {
+        throw new Error('Unknown registry key: ' + key)
     }
 }
 
@@ -62,6 +66,10 @@ export class InstanceRegistry<T> {
         if (this.hasKey(key))
             return this.elements[key]
         else
-            throw new Error('Unknown registry key: ' + key)
+            return this.missing(key)
+    }
+
+    missing(key: string): T {
+        throw new Error('Unknown registry key: ' + key)
     }
 }
