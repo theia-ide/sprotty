@@ -1,8 +1,7 @@
-import {SModelRoot, SModelRootSchema, SModelFactory} from "../model"
-import {SGraphFactory} from "../../graph/model";
+import {SModelRoot, SModelRootSchema} from "../model"
+import {SGraphFactory} from "../../graph/model"
 import {Command} from "./commands"
 import {Action} from "./actions"
-import {SourceDelegateActionHandler} from "./source-delegate"
 
 export const SetModelKind = 'SetModel'
 
@@ -39,24 +38,9 @@ export class SetModelCommand implements Command {
     }
 }
 
-export const FetchModelKind = 'FetchModel'
+export const RequestModelKind = 'RequestModel'
 
-export class FetchModelAction implements Action {
-    kind = FetchModelKind
-
-    constructor(public readonly options: any) {
-    }
+export class RequestModelAction implements Action {
+    kind = RequestModelKind
 }
 
-export class FetchModelHandler extends SourceDelegateActionHandler {
-    readonly modelFactory = new SGraphFactory()
-
-    protected callSource(action: FetchModelAction): PromiseLike<any> {
-        return this.source.getDiagram({options: action.options})
-    }
-
-    protected getFollowActions(action: FetchModelAction, result: SModelRootSchema): Action[] {
-        const newRoot = this.modelFactory.createRoot(result)
-        return [new SetModelAction(newRoot)]
-    }
-}

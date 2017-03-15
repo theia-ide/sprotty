@@ -1,10 +1,10 @@
 import {EventSource} from "../../utils"
 import {ViewerCallback} from "../view"
-import {IModelSource} from "../model"
 import {Action, UndoKind, RedoKind, ActionHandlerRegistry} from "./actions"
 import {Command, CommandActionHandler} from "./commands"
 import {SetModelKind, SetModelCommand} from "./model-manipulation"
-import {SourceDelegateActionHandler} from "./source-delegate"
+import {RequestActionHandler, NotificationActionHandler} from "./server-action-handlers"
+import {DiagramServer} from "../../jsonrpc/protocol"
 
 /**
  * Collects actions, converts them to commands and dispatches them.
@@ -12,6 +12,8 @@ import {SourceDelegateActionHandler} from "./source-delegate"
 export class ActionDispatcher extends EventSource<DispatcherCallback> implements ViewerCallback {
 
     readonly actionHandlerRegistry = new ActionHandlerRegistry()
+
+    private _server?: DiagramServer
 
     constructor() {
         super()
@@ -22,14 +24,32 @@ export class ActionDispatcher extends EventSource<DispatcherCallback> implements
         this.registerCommand(SetModelKind, SetModelCommand)
     }
 
+    connect(server: DiagramServer):  void {
+        if(this._server)
+            this.disconnect()
+        this._server = server
+    }
+
+    disconnect(): void {
+        if(this._server)
+            this._server.dispose()
+        this._server = undefined
+    }
+
+    get server(): DiagramServer | undefined {
+        return this._server
+    }
+
     registerCommand(kind: string, commandType: new (Action) => Command) {
         this.actionHandlerRegistry.register(kind, new CommandActionHandler(commandType))
     }
 
-    registerSourceDelegate(kind: string,
-                           sourceDelegateType: new(ActionDispatcher, IModelSource) => SourceDelegateActionHandler,
-                           source: IModelSource) {
-        this.actionHandlerRegistry.register(kind, new sourceDelegateType(this, source))
+    registerServerRequest(kind: string) {
+        this.actionHandlerRegistry.register(kind, new RequestActionHandler(this))
+    }
+
+    registerServerNotification(kind: string) {
+        this.actionHandlerRegistry.register(kind, new NotificationActionHandler(this))
     }
 
     execute(actions: Action[]): void {

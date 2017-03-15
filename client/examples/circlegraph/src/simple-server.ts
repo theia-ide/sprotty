@@ -7,13 +7,12 @@ import {
     MoveKind,
     SelectKind,
     SelectCommand,
-    FetchModelKind,
-    FetchModelAction,
-    FetchModelHandler
+    RequestModelAction
 } from "../../../src/base/intent"
 import {Viewer} from "../../../src/base/view"
 import {DiagramServer, connectDiagramServer} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
+import {RequestModelKind} from "../../../src/base/intent/model-manipulation"
 
 export default function runSimpleServer() {
     // Setup event loop
@@ -25,6 +24,7 @@ export default function runSimpleServer() {
 
     eventLoop.dispatcher.registerCommand(MoveKind, MoveCommand)
     eventLoop.dispatcher.registerCommand(SelectKind, SelectCommand)
+    eventLoop.dispatcher.registerServerRequest(RequestModelKind)
 
     // Register views
     const viewComponentRegistry = eventLoop.viewer.viewRegistry
@@ -34,10 +34,9 @@ export default function runSimpleServer() {
 
     // Connect to the diagram server
     connectDiagramServer('ws://localhost:62000').then((diagramServer: DiagramServer) => {
-        eventLoop.dispatcher.registerSourceDelegate(FetchModelKind, FetchModelHandler, diagramServer)
-
+        eventLoop.dispatcher.connect(diagramServer)
         // Run
-        const action = new FetchModelAction({});
+        const action = new RequestModelAction();
         eventLoop.dispatcher.dispatch(action);
     })
 

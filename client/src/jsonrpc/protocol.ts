@@ -1,7 +1,7 @@
 import {CancellationToken, MessageConnection, NotificationType1, RequestType1} from "vscode-jsonrpc"
-import {IModelSource, GetDiagramParams, SelectionParams, SModelRootSchema} from "../base/model"
+import {Action} from "../base/intent/actions"
 
-export class DiagramServer implements IModelSource {
+export class DiagramServer {
 
     protected connection: MessageConnection;
 
@@ -12,23 +12,20 @@ export class DiagramServer implements IModelSource {
     dispose() {
     }
 
-    getDiagram(params: GetDiagramParams, token?: CancellationToken): Thenable<SModelRootSchema> {
+    request(params: Action, token?: CancellationToken): Thenable<Action[]> {
         token = token || CancellationToken.None;
-        return this.connection.sendRequest(GetDiagramRequest.type, params, token);
+        return this.connection.sendRequest(ActionRequest.type, params, token);
     }
 
-    elementSelected(params: SelectionParams): void {
-        return this.connection.sendNotification(ElementSelectedNotification.type, params);
+    notify(params: Action): void {
+        return this.connection.sendNotification(ActionNotification.type, params);
     }
-
 }
 
-// RPC method definitions
-
-export namespace GetDiagramRequest {
-    export const type = new RequestType1<GetDiagramParams, SModelRootSchema, void, void>('getDiagram');
+export namespace ActionRequest {
+    export const type = new RequestType1<Action, Action[], void, void>('requestAction');
 }
 
-export namespace ElementSelectedNotification {
-    export const type = new NotificationType1<SelectionParams, void>('elementSelected');
+export namespace ActionNotification {
+    export const type = new NotificationType1<Action, void>('notifyAction');
 }
