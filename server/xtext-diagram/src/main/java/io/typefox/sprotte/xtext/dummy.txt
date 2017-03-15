@@ -1,0 +1,1 @@
+This file can be removed as soon as the project contains some code
