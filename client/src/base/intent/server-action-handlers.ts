@@ -14,8 +14,14 @@ export class RequestActionHandler implements IActionHandler {
         const promise = server.request(action)
         if (promise) {
             promise.then(result => {
-                if(result && result.length > 0)
-                    this.actionDispatcher.execute(result)
+                if(result) {
+                    if(Array.isArray(result)) {
+                        if (result.length > 0)
+                            this.actionDispatcher.execute(result)
+                    } else {
+                        this.actionDispatcher.execute([result])
+                    }
+                }
             })
         }
         if(this.immediateHandler)

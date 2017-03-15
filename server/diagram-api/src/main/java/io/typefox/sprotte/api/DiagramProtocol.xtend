@@ -2,7 +2,6 @@ package io.typefox.sprotte.api
 
 import io.typefox.sprotte.protocolgen.JsonRPC
 import java.util.List
-import java.util.Map
 import java.util.concurrent.CompletableFuture
 import org.eclipse.lsp4j.generator.JsonRpcData
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification
@@ -13,10 +12,10 @@ import org.eclipse.lsp4j.jsonrpc.validation.NonNull
 interface DiagramServer {
 	
     @JsonRequest
-    def CompletableFuture<GModelRoot> getDiagram(GetDiagramParams params)
+    def CompletableFuture<SetModelAction> requestModel(RequestModelAction params)
     
     @JsonNotification
-    def void elementSelected(SelectionParams params)
+    def void elementSelected(SelectAction params)
     
 }
 
@@ -26,17 +25,21 @@ interface DiagramClient {
 }
 
 @JsonRpcData
-class GetDiagramParams {
-
-    Map<String, String> options
-    
+class RequestModelAction {
+	String kind = 'requestModel'
 }
 
 @JsonRpcData
-class SelectionParams {
+class SetModelAction {
+	String kind = 'setModel'
+	GModelRoot newRoot
+}
 
-    Map<String, String> options
-    
+@JsonRpcData
+class SelectAction {
+	String kind = 'elementSelected'
+	List<String> selectedElementsIDs
+	List<String> deselectedElementsIDs
 }
 
 @JsonRpcData

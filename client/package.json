@@ -19,7 +19,7 @@
   "devDependencies": {
     "@types/chai": "^3.4.35",
     "@types/node": "^6.0.42",
-    "@types/core-js": "^0.9.35",
+    "@types/core-js": "0.9.35",
     "@types/mocha": "^2.2.39",
     "chai": "^3.5.0",
     "mocha": "^3.2.0",
