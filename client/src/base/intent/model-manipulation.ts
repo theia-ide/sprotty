@@ -1,6 +1,6 @@
 import {SModelRoot, SModelRootSchema} from "../model"
 import {SGraphFactory} from "../../graph/model"
-import {Command} from "./commands"
+import {Command, CommandExecutionContext} from "./commands"
 import {Action} from "./actions"
 
 
@@ -8,7 +8,7 @@ export class SetModelAction implements Action {
     static readonly KIND = 'setModel'
     kind = SetModelAction.KIND
 
-    constructor(public readonly newRoot: SModelRoot) {
+    constructor(public readonly newRoot: SModelRootSchema) {
     }
 }
 
@@ -19,9 +19,9 @@ export class SetModelCommand implements Command {
     constructor(public action: SetModelAction) {
     }
 
-    execute(element: SModelRoot) {
+    execute(element: SModelRoot, context: CommandExecutionContext) {
         this.oldRoot = element
-        this.newRoot = this.action.newRoot
+        this.newRoot = context.modelFactory.createRoot(this.action.newRoot)
         return this.newRoot
     }
 

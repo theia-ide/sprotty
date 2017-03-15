@@ -1,21 +1,26 @@
 import {EventLoop} from "../../../src/base"
 import {
-    CommandStack, ActionDispatcher, SelectKind, SelectCommand, FetchModelKind, FetchModelHandler, FetchModelAction
+    CommandStack,
+    ActionDispatcher,
+    SelectCommand
 } from "../../../src/base/intent"
 import {Viewer} from "../../../src/base/view"
 import {DiagramServer, connectDiagramServer} from "../../../src/jsonrpc"
 import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
-import XUnit = Mocha.reporters.XUnit
+import {RequestModelAction} from "../../../src/base/intent/model-manipulation"
+import {ChipModelFactory} from "./chipmodel-factory"
+import {SelectAction} from "../../../src/base/intent/select"
 
 export default function runMulticoreServer() {
     // Setup event loop
     const eventLoop = new EventLoop(
         new ActionDispatcher(),
-        new CommandStack(),
+        new CommandStack(new ChipModelFactory()),
         new Viewer('sprotte')
     );
 
-    eventLoop.dispatcher.registerCommand(SelectKind, SelectCommand)
+    eventLoop.dispatcher.registerCommand(SelectAction.KIND, SelectCommand)
+    eventLoop.dispatcher.registerServerRequest(RequestModelAction.KIND)
 
     // Register views
     const viewComponentRegistry = eventLoop.viewer.viewRegistry
@@ -26,10 +31,9 @@ export default function runMulticoreServer() {
 
     // Connect to the diagram server
     connectDiagramServer('ws://localhost:8080/diagram').then((diagramServer: DiagramServer) => {
-        eventLoop.dispatcher.registerSourceDelegate(FetchModelKind, FetchModelHandler, diagramServer)
-
+        eventLoop.dispatcher.connect(diagramServer)
         // Run
-        const action = new FetchModelAction({});
+        const action = new RequestModelAction();
         eventLoop.dispatcher.dispatch(action);
     })
 }

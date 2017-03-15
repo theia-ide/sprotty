@@ -2,6 +2,7 @@ import {DispatcherCallback} from "./action-dispatcher"
 import {Command, CommandExecutionContext} from "./commands"
 import {SModelRoot, SModel} from "../model"
 import {EventSource} from "../../utils"
+import {SModelFactory} from "../model/smodel-factory"
 
 /**
  * The component that holds the model and applies the commands to change it.
@@ -15,6 +16,10 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
     undoStack: Command[] = []
     redoStack: Command[] = []
 
+    constructor(protected modelFactory: SModelFactory) {
+        super()
+    }
+
     execute(commands: Command[]): void {
         commands.forEach(
             (command) => {
@@ -24,6 +29,7 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
                             (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
                                 const context: CommandExecutionContext = {
                                     modelChanged: this,
+                                    modelFactory: this.modelFactory,
                                     duration: this.defaultDuration,
                                     root: model
                                 }
@@ -71,6 +77,7 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
                         } else {
                             const context: CommandExecutionContext = {
                                 modelChanged: this,
+                                modelFactory: this.modelFactory,
                                 duration: this.defaultDuration,
                                 root: model
                             }
@@ -106,6 +113,7 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
                         } else {
                             const context: CommandExecutionContext = {
                                 modelChanged: this,
+                                modelFactory: this.modelFactory,
                                 duration: this.defaultDuration,
                                 root: model
                             }

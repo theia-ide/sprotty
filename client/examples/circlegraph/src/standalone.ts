@@ -18,7 +18,7 @@ export default function runStandalone() {
     // Setup event loop
     const eventLoop = new EventLoop(
         new ActionDispatcher(),
-        new CommandStack(),
+        new CommandStack(new SGraphFactory()),
         new Viewer('sprotte')
     );
 

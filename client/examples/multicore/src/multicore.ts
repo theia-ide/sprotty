@@ -6,7 +6,6 @@ import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
 import {Direction} from "../../../src/utils/geometry"
 import {ChipModelFactory} from "./chipmodel-factory"
 import {SelectAction} from "../../../src/base/intent/select"
-import XUnit = Mocha.reporters.XUnit
 
 export default function runMulticore() {
     // init gmodel
@@ -86,7 +85,7 @@ export default function runMulticore() {
     // setup event loop
     const eventLoop = new EventLoop(
         new ActionDispatcher(),
-        new CommandStack(),
+        new CommandStack(new ChipModelFactory()),
         new Viewer('sprotte')
     );
 

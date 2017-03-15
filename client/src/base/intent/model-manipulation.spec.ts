@@ -3,6 +3,9 @@ import { SetModelCommand, SetModelAction } from "./model-manipulation"
 import { expect } from 'chai';
 import 'mocha'
 import {SGraphFactory} from "../../graph/model/sgraph-factory"
+import {CommandExecutionContext} from "./commands"
+import {SModel} from "../model/smodel"
+import EMPTY_ROOT = SModel.EMPTY_ROOT
 
 // note: it looks like the API for the set-model command is not
 // finalized. Let's still give the tests a first shot - we can adjust
@@ -35,10 +38,17 @@ describe('test set model command execution, undo, redo and merge', () => {
 
     // create the command
     const cmd = new SetModelCommand(mySetModelAction)
+    const context: CommandExecutionContext = {
+        root: EMPTY_ROOT,
+        modelFactory: graphFactory,
+        duration: 0,
+        modelChanged: undefined!
+    }
+
 
     it('set model command', () => {
         // execute command
-        const newModel = cmd.execute(model1 /* the old model */)
+        const newModel = cmd.execute(model1 /* the old model */, context)
         expect(model2).equal(newModel)
         expect(model1).equal(cmd.oldRoot)
         expect(model2).equal(cmd.newRoot)

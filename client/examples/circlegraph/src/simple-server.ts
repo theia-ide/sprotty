@@ -6,12 +6,13 @@ import {DiagramServer, connectDiagramServer} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
 import {MoveAction} from "../../../src/base/intent/move"
 import {SelectAction} from "../../../src/base/intent/select"
+import {SGraphFactory} from "../../../src/graph/model/sgraph-factory"
 
 export default function runSimpleServer() {
     // Setup event loop
     const eventLoop = new EventLoop(
         new ActionDispatcher(),
-        new CommandStack(),
+        new CommandStack(new SGraphFactory()),
         new Viewer('sprotte')
     );
 
