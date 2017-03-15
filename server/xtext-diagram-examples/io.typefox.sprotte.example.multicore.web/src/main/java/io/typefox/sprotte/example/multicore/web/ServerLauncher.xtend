@@ -1,25 +1,68 @@
 package io.typefox.sprotte.example.multicore.web
 
+import io.typefox.sprotte.server.services.DiagramServerEndpoint
+import io.typefox.sprotte.server.services.GuiceEndpointConfigurator
 import java.net.InetSocketAddress
+import javax.websocket.CloseReason
+import javax.websocket.EndpointConfig
+import javax.websocket.Session
+import javax.websocket.server.ServerEndpointConfig
+import org.apache.log4j.Logger
 import org.eclipse.jetty.annotations.AnnotationConfiguration
 import org.eclipse.jetty.server.Server
+import org.eclipse.jetty.servlet.ServletContextHandler
 import org.eclipse.jetty.util.log.Slf4jLog
 import org.eclipse.jetty.webapp.MetaInfConfiguration
 import org.eclipse.jetty.webapp.WebAppContext
 import org.eclipse.jetty.webapp.WebInfConfiguration
 import org.eclipse.jetty.webapp.WebXmlConfiguration
+import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer
+import org.eclipse.lsp4j.jsonrpc.messages.Message
+import org.eclipse.xtext.util.DisposableRegistry
 
 /**
  * This program starts an HTTP server for testing the web integration of your DSL.
  * Just execute it and point a web browser to http://localhost:8080/
  */
 class ServerLauncher {
+	
+	static val LOG = Logger.getLogger(ServerLauncher)
+	
+	static class TestServerEndpoint extends DiagramServerEndpoint {
+    	override onOpen(Session session, EndpointConfig config) {
+    		LOG.info('''Opened connection [«session.id»]''')
+    		session.maxIdleTimeout = 0
+    		super.onOpen(session, config)
+    	}
+    	
+		override protected logServerMessage(Message message) {
+			LOG.info('''SERVER: «message»''')
+		}
+		
+		override protected logClientMessage(Message message) {
+			LOG.info('''CLIENT: «message»''')
+		}
+		
+	    override onError(Session session, Throwable t) {
+			LOG.error('''Unhandled error occurred [«session.id»]''', t)
+			super.onError(session, t)
+		}
+		
+		override onClose(Session session, CloseReason closeReason) {
+			LOG.info('''Closed connection [«session.id»]''')
+			super.onClose(session, closeReason)
+		}
+	}
+	
 	def static void main(String[] args) {
+		val injector = new MulticoreAllocationWebSetup().createInjectorAndDoEMFRegistration()
+		val disposableRegistry = injector.getInstance(DisposableRegistry)
+		
 		val server = new Server(new InetSocketAddress('localhost', 8080))
 		server.handler = new WebAppContext => [
 			resourceBase = 'src/main/webapp'
-			welcomeFiles = #["index.html"]
-			contextPath = "/"
+			welcomeFiles = #['index.html']
+			contextPath = '/'
 			configurations = #[
 				new AnnotationConfiguration,
 				new WebXmlConfiguration,
@@ -27,8 +70,14 @@ class ServerLauncher {
 				new MetaInfConfiguration
 			]
 			setAttribute(WebInfConfiguration.CONTAINER_JAR_PATTERN, '.*/io\\.typefox\\.sprotte\\.example\\.multicore\\.web/.*,.*\\.jar')
-			setInitParameter("org.mortbay.jetty.servlet.Default.useFileMappedBuffer", "false")
+			setInitParameter('org.mortbay.jetty.servlet.Default.useFileMappedBuffer', 'false')
 		]
+		
+		val container = WebSocketServerContainerInitializer.configureContext(server.handler as ServletContextHandler)
+		val endpointConfigBuilder = ServerEndpointConfig.Builder.create(TestServerEndpoint, '/diagram')
+				.configurator(new GuiceEndpointConfigurator(injector))
+		container.addEndpoint(endpointConfigBuilder.build())
+		
 		val log = new Slf4jLog(ServerLauncher.name)
 		try {
 			server.start
@@ -46,6 +95,8 @@ class ServerLauncher {
 		} catch (Exception exception) {
 			log.warn(exception.message)
 			System.exit(1)
+		} finally {
+			disposableRegistry.dispose()
 		}
 	}
 }

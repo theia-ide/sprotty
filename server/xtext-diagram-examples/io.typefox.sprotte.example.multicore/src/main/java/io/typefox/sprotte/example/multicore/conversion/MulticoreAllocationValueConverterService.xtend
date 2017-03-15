@@ -6,8 +6,8 @@ import org.eclipse.xtext.conversion.IValueConverter
 
 class MulticoreAllocationValueConverterService extends DefaultTerminalConverters {
 	
-	@ValueConverter(rule = "INTEGER")
-	def IValueConverter<Integer> INTEGER() {
+	@ValueConverter(rule = "Integer")
+	def IValueConverter<Integer> Integer() {
 		// Use the same value converter as the INT rule, but convert to Integer instead of primitive int
 		INT
 	}

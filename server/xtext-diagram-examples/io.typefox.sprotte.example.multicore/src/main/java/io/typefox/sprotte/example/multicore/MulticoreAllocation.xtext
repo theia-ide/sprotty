@@ -19,7 +19,7 @@ CoreAllocation:
 	'}';
 
 CoreSelector:
-	from=INTEGER ('..' to=INTEGER)?;
+	from=Integer ('..' to=Integer)?;
 
 Statement:
 	ExecuteStatement | LoopStatement | SendStatement | ReceiveStatement;
@@ -29,7 +29,7 @@ ExecuteStatement:
 
 LoopStatement:
 	{Loop}
-	'loop' (times=INTEGER 'times')? '{'
+	'loop' (times=Integer 'times')? '{'
 		statements+=Statement*
 	'}';
 
@@ -42,5 +42,5 @@ ReceiveStatement:
 enum Direction:
 	north | east | south | west;
 
-terminal INTEGER returns ecore::EIntegerObject:
-	('0'..'9')+;
+Integer returns ecore::EIntegerObject:
+	INT;

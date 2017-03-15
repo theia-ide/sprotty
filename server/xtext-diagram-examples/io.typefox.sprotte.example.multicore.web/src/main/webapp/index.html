@@ -2,7 +2,7 @@
 <head>
 	<meta http-equiv="Content-Type" content="text/html; charset=UTF-8">
 	<meta http-equiv="Content-Language" content="en-us">
-	<title>Example Web Editor</title>
+	<title>Multicore Allocation Web Editor</title>
 	<link rel="stylesheet" type="text/css" href="xtext/2.11.0/xtext-ace.css"/>
 	<link rel="stylesheet" type="text/css" href="style.css"/>
 	<script src="webjars/requirejs/2.3.2/require.min.js"></script>
@@ -30,15 +30,36 @@
 	</script>
 </head>
 <body>
+<div id="xtext-editor" data-editor-xtext-lang="multicore">schedule Example for 16 cores
 
-<div class="container">
-	<div class="header">
-		<h1>Example MulticoreAllocation Web Editor</h1>
-	</div>
-	<div class="content">
-		<div id="xtext-editor" data-editor-xtext-lang="multicore"></div>
-	</div>
+task t1
+task t2
+task t3
+task t4
+task t5
+task t6
+
+core 0..3 {
+    loop {
+        execute t1
+        send to south
+    }
+}
+
+core 4, 8, 12 {
+    loop {
+        loop 3 times {
+            receive from west
+            execute t2
+            send to south
+        }
+        loop 3 times {
+            receive from north
+            execute t3
+            send to east
+        }
+    }
+}
 </div>
-
 </body>
 </html>

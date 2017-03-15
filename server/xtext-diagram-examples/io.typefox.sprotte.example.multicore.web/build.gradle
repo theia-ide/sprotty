@@ -5,6 +5,7 @@ plugins {
 webAppDirName = 'src/main/webapp'
 
 dependencies {
+	compile project(':diagram-server')
 	compile project(':xtext-diagram-examples:io.typefox.sprotte.example.multicore.ide')
 	compile "org.eclipse.xtext:org.eclipse.xtext.xbase.web:$versions.xtext"
 	compile "org.eclipse.xtext:org.eclipse.xtext.web.servlet:$versions.xtext"
@@ -12,8 +13,9 @@ dependencies {
 	compile "org.webjars:requirejs:2.3.2"
 	compile "org.webjars:jquery:2.2.4"
 	compile "org.webjars:ace:1.2.3"
-	providedCompile "org.eclipse.jetty:jetty-annotations:9.3.8.v20160314"
-	providedCompile "org.slf4j:slf4j-simple:1.7.21"
+	providedCompile "org.eclipse.jetty:jetty-annotations:$versions.jetty"
+    providedCompile "org.eclipse.jetty.websocket:javax-websocket-server-impl:$versions.jetty"
+	providedCompile "org.slf4j:slf4j-simple:$versions.slf4j"
 }
 
 task jettyRun(type:JavaExec) {
