@@ -1,8 +1,6 @@
 import {EventLoop} from "../../../src/base"
 import {
-    CommandStack,
-    ActionDispatcher,
-    SelectCommand
+    CommandStack, ActionDispatcher, SelectCommand, NotificationActionHandler, CommandActionHandler
 } from "../../../src/base/intent"
 import {Viewer} from "../../../src/base/view"
 import {DiagramServer, connectDiagramServer} from "../../../src/jsonrpc"
@@ -19,7 +17,8 @@ export default function runMulticoreServer() {
         new Viewer('sprotte')
     );
 
-    eventLoop.dispatcher.registerCommand(SelectAction.KIND, SelectCommand)
+    eventLoop.dispatcher.registerServerNotification(SelectAction.KIND,
+        new NotificationActionHandler(eventLoop.dispatcher, new CommandActionHandler(SelectCommand)))
     eventLoop.dispatcher.registerServerRequest(RequestModelAction.KIND)
 
     // Register views

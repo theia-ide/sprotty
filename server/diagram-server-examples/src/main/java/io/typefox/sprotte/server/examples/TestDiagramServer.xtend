@@ -8,11 +8,11 @@ import io.typefox.sprotte.api.RequestModelAction
 import io.typefox.sprotte.api.SelectAction
 import io.typefox.sprotte.api.SetModelAction
 import java.util.concurrent.CompletableFuture
-import org.apache.log4j.Logger
+import org.eclipse.jetty.util.log.Slf4jLog
 
 class TestDiagramServer implements DiagramServer {
 
-	static val LOG = Logger.getLogger(TestDiagramServer)
+	static val LOG = new Slf4jLog(ServerLauncher.name)
 
 	override requestModel(RequestModelAction params) {
 		val model = new SetModelAction => [

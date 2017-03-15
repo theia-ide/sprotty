@@ -1,15 +1,17 @@
 package io.typefox.sprotte.example.multicore.conversion
 
+import com.google.inject.Inject
 import org.eclipse.xtext.common.services.DefaultTerminalConverters
-import org.eclipse.xtext.conversion.ValueConverter
 import org.eclipse.xtext.conversion.IValueConverter
+import org.eclipse.xtext.conversion.ValueConverter
 
 class MulticoreAllocationValueConverterService extends DefaultTerminalConverters {
 	
+	@Inject IntegerValueConverter integerValueconverter
+	
 	@ValueConverter(rule = "Integer")
 	def IValueConverter<Integer> Integer() {
-		// Use the same value converter as the INT rule, but convert to Integer instead of primitive int
-		INT
+		integerValueconverter
 	}
 	
 }

@@ -1,6 +1,9 @@
 import {EventLoop} from "../../../src/base"
 import {GGraphView, StraightEdgeView} from "../../../src/graph/view"
-import {CommandStack, ActionDispatcher, MoveCommand, SelectCommand, RequestModelAction} from "../../../src/base/intent"
+import {
+    CommandStack, ActionDispatcher, MoveCommand, SelectCommand, RequestModelAction, NotificationActionHandler,
+    CommandActionHandler
+} from "../../../src/base/intent"
 import {Viewer} from "../../../src/base/view"
 import {DiagramServer, connectDiagramServer} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
@@ -17,7 +20,8 @@ export default function runSimpleServer() {
     );
 
     eventLoop.dispatcher.registerCommand(MoveAction.KIND, MoveCommand)
-    eventLoop.dispatcher.registerCommand(SelectAction.KIND, SelectCommand)
+    eventLoop.dispatcher.registerServerNotification(SelectAction.KIND,
+        new NotificationActionHandler(eventLoop.dispatcher, new CommandActionHandler(SelectCommand)))
     eventLoop.dispatcher.registerServerRequest(RequestModelAction.KIND)
 
     // Register views

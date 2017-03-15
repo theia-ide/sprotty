@@ -5,19 +5,19 @@ import io.typefox.sprotte.api.DiagramServer
 import io.typefox.sprotte.server.services.DiagramServerEndpoint
 import io.typefox.sprotte.server.services.GuiceEndpointConfigurator
 import java.net.InetSocketAddress
+import javax.websocket.CloseReason
 import javax.websocket.EndpointConfig
 import javax.websocket.Session
 import javax.websocket.server.ServerEndpointConfig
-import org.apache.log4j.Logger
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletContextHandler
+import org.eclipse.jetty.util.log.Slf4jLog
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer
 import org.eclipse.lsp4j.jsonrpc.messages.Message
-import javax.websocket.CloseReason
 
 class ServerLauncher {
 	
-	static val LOG = Logger.getLogger(ServerLauncher)
+	static val LOG = new Slf4jLog(ServerLauncher.name)
 	
 	static class TestServerEndpoint extends DiagramServerEndpoint {
     	override onOpen(Session session, EndpointConfig config) {
@@ -35,7 +35,7 @@ class ServerLauncher {
 		}
 		
 	    override onError(Session session, Throwable t) {
-			LOG.error('''Unhandled error occurred [«session.id»]''', t)
+			LOG.warn('''Unhandled error occurred [«session.id»]''', t)
 			super.onError(session, t)
 		}
 		
@@ -72,7 +72,7 @@ class ServerLauncher {
 		    ].start
 			server.join
 		} catch (Exception exception) {
-			LOG.error('Shutting down due to exception', exception)
+			LOG.warn('Shutting down due to exception', exception)
 			System.exit(1)
 		}
 	}
