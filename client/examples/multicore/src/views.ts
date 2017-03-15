@@ -10,7 +10,9 @@ export class ChipView implements View {
         const vNode = h('svg', {
                 key: model.id,
                 attrs: {
-                    id: model.id
+                    id: model.id,
+                    viewBox: "0 0 " + model.columns * (CoreView.width + CoreView.dist) + 
+                    " " + (model.columns + 1) * (CoreView.width + CoreView.dist)
                 }
             }, [
                 h('g', {
