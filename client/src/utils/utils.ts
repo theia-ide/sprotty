@@ -28,7 +28,7 @@ export class ProviderRegistry<T, U> {
             return this.missing(key, arg)
     }
 
-    missing(key: string, arg: U): T {
+    protected missing(key: string, arg: U): T {
         throw new Error('Unknown registry key: ' + key)
     }
 }
@@ -56,7 +56,7 @@ export class InstanceRegistry<T> {
             return this.missing(key)
     }
 
-    missing(key: string): T {
+    protected missing(key: string): T {
         throw new Error('Unknown registry key: ' + key)
     }
 }
