@@ -98,10 +98,7 @@ export class SModelRoot extends SParentElement implements SModelRootSchema {
  */
 export class SModelIndex {
 
-    constructor() {
-    }
-
-    id2element: Map<SModelElement> = {}
+    private id2element: Map<SModelElement> = {}
 
     add(element: SModelElement): void {
         this.id2element[element.id] = element
