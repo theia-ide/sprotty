@@ -1,19 +1,23 @@
-import {TYPES, DefaultContainerFactory, ViewerOptions, SModelFactory} from "../../../src/base"
+import {ContainerModule, Container} from "inversify"
+import {TYPES,  SModelFactory} from "../../../src/base"
 import {SGraphFactory} from "../../../src/graph";
 import {DiagramServer, connectDiagramServer} from "../../../src/jsonrpc";
+import defaultModule from "../../../src/base/container-module"
 
-export default class CirclegraphContainerFactory extends DefaultContainerFactory {
-    protected bindSModelFactory() {
-        this.container.bind(SModelFactory).to(SGraphFactory).inSingletonScope()
-    }
-    private diagramServer?: Promise<DiagramServer>
-    protected bindDiagramServerProvider() {
-        this.container.bind(TYPES.DiagramServerProvider).toProvider<DiagramServer>((context) => {
-            return () => {
-                if (!this.diagramServer)
-                    this.diagramServer = connectDiagramServer('ws://localhost:62000')
-                return this.diagramServer
-            }
-        })
-    }
+const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+    rebind(SModelFactory).to(SGraphFactory).inSingletonScope()
+    let diagramServer: Promise<DiagramServer>
+    bind(TYPES.DiagramServerProvider).toProvider<DiagramServer>((context) => {
+        return () => {
+            if (!diagramServer)
+                diagramServer = connectDiagramServer('ws://localhost:62000')
+            return diagramServer
+        }
+    })
+})
+
+export default () => {
+    const container = new Container()
+    container.load(defaultModule, circlegraphModule)
+    return container
 }

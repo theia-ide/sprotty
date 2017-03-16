@@ -5,10 +5,10 @@ import {Direction} from "../../../src/utils"
 import {Core, ChipSchema, Crossbar, Channel, CoreSchema, ChannelSchema, CrossbarSchema} from "./chipmodel"
 import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
 import {ChipModelFactory} from "./chipmodel-factory"
-import ContainerFactory from "./inversify.config"
+import createContainer from "./inversify.config"
 
 export default function runMulticore() {
-    const container = new ContainerFactory().make()
+    const container = createContainer()
 
     // init gmodel
     const dim = 8

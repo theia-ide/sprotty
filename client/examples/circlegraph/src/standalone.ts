@@ -6,10 +6,10 @@ import {
     GGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema
 } from "../../../src/graph"
 import {CircleNodeView} from "./views"
-import ContainerFactory from "./inversify.config"
+import createContainer from "./inversify.config"
 
 export default function runStandalone() {
-    const container = new ContainerFactory().make()
+    const container = createContainer()
 
     // Register commands
     const actionHandlerRegistry = container.get(ActionHandlerRegistry)

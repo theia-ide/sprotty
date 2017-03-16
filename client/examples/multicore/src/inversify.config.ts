@@ -1,19 +1,23 @@
-import {TYPES, DefaultContainerFactory, ViewerOptions, SModelFactory} from "../../../src/base"
-import {DiagramServer, connectDiagramServer} from "../../../src/jsonrpc";
+import {ContainerModule, Container} from "inversify"
+import {TYPES,  SModelFactory} from "../../../src/base"
 import {ChipModelFactory} from "./chipmodel-factory";
+import {DiagramServer, connectDiagramServer} from "../../../src/jsonrpc";
+import defaultModule from "../../../src/base/container-module"
 
-export default class MulticoreContainerFactory extends DefaultContainerFactory {
-    protected bindSModelFactory() {
-        this.container.bind(SModelFactory).to(ChipModelFactory).inSingletonScope()
-    }
-    private diagramServer?: Promise<DiagramServer>
-    protected bindDiagramServerProvider() {
-        this.container.bind(TYPES.DiagramServerProvider).toProvider<DiagramServer>((context) => {
-            return () => {
-                if (!this.diagramServer)
-                    this.diagramServer = connectDiagramServer('ws://localhost:8080/diagram')
-                return this.diagramServer
-            }
-        })
-    }
+const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+    rebind(SModelFactory).to(ChipModelFactory).inSingletonScope()
+    let diagramServer: Promise<DiagramServer>
+    bind(TYPES.DiagramServerProvider).toProvider<DiagramServer>((context) => {
+        return () => {
+            if (!diagramServer)
+                diagramServer = connectDiagramServer('ws://localhost:8080/diagram')
+            return diagramServer
+        }
+    })
+})
+
+export default () => {
+    const container = new Container()
+    container.load(defaultModule, multicoreModule)
+    return container
 }

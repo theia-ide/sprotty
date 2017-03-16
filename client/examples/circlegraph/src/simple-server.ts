@@ -1,14 +1,14 @@
 import {
-    TYPES, ActionDispatcher, MoveCommand, MoveAction, SelectCommand, SetModelAction, SelectAction,
+    TYPES, ActionDispatcher, MoveCommand, MoveAction, SelectCommand, SelectAction,
     ActionHandlerRegistry, ViewRegistry, CommandActionHandler, RequestModelAction
 } from "../../../src/base"
 import {GGraphView, StraightEdgeView} from "../../../src/graph"
-import {DiagramServer, DiagramServerProvider} from "../../../src/jsonrpc"
+import {DiagramServerProvider} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
-import ContainerFactory from "./inversify.config"
+import createContainer from "./inversify.config"
 
 export default function runSimpleServer() {
-    const container = new ContainerFactory().make()
+    const container = createContainer()
 
     // Register commands
     const actionHandlerRegistry = container.get(ActionHandlerRegistry)

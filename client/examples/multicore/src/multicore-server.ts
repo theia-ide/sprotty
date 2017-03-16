@@ -1,13 +1,13 @@
 import {
-    TYPES, ActionDispatcher,  SelectCommand, SelectAction, ActionHandlerRegistry, ViewRegistry,CommandActionHandler,
+    TYPES, ActionDispatcher,  SelectCommand, SelectAction, ActionHandlerRegistry, ViewRegistry, CommandActionHandler,
     RequestModelAction
 } from "../../../src/base"
 import {DiagramServerProvider} from "../../../src/jsonrpc"
 import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
-import ContainerFactory from "./inversify.config"
+import createContainer from "./inversify.config"
 
 export default function runMulticoreServer() {
-    const container = new ContainerFactory().make()
+    const container = createContainer()
 
     // Register commands
     const actionHandlerRegistry = container.get(ActionHandlerRegistry)
