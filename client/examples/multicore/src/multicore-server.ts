@@ -2,7 +2,7 @@ import {
     TYPES, ActionDispatcher,  SelectCommand, SelectAction, ActionHandlerRegistry, ViewRegistry, CommandActionHandler,
     RequestModelAction
 } from "../../../src/base"
-import {DiagramServerProvider} from "../../../src/jsonrpc"
+import {DiagramServer} from "../../../src/jsonrpc"
 import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
 import createContainer from "./inversify.config"
 
@@ -23,9 +23,10 @@ export default function runMulticoreServer() {
     viewRegistry.register('channel', ChannelView)
 
     // Connect to the diagram server
-    container.get<DiagramServerProvider>(TYPES.DiagramServerProvider)().then((diagramServer) => {
+    const diagramServer = container.get(DiagramServer)
+    diagramServer.connectWebSocket('ws://localhost:8080/diagram').then(connection => {
         // Run
-        const action = new RequestModelAction();
-        dispatcher.dispatch(action);
+        const action = new RequestModelAction()
+        dispatcher.dispatch(action)
     })
 }

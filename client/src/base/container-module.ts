@@ -1,12 +1,12 @@
 import {ContainerModule, interfaces} from "inversify"
-import {DiagramServerProvider} from "../jsonrpc";
+import {DiagramServer} from "../jsonrpc"
 import {
     ActionDispatcher, CommandStack, ActionHandlerRegistry, RequestActionHandler, NotificationActionHandler,
     IActionHandler
-} from "./intent";
-import {Viewer, ViewRegistry, ViewerOptions} from "./view";
-import {SModelFactory} from "./model";
-import {TYPES} from "./types";
+} from "./intent"
+import {Viewer, ViewRegistry, ViewerOptions} from "./view"
+import {SModelFactory} from "./model"
+import {TYPES} from "./types"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Action Dispatcher ---------------------------------------------
@@ -54,18 +54,20 @@ let defaultContainerModule = new ContainerModule(bind => {
     // Action Handlers ---------------------------------------------
     bind(TYPES.RequestActionHandlerFactory).toFactory<RequestActionHandler>((context: interfaces.Context) => {
         return (immediateHandler?: IActionHandler) => {
-            const diagramServerProvider = context.container.get<DiagramServerProvider>(TYPES.DiagramServerProvider)
+            const diagramServer = context.container.get(DiagramServer)
             const actionDispatcher = context.container.get(ActionDispatcher)
-            return new RequestActionHandler(diagramServerProvider, actionDispatcher, immediateHandler)
+            return new RequestActionHandler(diagramServer, actionDispatcher, immediateHandler)
         }
     })
     bind(TYPES.NotificationActionHandlerFactory).toFactory<NotificationActionHandler>((context: interfaces.Context) => {
         return (immediateHandler?: IActionHandler) => {
-            const diagramServerProvider = context.container.get<DiagramServerProvider>(TYPES.DiagramServerProvider)
-            const actionDispatcher = context.container.get(ActionDispatcher)
-            return new NotificationActionHandler(diagramServerProvider, actionDispatcher, immediateHandler)
+            const diagramServer = context.container.get(DiagramServer)
+            return new NotificationActionHandler(diagramServer, immediateHandler)
         }
     })
+
+    // Diagram Server ---------------------------------------------
+    bind(DiagramServer).toSelf().inSingletonScope()
 })
 
 export default defaultContainerModule

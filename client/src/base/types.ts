@@ -6,6 +6,5 @@ export let TYPES = {
     ViewerProvider: Symbol('ViewerProvider'),
     ViewerOptions: Symbol('ViewerOptions'),
     RequestActionHandlerFactory: Symbol('RequestActionHandlerFactory'),
-    NotificationActionHandlerFactory: Symbol('NotificationActionHandlerFactory'),
-    DiagramServerProvider: Symbol('DiagramServerProvider')
+    NotificationActionHandlerFactory: Symbol('NotificationActionHandlerFactory')
 }

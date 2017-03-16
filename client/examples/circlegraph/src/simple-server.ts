@@ -3,7 +3,7 @@ import {
     ActionHandlerRegistry, ViewRegistry, CommandActionHandler, RequestModelAction
 } from "../../../src/base"
 import {GGraphView, StraightEdgeView} from "../../../src/graph"
-import {DiagramServerProvider} from "../../../src/jsonrpc"
+import {DiagramServer} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
 
@@ -24,10 +24,11 @@ export default function runSimpleServer() {
     viewRegistry.register('edge:straight', StraightEdgeView)
 
     // Connect to the diagram server
-    container.get<DiagramServerProvider>(TYPES.DiagramServerProvider)().then((diagramServer) => {
+    const diagramServer = container.get(DiagramServer)
+    diagramServer.connectWebSocket('ws://localhost:62000').then(connection => {
         // Run
-        const action = new RequestModelAction();
-        dispatcher.dispatch(action);
+        const action = new RequestModelAction()
+        dispatcher.dispatch(action)
     })
 
 }
