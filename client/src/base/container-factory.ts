@@ -41,21 +41,21 @@ export class DefaultContainerFactory {
     }
 
     protected bindActionDispatcher() {
-        this.container.bind(TYPES.ActionDispatcher).to(ActionDispatcher).inSingletonScope()
+        this.container.bind(ActionDispatcher).toSelf().inSingletonScope()
     }
 
     protected bindActionDispatcherProvider() {
         this.container.bind(TYPES.ActionDispatcherProvider).toProvider<ActionDispatcher>((context) => {
             return () => {
                 return new Promise<ActionDispatcher>((resolve) => {
-                    resolve(context.container.get<ActionDispatcher>(TYPES.ActionDispatcher))
+                    resolve(context.container.get(ActionDispatcher))
                 })
             }
         })
     }
 
     protected bindCommandStack() {
-        this.container.bind(TYPES.CommandStack).to(CommandStack).inSingletonScope()
+        this.container.bind(CommandStack).toSelf().inSingletonScope()
         this.container.bind(TYPES.ICommandStack).to(CommandStack).inSingletonScope()
     }
 
@@ -63,14 +63,14 @@ export class DefaultContainerFactory {
         this.container.bind(TYPES.CommandStackProvider).toProvider<CommandStack>((context) => {
             return () => {
                 return new Promise<CommandStack>((resolve) => {
-                    resolve(context.container.get<CommandStack>(TYPES.CommandStack))
+                    resolve(context.container.get(CommandStack))
                 })
             }
         })
     }
 
     protected bindViewer() {
-        this.container.bind(TYPES.Viewer).to(Viewer).inSingletonScope()
+        this.container.bind(Viewer).toSelf().inSingletonScope()
         this.container.bind(TYPES.IViewer).to(Viewer).inSingletonScope()
     }
 
@@ -78,7 +78,7 @@ export class DefaultContainerFactory {
         this.container.bind(TYPES.ViewerProvider).toProvider<Viewer>((context) => {
             return () => {
                 return new Promise<Viewer>((resolve) => {
-                    resolve(context.container.get<Viewer>(TYPES.Viewer))
+                    resolve(context.container.get(Viewer))
                 })
             }
         })
@@ -91,22 +91,22 @@ export class DefaultContainerFactory {
     }
 
     protected bindActionHandlerRegistry() {
-        this.container.bind(TYPES.ActionHandlerRegistry).to(ActionHandlerRegistry).inSingletonScope()
+        this.container.bind(ActionHandlerRegistry).toSelf().inSingletonScope()
     }
 
     protected bindViewRegistry() {
-        this.container.bind(TYPES.ViewRegistry).to(ViewRegistry).inSingletonScope()
+        this.container.bind(ViewRegistry).toSelf().inSingletonScope()
     }
 
     protected bindSModelFactory() {
-        this.container.bind(TYPES.SModelFactory).to(SModelFactory).inSingletonScope()
+        this.container.bind(SModelFactory).toSelf().inSingletonScope()
     }
 
     protected bindRequestActionHandlerFactory() {
         this.container.bind(TYPES.RequestActionHandlerFactory).toFactory<RequestActionHandler>((context: interfaces.Context) => {
             return (immediateHandler?: IActionHandler) => {
                 const diagramServerProvider = context.container.get<DiagramServerProvider>(TYPES.DiagramServerProvider)
-                const actionDispatcher = context.container.get<ActionDispatcher>(TYPES.ActionDispatcher)
+                const actionDispatcher = context.container.get(ActionDispatcher)
                 return new RequestActionHandler(diagramServerProvider, actionDispatcher, immediateHandler)
             }
         })
@@ -116,7 +116,7 @@ export class DefaultContainerFactory {
         this.container.bind(TYPES.NotificationActionHandlerFactory).toFactory<NotificationActionHandler>((context: interfaces.Context) => {
             return (immediateHandler?: IActionHandler) => {
                 const diagramServerProvider = context.container.get<DiagramServerProvider>(TYPES.DiagramServerProvider)
-                const actionDispatcher = context.container.get<ActionDispatcher>(TYPES.ActionDispatcher)
+                const actionDispatcher = context.container.get(ActionDispatcher)
                 return new NotificationActionHandler(diagramServerProvider, actionDispatcher, immediateHandler)
             }
         })

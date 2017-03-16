@@ -12,13 +12,13 @@ export default function runStandalone() {
     const container = new ContainerFactory().make()
 
     // Register commands
-    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
+    const actionHandlerRegistry = container.get(ActionHandlerRegistry)
     actionHandlerRegistry.registerCommand(MoveAction.KIND, MoveCommand)
     actionHandlerRegistry.registerCommand(SelectAction.KIND, SelectCommand)
     actionHandlerRegistry.registerCommand(ResizeAction.KIND, ResizeCommand)
 
     // Register views
-    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
+    const viewRegistry = container.get(ViewRegistry)
     viewRegistry.register('graph', GGraphView)
     viewRegistry.register('node:circle', CircleNodeView)
     viewRegistry.register('edge:straight', StraightEdgeView)
@@ -31,7 +31,7 @@ export default function runStandalone() {
     const graph = modelFactory.createRoot({id: 'graph', type: 'graph', children: [node0, node1, edge0]});
 
     // Run
-    const dispatcher = container.get<ActionDispatcher>(TYPES.ActionDispatcher)
+    const dispatcher = container.get(ActionDispatcher)
     const action = new SetModelAction(graph);
     dispatcher.dispatch(action);
 

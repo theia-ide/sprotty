@@ -28,7 +28,7 @@ export interface IViewer {
 @injectable()
 export class Viewer implements VNodeDecorator, IViewer {
 
-    @inject(TYPES.ViewRegistry) public viewRegistry: ViewRegistry
+    @inject(ViewRegistry) public viewRegistry: ViewRegistry
     @inject(TYPES.ViewerOptions) protected options: ViewerOptions
     @inject(TYPES.ActionDispatcherProvider) protected actionDispatcherProvider: ActionDispatcherProvider
 

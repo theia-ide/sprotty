@@ -19,7 +19,7 @@ export class CommandStack implements ICommandStack {
 
     defaultDuration = 250
 
-    @inject(TYPES.SModelFactory) protected modelFactory: SModelFactory
+    @inject(SModelFactory) protected modelFactory: SModelFactory
     @inject(TYPES.IViewer) protected viewer: IViewer
 
     protected currentPromise: Promise<SModelRoot> = Promise.resolve(SModel.EMPTY_ROOT)

@@ -85,18 +85,18 @@ export default function runMulticore() {
     const chip = modelFactory.createRoot(chipSchema)
 
     // Register commands
-    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
+    const actionHandlerRegistry = container.get(ActionHandlerRegistry)
     actionHandlerRegistry.registerCommand(SelectAction.KIND, SelectCommand)
 
     // Register views
-    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
+    const viewRegistry = container.get(ViewRegistry)
     viewRegistry.register('chip', ChipView)
     viewRegistry.register('core', CoreView)
     viewRegistry.register('crossbar', CrossbarView)
     viewRegistry.register('channel', ChannelView)
 
     // Run
-    const dispatcher = container.get<ActionDispatcher>(TYPES.ActionDispatcher)
+    const dispatcher = container.get(ActionDispatcher)
     const action = new SetModelAction(chip);
     dispatcher.dispatch(action);
 

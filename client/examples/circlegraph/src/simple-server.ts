@@ -11,14 +11,14 @@ export default function runSimpleServer() {
     const container = new ContainerFactory().make()
 
     // Register commands
-    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
-    const dispatcher = container.get<ActionDispatcher>(TYPES.ActionDispatcher)
+    const actionHandlerRegistry = container.get(ActionHandlerRegistry)
+    const dispatcher = container.get(ActionDispatcher)
     actionHandlerRegistry.registerCommand(MoveAction.KIND, MoveCommand)
     actionHandlerRegistry.registerServerNotification(SelectAction.KIND, new CommandActionHandler(SelectCommand))
     actionHandlerRegistry.registerServerRequest(RequestModelAction.KIND)
 
     // Register views
-    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
+    const viewRegistry = container.get(ViewRegistry)
     viewRegistry.register('graph', GGraphView)
     viewRegistry.register('node:circle', CircleNodeView)
     viewRegistry.register('edge:straight', StraightEdgeView)

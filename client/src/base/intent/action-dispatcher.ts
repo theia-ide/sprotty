@@ -10,7 +10,7 @@ import {ICommandStack} from "./command-stack";
 @injectable()
 export class ActionDispatcher {
 
-    @inject(TYPES.ActionHandlerRegistry) protected actionHandlerRegistry: ActionHandlerRegistry
+    @inject(ActionHandlerRegistry) protected actionHandlerRegistry: ActionHandlerRegistry
     @inject(TYPES.ICommandStack) protected commandStack: ICommandStack
 
     dispatchAll(actions: Action[]): void {
