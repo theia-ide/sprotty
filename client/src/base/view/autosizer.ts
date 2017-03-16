@@ -6,46 +6,56 @@ import {almostEquals} from "../../utils/geometry"
 import {Viewer} from "./viewer"
 import {ElementResize, ResizeAction} from "../intent/resize"
 
+class VNodeAndSizeable{
+    vnode: VNode
+    element: Sizeable & SModelElement
+}
+
 export class Autosizer implements VNodeDecorator {
 
-    resizes: ElementResize[] = []
+    s: SVGGElement
+    sizeables: VNodeAndSizeable[] = []
 
     constructor(private viewer: Viewer) {
     }
 
-    private nodeInserted(vnode: VNode, element: SModelElement & Sizeable) {
-        if (vnode.elm && vnode.elm instanceof Element) {
-            const bounds = vnode.elm.getBoundingClientRect()
-            if (bounds
-                && (!almostEquals(bounds.width, element.width)
-                || !almostEquals(bounds.height, element.height))) {
-                this.resizes.push({
-                    elementId: element.id,
-                    newSize: {
-                        width: bounds.width,
-                        height: bounds.height
-                    }
-                })
-            }
-        }
-    }
-
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (isSizeable(element) && element.autosize === true) {
-            const data = vnode.data!
-            if (!data.hook)
-                data.hook = {}
-            data.hook.postpatch = (vnode) => {
-                this.nodeInserted(vnode, element)
-            }
+            this.sizeables.push({
+                vnode: vnode,
+                element: element
+            })
         }
         return vnode
     }
 
     postUpdate() {
-        if (this.resizes.length > 0) {
-            this.viewer.fireAction(new ResizeAction(this.resizes))
-            this.resizes = []
-        }
+        window.requestAnimationFrame(() => {
+            const resizes: ElementResize[] = []
+            this.sizeables.forEach(
+                sizeable => {
+                    const vnode = sizeable.vnode
+                    const element = sizeable.element
+                    if (vnode.elm) {
+                        const bounds = (vnode.elm as any).getBBox()
+                        if (bounds
+                            && (!almostEquals(bounds.width, element.width)
+                            || !almostEquals(bounds.height, element.height))) {
+                            resizes.push({
+                                elementId: element.id,
+                                newSize: {
+                                    width: bounds.width,
+                                    height: bounds.height
+                                }
+                            })
+                        }
+                    }
+
+                }
+            )
+            if(resizes.length > 0)
+                this.viewer.fireAction(new ResizeAction(resizes))
+
+        })
     }
 }

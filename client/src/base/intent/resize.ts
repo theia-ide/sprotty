@@ -56,6 +56,7 @@ export class ResizeCommand extends AbstractCommand {
             resize => {
                 resize.element.width = resize.oldSize.width
                 resize.element.height = resize.oldSize.height
+                resize.element.autosize = true
             }
         )
         return root
@@ -66,6 +67,7 @@ export class ResizeCommand extends AbstractCommand {
             resize => {
                 resize.element.width = resize.newSize.width
                 resize.element.height = resize.newSize.height
+                resize.element.autosize = false
             }
         )
         return root
