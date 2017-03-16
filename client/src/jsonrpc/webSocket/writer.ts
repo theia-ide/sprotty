@@ -3,11 +3,11 @@ import {AbstractStreamMessageWriter} from "../common"
 export class WebSocketMessageWriter extends AbstractStreamMessageWriter {
 
     constructor(protected socket: WebSocket) {
-        super();
+        super()
     }
 
     protected send(content: string): void {
-        this.socket.send(content);
+        this.socket.send(content)
     }
 
 }

@@ -1,2 +1,2 @@
-export * from './sgraph';
-export * from './sgraph-factory';
+export * from './sgraph'
+export * from './sgraph-factory'

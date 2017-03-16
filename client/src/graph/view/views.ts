@@ -20,7 +20,7 @@ export class GGraphView implements View {
                 }
             }, [
                 h('g', {}, context.viewer.renderChildren(model, context))]
-        );
+        )
         return vNode
     }
 }

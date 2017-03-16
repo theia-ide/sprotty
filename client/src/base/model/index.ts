@@ -1,3 +1,3 @@
-export * from './behavior';
-export * from './smodel';
-export * from './smodel-factory';
+export * from './behavior'
+export * from './smodel'
+export * from './smodel-factory'

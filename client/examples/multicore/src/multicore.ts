@@ -97,16 +97,16 @@ export default function runMulticore() {
 
     // Run
     const dispatcher = container.get(ActionDispatcher)
-    const action = new SetModelAction(chip);
-    dispatcher.dispatch(action);
+    const action = new SetModelAction(chip)
+    dispatcher.dispatch(action)
 
     function changeModel() {
         for (let i = 0; i < chip.children.length; ++i) {
             const child = chip.children[i] as (Core | Channel | Crossbar)
             child.load = Math.max(0, Math.min(1, child.load + Math.random() * 0.2 - 0.1))
         }
-        const action = new SetModelAction(chip);
-        dispatcher.dispatch(action);
+        const action = new SetModelAction(chip)
+        dispatcher.dispatch(action)
     }
 
     setInterval(changeModel.bind(this), 50)

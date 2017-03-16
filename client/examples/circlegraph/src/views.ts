@@ -26,11 +26,11 @@ export class CircleNodeView extends GNodeView {
     }
 
     getAnchor(node: SNode, refPoint: Point, arrowLength: number) {
-        const dx = node.x - refPoint.x;
-        const dy = node.y - refPoint.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const normX = dx / distance;
-        const normY = dy / distance;
+        const dx = node.x - refPoint.x
+        const dy = node.y - refPoint.y
+        const distance = Math.sqrt(dx * dx + dy * dy)
+        const normX = dx / distance
+        const normY = dy / distance
         return {
             x: node.x - normX * (this.getRadius(node) + arrowLength),
             y: node.y - normY * (this.getRadius(node) + arrowLength)

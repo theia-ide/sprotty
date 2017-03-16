@@ -62,15 +62,15 @@ export class DiagramServer {
     request(action: Action, token?: CancellationToken): Thenable<Action[]> {
         if (!this.connection)
             throw new Error("The diagram server is not connected.")
-        token = token || CancellationToken.None;
+        token = token || CancellationToken.None
         const requestType = new RequestType1<Action, Action[], void, void>(action.kind)
-        return this.connection.sendRequest(requestType, action, token);
+        return this.connection.sendRequest(requestType, action, token)
     }
 
     notify(action: Action): void {
         if (!this.connection)
             throw new Error("The diagram server is not connected.")
         const notificationType = new NotificationType1<Action, void>(action.kind)
-        return this.connection.sendNotification(notificationType, action);
+        return this.connection.sendNotification(notificationType, action)
     }
 }
