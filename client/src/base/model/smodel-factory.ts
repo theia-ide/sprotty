@@ -1,6 +1,12 @@
 import {
-    SModelElementSchema, SModelElement, SModelRootSchema, SModelRoot, SParentElementSchema, SParentElement,
-    SChildElement, SModelIndex
+    SModelElementSchema,
+    SModelElement,
+    SModelRootSchema,
+    SModelRoot,
+    SParentElementSchema,
+    SParentElement,
+    SChildElement,
+    SModelIndex
 } from "./smodel"
 
 export class SModelFactory {

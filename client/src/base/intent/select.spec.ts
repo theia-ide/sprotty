@@ -1,9 +1,11 @@
 import {expect} from "chai"
 import "mocha"
 import {SModelRoot} from "../model"
-import {SGraph, SNode, SGraphFactory} from "../../graph/model"
+import {SNode, SGraphFactory} from "../../graph/model"
 import {SelectCommand, SelectAction} from "./select"
 import {CommandExecutionContext} from "./commands"
+import {SModel} from "../model/smodel"
+import EMPTY_ROOT = SModel.EMPTY_ROOT
 
 
 describe('test select command execution, undo, redo and merge', () => {
@@ -31,6 +33,13 @@ describe('test select command execution, undo, redo and merge', () => {
     // global so we can carry-over the model, as it's updated, 
     // from test case to test case (i,e, select, undo, redo, merge)
     var newModel: SModelRoot
+
+    const context: CommandExecutionContext = {
+        root: EMPTY_ROOT,
+        modelFactory: modelFactory,
+        duration: 0,
+        modelChanged: undefined!
+    }
 
     it('select command', () => {
         // execute command
@@ -80,7 +89,7 @@ describe('test select command execution, undo, redo and merge', () => {
     // "merge" is N/A for selection
     it('merge select command (N/A)', () => {
         // test "merge"
-        const result = cmd.merge(cmd);
+        const result = cmd.merge(cmd, context);
         expect(false).to.equal(result)
 
         // confirm selection is as expected (i.e. unchanged)

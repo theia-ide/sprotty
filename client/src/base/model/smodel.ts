@@ -1,5 +1,5 @@
 import {Map} from "../../utils"
-import {SModelFactory} from "./smodel-factory";
+import {SModelFactory} from "./smodel-factory"
 
 export interface SModelElementSchema {
     type: string

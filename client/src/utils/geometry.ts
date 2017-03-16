@@ -7,7 +7,7 @@ export interface Dimension {
 }
 
 export function almostEquals(a: number, b: number) {
-    return Math.abs(a - b) < 1e-9
+    return Math.abs(a - b) < 1e-3
 }
 
 export enum Direction { left, right, up, down}

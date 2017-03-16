@@ -61,9 +61,11 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
                 this.undoStack.push(command)
             }
         } else {
-            this.undoStack.push(command)
+            if(command.isPushable())
+                this.undoStack.push(command)
         }
-        this.redoStack = []
+        if(command.isPushable())
+            this.redoStack = []
     }
 
     undo() {

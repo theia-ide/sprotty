@@ -34,5 +34,6 @@ export class KeyTool implements VNodeDecorator {
         return vnode
     }
 
-    postUpdate() {}
+    postUpdate() {
+    }
 }

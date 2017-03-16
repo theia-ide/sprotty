@@ -2,7 +2,7 @@ import {Point, Map} from "../../utils"
 import {Animation} from "../animations"
 import {SModelElement, SModelRoot, Moveable} from "../model"
 import {Action} from "./actions"
-import {Command, CommandExecutionContext} from "./commands"
+import {Command, CommandExecutionContext, AbstractCommand} from "./commands"
 import {SModelIndex} from "../model/smodel"
 
 
@@ -28,11 +28,12 @@ export type ResolvedElementMove = {
     toPosition: Point
 }
 
-export class MoveCommand implements Command {
+export class MoveCommand extends AbstractCommand {
 
     resolvedMoves: Map<ResolvedElementMove> = {}
 
     constructor(public action: MoveAction) {
+        super()
     }
 
     execute(model: SModelRoot, context: CommandExecutionContext) {
@@ -86,7 +87,7 @@ export class MoveCommand implements Command {
                         existingMove.toPosition = otherMove.toPosition
                     } else {
                         const resolvedMove = this.resolve(otherMove, context.root.index)
-                        if(resolvedMove)
+                        if (resolvedMove)
                             this.resolvedMoves[resolvedMove.elementId] = resolvedMove
                     }
                 }
@@ -104,7 +105,7 @@ export class MoveAnimation extends Animation {
     }
 
     tween(t: number) {
-        for(let elementId in this.elementMoves) {
+        for (let elementId in this.elementMoves) {
             const elementMove = this.elementMoves[elementId]
             if (this.reverse) {
                 elementMove.element.x = (1 - t) * elementMove.toPosition.x + t * elementMove.fromPosition.x

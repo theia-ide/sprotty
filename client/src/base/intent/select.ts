@@ -1,5 +1,5 @@
-import {SModelRoot, SModelElement, SChildElement, Selectable, isSelectable} from "../model"
-import {Command} from "./commands"
+import {SModelRoot, SChildElement, Selectable, isSelectable} from "../model"
+import {AbstractCommand} from "./commands"
 import {Action} from "./actions"
 
 export class SelectAction implements Action {
@@ -15,12 +15,13 @@ type ElementSelection= {
     index: number
 }
 
-export class SelectCommand implements Command {
+export class SelectCommand extends AbstractCommand {
 
     selected: ElementSelection[] = []
     deselected: ElementSelection[] = []
 
     constructor(public action: SelectAction) {
+        super()
     }
 
     execute(model: SModelRoot): SModelRoot {
@@ -70,9 +71,5 @@ export class SelectCommand implements Command {
         this.selected.forEach(selection => selection.element.selected = true)
         this.deselected.forEach(selection => selection.element.selected = false)
         return model
-    }
-
-    merge(command: Command): boolean {
-        return false
     }
 }

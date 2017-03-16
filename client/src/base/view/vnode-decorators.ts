@@ -26,5 +26,6 @@ export class AddRemoveAnimationDecorator implements VNodeDecorator {
         return vnode
     }
 
-    postUpdate() {}
+    postUpdate() {
+    }
 }

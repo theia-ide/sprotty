@@ -24,14 +24,14 @@ export class ActionDispatcher extends EventSource<DispatcherCallback> implements
         this.registerCommand(SetModelAction.KIND, SetModelCommand)
     }
 
-    connect(server: DiagramServer):  void {
-        if(this._server)
+    connect(server: DiagramServer): void {
+        if (this._server)
             this.disconnect()
         this._server = server
     }
 
     disconnect(): void {
-        if(this._server)
+        if (this._server)
             this._server.dispose()
         this._server = undefined
     }
@@ -45,13 +45,13 @@ export class ActionDispatcher extends EventSource<DispatcherCallback> implements
     }
 
     registerServerRequest(kind: string, handler?: RequestActionHandler) {
-        if(!handler)
+        if (!handler)
             handler = new RequestActionHandler(this)
         this.actionHandlerRegistry.register(kind, handler)
     }
 
     registerServerNotification(kind: string, handler?: NotificationActionHandler) {
-        if(!handler)
+        if (!handler)
             handler = new NotificationActionHandler(this)
         this.actionHandlerRegistry.register(kind, handler)
     }

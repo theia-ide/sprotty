@@ -92,7 +92,7 @@ export class MouseTool implements VNodeDecorator {
         }
         if (isSelectable(element) || isMoveable(element)) {
             VNodeUtils.on(vnode, 'mousedown', this.mouseDown.bind(this), element)
-            VNodeUtils.on(vnode, 'mouseup',  this.mouseUp.bind(this), element)
+            VNodeUtils.on(vnode, 'mouseup', this.mouseUp.bind(this), element)
         }
         if (element instanceof SModelRoot) {
             VNodeUtils.on(vnode, 'mousemove', this.mouseMove.bind(this), element)
@@ -107,5 +107,6 @@ export class MouseTool implements VNodeDecorator {
         return vnode
     }
 
-    postUpdate() {}
+    postUpdate() {
+    }
 }

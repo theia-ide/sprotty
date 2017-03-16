@@ -1,7 +1,6 @@
-import { SGraph, SNode } from "../../graph/model/sgraph"
-import { SetModelCommand, SetModelAction } from "./model-manipulation"
-import { expect } from 'chai';
-import 'mocha'
+import {SetModelCommand, SetModelAction} from "./model-manipulation"
+import {expect} from "chai"
+import "mocha"
 import {SGraphFactory} from "../../graph/model/sgraph-factory"
 import {CommandExecutionContext} from "./commands"
 import {SModel} from "../model/smodel"
@@ -61,14 +60,14 @@ describe('test set model command execution, undo, redo and merge', () => {
 
     it('redo set model command', () => {
         // test "redo": returns new model
-        expect(model2).equal(cmd.redo(/* note: param ignored */ modelBogus ))
+        expect(model2).equal(cmd.redo(/* note: param ignored */ modelBogus))
 
     });
 
     // "merge" is N/A
     it('merge set model command (N/A)', () => {
         // test "merge"
-        const result = cmd.merge(/* note: param ignored */ cmd);
+        const result = cmd.merge(/* note: param ignored */ cmd, context);
         expect(false).to.equal(result)
     });
 })

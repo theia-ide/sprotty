@@ -1,5 +1,5 @@
 import {SModelRoot} from "../model"
-import {CommandStackCallback, CommandStack} from "./command-stack"
+import {CommandStackCallback} from "./command-stack"
 import {IActionHandler, Action} from "./actions"
 import {SModelFactory} from "../model/smodel-factory"
 
@@ -16,6 +16,18 @@ export interface Command {
     redo(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
 
     merge(command: Command, context: CommandExecutionContext): boolean
+
+    isPushable(): boolean
+}
+
+export abstract class AbstractCommand {
+    merge(command: Command, context: CommandExecutionContext): boolean {
+        return false
+    }
+
+    isPushable(): boolean {
+        return true
+    }
 }
 
 type GModelRootOrPromise = SModelRoot | Promise<SModelRoot>

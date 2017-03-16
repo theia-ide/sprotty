@@ -1,5 +1,11 @@
 import {
-    SModelRootSchema, SModelElementSchema, SParentElementSchema, SChildElement, SModelRoot, Moveable, Selectable
+    SModelRootSchema,
+    SModelElementSchema,
+    SParentElementSchema,
+    SChildElement,
+    SModelRoot,
+    Moveable,
+    Selectable
 } from "../../base/model"
 import {Sizeable} from "../../base/model/behavior"
 

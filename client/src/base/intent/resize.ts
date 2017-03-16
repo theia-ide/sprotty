@@ -3,7 +3,7 @@ import {Action} from "./actions"
 import {SModelElement, SModelRoot} from "../model/smodel"
 import {Dimension} from "../../utils/geometry"
 import {Sizeable, isSizeable} from "../model/behavior"
-import {Command, CommandExecutionContext} from "./commands"
+import {CommandExecutionContext, AbstractCommand} from "./commands"
 
 export class ResizeAction implements Action {
     static readonly KIND = 'resize'
@@ -24,17 +24,19 @@ type ResolvedElementResize = {
     newSize: Dimension
 }
 
-export class ResizeCommand implements Command {
+export class ResizeCommand extends AbstractCommand {
 
     private resizes: ResolvedElementResize[] = []
 
-    constructor(private action: ResizeAction) {}
+    constructor(private action: ResizeAction) {
+        super()
+    }
 
     execute(root: SModelRoot, context: CommandExecutionContext) {
         this.action.resizes.forEach(
             resize => {
                 const element = root.index.getById(resize.elementId)
-                if(element && isSizeable(element)) {
+                if (element && isSizeable(element)) {
                     this.resizes.push({
                         element: element,
                         oldSize: {
@@ -69,8 +71,7 @@ export class ResizeCommand implements Command {
         return root
     }
 
-    merge(command: Command, context: CommandExecutionContext): boolean {
+    isPushable(): boolean {
         return false
     }
-
 }

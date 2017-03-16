@@ -9,13 +9,13 @@ export class RequestActionHandler implements IActionHandler {
 
     handle(action: Action): Command[] {
         const server = this.actionDispatcher.server
-        if(!server)
+        if (!server)
             throw Error('Cannot send request. No server connection.')
         const promise = server.request(action)
         if (promise) {
             promise.then(result => {
-                if(result) {
-                    if(Array.isArray(result)) {
+                if (result) {
+                    if (Array.isArray(result)) {
                         if (result.length > 0)
                             this.actionDispatcher.execute(result)
                     } else {
@@ -24,7 +24,7 @@ export class RequestActionHandler implements IActionHandler {
                 }
             })
         }
-        if(this.immediateHandler)
+        if (this.immediateHandler)
             return this.immediateHandler.handle(action)
         else
             return [];
@@ -38,10 +38,10 @@ export class NotificationActionHandler implements IActionHandler {
 
     handle(action: Action): Command[] {
         const server = this.actionDispatcher.server
-        if(!server)
+        if (!server)
             throw Error('Cannot send notification. No server connection.')
         server.notify(action)
-        if(this.immediateHandler)
+        if (this.immediateHandler)
             return this.immediateHandler.handle(action)
         else
             return [];

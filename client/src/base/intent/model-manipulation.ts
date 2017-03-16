@@ -1,6 +1,5 @@
 import {SModelRoot, SModelRootSchema} from "../model"
-import {SGraphFactory} from "../../graph/model"
-import {Command, CommandExecutionContext} from "./commands"
+import {CommandExecutionContext, AbstractCommand} from "./commands"
 import {Action} from "./actions"
 
 
@@ -12,11 +11,12 @@ export class SetModelAction implements Action {
     }
 }
 
-export class SetModelCommand implements Command {
+export class SetModelCommand extends AbstractCommand {
     oldRoot: SModelRoot
     newRoot: SModelRoot
 
     constructor(public action: SetModelAction) {
+        super()
     }
 
     execute(element: SModelRoot, context: CommandExecutionContext) {
@@ -31,10 +31,6 @@ export class SetModelCommand implements Command {
 
     redo(element: SModelRoot) {
         return this.newRoot
-    }
-
-    merge(command: Command): boolean {
-        return false
     }
 }
 

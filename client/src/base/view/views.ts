@@ -3,7 +3,6 @@ import {h} from "snabbdom"
 import {SModelElement, SModelRoot, SModel} from "../model"
 import {ProviderRegistry} from "../../utils"
 import {Viewer} from "./viewer"
-import {isMoveable} from "../model/behavior"
 
 /**
  * Base interface for the components that turn GModelElements into virtual DOM elements.
