@@ -1,3 +1,5 @@
+import "reflect-metadata"
+import { injectable } from "inversify"
 import {
     SModelElementSchema,
     SModelElement,
@@ -9,6 +11,7 @@ import {
     SModelIndex
 } from "./smodel"
 
+@injectable()
 export class SModelFactory {
 
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {

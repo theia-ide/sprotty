@@ -1,13 +1,15 @@
-import {EventLoop} from "../../../src/base"
-import {CommandStack, ActionDispatcher, SetModelAction, SelectCommand} from "../../../src/base/intent"
-import {Viewer} from "../../../src/base/view"
+import {
+    TYPES, ActionDispatcher, SetModelAction, SelectCommand, SelectAction, ActionHandlerRegistry, ViewRegistry
+} from "../../../src/base"
+import {Direction} from "../../../src/utils"
 import {Core, ChipSchema, Crossbar, Channel, CoreSchema, ChannelSchema, CrossbarSchema} from "./chipmodel"
 import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
-import {Direction} from "../../../src/utils/geometry"
 import {ChipModelFactory} from "./chipmodel-factory"
-import {SelectAction} from "../../../src/base/intent/select"
+import ContainerFactory from "./inversify.config"
 
 export default function runMulticore() {
+    const container = new ContainerFactory().make()
+
     // init gmodel
     const dim = 8
     const cores: CoreSchema[] = []
@@ -82,25 +84,21 @@ export default function runMulticore() {
     }
     const chip = modelFactory.createRoot(chipSchema)
 
-    // setup event loop
-    const eventLoop = new EventLoop(
-        new ActionDispatcher(),
-        new CommandStack(new ChipModelFactory()),
-        new Viewer('sprotte')
-    );
+    // Register commands
+    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
+    actionHandlerRegistry.registerCommand(SelectAction.KIND, SelectCommand)
 
-    eventLoop.dispatcher.registerCommand(SelectAction.KIND, SelectCommand)
+    // Register views
+    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
+    viewRegistry.register('chip', ChipView)
+    viewRegistry.register('core', CoreView)
+    viewRegistry.register('crossbar', CrossbarView)
+    viewRegistry.register('channel', ChannelView)
 
-    // register views
-    const viewComponentRegistry = eventLoop.viewer.viewRegistry
-    viewComponentRegistry.register('chip', ChipView)
-    viewComponentRegistry.register('core', CoreView)
-    viewComponentRegistry.register('crossbar', CrossbarView)
-    viewComponentRegistry.register('channel', ChannelView)
-
-    // run
+    // Run
+    const dispatcher = container.get<ActionDispatcher>(TYPES.ActionDispatcher)
     const action = new SetModelAction(chip);
-    eventLoop.dispatcher.dispatch(action);
+    dispatcher.dispatch(action);
 
     function changeModel() {
         for (let i = 0; i < chip.children.length; ++i) {
@@ -108,7 +106,7 @@ export default function runMulticore() {
             child.load = Math.max(0, Math.min(1, child.load + Math.random() * 0.2 - 0.1))
         }
         const action = new SetModelAction(chip);
-        eventLoop.dispatcher.dispatch(action);
+        dispatcher.dispatch(action);
     }
 
     setInterval(changeModel.bind(this), 50)

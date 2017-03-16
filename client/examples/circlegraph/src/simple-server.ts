@@ -1,41 +1,33 @@
-import {EventLoop} from "../../../src/base"
-import {GGraphView, StraightEdgeView} from "../../../src/graph/view"
 import {
-    CommandStack, ActionDispatcher, MoveCommand, SelectCommand, RequestModelAction, NotificationActionHandler,
-    CommandActionHandler
-} from "../../../src/base/intent"
-import {Viewer} from "../../../src/base/view"
-import {DiagramServer, connectDiagramServer} from "../../../src/jsonrpc"
+    TYPES, ActionDispatcher, MoveCommand, MoveAction, SelectCommand, SetModelAction, SelectAction,
+    ActionHandlerRegistry, ViewRegistry, CommandActionHandler, RequestModelAction
+} from "../../../src/base"
+import {GGraphView, StraightEdgeView} from "../../../src/graph"
+import {DiagramServer, DiagramServerProvider} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
-import {MoveAction} from "../../../src/base/intent/move"
-import {SelectAction} from "../../../src/base/intent/select"
-import {SGraphFactory} from "../../../src/graph/model/sgraph-factory"
+import ContainerFactory from "./inversify.config"
 
 export default function runSimpleServer() {
-    // Setup event loop
-    const eventLoop = new EventLoop(
-        new ActionDispatcher(),
-        new CommandStack(new SGraphFactory()),
-        new Viewer('sprotte')
-    );
+    const container = new ContainerFactory().make()
 
-    eventLoop.dispatcher.registerCommand(MoveAction.KIND, MoveCommand)
-    eventLoop.dispatcher.registerServerNotification(SelectAction.KIND,
-        new NotificationActionHandler(eventLoop.dispatcher, new CommandActionHandler(SelectCommand)))
-    eventLoop.dispatcher.registerServerRequest(RequestModelAction.KIND)
+    // Register commands
+    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
+    const dispatcher = container.get<ActionDispatcher>(TYPES.ActionDispatcher)
+    actionHandlerRegistry.registerCommand(MoveAction.KIND, MoveCommand)
+    actionHandlerRegistry.registerServerNotification(SelectAction.KIND, new CommandActionHandler(SelectCommand))
+    actionHandlerRegistry.registerServerRequest(RequestModelAction.KIND)
 
     // Register views
-    const viewComponentRegistry = eventLoop.viewer.viewRegistry
-    viewComponentRegistry.register('graph', GGraphView)
-    viewComponentRegistry.register('node:circle', CircleNodeView)
-    viewComponentRegistry.register('edge:straight', StraightEdgeView)
+    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
+    viewRegistry.register('graph', GGraphView)
+    viewRegistry.register('node:circle', CircleNodeView)
+    viewRegistry.register('edge:straight', StraightEdgeView)
 
     // Connect to the diagram server
-    connectDiagramServer('ws://localhost:62000').then((diagramServer: DiagramServer) => {
-        eventLoop.dispatcher.connect(diagramServer)
+    container.get<DiagramServerProvider>(TYPES.DiagramServerProvider)().then((diagramServer) => {
         // Run
         const action = new RequestModelAction();
-        eventLoop.dispatcher.dispatch(action);
+        dispatcher.dispatch(action);
     })
 
 }

@@ -23,3 +23,5 @@ export class DiagramServer {
         return this.connection.sendNotification(notificationType, action);
     }
 }
+
+export type DiagramServerProvider = () => Promise<DiagramServer>

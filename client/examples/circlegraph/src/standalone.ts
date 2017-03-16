@@ -1,37 +1,27 @@
-import {EventLoop} from "../../../src/base"
 import {
-    ActionDispatcher,
-    CommandStack,
-    MoveCommand,
-    ElementMove,
-    MoveAction,
-    SelectCommand,
-    SetModelAction
-} from "../../../src/base/intent"
-import {Viewer} from "../../../src/base/view"
-import {GGraphView, StraightEdgeView} from "../../../src/graph/view"
-import {SNode, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph/model"
+    TYPES, ActionDispatcher, MoveCommand, ElementMove, MoveAction, SelectCommand, SetModelAction, SelectAction,
+    ActionHandlerRegistry, ViewRegistry, ResizeAction, ResizeCommand
+} from "../../../src/base"
+import {
+    GGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema
+} from "../../../src/graph"
 import {CircleNodeView} from "./views"
-import {SelectAction} from "../../../src/base/intent/select"
-import {ResizeAction, ResizeCommand} from "../../../src/base/intent/resize"
+import ContainerFactory from "./inversify.config"
 
 export default function runStandalone() {
-    // Setup event loop
-    const eventLoop = new EventLoop(
-        new ActionDispatcher(),
-        new CommandStack(new SGraphFactory()),
-        new Viewer('sprotte')
-    );
+    const container = new ContainerFactory().make()
 
-    eventLoop.dispatcher.registerCommand(MoveAction.KIND, MoveCommand)
-    eventLoop.dispatcher.registerCommand(SelectAction.KIND, SelectCommand)
-    eventLoop.dispatcher.registerCommand(ResizeAction.KIND, ResizeCommand)
+    // Register commands
+    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
+    actionHandlerRegistry.registerCommand(MoveAction.KIND, MoveCommand)
+    actionHandlerRegistry.registerCommand(SelectAction.KIND, SelectCommand)
+    actionHandlerRegistry.registerCommand(ResizeAction.KIND, ResizeCommand)
 
     // Register views
-    const viewComponentRegistry = eventLoop.viewer.viewRegistry
-    viewComponentRegistry.register('graph', GGraphView)
-    viewComponentRegistry.register('node:circle', CircleNodeView)
-    viewComponentRegistry.register('edge:straight', StraightEdgeView)
+    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
+    viewRegistry.register('graph', GGraphView)
+    viewRegistry.register('node:circle', CircleNodeView)
+    viewRegistry.register('edge:straight', StraightEdgeView)
 
     // Initialize gmodel
     const modelFactory = new SGraphFactory()
@@ -41,8 +31,9 @@ export default function runStandalone() {
     const graph = modelFactory.createRoot({id: 'graph', type: 'graph', children: [node0, node1, edge0]});
 
     // Run
+    const dispatcher = container.get<ActionDispatcher>(TYPES.ActionDispatcher)
     const action = new SetModelAction(graph);
-    eventLoop.dispatcher.dispatch(action);
+    dispatcher.dispatch(action);
 
     let count = 2
 
@@ -67,12 +58,12 @@ export default function runStandalone() {
     for (let i = 0; i < 200; ++i) {
         addNode()
     }
-    eventLoop.dispatcher.dispatch(new SetModelAction(graph))
+    dispatcher.dispatch(new SetModelAction(graph))
 
     // button behavior
     document.getElementById('addNode')!.addEventListener('click', () => {
         addNode()
-        eventLoop.dispatcher.dispatch(new SetModelAction(graph))
+        dispatcher.dispatch(new SetModelAction(graph))
         document.getElementById('graph')!.focus()
     })
 
@@ -89,7 +80,7 @@ export default function runStandalone() {
                 })
             }
         })
-        eventLoop.dispatcher.dispatch(new MoveAction(nodeMoves, true))
+        dispatcher.dispatch(new MoveAction(nodeMoves, true))
         document.getElementById('graph')!.focus()
     })
 

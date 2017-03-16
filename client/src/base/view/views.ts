@@ -1,3 +1,5 @@
+import "reflect-metadata"
+import { injectable } from "inversify"
 import {VNode} from "snabbdom/vnode"
 import {h} from "snabbdom"
 import {SModelElement, SModelRoot, SModel} from "../model"
@@ -21,9 +23,14 @@ export interface RenderingContext {
 /**
  * Allows to look up the View for a given SModelElement based on its type.
  */
+@injectable()
 export class ViewRegistry extends ProviderRegistry<View, SModelElement> {
     constructor() {
         super()
+        this.registerDefaults()
+    }
+
+    protected registerDefaults() {
         this.register(SModel.EMPTY_ROOT.type, EmptyView)
     }
 

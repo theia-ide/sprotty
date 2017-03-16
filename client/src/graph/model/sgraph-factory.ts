@@ -1,3 +1,5 @@
+import "reflect-metadata"
+import { injectable } from "inversify"
 import {
     SModel,
     SModelFactory,
@@ -9,6 +11,7 @@ import {
 } from "../../base/model"
 import {SGraph, SGraphSchema, SNodeSchema, SEdgeSchema, SNode, SEdge} from "./sgraph"
 
+@injectable()
 export class SGraphFactory extends SModelFactory {
 
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {

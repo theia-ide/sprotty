@@ -1,24 +1,31 @@
-import {DispatcherCallback} from "./action-dispatcher"
+import "reflect-metadata"
+import { injectable, inject } from "inversify"
+import { TYPES } from "../types"
+import {SModelRoot, SModel, SModelFactory} from "../model"
+import {IViewer} from "../view";
 import {Command, CommandExecutionContext} from "./commands"
-import {SModelRoot, SModel} from "../model"
-import {EventSource} from "../../utils"
-import {SModelFactory} from "../model/smodel-factory"
+
+export interface ICommandStack {
+    execute(commands: Command[]): void
+    undo(): void
+    redo(): void
+}
 
 /**
  * The component that holds the model and applies the commands to change it.
  */
-export class CommandStack extends EventSource<CommandStackCallback> implements DispatcherCallback, CommandStackCallback {
+@injectable()
+export class CommandStack implements ICommandStack {
 
     defaultDuration = 250
 
-    currentPromise: Promise<SModelRoot> = Promise.resolve(SModel.EMPTY_ROOT)
+    @inject(TYPES.SModelFactory) protected modelFactory: SModelFactory
+    @inject(TYPES.IViewer) protected viewer: IViewer
 
-    undoStack: Command[] = []
-    redoStack: Command[] = []
+    protected currentPromise: Promise<SModelRoot> = Promise.resolve(SModel.EMPTY_ROOT)
 
-    constructor(protected modelFactory: SModelFactory) {
-        super()
-    }
+    protected undoStack: Command[] = []
+    protected redoStack: Command[] = []
 
     execute(commands: Command[]): void {
         commands.forEach(
@@ -141,10 +148,8 @@ export class CommandStack extends EventSource<CommandStackCallback> implements D
     }
 
     update(model: SModelRoot) {
-        this.callbacks.forEach((callback) => callback.update(model))
+        this.viewer.update(model)
     }
 }
 
-export interface CommandStackCallback {
-    update(model: SModelRoot): void
-}
+export type CommandStackProvider = () => Promise<CommandStack>

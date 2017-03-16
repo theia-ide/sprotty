@@ -1,7 +1,7 @@
 import {SModelRoot} from "../model"
-import {CommandStackCallback} from "./command-stack"
-import {IActionHandler, Action} from "./actions"
 import {SModelFactory} from "../model/smodel-factory"
+import {IViewer} from "../view";
+import {IActionHandler, Action} from "./actions"
 
 /**
  * A command holds the behaviour of an action.
@@ -35,7 +35,7 @@ type GModelRootOrPromise = SModelRoot | Promise<SModelRoot>
 export interface CommandExecutionContext {
     root: SModelRoot
     modelFactory: SModelFactory
-    modelChanged: CommandStackCallback
+    modelChanged: IViewer
     duration: number
 }
 

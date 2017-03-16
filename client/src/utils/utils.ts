@@ -1,25 +1,11 @@
-/**
- * Created by koehnlein on 21/02/2017.
- */
+import "reflect-metadata"
+import { injectable } from "inversify"
 
 export interface Map<T> {
     [key: string]: T
 }
 
-export class EventSource<CALLBACK> {
-    callbacks: CALLBACK[] = []
-
-    register(callback: CALLBACK) {
-        this.callbacks.push(callback)
-    }
-
-    deregister(callback: CALLBACK) {
-        const index = this.callbacks.indexOf(callback)
-        if (index != -1)
-            this.callbacks.splice(index, 1)
-    }
-}
-
+@injectable()
 export class ProviderRegistry<T, U> {
     private elements: Map<new(U) => T> = {}
 
@@ -47,6 +33,7 @@ export class ProviderRegistry<T, U> {
     }
 }
 
+@injectable()
 export class InstanceRegistry<T> {
     private elements: Map<T> = {}
 
