@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import { injectable } from "inversify"
+import {injectable} from "inversify"
 import {VNode} from "snabbdom/vnode"
 import {h} from "snabbdom"
 import {SModelElement, SModelRoot, SModel} from "../model"

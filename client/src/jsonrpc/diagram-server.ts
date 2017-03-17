@@ -1,12 +1,16 @@
 const WebSocket = require('reconnecting-websocket')
 
 import "reflect-metadata"
-import { injectable } from "inversify"
+import {injectable} from "inversify"
 import {Action} from "../base/intent/actions"
 import {ConsoleLogger} from "./common"
 import {WebSocketMessageReader, WebSocketMessageWriter} from "./webSocket"
 import {
-    CancellationToken, MessageConnection, NotificationType1, RequestType1, createMessageConnection
+    CancellationToken,
+    MessageConnection,
+    NotificationType1,
+    RequestType1,
+    createMessageConnection
 } from "vscode-jsonrpc"
 
 @injectable()

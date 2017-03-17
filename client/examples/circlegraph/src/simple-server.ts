@@ -1,6 +1,13 @@
 import {
-    TYPES, ActionDispatcher, MoveCommand, MoveAction, SelectCommand, SelectAction,
-    ActionHandlerRegistry, ViewRegistry, CommandActionHandler, RequestModelAction
+    ActionDispatcher,
+    MoveCommand,
+    MoveAction,
+    SelectCommand,
+    SelectAction,
+    ActionHandlerRegistry,
+    ViewRegistry,
+    CommandActionHandler,
+    RequestModelAction
 } from "../../../src/base"
 import {GGraphView, StraightEdgeView} from "../../../src/graph"
 import {DiagramServer} from "../../../src/jsonrpc"

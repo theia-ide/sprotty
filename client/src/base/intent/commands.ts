@@ -1,6 +1,6 @@
 import {SModelRoot} from "../model"
 import {SModelFactory} from "../model/smodel-factory"
-import {IViewer} from "../view";
+import {IViewer} from "../view"
 import {IActionHandler, Action} from "./actions"
 
 /**

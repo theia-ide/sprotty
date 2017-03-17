@@ -6,7 +6,7 @@ import {almostEquals} from "../../utils/geometry"
 import {Viewer} from "./viewer"
 import {ElementResize, ResizeAction} from "../intent/resize"
 
-class VNodeAndSizeable{
+class VNodeAndSizeable {
     vnode: VNode
     element: Sizeable & SModelElement
 }
@@ -53,7 +53,7 @@ export class Autosizer implements VNodeDecorator {
 
                 }
             )
-            if(resizes.length > 0)
+            if (resizes.length > 0)
                 this.viewer.fireAction(new ResizeAction(resizes))
 
         })

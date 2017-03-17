@@ -1,5 +1,10 @@
 import {
-    TYPES, ActionDispatcher, SetModelAction, SelectCommand, SelectAction, ActionHandlerRegistry, ViewRegistry
+    ActionDispatcher,
+    SetModelAction,
+    SelectCommand,
+    SelectAction,
+    ActionHandlerRegistry,
+    ViewRegistry
 } from "../../../src/base"
 import {Direction} from "../../../src/utils"
 import {Core, ChipSchema, Crossbar, Channel, CoreSchema, ChannelSchema, CrossbarSchema} from "./chipmodel"

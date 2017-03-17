@@ -11,7 +11,7 @@ export class ChipView implements View {
                 key: model.id,
                 attrs: {
                     id: model.id,
-                    viewBox: "0 0 " + model.columns * (CoreView.width + CoreView.dist) + 
+                    viewBox: "0 0 " + model.columns * (CoreView.width + CoreView.dist) +
                     " " + (model.columns + 1) * (CoreView.width + CoreView.dist)
                 }
             }, [

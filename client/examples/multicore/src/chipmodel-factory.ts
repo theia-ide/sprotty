@@ -4,7 +4,8 @@ import {
     SParentElement,
     SChildElement,
     SModelRootSchema,
-    SModelRoot, SModel
+    SModelRoot,
+    SModel
 } from "../../../src/base/model/smodel"
 import {ChipSchema, Chip, CoreSchema, ChannelSchema, Core, Channel, Crossbar, CrossbarSchema} from "./chipmodel"
 import {Direction} from "../../../src/utils/geometry"
@@ -44,8 +45,8 @@ export class ChipModelFactory extends SModelFactory {
     }
 
     private validate(coreOrChannel: CoreSchema | ChannelSchema, chip?: SParentElement) {
-        if(chip) {
-            if(!(chip instanceof Chip))
+        if (chip) {
+            if (!(chip instanceof Chip))
                 throw new Error('Parent model element must be a Chip')
             let rowDelta = 0
             let columnDelta = 0
@@ -60,7 +61,7 @@ export class ChipModelFactory extends SModelFactory {
                         break;
                 }
             }
-            if(coreOrChannel.row < 0 || coreOrChannel.row >= chip.rows + rowDelta
+            if (coreOrChannel.row < 0 || coreOrChannel.row >= chip.rows + rowDelta
                 || coreOrChannel.column < 0 && coreOrChannel.column >= chip.columns + columnDelta)
                 throw Error('Element coordinates are out of bounds ' + coreOrChannel)
         }

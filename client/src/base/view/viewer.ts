@@ -1,6 +1,6 @@
 import "reflect-metadata"
-import { injectable, inject } from "inversify"
-import { TYPES } from "../types"
+import {injectable, inject} from "inversify"
+import {TYPES} from "../types"
 import {h, init} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
 import {Module} from "snabbdom/modules/module"

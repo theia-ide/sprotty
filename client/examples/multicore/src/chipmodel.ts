@@ -8,7 +8,7 @@ export interface ChipSchema extends SModelElementSchema {
     children: SModelElementSchema[]
 }
 
-export class Chip extends SModelRoot  implements ChipSchema {
+export class Chip extends SModelRoot implements ChipSchema {
     readonly rows: number
     readonly columns: number
 }

@@ -1,10 +1,17 @@
 import {
-    TYPES, ActionDispatcher, MoveCommand, ElementMove, MoveAction, SelectCommand, SetModelAction, SelectAction,
-    ActionHandlerRegistry, ViewRegistry, ResizeAction, ResizeCommand
+    ActionDispatcher,
+    MoveCommand,
+    ElementMove,
+    MoveAction,
+    SelectCommand,
+    SetModelAction,
+    SelectAction,
+    ActionHandlerRegistry,
+    ViewRegistry,
+    ResizeAction,
+    ResizeCommand
 } from "../../../src/base"
-import {
-    GGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema
-} from "../../../src/graph"
+import {GGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
 

@@ -1,8 +1,8 @@
 import "reflect-metadata"
-import { injectable, inject } from "inversify"
-import { TYPES } from "../types"
+import {injectable, inject} from "inversify"
+import {TYPES} from "../types"
 import {Action, ActionHandlerRegistry, UndoAction, RedoAction} from "./actions"
-import {ICommandStack} from "./command-stack";
+import {ICommandStack} from "./command-stack"
 
 /**
  * Collects actions, converts them to commands and dispatches them.

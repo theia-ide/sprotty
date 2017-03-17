@@ -1,7 +1,11 @@
 import {ContainerModule, interfaces} from "inversify"
 import {DiagramServer} from "../jsonrpc"
 import {
-    ActionDispatcher, CommandStack, ActionHandlerRegistry, RequestActionHandler, NotificationActionHandler,
+    ActionDispatcher,
+    CommandStack,
+    ActionHandlerRegistry,
+    RequestActionHandler,
+    NotificationActionHandler,
     IActionHandler
 } from "./intent"
 import {Viewer, ViewRegistry, ViewerOptions} from "./view"

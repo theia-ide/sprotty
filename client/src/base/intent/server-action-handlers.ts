@@ -1,15 +1,14 @@
-import {DiagramServer} from "../../jsonrpc";
+import {DiagramServer} from "../../jsonrpc"
 import {Action, IActionHandler} from "./actions"
 import {Command} from "./commands"
 import {ActionDispatcher} from "./action-dispatcher"
 
 export class RequestActionHandler implements IActionHandler {
 
-    constructor(
-        protected diagramServer: DiagramServer,
-        protected actionDispatcher: ActionDispatcher,
-        protected immediateHandler?: IActionHandler
-    ) {}
+    constructor(protected diagramServer: DiagramServer,
+                protected actionDispatcher: ActionDispatcher,
+                protected immediateHandler?: IActionHandler) {
+    }
 
     handle(action: Action): Command[] {
         const promise = this.diagramServer.request(action)
@@ -36,10 +35,9 @@ export type RequestActionHandlerFactory = (immediateHandler?: IActionHandler) =>
 
 export class NotificationActionHandler implements IActionHandler {
 
-    constructor(
-        protected diagramServer: DiagramServer,
-        protected immediateHandler?: IActionHandler
-    ) {}
+    constructor(protected diagramServer: DiagramServer,
+                protected immediateHandler?: IActionHandler) {
+    }
 
     handle(action: Action): Command[] {
         this.diagramServer.notify(action)

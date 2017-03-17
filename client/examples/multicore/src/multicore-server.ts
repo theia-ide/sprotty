@@ -1,5 +1,10 @@
 import {
-    TYPES, ActionDispatcher,  SelectCommand, SelectAction, ActionHandlerRegistry, ViewRegistry, CommandActionHandler,
+    ActionDispatcher,
+    SelectCommand,
+    SelectAction,
+    ActionHandlerRegistry,
+    ViewRegistry,
+    CommandActionHandler,
     RequestModelAction
 } from "../../../src/base"
 import {DiagramServer} from "../../../src/jsonrpc"

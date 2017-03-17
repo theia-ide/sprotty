@@ -1,8 +1,8 @@
 import "reflect-metadata"
-import { injectable, inject } from "inversify"
-import { TYPES } from "../types"
+import {injectable, inject} from "inversify"
+import {TYPES} from "../types"
 import {SModelRoot, SModel, SModelFactory} from "../model"
-import {IViewer} from "../view";
+import {IViewer} from "../view"
 import {Command, CommandExecutionContext} from "./commands"
 
 export interface ICommandStack {
@@ -68,10 +68,10 @@ export class CommandStack implements ICommandStack {
                 this.undoStack.push(command)
             }
         } else {
-            if(command.isPushable())
+            if (command.isPushable())
                 this.undoStack.push(command)
         }
-        if(command.isPushable())
+        if (command.isPushable())
             this.redoStack = []
     }
 

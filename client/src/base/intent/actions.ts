@@ -1,10 +1,10 @@
 import "reflect-metadata"
 import {injectable, inject} from "inversify"
-import { TYPES } from "../types"
+import {TYPES} from "../types"
 import {InstanceRegistry} from "../../utils"
 import {Command, CommandActionHandler} from "./commands"
-import {SetModelAction, SetModelCommand} from "./model-manipulation";
-import {RequestActionHandlerFactory, NotificationActionHandlerFactory} from "./server-action-handlers";
+import {SetModelAction, SetModelCommand} from "./model-manipulation"
+import {RequestActionHandlerFactory, NotificationActionHandlerFactory} from "./server-action-handlers"
 
 /**
  * An action describes a change to the model declaratively.
