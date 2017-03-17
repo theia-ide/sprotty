@@ -7,6 +7,7 @@ import {ContainerModule, Container} from "inversify"
 import defaultModule from "../../../src/base/container-module"
 import {TYPES} from "../types"
 import {SetModelCommand, SetModelAction} from "./model-manipulation"
+import {MoveCommand, MoveAction} from "./move"
 import {SModel} from "../model/smodel"
 import EMPTY_ROOT = SModel.EMPTY_ROOT
 
@@ -31,9 +32,6 @@ describe('action dispatcher', () => {
 
     const actionDispatcher = container.get(ActionDispatcher)
 
-    const registry = container.get(ActionHandlerRegistry)
-    registry.registerCommand(SetModelAction.KIND, SetModelCommand)
-    
     it('undo/redo/execute', () => {
         actionDispatcher.dispatch(new UndoAction)
         expect(execCount).to.be.equal(0)
@@ -49,9 +47,24 @@ describe('action dispatcher', () => {
         expect(execCount).to.be.equal(0)
         expect(undoCount).to.be.equal(1)
         expect(redoCount).to.be.equal(1)
-    
+
+        // SetModelAction is registered by default
         actionDispatcher.dispatch(new SetModelAction(EMPTY_ROOT))
         expect(execCount).to.be.equal(1)
+        expect(undoCount).to.be.equal(1)
+        expect(redoCount).to.be.equal(1)
+    
+        // MoveAction is not registered by default
+        actionDispatcher.dispatch(new MoveAction([], false))
+        expect(execCount).to.be.equal(1)
+        expect(undoCount).to.be.equal(1)
+        expect(redoCount).to.be.equal(1)
+
+        const registry = container.get(ActionHandlerRegistry)
+        registry.registerCommand(MoveAction.KIND, MoveCommand)
+    
+        actionDispatcher.dispatch(new MoveAction([], false))
+        expect(execCount).to.be.equal(2)
         expect(undoCount).to.be.equal(1)
         expect(redoCount).to.be.equal(1)
     })
