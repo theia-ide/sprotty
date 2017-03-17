@@ -139,9 +139,7 @@ export namespace SModel {
             return schema.type
     }
 
-    export const EMPTY_ROOT = new SModelFactory().createRoot({
-        id: 'EMPTY',
-        type: 'NONE'
-    })
-
+    export const EMPTY_ROOT = new SModelRoot()
+    EMPTY_ROOT.id = 'EMPTY'
+    EMPTY_ROOT.type = 'NONE'
 }

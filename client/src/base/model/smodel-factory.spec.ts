@@ -1,9 +1,11 @@
 import {expect} from "chai"
-import {SModelFactory} from "./smodel-factory"
 import {SParentElementSchema} from "./smodel"
+import {SModelFactory} from "./smodel-factory"
 
-describe('SModelFactory', () => {
+describe('model factory', () => {
+
     const factory = new SModelFactory()
+
     it('creates a single element from a schema', () => {
         const element = factory.createElement({
             type: 'foo',

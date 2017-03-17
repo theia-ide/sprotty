@@ -1,3 +1,9 @@
 // Jest Snapshot v1, https://goo.gl/fbAQLP
 
-exports[`<svg id="mygraph" class="graph"><g></g></svg> 1`] = `"<svg id=\\"mygraph\\" class=\\"graph\\"><g></g></svg>"`;
+exports[`graph views circle node 1`] = `"<circle id=\\"node0\\" class=\\"node\\" key=\\"node0\\" r=\\"40\\"></circle>"`;
+
+exports[`graph views empty graph 1`] = `"<svg id=\\"mygraph\\" class=\\"graph\\"><g></g></svg>"`;
+
+exports[`graph views graph 1`] = `"<svg id=\\"graph\\" class=\\"graph\\"><g><g transform=\\"translate(100, 100)\\"><circle id=\\"node0\\" class=\\"node\\" key=\\"node0\\" r=\\"40\\" style=\\"opacity: 1; transition: opacity 0.5s\\" /></g><g transform=\\"translate(200, 150)\\"><circle id=\\"node1\\" class=\\"node selected\\" key=\\"node1\\" r=\\"40\\" style=\\"opacity: 1; transition: opacity 0.5s\\" /></g><path id=\\"edge0\\" class=\\"edge\\" d=\\"M 135.77708763999664,117.88854381999832 L 164.22291236000336,132.11145618000168\\" style=\\"opacity: 1; transition: opacity 0.5s\\" /></g></svg>"`;
+
+exports[`graph views straight edge 1`] = `"<path id=\\"edge0\\" class=\\"edge\\" d=\\"M 135.77708763999664,117.88854381999832 L 164.22291236000336,132.11145618000168\\"></path>"`;
