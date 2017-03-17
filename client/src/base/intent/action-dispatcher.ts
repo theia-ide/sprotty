@@ -4,11 +4,16 @@ import {TYPES} from "../types"
 import {Action, ActionHandlerRegistry, UndoAction, RedoAction} from "./actions"
 import {ICommandStack} from "./command-stack"
 
+export interface IActionDispatcher {
+    dispatch(action: Action): void
+    dispatchAll(actions: Action[]): void
+}
+
 /**
  * Collects actions, converts them to commands and dispatches them.
  */
 @injectable()
-export class ActionDispatcher {
+export class ActionDispatcher implements IActionDispatcher {
 
     @inject(ActionHandlerRegistry) protected actionHandlerRegistry: ActionHandlerRegistry
     @inject(TYPES.ICommandStack) protected commandStack: ICommandStack
@@ -17,7 +22,7 @@ export class ActionDispatcher {
         actions.forEach(action => this.dispatch(action))
     }
 
-    dispatch(action: Action) {
+    dispatch(action: Action): void {
         if (action.kind == UndoAction.KIND)
             this.commandStack.undo()
         else if (action.kind == RedoAction.KIND)
@@ -36,4 +41,4 @@ export class ActionDispatcher {
 
 }
 
-export type ActionDispatcherProvider = () => Promise<ActionDispatcher>
+export type ActionDispatcherProvider = () => Promise<IActionDispatcher>

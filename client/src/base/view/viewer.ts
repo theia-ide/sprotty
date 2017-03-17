@@ -9,7 +9,7 @@ import {propsModule} from "snabbdom/modules/props"
 import {attributesModule} from "snabbdom/modules/attributes"
 import {styleModule} from "snabbdom/modules/style"
 import {eventListenersModule} from "snabbdom/modules/eventlisteners"
-import {Action, ActionDispatcher, ActionDispatcherProvider} from "../intent"
+import {Action, IActionDispatcher, ActionDispatcherProvider} from "../intent"
 import {SModelRoot, SModelElement, SParentElement} from "../model"
 import {AddRemoveAnimationDecorator, VNodeDecorator} from "./vnode-decorators"
 import {RenderingContext, ViewRegistry} from "./views"
@@ -34,7 +34,7 @@ export class Viewer implements VNodeDecorator, IViewer {
 
     protected readonly patcher: Patcher
     protected readonly decorators: VNodeDecorator[] = []
-    protected actionDispatcher?: ActionDispatcher
+    protected actionDispatcher?: IActionDispatcher
     private lastVDOM: any
 
     constructor() {

@@ -1,12 +1,12 @@
 import {DiagramServer} from "../../jsonrpc"
 import {Action, IActionHandler} from "./actions"
 import {Command} from "./commands"
-import {ActionDispatcher} from "./action-dispatcher"
+import {IActionDispatcher} from "./action-dispatcher"
 
 export class RequestActionHandler implements IActionHandler {
 
     constructor(protected diagramServer: DiagramServer,
-                protected actionDispatcher: ActionDispatcher,
+                protected actionDispatcher: IActionDispatcher,
                 protected immediateHandler?: IActionHandler) {
     }
 

@@ -11,10 +11,12 @@ import {
 import {Viewer, ViewRegistry, ViewerOptions} from "./view"
 import {SModelFactory} from "./model"
 import {TYPES} from "./types"
+import {IActionDispatcher} from "./intent/action-dispatcher"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Action Dispatcher ---------------------------------------------
     bind(ActionDispatcher).toSelf().inSingletonScope()
+    bind(TYPES.IActionDispatcher).to(ActionDispatcher).inSingletonScope()
     bind(TYPES.ActionDispatcherProvider).toProvider<ActionDispatcher>((context) => {
         return () => {
             return new Promise<ActionDispatcher>((resolve) => {
