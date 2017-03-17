@@ -11,7 +11,8 @@ The diagram is stored in a graph model. All elements inherit from `GModelElement
 Behaviors are interfaces that describe additional data that is attached to a `GModelElement` in order to allow some interaction pattern, e.g.
 
 - `Selectable`: An element can be selected
-- `Movable`: An element can be moved.
+- `Moveable`: An element can be moved.
+- `Sizeable`: An element with a width and height that can be updated
 
 ## Actions
 `Actions` describe a certain operation on the grpah model. As plain JSON objects they can be serialized and as such transported between client and server. In actions, model elements are referred to by ID.
@@ -19,12 +20,14 @@ Behaviors are interfaces that describe additional data that is attached to a `GM
 ### Action Dispatcher
 The `ActionDispatcher` receives actions either from the `Viewer` or from the server. It converts them to commands using the `CommandRegistry` and passes them to the `CommandStack`.
 
+### Action Handler
+An `IActionHandler` takes an action and converts it to a command, as such adding the behavior. It can also have side effects such as sending requests or notifications to the server.
+
 ## Commands
 `Commands` correspond to `Actions` and carry the actual behavior of the operation. They have the notorious methods `execute()`, `undo()`and `redo()`, each of which take the current model and a command execution context as parameter, and return the new model or a promise for it. The latter serves to chain asynchronous commands, e.g. animations.
 
-### Command Registry
-The `CommandRegistry` is used to look up the command that corresponds to an action.
-It's the user's responsibility to populate it.
+### Animated commands
+Animated commands use an `Animation` to report updates to the `Viewer` on every rendering pass, during `duration` milliseconds  from the start of the execution, before they resolve their promise. An example is the `MoveCommand` that smoothly interpolates the positions between start and end position. 
 
 ### Command Stack
 The `CommandStack` executes the commands it receives from the `ActionDispatcher`. It chains the promises returned by the execution methods and keeps an undo and a redo stack. It is merges the current commands with the last one, e.g. to only keep the start and end point of a move by drag operation. Once the new graph model is available, it is forwarded to the `Viewer`.
