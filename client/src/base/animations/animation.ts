@@ -2,6 +2,10 @@ import {SModelRoot} from "../model"
 import {CommandExecutionContext} from "../intent"
 import {easeInOut} from "./easing"
 
+/**
+ * An animation uses the rendering loop of the browser to smoothly
+ * calculate a transition between two states of a model element.
+ */
 export abstract class Animation {
 
     constructor(protected context: CommandExecutionContext, protected ease: (number) => number = easeInOut) {
@@ -35,5 +39,12 @@ export abstract class Animation {
             })
     }
 
+    /**
+     * This method called by the animation at each rendering pass until
+     * the duration is reached. Implement it to interpolate the state.
+     *
+     * @param t varies between 0 (start of animation) and 1 (end of animation)
+     * @param context
+     */
     abstract tween(t: number, context: CommandExecutionContext): SModelRoot
 }
