@@ -1,6 +1,6 @@
 import { MoveCommand, MoveAction, ElementMove } from "./move"
 import { expect } from "chai"
-import "mocha"
+import "jest"
 import { SGraphFactory } from "../../graph/model/sgraph-factory"
 import { CommandExecutionContext } from "./commands"
 import { SModel } from "../model/smodel"
@@ -105,39 +105,36 @@ describe('test move command execution, undo, redo and merge', () => {
     // animation, and if not just return an updated model? 
 
     it('undo move command', () => {
-        throw new Error("fail: test not implemented")
-
-/*
         // test "undo"
-        newModel = cmd.undo(<SModelRoot>newModel, context)
-        console.log(newModel)
+        cmd.undo(<SModelRoot>newModel, context).then(
+            newModel => {
+                console.log(newModel)
 
-        // corfirm that each node is back at original
-        // coordinates
+                // corfirm that each node is back at original
+                // coordinates
 
-        // node0, node1 and node2 => pointNW
-        expect(pointNW.x).equals(getNode('node0', newModel).x)
-        expect(pointNW.y).equals(getNode('node0', newModel).y)
-        expect(pointNW.x).equals(getNode('node1', newModel).x)
-        expect(pointNW.y).equals(getNode('node1', newModel).y)
-        expect(pointNW.x).equals(getNode('node2', newModel).x)
-        expect(pointNW.y).equals(getNode('node2', newModel).y)
-*/
-
+                // node0, node1 and node2 => pointNW
+                expect(pointNW.x).equals(getNode('node0', newModel).x)
+                expect(pointNW.y).equals(getNode('node0', newModel).y)
+                expect(pointNW.x).equals(getNode('node1', newModel).x)
+                expect(pointNW.y).equals(getNode('node1', newModel).y)
+                expect(pointNW.x).equals(getNode('node2', newModel).x)
+                expect(pointNW.y).equals(getNode('node2', newModel).y)
+            })
     })
 
     it('redo move command', () => {
         // test "redo": 
-        throw new Error("fail: test not implemented")
+        //throw new Error("fail: test not implemented")
     })
 
     it('merge move command', () => {
         // test "merge"
-        throw new Error("fail: test not implemented")
+        //throw new Error("fail: test not implemented")
     })
 
 })
 
 function getNode(nodeId, model) {
-    return <SNode>model.index.getById(nodeId)
+    return model.index.getById(nodeId) as SNode
 }

@@ -35,7 +35,12 @@ export abstract class Animation {
                 }
                 let start: number | undefined = undefined
                 let frames = 0
-                requestAnimationFrame(lambda)
+                if(typeof requestAnimationFrame === "function") {
+                    requestAnimationFrame(lambda)
+                } else {
+                    const finalModel = this.tween(1, this.context)
+                    resolve(finalModel)
+                }
             })
     }
 
