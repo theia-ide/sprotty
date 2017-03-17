@@ -7,7 +7,7 @@ import {SGraph, SNode, SEdge} from "../model"
 /**
  * View component that turns a SGraph element and its children into a tree of virtual DOM.
  */
-export class GGraphView implements View {
+export class SGraphView implements View {
 
     render(model: SGraph, context: RenderingContext): VNode {
         const vNode = h('svg', {
@@ -25,7 +25,7 @@ export class GGraphView implements View {
     }
 }
 
-export abstract class GNodeView implements View {
+export abstract class SNodeView implements View {
     abstract render(model: SNode, context: RenderingContext): VNode
 
     abstract getAnchor(node: SNode, refPoint: Point, arrowLength: number)
@@ -36,9 +36,9 @@ export class StraightEdgeView implements View {
         const source = edge.source
         const target = edge.target
         if (source && target) {
-            const sourceView = (context.viewer.viewRegistry.get(source.type, source)) as GNodeView
+            const sourceView = (context.viewer.viewRegistry.get(source.type, source)) as SNodeView
             const sourceAnchor = sourceView.getAnchor(source, target, 0)
-            const targetView = (context.viewer.viewRegistry.get(target.type, target)) as GNodeView
+            const targetView = (context.viewer.viewRegistry.get(target.type, target)) as SNodeView
             const targetAnchor = targetView.getAnchor(target, source, 0)
             const path = `M ${sourceAnchor.x},${sourceAnchor.y} L ${targetAnchor.x},${targetAnchor.y}`
             return h('path', {

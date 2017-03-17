@@ -1,4 +1,4 @@
-import {GGraphView} from "./views"
+import {SGraphView} from "./views"
 import {SGraph} from "../../graph/model/sgraph"
 import {SGraphFactory} from "../model/sgraph-factory"
 import {Viewer} from "../../base/view/viewer"
@@ -16,7 +16,7 @@ describe('base views', () => {
             children: []
         }
         const graph = factory.createRoot(schema) as SGraph
-        const view = new GGraphView()
+        const view = new SGraphView()
         const vnode = view.render(graph, context)
         const html = toHTML(vnode)
         expect(html).toMatchSnapshot(html)

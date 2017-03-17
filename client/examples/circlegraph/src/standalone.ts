@@ -11,7 +11,7 @@ import {
     ResizeAction,
     ResizeCommand
 } from "../../../src/base"
-import {GGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph"
+import {SGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
 
@@ -26,7 +26,7 @@ export default function runStandalone() {
 
     // Register views
     const viewRegistry = container.get(ViewRegistry)
-    viewRegistry.register('graph', GGraphView)
+    viewRegistry.register('graph', SGraphView)
     viewRegistry.register('node:circle', CircleNodeView)
     viewRegistry.register('edge:straight', StraightEdgeView)
 

@@ -9,7 +9,7 @@ import {
     CommandActionHandler,
     RequestModelAction
 } from "../../../src/base"
-import {GGraphView, StraightEdgeView} from "../../../src/graph"
+import {SGraphView, StraightEdgeView} from "../../../src/graph"
 import {DiagramServer} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
@@ -26,7 +26,7 @@ export default function runSimpleServer() {
 
     // Register views
     const viewRegistry = container.get(ViewRegistry)
-    viewRegistry.register('graph', GGraphView)
+    viewRegistry.register('graph', SGraphView)
     viewRegistry.register('node:circle', CircleNodeView)
     viewRegistry.register('edge:straight', StraightEdgeView)
 

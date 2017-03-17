@@ -1,13 +1,13 @@
 import {h} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
 import {RenderingContext} from "../../../src/base"
-import {SNode, GNodeView} from "../../../src/graph"
+import {SNode, SNodeView} from "../../../src/graph"
 import {Point} from "../../../src/utils"
 
 /**
  * A very simple example node consisting of a plain circle.
  */
-export class CircleNodeView extends GNodeView {
+export class CircleNodeView extends SNodeView {
     render(node: SNode, context: RenderingContext): VNode {
         return h('circle', {
             class: {
