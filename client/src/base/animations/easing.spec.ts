@@ -1,5 +1,6 @@
 import {easeInOut} from "./easing"
 import {expect} from "chai"
+import "mocha"
 
 describe('easing', () => {
     it('test in/out',() => {

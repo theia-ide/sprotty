@@ -10,32 +10,19 @@
   "scripts": {
     "prepublish": "typings install --overwrite --save",
     "watch": "webpack --watch",
-    "test": "jest"
-  },
-  "jest": {
-    "transform": {
-      ".(ts|tsx)": "./node_modules/ts-jest/preprocessor.js"
-    },
-    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
-    "moduleFileExtensions": [
-      "ts",
-      "tsx",
-      "js"
-    ]
+    "test": "mocha --opts ./mocha.opts"
   },
   "keywords": [],
   "author": "TypeFox",
   "license": "ISC",
   "devDependencies": {
-    "@types/jest": "^19.2.2",
+    "@types/mocha": "^2.2.40",
     "@types/node": "^6.0.42",
-    "babel-core": "^6.24.0",
     "chai": "^3.5.0",
     "inversify": "^3.1.0",
-    "jest": "^19.0.2",
+    "mocha": "^3.2.0",
     "reflect-metadata ": "^0.1.10",
     "snabbdom-to-html": "^3.1.1",
-    "ts-jest": "^19.0.1",
     "ts-loader": "^2.0.0",
     "ts-node": "^2.1.0",
     "typescript": "^2.2.1",

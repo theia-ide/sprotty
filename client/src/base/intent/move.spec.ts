@@ -1,6 +1,5 @@
 import { MoveCommand, MoveAction, ElementMove } from "./move"
 import { expect } from "chai"
-import "jest"
 import { SGraphFactory } from "../../graph/model/sgraph-factory"
 import { CommandExecutionContext } from "./commands"
 import { SModel } from "../model/smodel"
