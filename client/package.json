@@ -10,31 +10,41 @@
   "scripts": {
     "prepublish": "typings install --overwrite --save",
     "watch": "webpack --watch",
-    "test": "mocha --opts ./mocha.opts",
-    "test:debug": "mocha -w --opts ./mocha.opts"
+    "test": "jest"
+  },
+  "jest": {
+    "transform": {
+      ".(ts|tsx)": "./node_modules/ts-jest/preprocessor.js"
+    },
+    "testRegex": "(/__tests__/.*|\\.(test|spec))\\.(ts|tsx|js)$",
+    "moduleFileExtensions": [
+      "ts",
+      "tsx",
+      "js"
+    ]
   },
   "keywords": [],
   "author": "TypeFox",
   "license": "ISC",
   "devDependencies": {
-    "@types/chai": "^3.4.35",
+    "@types/jest": "^19.2.2",
     "@types/node": "^6.0.42",
-    "@types/core-js": "0.9.35",
-    "@types/mocha": "^2.2.39",
+    "babel-core": "^6.24.0",
     "chai": "^3.5.0",
-    "mocha": "^3.2.0",
+    "inversify": "^3.1.0",
+    "jest": "^19.0.2",
+    "reflect-metadata ": "^0.1.10",
+    "snabbdom-to-html": "^3.1.1",
+    "ts-jest": "^19.0.1",
     "ts-loader": "^2.0.0",
     "ts-node": "^2.1.0",
     "typescript": "^2.2.1",
     "typings": "^2.1.0",
-    "webpack": "^2.2.1",
-    "inversify": "^3.1.0",
-    "reflect-metadata ": "^0.1.10",
-    "vscode-jsonrpc": "^3.1.0"
+    "vscode-jsonrpc": "^3.1.0",
+    "webpack": "^2.2.1"
   },
   "dependencies": {
-    "@types/rx": "^4.1.1",
-    "snabbdom": "^0.6.4",
-    "reconnecting-websocket": "^3.0.3"
+    "reconnecting-websocket": "^3.0.3",
+    "snabbdom": "^0.6.4"
   }
 }

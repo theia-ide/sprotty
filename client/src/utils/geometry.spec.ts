@@ -1,6 +1,5 @@
 import {expect} from "chai"
-import "mocha"
-import { almostEquals } from "./geometry"
+import {almostEquals} from "./geometry"
 
 describe('almostEquals', () => {
     it('returns false for clearly different values', () => {

@@ -1,6 +1,5 @@
 import {expect} from "chai"
-import "mocha"
-import { SModelRoot, SChildElement, SModelIndex } from "./smodel"
+import {SModelRoot, SChildElement, SModelIndex} from "./smodel"
 
 describe('SModelRoot', () => {
     const element = new SModelRoot()

@@ -1,7 +1,6 @@
 import {expect} from "chai"
-import "mocha"
-import { SModelFactory } from "./smodel-factory"
-import { SParentElementSchema } from "./smodel";
+import {SModelFactory} from "./smodel-factory"
+import {SParentElementSchema} from "./smodel"
 
 describe('SModelFactory', () => {
     const factory = new SModelFactory()

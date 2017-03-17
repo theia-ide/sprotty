@@ -1,6 +1,5 @@
 import {expect} from "chai"
-import "mocha"
-import { ProviderRegistry, InstanceRegistry } from "./utils";
+import {ProviderRegistry, InstanceRegistry} from "./utils"
 
 describe('ProviderRegistry', () => {
     class Foo {

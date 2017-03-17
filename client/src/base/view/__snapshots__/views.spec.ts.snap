@@ -1,0 +1,7 @@
+// Jest Snapshot v1, https://goo.gl/fbAQLP
+
+exports[`base views empty view 1`] = `"<g id=\\"EMPTY\\"></g>"`;
+
+exports[`base views missing view 1`] = `"<text class=\\"missing\\" text-anchor=\\"middle\\" x=\\"0\\" y=\\"0\\">?EMPTY?</text>"`;
+
+exports[`base views missing view 2`] = `"<text class=\\"missing\\" text-anchor=\\"middle\\" x=\\"42\\" y=\\"41\\">?foo?</text>"`;

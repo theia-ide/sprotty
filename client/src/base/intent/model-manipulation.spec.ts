@@ -1,6 +1,6 @@
 import {SetModelCommand, SetModelAction} from "./model-manipulation"
 import {expect} from "chai"
-import "mocha"
+import "jest"
 import {SGraphFactory} from "../../graph/model/sgraph-factory"
 import {CommandExecutionContext} from "./commands"
 import {SModel} from "../model/smodel"
