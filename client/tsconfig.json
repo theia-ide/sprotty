@@ -8,7 +8,9 @@
     "types": ["reflect-metadata"],
     "strictNullChecks": true,
     "experimentalDecorators": true,
-    "emitDecoratorMetadata": true
+    "emitDecoratorMetadata": true,
+    "jsx": "react",
+    "reactNamespace": "JSX"
   },
   "exclude": [
     "node_modules"

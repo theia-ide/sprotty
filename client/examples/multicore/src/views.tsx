@@ -1,27 +1,24 @@
 import {View, RenderingContext} from "../../../src/base/view/views"
-import {h} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
 import {Chip, Core, Channel, Crossbar} from "./chipmodel"
 import {Direction} from "../../../src/utils/geometry"
 import {ColorMap, RGBColor} from "../../../src/utils/color"
 
+const snabbdom = require("snabbdom-jsx")
+const JSX = {createElement: snabbdom.svg}
+
 export class ChipView implements View {
     render(model: Chip, context: RenderingContext): VNode {
-        const vNode = h('svg', {
-                key: model.id,
-                attrs: {
-                    id: model.id,
-                    viewBox: "0 0 " + model.columns * (CoreView.width + CoreView.dist) +
-                    " " + (model.columns + 1) * (CoreView.width + CoreView.dist)
-                }
-            }, [
-                h('g', {
-                    attrs: {
-                        transform: 'translate(' + CoreView.width + ',' + CoreView.width + ')'
-                    }
-                }, context.viewer.renderChildren(model, context))]
-        );
-        return vNode
+        const viewBox = "0 0 "
+            + model.columns * (CoreView.width + CoreView.dist)
+            + " "
+            + (model.columns + 1) * (CoreView.width + CoreView.dist)
+        const transform = 'translate(' + CoreView.width + ',' + CoreView.width + ')'
+        return <svg key={model.id} id={model.id} viewBox={viewBox}>
+                <g transform={transform}>
+                    {context.viewer.renderChildren(model, context)}
+                </g>
+            </svg>
     }
 }
 
@@ -35,36 +32,18 @@ export class CoreView implements View {
             y: model.row * (CoreView.width + CoreView.dist),
         }
         const nodeName = this.padLeft(model.row) + this.padLeft(model.column)
-        return h('g', {
-            class: {
-                core: true
-            },
-            attrs: {
-                id: model.id,
-                key: model.id,
-                transform: 'translate(' + position.x + ',' + position.y + ')'
-            }
-        }, [
-            h('rect', {
-                attrs: {
-                    width: CoreView.width,
-                    height: CoreView.width,
-                    rx: 4,
-                    ry: 4,
-                    fill: LoadColor.getSVG(model.load)
-                }
-            }),
-            h('text', {
-                class: {
-                    text: true
-                },
-                attrs: {
-                    'text-anchor': 'middle',
-                    x: CoreView.width / 2,
-                    y: CoreView.width / 2,
-                }
-            }, nodeName)
-        ]);
+        const transform = 'translate(' + position.x + ',' + position.y + ')'
+        return <g class-core={true}
+                  id={model.id}
+                  key={model.id}
+                  transform={transform}>
+                <rect width={CoreView.width}
+                      height={CoreView.width}
+                      rx={4}
+                      ry={4}
+                      fill={LoadColor.getSVG(model.load)}/>
+                <text class-text={true} x={CoreView.width / 2} y={CoreView.width / 2}>{nodeName}</text>
+            </g>
     }
 
     private padLeft(n: number): string {
@@ -110,19 +89,13 @@ export class CrossbarView implements View {
                 height = columns * (CoreView.width + CoreView.dist) - CoreView.dist
                 break;
         }
-        return h('rect', {
-            class: {
-                crossbar: true
-            },
-            attrs: {
-                id: model.id,
-                key: model.id,
-                width: width,
-                height: height,
-                x: x,
-                y: y,
-            }
-        });
+        return <rect class-crossbar={true}
+                     id={model.id}
+                     key={model.id}
+                     width={width}
+                     height={height}
+                     x={x}
+                     y={y} />
     }
 }
 
@@ -191,17 +164,12 @@ export class ChannelView implements View {
             y: model.row * (CoreView.width + CoreView.dist),
         }
 
-        return h('polygon', {
-            class: {
-                channel: true,
-            },
-            attrs: {
-                id: model.id,
-                key: model.id,
-                points: points,
-                transform: 'translate(' + position.x + ',' + position.y + ')',
-                fill: LoadColor.getSVG(model.load)
-            }
-        })
+        const transform = 'translate(' + position.x + ',' + position.y + ')'
+        return <polygon class-channel={true}
+                        id={model.id}
+                        key={model.id}
+                        points={points}
+                        transform={transform}
+                        fill={LoadColor.getSVG(model.load)} />
     }
 }

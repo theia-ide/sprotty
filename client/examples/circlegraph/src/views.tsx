@@ -1,24 +1,17 @@
-import {h} from "snabbdom"
-import {VNode} from "snabbdom/vnode"
 import {RenderingContext} from "../../../src/base"
 import {SNode, SNodeView} from "../../../src/graph"
 import {Point} from "../../../src/utils"
+import {VNode} from "snabbdom/vnode"
+
+const snabbdom = require("snabbdom-jsx")
+const JSX = {createElement: snabbdom.svg}
 
 /**
  * A very simple example node consisting of a plain circle.
  */
 export class CircleNodeView extends SNodeView {
     render(node: SNode, context: RenderingContext): VNode {
-        return h('circle', {
-            class: {
-                node: true,
-            },
-            attrs: {
-                id: node.id,
-                key: node.id,
-                r: this.getRadius(node)
-            }
-        });
+        return <circle key={node.id} id={node.id} class-node={true} r={this.getRadius(node)}></circle>
     }
 
     private getRadius(node: SNode) {

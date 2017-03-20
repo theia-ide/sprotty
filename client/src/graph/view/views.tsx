@@ -1,27 +1,22 @@
-import {h} from "snabbdom"
-import {VNode} from "snabbdom/vnode"
 import {View, RenderingContext} from "../../base/view"
 import {Point} from "../../utils"
 import {SGraph, SNode, SEdge} from "../model"
+import {VNode} from "snabbdom/vnode"
+
+const snabbdom = require("snabbdom-jsx")
+const JSX = {createElement: snabbdom.svg}
 
 /**
  * View component that turns a SGraph element and its children into a tree of virtual DOM.
  */
 export class SGraphView implements View {
 
-    render(model: SGraph, context: RenderingContext): VNode {
-        const vNode = h('svg', {
-                key: model.id,
-                class: {
-                    graph: true
-                },
-                attrs: {
-                    id: model.id
-                }
-            }, [
-                h('g', {}, context.viewer.renderChildren(model, context))]
-        )
-        return vNode
+    render(model: SGraph, context: RenderingContext): VNode  {
+        return <svg key={model.id} id={model.id} class-graph={true}>
+                <g>
+                    {context.viewer.renderChildren(model, context)}
+                </g>
+            </svg>
     }
 }
 
@@ -41,26 +36,9 @@ export class StraightEdgeView implements View {
             const targetView = (context.viewer.viewRegistry.get(target.type, target)) as SNodeView
             const targetAnchor = targetView.getAnchor(target, source, 0)
             const path = `M ${sourceAnchor.x},${sourceAnchor.y} L ${targetAnchor.x},${targetAnchor.y}`
-            return h('path', {
-                key: edge.id,
-                class: {
-                    edge: true
-                },
-                attrs: {
-                    d: path,
-                    id: edge.id,
-                }
-            })
+            return <path key={edge.id} id={edge.id} class-edge={true} d={path} />
         } else {
-            return h('text', {
-                key: edge.id,
-                class: {
-                    'dangling-edge': true
-                },
-                attrs: {
-                    id: edge.id,
-                }
-            }, '?')
+            return <text key={edge.id} id={edge.id} class-dangling-edge={true}>?</text>
         }
     }
 }

@@ -1,5 +1,4 @@
 import {VNode} from "snabbdom/vnode"
-import {h} from "snabbdom"
 import {Point} from "../../utils"
 import {SelectAction, ElementMove, MoveAction} from "../intent"
 import {SModelElement, isMoveable, isSelectable} from "../model"
@@ -8,6 +7,9 @@ import {Viewer} from "./viewer"
 import {SModelRoot} from "../model/smodel"
 import {VNodeUtils} from "./vnode-utils"
 import {isCtrlOrCmd} from "../../utils/utils"
+
+const snabbdom = require("snabbdom-jsx")
+const JSX = {createElement: snabbdom.svg}
 
 export class MouseTool implements VNodeDecorator {
 
@@ -98,11 +100,8 @@ export class MouseTool implements VNodeDecorator {
             VNodeUtils.on(vnode, 'mousemove', this.mouseMove.bind(this), element)
         }
         if (isMoveable(element)) {
-            vnode = h('g', {
-                attrs: {
-                    transform: 'translate(' + element.x + ', ' + element.y + ')'
-                }
-            }, [vnode])
+            const translate = 'translate(' + element.x + ', ' + element.y + ')'
+            vnode = <g transform={translate}>{vnode}</g>
         }
         return vnode
     }

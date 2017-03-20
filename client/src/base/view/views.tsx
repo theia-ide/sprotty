@@ -1,10 +1,12 @@
 import "reflect-metadata"
 import {injectable} from "inversify"
-import {VNode} from "snabbdom/vnode"
-import {h} from "snabbdom"
 import {SModelElement, SModelRoot, SModel} from "../model"
 import {ProviderRegistry} from "../../utils"
 import {Viewer} from "./viewer"
+import {VNode} from "snabbdom/vnode"
+
+const snabbdom = require("snabbdom-jsx")
+const JSX = {createElement: snabbdom.svg}
 
 /**
  * Base interface for the components that turn GModelElements into virtual DOM elements.
@@ -41,12 +43,7 @@ export class ViewRegistry extends ProviderRegistry<View, SModelElement> {
 
 export class EmptyView implements View {
     render(model: SModelRoot, context: RenderingContext): VNode {
-        return h('g', {
-            key: model.id,
-            attrs: {
-                id: model.id
-            }
-        });
+        return <g key={model.id} id={model.id}></g>
     }
 }
 
@@ -54,15 +51,6 @@ export class MissingView implements View {
     render(model: SModelElement, context: RenderingContext): VNode {
         const x = (model as any).x || 0
         const y = (model as any).y || 0
-        return h('text', {
-            class: {
-                missing: true
-            },
-            attrs: {
-                'text-anchor': 'middle',
-                x: x,
-                y: y,
-            }
-        }, '?' + model.id + '?')
+        return <text class-missing={true} id={model.id} x={x} y={y}>?{model.id}?</text>
     }
 }

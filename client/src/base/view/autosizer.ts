@@ -13,7 +13,6 @@ class VNodeAndSizeable {
 
 export class Autosizer implements VNodeDecorator {
 
-    s: SVGGElement
     sizeables: VNodeAndSizeable[] = []
 
     constructor(private viewer: Viewer) {

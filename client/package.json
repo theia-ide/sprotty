@@ -22,6 +22,7 @@
     "inversify": "^3.1.0",
     "mocha": "^3.2.0",
     "reflect-metadata ": "^0.1.10",
+    "snabbdom-jsx": "^0.3.1",
     "snabbdom-to-html": "^3.1.1",
     "ts-loader": "^2.0.0",
     "ts-node": "^2.1.0",

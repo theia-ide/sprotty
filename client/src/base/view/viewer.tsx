@@ -4,7 +4,6 @@ import {TYPES} from "../types"
 import {h, init} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
 import {Module} from "snabbdom/modules/module"
-import {classModule} from "snabbdom/modules/class"
 import {propsModule} from "snabbdom/modules/props"
 import {attributesModule} from "snabbdom/modules/attributes"
 import {styleModule} from "snabbdom/modules/style"
@@ -16,6 +15,11 @@ import {RenderingContext, ViewRegistry} from "./views"
 import {KeyTool} from "./key-tool"
 import {MouseTool} from "./mouse-tool"
 import {Autosizer} from "./autosizer"
+import {classModule} from "snabbdom/modules/class"
+import {VNodeUtils} from "./vnode-utils"
+
+const snabbdom = require("snabbdom-jsx")
+const JSX = {createElement: snabbdom.html}  // must be html here, as we're creating a div
 
 export interface IViewer {
     update(model: SModelRoot): void
@@ -48,9 +52,9 @@ export class Viewer implements VNodeDecorator, IViewer {
 
     createModules(): Module[] {
         return [
-            classModule,
             propsModule,
             attributesModule,
+            classModule,
             styleModule,
             eventListenersModule
         ]
@@ -87,14 +91,10 @@ export class Viewer implements VNodeDecorator, IViewer {
 
     update(model: SModelRoot): void {
         const context = this.createRenderingContext(model)
-        const newVDOM = h('div', {
-            attrs: {
-                id: this.options.baseDiv,
-                class: this.options.baseDiv
-            }
-        }, [
-            this.renderElement(model, context)
-        ])
+        const newVDOM = <div id={this.options.baseDiv}>
+                {this.renderElement(model, context) as VNode}
+            </div>
+        VNodeUtils.setClass(newVDOM, this.options.baseDiv, true)
         if (this.lastVDOM) {
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
         } else {
