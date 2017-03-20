@@ -14,11 +14,11 @@ describe('test move command execution, undo, redo and merge', () => {
     const graphFactory = new SGraphFactory()
 
     const pointNW: Point = { x: 0, y: 0 }
-    const pointNE: Point = { x: 300, y: 0 }
-    const pointSW: Point = { x: 0, y: 300 }
-    const pointSE: Point = { x: 300, y: 300 }
+    const pointNE: Point = { x: 300, y: 1 }
+    const pointSW: Point = { x: 1, y: 300 }
+    const pointSE: Point = { x: 301, y: 301 }
 
-    // nodes start at origin (NW)
+    // nodes start at pointNW
     const myNode0 = {
         id: 'node0', type: 'node:circle',
         x: pointNW.x, y: pointNW.y,
@@ -107,8 +107,6 @@ describe('test move command execution, undo, redo and merge', () => {
         // test "undo"
         cmd.undo(<SModelRoot>newModel, context).then(
             newModel => {
-                console.log(newModel)
-
                 // corfirm that each node is back at original
                 // coordinates
 
@@ -124,12 +122,20 @@ describe('test move command execution, undo, redo and merge', () => {
 
     it('redo move command', () => {
         // test "redo": 
-        //throw new Error("fail: test not implemented")
-    })
+        cmd.redo(<SModelRoot>newModel, context).then(
+            newModel => {
+                // corfirm that each node is back where ordered to move
 
-    it('merge move command', () => {
-        // test "merge"
-        //throw new Error("fail: test not implemented")
+                // node0 => PointNE
+                expect(pointNE.x).equals(getNode('node0', newModel).x)
+                expect(pointNE.y).equals(getNode('node0', newModel).y)
+                // node1 => pointSW
+                expect(pointSW.x).equals(getNode('node1', newModel).x)
+                expect(pointSW.y).equals(getNode('node1', newModel).y)
+                // node2 => PointSE
+                expect(pointSE.x).equals(getNode('node2', newModel).x)
+                expect(pointSE.y).equals(getNode('node2', newModel).y)
+            })
     })
 
 })
