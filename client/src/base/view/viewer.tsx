@@ -17,8 +17,8 @@ import {MouseTool} from "./mouse-tool"
 import {Autosizer} from "./autosizer"
 import {classModule} from "snabbdom/modules/class"
 import {VNodeUtils} from "./vnode-utils"
+import * as snabbdom from "snabbdom-jsx"
 
-const snabbdom = require("snabbdom-jsx")
 const JSX = {createElement: snabbdom.html}  // must be html here, as we're creating a div
 
 export interface IViewer {

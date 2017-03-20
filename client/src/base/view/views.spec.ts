@@ -3,6 +3,7 @@ import {EmptyView, MissingView} from "./views"
 import {Viewer} from "./viewer"
 import {SNode} from "../../graph/model/sgraph"
 import {expect} from "chai"
+
 const toHTML = require('snabbdom-to-html')
 
 describe('base views', () => {

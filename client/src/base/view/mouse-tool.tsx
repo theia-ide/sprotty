@@ -7,8 +7,8 @@ import {Viewer} from "./viewer"
 import {SModelRoot} from "../model/smodel"
 import {VNodeUtils} from "./vnode-utils"
 import {isCtrlOrCmd} from "../../utils/utils"
+import * as snabbdom from "snabbdom-jsx"
 
-const snabbdom = require("snabbdom-jsx")
 const JSX = {createElement: snabbdom.svg}
 
 export class MouseTool implements VNodeDecorator {

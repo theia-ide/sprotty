@@ -3,8 +3,8 @@ import {VNode} from "snabbdom/vnode"
 import {Chip, Core, Channel, Crossbar} from "./chipmodel"
 import {Direction} from "../../../src/utils/geometry"
 import {ColorMap, RGBColor} from "../../../src/utils/color"
+import * as snabbdom from "snabbdom-jsx"
 
-const snabbdom = require("snabbdom-jsx")
 const JSX = {createElement: snabbdom.svg}
 
 export class ChipView implements View {

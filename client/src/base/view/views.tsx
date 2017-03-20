@@ -4,8 +4,8 @@ import {SModelElement, SModelRoot, SModel} from "../model"
 import {ProviderRegistry} from "../../utils"
 import {Viewer} from "./viewer"
 import {VNode} from "snabbdom/vnode"
+import * as snabbdom from "snabbdom-jsx"
 
-const snabbdom = require("snabbdom-jsx")
 const JSX = {createElement: snabbdom.svg}
 
 /**

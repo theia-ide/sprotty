@@ -2,8 +2,8 @@ import {View, RenderingContext} from "../../base/view"
 import {Point} from "../../utils"
 import {SGraph, SNode, SEdge} from "../model"
 import {VNode} from "snabbdom/vnode"
+import * as snabbdom from "snabbdom-jsx"
 
-const snabbdom = require("snabbdom-jsx")
 const JSX = {createElement: snabbdom.svg}
 
 /**
