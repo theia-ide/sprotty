@@ -1,0 +1,17 @@
+grammar io.typefox.sprotte.example.flow.ExecutionFlow with org.eclipse.xtext.common.Terminals
+
+generate dataFlow "http://www.typefox.io/sprotte/example/flow/ExecutionFlow"
+
+Flow:
+	'program' name=ID
+	declarations+=Declaration*;
+
+Declaration:
+	Execution | Barrier;
+
+Execution:
+	'start' name=ID;
+
+Barrier:
+	'join' joinedTasks+=[Execution] (',' joinedTasks+=[Execution])*
+	('then' executions+=Execution (',' executions+=Execution)*)?;
