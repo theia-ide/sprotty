@@ -1,6 +1,5 @@
 dependencies {
     compile project(':diagram-api')
-    compile "org.eclipse.xtend:org.eclipse.xtend.lib:$versions.xtext"
     compile "com.google.inject:guice:$versions.guice"
     compile "javax.websocket:javax.websocket-api:$versions.websocket"
 }
