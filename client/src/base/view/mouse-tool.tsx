@@ -8,7 +8,7 @@ import {SModelRoot, SChildElement} from "../model/smodel"
 import {VNodeUtils} from "./vnode-utils"
 import {isCtrlOrCmd} from "../../utils/utils"
 import * as snabbdom from "snabbdom-jsx"
-import {isViewport, Viewport} from "../model/behavior"
+import {isViewport, Viewport, Sizeable, isSizeable} from "../model/behavior"
 import {ViewportAction} from "../intent/viewport"
 
 const JSX = {createElement: snabbdom.svg}
@@ -128,6 +128,8 @@ export class MouseTool implements VNodeDecorator {
                 const newViewport: Viewport = {
                     centerX: viewport.centerX - dx,
                     centerY: viewport.centerY - dy,
+                    width: viewport.width,
+                    height: viewport.height,
                     zoom: viewport.zoom
                 }
                 this.lastScrollPosition = {x: event.clientX, y: event.clientY}
@@ -160,9 +162,15 @@ export class MouseTool implements VNodeDecorator {
         const viewport = this.getViewport(element)
         if (viewport) {
             const newZoom = Math.exp(event.deltaY * 0.005)
+            const factor =  1./(newZoom * viewport.zoom) - 1./viewport.zoom
+            const pivotX = event.offsetX - 0.5 * viewport.width
+            const pivotY = event.offsetY - 0.5 * viewport.height
+            console.log(pivotX + ' ' + pivotY)
             const newViewport: Viewport = {
-                centerX: viewport.centerX,
-                centerY: viewport.centerY,
+                centerX:  - (factor * pivotX - viewport.centerX),
+                centerY: - (factor * pivotY - viewport.centerY),
+                width: viewport.width,
+                height: viewport.height,
                 zoom: viewport.zoom * newZoom
             }
             this.viewer.fireAction(new ViewportAction(viewport.id, newViewport, false))

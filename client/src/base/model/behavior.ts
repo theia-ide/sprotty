@@ -32,7 +32,9 @@ export function isSizeable(element: SModelElement | Sizeable): element is Sizeab
         && 'height' in element
 }
 
-export interface Viewport extends Behavior {
+export interface Viewport extends Behavior, Dimension {
+    width: number
+    height: number
     centerX: number
     centerY: number
     zoom: number
@@ -42,4 +44,6 @@ export function isViewport(element: SModelElement | Viewport): element is Viewpo
     return 'centerX' in element
         && 'centerY' in element
         && 'zoom' in element
+        && 'width' in element
+        && 'height' in element
 }

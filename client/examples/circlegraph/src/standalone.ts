@@ -38,11 +38,7 @@ export default function runStandalone() {
     const node0 = {id: 'node0', type: 'node:circle', x: 100, y: 100};
     const node1 = {id: 'node1', type: 'node:circle', x: 200, y: 150, selected: true};
     const edge0 = {id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1'};
-    const graph = modelFactory.createRoot({
-        id: 'graph',
-        type: 'graph',
-        centerX: 100, centerY:100,
-        children: [node0, node1, edge0]} as SModelRootSchema);
+    const graph = modelFactory.createRoot({id: 'graph', type: 'graph', children: [node0, node1, edge0]});
 
     // Run
     const dispatcher = container.get(ActionDispatcher)
@@ -55,8 +51,8 @@ export default function runStandalone() {
         const newNode: SNodeSchema = {
             id: 'node' + count,
             type: 'node:circle',
-            x: Math.random() * 1024,
-            y: Math.random() * 768,
+            x: Math.random() * 1024 - 512,
+            y: Math.random() * 768 - 384,
             width: 40
         }
         graph.add(modelFactory.createElement(newNode))
@@ -70,7 +66,7 @@ export default function runStandalone() {
     }
 
     for (let i = 0; i < 200; ++i) {
-        // addNode()
+        addNode()
     }
     dispatcher.dispatch(new SetModelAction(graph))
 
@@ -88,8 +84,8 @@ export default function runStandalone() {
                 nodeMoves.push({
                     elementId: shape.id,
                     toPosition: {
-                        x: Math.random() * 1024,
-                        y: Math.random() * 768
+                        x: Math.random() * 1024 - 512,
+                        y: Math.random() * 768 - 384
                     }
                 })
             }

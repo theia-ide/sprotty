@@ -32,6 +32,8 @@ export class ViewportCommand extends AbstractCommand {
             this.oldViewport = {
                 centerX: this.element.centerX,
                 centerY: this.element.centerY,
+                width: this.element.width,
+                height: this.element.height,
                 zoom: this.element.zoom
             }
             if (this.action.animate)

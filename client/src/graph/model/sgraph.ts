@@ -20,7 +20,7 @@ export class SGraph extends SModelRoot implements SGraphSchema, Viewport, Sizeab
     children: SGraphElement[]
     centerX: number = 0
     centerY: number = 0
-    zoom: number = 1.5
+    zoom: number = 1
     width: number = 0
     height: number = 0
     autosize: boolean = true

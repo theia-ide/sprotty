@@ -28,7 +28,7 @@ describe('graph views', () => {
         const view = new SGraphView()
         const vnode = view.render(graph, context)
         const html = toHTML(vnode)
-        expect(html).to.be.equal('<svg id="mygraph" class="graph"><g transform="translate(0,0)"></g></svg>')
+        expect(html).to.be.equal('<svg id="mygraph" class="graph"><g transform="scale(1) translate(0,0)"></g></svg>')
     })
 
     const node0 = {id: 'node0', type: 'node:circle', x: 100, y: 100};
@@ -48,7 +48,7 @@ describe('graph views', () => {
         const view = new CircleNodeView()
         const vnode = view.render(graph.index.getById('node0') as SNode, context)
         const html = toHTML(vnode)
-        expect(html).to.be.equal('<circle id="node0" class="node" r="40" />')
+        expect(html).to.be.equal('<g id="node0"><circle class="node" r="40" /><text class="text" y="7">0</text></g>')
     })
 
     it('graph', () => {
@@ -57,10 +57,10 @@ describe('graph views', () => {
         const html = toHTML(vnode)
         expect(html).to.be.equal(
             '<svg id="graph" class="graph">'
-            + '<g transform="translate(0,0)">'
-            + '<g transform="translate(100, 100)"><circle id="node0" class="node" r="40" style="opacity: 1; transition: opacity 0.5s" /></g>'
-            + '<g transform="translate(200, 150)"><circle id="node1" class="node selected" r="40" style="opacity: 1; transition: opacity 0.5s" /></g>'
-            + '<path id="edge0" class="edge" d="M 135.77708763999664,117.88854381999832 L 164.22291236000336,132.11145618000168" style="opacity: 1; transition: opacity 0.5s" />'
+            + '<g transform="scale(1) translate(0,0)">'
+            + '<g transform="translate(100, 100)"><g id="node0"><circle class="node" r="40" /><text class="text" y="7">0</text></g></g>'
+            + '<g transform="translate(200, 150)"><g id="node1" class="selected"><circle class="node selected" r="40" /><text class="text" y="7">1</text></g></g>'
+            + '<path id="edge0" class="edge" d="M 135.77708763999664,117.88854381999832 L 164.22291236000336,132.11145618000168" />'
             + '</g>' 
             + '</svg>')
     })
