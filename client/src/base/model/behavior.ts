@@ -31,3 +31,15 @@ export function isSizeable(element: SModelElement | Sizeable): element is Sizeab
         && 'width' in element
         && 'height' in element
 }
+
+export interface Viewport extends Behavior {
+    viewX: number
+    viewY: number
+    zoom: number
+}
+
+export function isViewport(element: SModelElement | Viewport): element is Viewport {
+    return 'viewX' in element
+        && 'viewY' in element
+        && 'zoom' in element
+}

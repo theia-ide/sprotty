@@ -7,14 +7,20 @@ import {
     Moveable,
     Selectable
 } from "../../base/model"
-import {Sizeable} from "../../base/model/behavior"
+import {Sizeable, Viewport} from "../../base/model/behavior"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
+    viewX: number
+    viewY: number
+    zoom: number
 }
 
-export class SGraph extends SModelRoot implements SGraphSchema {
+export class SGraph extends SModelRoot implements SGraphSchema, Viewport {
     children: SGraphElement[]
+    viewX: number = 0
+    viewY: number = 0
+    zoom: number = 1
 }
 
 export interface SNodeSchema extends SParentElementSchema {

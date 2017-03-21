@@ -12,8 +12,9 @@ const JSX = {createElement: snabbdom.svg}
 export class SGraphView implements View {
 
     render(model: SGraph, context: RenderingContext): VNode  {
+        const transform = `translate(${model.viewX || 0},${model.viewY || 0})`
         return <svg key={model.id} id={model.id} class-graph={true}>
-                <g>
+                <g transform={transform}>
                     {context.viewer.renderChildren(model, context)}
                 </g>
             </svg>

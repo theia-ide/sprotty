@@ -28,7 +28,7 @@ describe('graph views', () => {
         const view = new SGraphView()
         const vnode = view.render(graph, context)
         const html = toHTML(vnode)
-        expect(html).to.be.equal('<svg id="mygraph" class="graph"><g></g></svg>')
+        expect(html).to.be.equal('<svg id="mygraph" class="graph"><g transform="translate(0,0)"></g></svg>')
     })
 
     const node0 = {id: 'node0', type: 'node:circle', x: 100, y: 100};
@@ -56,10 +56,12 @@ describe('graph views', () => {
         const vnode = view.render(graph, context)
         const html = toHTML(vnode)
         expect(html).to.be.equal(
-            '<svg id="graph" class="graph"><g>' 
+            '<svg id="graph" class="graph">'
+            + '<g transform="translate(0,0)">'
             + '<g transform="translate(100, 100)"><circle id="node0" class="node" r="40" style="opacity: 1; transition: opacity 0.5s" /></g>'
             + '<g transform="translate(200, 150)"><circle id="node1" class="node selected" r="40" style="opacity: 1; transition: opacity 0.5s" /></g>'
             + '<path id="edge0" class="edge" d="M 135.77708763999664,117.88854381999832 L 164.22291236000336,132.11145618000168" style="opacity: 1; transition: opacity 0.5s" />'
-            + '</g></svg>')
+            + '</g>' 
+            + '</svg>')
     })
 })

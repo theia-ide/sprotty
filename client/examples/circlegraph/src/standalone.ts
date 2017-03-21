@@ -14,6 +14,7 @@ import {
 import {SGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
+import {ViewportAction, ViewportCommand} from "../../../src/base/intent/viewport"
 
 export default function runStandalone() {
     const container = createContainer()
@@ -23,6 +24,7 @@ export default function runStandalone() {
     actionHandlerRegistry.registerCommand(MoveAction.KIND, MoveCommand)
     actionHandlerRegistry.registerCommand(SelectAction.KIND, SelectCommand)
     actionHandlerRegistry.registerCommand(ResizeAction.KIND, ResizeCommand)
+    actionHandlerRegistry.registerCommand(ViewportAction.KIND, ViewportCommand)
 
     // Register views
     const viewRegistry = container.get(ViewRegistry)

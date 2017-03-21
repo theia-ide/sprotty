@@ -86,9 +86,13 @@ export interface SModelRootSchema extends SParentElementSchema {
  * Base class for the root elements of the diagram model tree.
  */
 export class SModelRoot extends SParentElement implements SModelRootSchema {
-    readonly _index = new SModelIndex()
+    private _index: SModelIndex
 
     get index(): SModelIndex {
+        if(!this._index) {
+            this._index = new SModelIndex
+            this._index.add(this)
+        }
         return this._index
     }
 }

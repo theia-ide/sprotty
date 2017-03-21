@@ -29,6 +29,8 @@ export class ActionDispatcher implements IActionDispatcher {
             this.commandStack.redo()
         else if (this.actionHandlerRegistry.hasKey(action.kind))
             this.handleAction(action)
+        else
+            console.log("Missing command for action '" + action.kind + "'")
     }
 
     protected handleAction(action: Action) {
