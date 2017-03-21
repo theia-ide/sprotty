@@ -1,10 +1,8 @@
 rootProject.name = 'sprotte-server'
 
-include 'protocol-generator'
 include 'diagram-api'
 include 'diagram-server'
 include 'diagram-server-examples'
-include 'xtext-diagram'
 include 'xtext-diagram-examples:io.typefox.sprotte.example.multicore'
 include 'xtext-diagram-examples:io.typefox.sprotte.example.multicore.ide'
 include 'xtext-diagram-examples:io.typefox.sprotte.example.multicore.web'

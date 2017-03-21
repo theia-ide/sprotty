@@ -1,6 +1,5 @@
 package io.typefox.sprotte.api
 
-import io.typefox.sprotte.protocolgen.JsonRPC
 import java.util.List
 import java.util.Map
 import java.util.concurrent.CompletableFuture
@@ -9,7 +8,6 @@ import org.eclipse.lsp4j.jsonrpc.services.JsonNotification
 import org.eclipse.lsp4j.jsonrpc.services.JsonRequest
 import org.eclipse.lsp4j.jsonrpc.validation.NonNull
 
-@JsonRPC
 interface DiagramServer {
 	
     @JsonRequest
@@ -20,7 +18,6 @@ interface DiagramServer {
     
 }
 
-@JsonRPC
 interface DiagramClient {
 	
 }
