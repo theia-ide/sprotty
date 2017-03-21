@@ -30,15 +30,15 @@ export class ViewportCommand extends AbstractCommand {
         if(element && isViewport(element)) {
             this.element = element
             this.oldViewport = {
-                viewX: this.element.viewX,
-                viewY: this.element.viewY,
+                centerX: this.element.centerX,
+                centerY: this.element.centerY,
                 zoom: this.element.zoom
             }
             if (this.action.animate)
                 return new ViewportAnimation(this.element, this.oldViewport, this.newViewport, context).start()
             else {
-                this.element.viewX = this.newViewport.viewX
-                this.element.viewY = this.newViewport.viewY
+                this.element.centerX = this.newViewport.centerX
+                this.element.centerY = this.newViewport.centerY
                 this.element.zoom = this.newViewport.zoom
             }
         }
@@ -72,8 +72,8 @@ export class ViewportAnimation extends Animation {
     }
 
     tween(t: number) {
-        this.element.viewX = (1 - t) * this.oldViewport.viewX + t * this.newViewport.viewX
-        this.element.viewY = (1 - t) * this.oldViewport.viewY + t * this.newViewport.viewY
+        this.element.centerX = (1 - t) * this.oldViewport.centerX + t * this.newViewport.centerX
+        this.element.centerY = (1 - t) * this.oldViewport.centerY + t * this.newViewport.centerY
         this.element.zoom = (1 - t) * this.oldViewport.zoom + t * this.newViewport.zoom
         return this.context.root
     }

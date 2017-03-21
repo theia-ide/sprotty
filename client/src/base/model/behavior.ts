@@ -22,7 +22,7 @@ export function isSelectable(element: SModelElement | Selectable): element is Se
     return 'selected' in element
 }
 
-export interface Sizeable extends Behavior, Point, Dimension {
+export interface Sizeable extends Behavior, Dimension {
     autosize: boolean
 }
 
@@ -33,13 +33,13 @@ export function isSizeable(element: SModelElement | Sizeable): element is Sizeab
 }
 
 export interface Viewport extends Behavior {
-    viewX: number
-    viewY: number
+    centerX: number
+    centerY: number
     zoom: number
 }
 
 export function isViewport(element: SModelElement | Viewport): element is Viewport {
-    return 'viewX' in element
-        && 'viewY' in element
+    return 'centerX' in element
+        && 'centerY' in element
         && 'zoom' in element
 }

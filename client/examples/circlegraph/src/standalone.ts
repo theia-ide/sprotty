@@ -15,6 +15,7 @@ import {SGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSc
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
 import {ViewportAction, ViewportCommand} from "../../../src/base/intent/viewport"
+import {SModelRootSchema} from "../../../src/base/model/smodel"
 
 export default function runStandalone() {
     const container = createContainer()
@@ -37,7 +38,11 @@ export default function runStandalone() {
     const node0 = {id: 'node0', type: 'node:circle', x: 100, y: 100};
     const node1 = {id: 'node1', type: 'node:circle', x: 200, y: 150, selected: true};
     const edge0 = {id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1'};
-    const graph = modelFactory.createRoot({id: 'graph', type: 'graph', children: [node0, node1, edge0]});
+    const graph = modelFactory.createRoot({
+        id: 'graph',
+        type: 'graph',
+        centerX: 100, centerY:100,
+        children: [node0, node1, edge0]} as SModelRootSchema);
 
     // Run
     const dispatcher = container.get(ActionDispatcher)
@@ -65,7 +70,7 @@ export default function runStandalone() {
     }
 
     for (let i = 0; i < 200; ++i) {
-        addNode()
+        // addNode()
     }
     dispatcher.dispatch(new SetModelAction(graph))
 

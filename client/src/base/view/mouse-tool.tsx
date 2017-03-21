@@ -91,10 +91,12 @@ export class MouseTool implements VNodeDecorator {
         const element = this.getTargetElement(model, event)
         if(!element)
             return
+        const viewport = this.getViewport(element)
         if (this.lastDragPosition) {
             this.hasDragged = true
-            const dx = event.clientX - this.lastDragPosition.x
-            const dy = event.clientY - this.lastDragPosition.y
+            const zoom = viewport ? viewport.zoom : 1
+            const dx = (event.clientX - this.lastDragPosition.x) / zoom
+            const dy = (event.clientY - this.lastDragPosition.y) / zoom
             const root = element.root
             const nodeMoves: ElementMove[] = []
             root
@@ -120,13 +122,12 @@ export class MouseTool implements VNodeDecorator {
                 this.viewer.fireAction(new MoveAction(nodeMoves, false))
             this.lastDragPosition = {x: event.clientX, y: event.clientY}
         } else if(this.lastScrollPosition) {
-            const viewport = this.getViewport(element)
             if(viewport) {
-                const dx = event.clientX - this.lastScrollPosition.x
-                const dy = event.clientY - this.lastScrollPosition.y
+                const dx = (event.clientX - this.lastScrollPosition.x) / viewport.zoom
+                const dy = (event.clientY - this.lastScrollPosition.y) / viewport.zoom
                 const newViewport: Viewport = {
-                    viewX: viewport.viewX + dx,
-                    viewY: viewport.viewY + dy,
+                    centerX: viewport.centerX - dx,
+                    centerY: viewport.centerY - dy,
                     zoom: viewport.zoom
                 }
                 this.lastScrollPosition = {x: event.clientX, y: event.clientY}
@@ -152,6 +153,23 @@ export class MouseTool implements VNodeDecorator {
         this.lastScrollPosition = undefined
     }
 
+    wheel(model: SModelRoot, event: WheelEvent) {
+        const element = this.getTargetElement(model, event)
+        if(!element)
+            return
+        const viewport = this.getViewport(element)
+        if (viewport) {
+            const newZoom = Math.exp(event.deltaY * 0.005)
+            const newViewport: Viewport = {
+                centerX: viewport.centerX,
+                centerY: viewport.centerY,
+                zoom: viewport.zoom * newZoom
+            }
+            this.viewer.fireAction(new ViewportAction(viewport.id, newViewport, false))
+            event.preventDefault()
+        }
+    }
+
     decorate(vnode: VNode, element: SModelElement) {
         if (isSelectable(element)) {
             VNodeUtils.setClass(vnode, 'selected', element.selected)
@@ -160,6 +178,7 @@ export class MouseTool implements VNodeDecorator {
             VNodeUtils.on(vnode, 'mousedown', this.mouseDown.bind(this), element)
             VNodeUtils.on(vnode, 'mouseup', this.mouseUp.bind(this), element)
             VNodeUtils.on(vnode, 'mousemove', this.mouseMove.bind(this), element)
+            VNodeUtils.on(vnode, 'wheel', this.wheel.bind(this), element)
             VNodeUtils.on(vnode, 'contextmenu', (element, event) => {
                 event.preventDefault()
             }, element)

@@ -47,7 +47,7 @@ export class Viewer implements VNodeDecorator, IViewer {
     }
 
     createDecorators(): VNodeDecorator[] {
-        return [new AddRemoveAnimationDecorator(), new KeyTool(this), new MouseTool(this), new Autosizer(this)]
+        return [/*new AddRemoveAnimationDecorator(), */new KeyTool(this), new MouseTool(this), new Autosizer(this)]
     }
 
     createModules(): Module[] {

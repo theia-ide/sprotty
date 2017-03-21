@@ -2,7 +2,7 @@ import {VNodeDecorator} from "./vnode-decorators"
 import {VNode} from "snabbdom/vnode"
 import {SModelElement} from "../model/smodel"
 import {isSizeable, Sizeable} from "../model/behavior"
-import {almostEquals} from "../../utils/geometry"
+import {almostEquals, Dimension} from "../../utils/geometry"
 import {Viewer} from "./viewer"
 import {ElementResize, ResizeAction} from "../intent/resize"
 
@@ -36,7 +36,7 @@ export class Autosizer implements VNodeDecorator {
                     const vnode = sizeable.vnode
                     const element = sizeable.element
                     if (vnode.elm) {
-                        const bounds = (vnode.elm as any).getBBox()
+                        const bounds = this.getDimension(vnode.elm as Element)
                         if (bounds
                             && (!almostEquals(bounds.width, element.width)
                             || !almostEquals(bounds.height, element.height))) {
@@ -56,5 +56,15 @@ export class Autosizer implements VNodeDecorator {
                 this.viewer.fireAction(new ResizeAction(resizes))
 
         })
+    }
+
+    private getDimension(elm: Element): Dimension {
+        if(elm.tagName == 'svg') {
+            const bounds = elm.getBoundingClientRect()
+            return { width: bounds.width, height: bounds.height }
+        } else {
+            const bounds = (elm as any).getBBox()
+            return { width: bounds.width, height: bounds.height }
+        }
     }
 }

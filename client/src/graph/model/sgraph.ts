@@ -11,16 +11,19 @@ import {Sizeable, Viewport} from "../../base/model/behavior"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
-    viewX: number
-    viewY: number
+    centerX: number
+    centerY: number
     zoom: number
 }
 
-export class SGraph extends SModelRoot implements SGraphSchema, Viewport {
+export class SGraph extends SModelRoot implements SGraphSchema, Viewport, Sizeable {
     children: SGraphElement[]
-    viewX: number = 0
-    viewY: number = 0
-    zoom: number = 1
+    centerX: number = 0
+    centerY: number = 0
+    zoom: number = 1.5
+    width: number = 0
+    height: number = 0
+    autosize: boolean = true
 }
 
 export interface SNodeSchema extends SParentElementSchema {
