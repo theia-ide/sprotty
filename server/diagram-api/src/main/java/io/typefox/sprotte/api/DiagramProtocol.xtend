@@ -62,9 +62,13 @@ class SModelRoot extends SModelElement {
 @JsonRpcData
 class SNode extends SModelElement {
 	
-	int x
+	Double x
 	
-	int y
+	Double y
+	
+	Double width
+	
+	Double height
 	
 }
 

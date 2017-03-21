@@ -23,14 +23,14 @@ class TestDiagramServer implements DiagramServer {
 					new SNode => [
 						type = 'node:circle'
 						id = 'node0'
-						x = 100
-						y = 100
+						x = 100.0
+						y = 100.0
 					],
 					new SNode => [
 						type = 'node:circle'
 						id = 'node1'
-						x = 300
-						y = 150
+						x = 300.0
+						y = 150.0
 					],
 					new SEdge => [
 						type = 'edge:straight'
