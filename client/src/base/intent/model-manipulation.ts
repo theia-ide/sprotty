@@ -1,7 +1,7 @@
+import {Map} from "../../utils"
 import {SModelRoot, SModelRootSchema} from "../model"
 import {CommandExecutionContext, AbstractCommand} from "./commands"
 import {Action} from "./actions"
-
 
 export class SetModelAction implements Action {
     static readonly KIND = 'setModel'
@@ -37,5 +37,8 @@ export class SetModelCommand extends AbstractCommand {
 export class RequestModelAction implements Action {
     static readonly KIND = 'requestModel'
     kind = RequestModelAction.KIND
+
+    constructor(public readonly options?: Map<string>) {
+    }
 }
 

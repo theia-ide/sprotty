@@ -2,6 +2,7 @@ package io.typefox.sprotte.api
 
 import io.typefox.sprotte.protocolgen.JsonRPC
 import java.util.List
+import java.util.Map
 import java.util.concurrent.CompletableFuture
 import org.eclipse.lsp4j.generator.JsonRpcData
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification
@@ -12,10 +13,10 @@ import org.eclipse.lsp4j.jsonrpc.validation.NonNull
 interface DiagramServer {
 	
     @JsonRequest
-    def CompletableFuture<SetModelAction> requestModel(RequestModelAction params)
+    def CompletableFuture<SetModelAction> requestModel(RequestModelAction action)
     
     @JsonNotification
-    def void elementSelected(SelectAction params)
+    def void elementSelected(SelectAction action)
     
 }
 
@@ -27,12 +28,13 @@ interface DiagramClient {
 @JsonRpcData
 class RequestModelAction {
 	String kind = 'requestModel'
+	Map<String, String> options
 }
 
 @JsonRpcData
 class SetModelAction {
 	String kind = 'setModel'
-	GModelRoot newRoot
+	SModelRoot newRoot
 }
 
 @JsonRpcData
@@ -43,25 +45,25 @@ class SelectAction {
 }
 
 @JsonRpcData
-abstract class GModelElement {
+abstract class SModelElement {
 	
 	@NonNull String type
 	
 	@NonNull String id
 	
-	List<GModelElement> children
+	List<SModelElement> children
 	
-	GModelElement parent
-	
-}
-
-@JsonRpcData
-class GModelRoot extends GModelElement {
+	SModelElement parent
 	
 }
 
 @JsonRpcData
-class GNode extends GModelElement {
+class SModelRoot extends SModelElement {
+	
+}
+
+@JsonRpcData
+class SNode extends SModelElement {
 	
 	int x
 	
@@ -70,7 +72,7 @@ class GNode extends GModelElement {
 }
 
 @JsonRpcData
-class GEdge extends GModelElement {
+class SEdge extends SModelElement {
 	
 	@NonNull String sourceId
 	

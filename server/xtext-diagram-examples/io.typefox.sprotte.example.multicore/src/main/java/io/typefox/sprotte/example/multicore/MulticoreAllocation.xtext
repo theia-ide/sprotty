@@ -11,7 +11,7 @@ Declaration:
 	Task | CoreAllocation;
 
 Task:
-	'task' name=ID;
+	'task' name=ID ':' duration=INT 'ticks';
 
 CoreAllocation:
 	'core' selectors+=CoreSelector (',' selectors+=CoreSelector)* '{'

@@ -7,11 +7,14 @@ Flow:
 	declarations+=Declaration*;
 
 Declaration:
-	Execution | Barrier;
+	Task | Execution | Barrier;
+
+Task:
+	'task' name=ID ':' duration=INT 'ticks';
 
 Execution:
-	'start' name=ID;
+	'execute' task=[Task] 'on' 'core' core=INT 'as' name=ID;
 
 Barrier:
-	'join' joinedTasks+=[Execution] (',' joinedTasks+=[Execution])*
-	('then' executions+=Execution (',' executions+=Execution)*)?;
+	'join' joined+=[Execution] (',' joined+=[Execution])*
+	('then' triggered+=Execution (',' triggered+=Execution)*)?;

@@ -1,30 +1,30 @@
 package io.typefox.sprotte.example.multicore.web.diagram
 
-import io.typefox.sprotte.api.GModelRoot
 import org.eclipse.lsp4j.generator.JsonRpcData
-import io.typefox.sprotte.api.GModelElement
+import io.typefox.sprotte.api.SModelElement
+import io.typefox.sprotte.api.SModelRoot
 
 @JsonRpcData
-class Chip extends GModelRoot {
+class Chip extends SModelRoot {
 	int rows
 	int columns
 }
 
 @JsonRpcData
-class Core extends GModelElement {
+class Core extends SModelElement {
 	int row
 	int column
 	double load
 }
 
 @JsonRpcData
-class Crossbar extends GModelElement {
+class Crossbar extends SModelElement {
 	Direction direction
 	double load
 }
 
 @JsonRpcData
-class Channel extends GModelElement {
+class Channel extends SModelElement {
 	int row
 	int column
 	Direction direction

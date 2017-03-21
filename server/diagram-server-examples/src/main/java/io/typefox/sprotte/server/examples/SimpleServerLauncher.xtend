@@ -15,9 +15,9 @@ import org.eclipse.jetty.util.log.Slf4jLog
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer
 import org.eclipse.lsp4j.jsonrpc.messages.Message
 
-class ServerLauncher {
+class SimpleServerLauncher {
 	
-	static val LOG = new Slf4jLog(ServerLauncher.name)
+	static val LOG = new Slf4jLog(SimpleServerLauncher.name)
 	
 	static class TestServerEndpoint extends DiagramServerEndpoint {
     	override onOpen(Session session, EndpointConfig config) {

@@ -30,6 +30,26 @@
 	</script>
 </head>
 <body>
-<div id="xtext-editor" data-editor-xtext-lang="execution"></div>
+<div id="xtext-editor" data-editor-xtext-lang="execution">program ExampleFlow
+
+task t0: 1 ticks
+task t1: 2 ticks
+task t2: 3 ticks
+
+execute t0 on core 0 as e0
+execute t1 on core 1 as e1
+
+join e0, e1
+then
+    execute t0 on core 0 as e2,
+    execute t1 on core 1 as e3,
+    execute t2 on core 2 as e4
+
+join e4
+then execute t2 on core 3 as e5
+
+join e2, e3, e4
+then execute t2 on core 3 as e6
+</div>
 </body>
 </html>

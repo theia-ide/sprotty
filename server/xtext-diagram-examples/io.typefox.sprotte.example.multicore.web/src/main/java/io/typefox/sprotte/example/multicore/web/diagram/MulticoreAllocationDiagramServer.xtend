@@ -15,7 +15,7 @@ class MulticoreAllocationDiagramServer implements DiagramServer {
 	
 	@Inject ExecutorServiceProvider executorServiceProvider
 	
-	override requestModel(RequestModelAction params) {
+	override requestModel(RequestModelAction action) {
 		return CompletableFutures.computeAsync(executorServiceProvider.get) [
 			val dim = 8
 			val cores = <Core>newArrayList
@@ -52,8 +52,8 @@ class MulticoreAllocationDiagramServer implements DiagramServer {
 		]
 	}
 
-	override elementSelected(SelectAction params) {
-		LOG.info('element selected = ' + params)
+	override elementSelected(SelectAction action) {
+		LOG.info('element selected = ' + action)
 	}
 		
 	private def createCore(int rowParam, int columnParam) {

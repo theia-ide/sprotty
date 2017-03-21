@@ -32,12 +32,12 @@
 <body>
 <div id="xtext-editor" data-editor-xtext-lang="multicore">schedule Example for 16 cores
 
-task t1
-task t2
-task t3
-task t4
-task t5
-task t6
+task t1: 1 ticks
+task t2: 2 ticks
+task t3: 3 ticks
+task t4: 2 ticks
+task t5: 1 ticks
+task t6: 2 ticks
 
 core 0..3 {
     loop {

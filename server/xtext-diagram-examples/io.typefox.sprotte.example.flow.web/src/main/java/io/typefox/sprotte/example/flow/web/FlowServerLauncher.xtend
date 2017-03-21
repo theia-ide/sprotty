@@ -24,9 +24,9 @@ import org.eclipse.xtext.util.DisposableRegistry
  * This program starts an HTTP server for testing the web integration of your DSL.
  * Just execute it and point a web browser to http://localhost:8080/
  */
-class ServerLauncher {
+class FlowServerLauncher {
 	
-	static val LOG = Logger.getLogger(ServerLauncher)
+	static val LOG = Logger.getLogger(FlowServerLauncher)
 	
 	static class TestServerEndpoint extends DiagramServerEndpoint {
     	override onOpen(Session session, EndpointConfig config) {
@@ -78,7 +78,7 @@ class ServerLauncher {
 				.configurator(new GuiceEndpointConfigurator(injector))
 		container.addEndpoint(endpointConfigBuilder.build())
 		
-		val log = new Slf4jLog(ServerLauncher.name)
+		val log = new Slf4jLog(FlowServerLauncher.name)
 		try {
 			server.start
 			log.info('Server started ' + server.getURI + '...')

@@ -132,6 +132,8 @@ export class SModelIndex {
 export namespace SModel {
 
     export function getBasicType(schema: SModelElementSchema): string {
+        if (!schema.type)
+            return ''
         let colonIndex = schema.type.indexOf(':')
         if (colonIndex >= 0)
             return schema.type.substring(0, colonIndex)

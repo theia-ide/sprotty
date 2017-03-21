@@ -36,6 +36,10 @@ Workflow {
 			serializer = {
 				generateStub = false
 			}
+			webSupport = {
+				framework = "Ace"
+				generateJettyLauncher = false
+			}
 		}
 	}
 }
