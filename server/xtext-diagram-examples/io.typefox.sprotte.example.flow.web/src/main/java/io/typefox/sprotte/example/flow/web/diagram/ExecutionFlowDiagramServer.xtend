@@ -4,18 +4,25 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import io.typefox.sprotte.api.DiagramServer
 import io.typefox.sprotte.api.RequestModelAction
+import io.typefox.sprotte.api.ResizeAction
+import io.typefox.sprotte.api.SEdge
 import io.typefox.sprotte.api.SelectAction
 import io.typefox.sprotte.api.SetModelAction
+import io.typefox.sprotte.example.flow.dataFlow.Barrier
+import io.typefox.sprotte.example.flow.dataFlow.Execution
 import io.typefox.sprotte.example.flow.dataFlow.Flow
+import io.typefox.sprotte.layout.ElkLayoutEngine
+import io.typefox.sprotte.layout.ILayoutEngine
+import io.typefox.sprotte.layout.LayoutUtil
 import org.apache.log4j.Logger
+import org.eclipse.elk.alg.layered.options.LayeredOptions
 import org.eclipse.lsp4j.jsonrpc.CompletableFutures
 import org.eclipse.xtext.ide.ExecutorServiceProvider
 import org.eclipse.xtext.util.CancelIndicator
 import org.eclipse.xtext.web.server.model.AbstractCachedService
 import org.eclipse.xtext.web.server.model.IXtextWebDocument
-import io.typefox.sprotte.example.flow.dataFlow.Execution
-import io.typefox.sprotte.example.flow.dataFlow.Barrier
-import io.typefox.sprotte.api.SEdge
+
+import static io.typefox.sprotte.layout.ElkLayoutEngine.*
 
 @Singleton
 class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implements DiagramServer {
@@ -23,6 +30,8 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 	static val LOG = Logger.getLogger(ExecutionFlowDiagramServer)
 	
 	@Inject ExecutorServiceProvider executorServiceProvider
+	
+	ILayoutEngine layoutEngine
 	
 	static Program cachedProgram
 	
@@ -42,6 +51,7 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 				enode.type = 'node:execution'
 				enode.id = 'node' + (index++)
 				enode.taskName = declaration.task?.name
+				enode.autosize = true
 				nodes.put(declaration, enode)
 				program.children += enode
 			}
@@ -50,6 +60,7 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 				val bnode = new BarrierNode
 				bnode.type = 'node:barrier'
 				bnode.id = 'node' + (index++)
+				bnode.autosize = true
 				nodes.put(declaration, bnode)
 				program.children += bnode
 				for (triggered : declaration.triggered) {
@@ -57,6 +68,7 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 					enode.type = 'node:execution'
 					enode.id = 'node' + (index++)
 					enode.taskName = triggered.task?.name
+					enode.autosize = true
 					nodes.put(triggered, enode)
 					program.children += enode
 				}
@@ -83,6 +95,29 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 		}
 		cachedProgram = program
 		return program
+	}
+	
+	protected def initializeLayoutEngine() {
+		if (layoutEngine === null) {
+			layoutEngine = new ElkLayoutEngine => [
+				initialize(new LayeredOptions)
+			]
+		}
+	}
+	
+	override resize(ResizeAction action) {
+		return CompletableFutures.computeAsync(executorServiceProvider.get) [
+			initializeLayoutEngine()
+			val graph = cachedProgram
+			if (graph !== null) {
+				LayoutUtil.applyResizeAction(graph, action)
+				layoutEngine.layout(graph)
+				return new SetModelAction => [
+					newRoot = graph
+				]
+			} else
+				throw new IllegalStateException("requestModel must be called before layout")
+		]
 	}
 	
 	/**

@@ -47,7 +47,7 @@ class SimpleServerLauncher {
 	
 	def static void main(String[] args) {
 		val injector = Guice.createInjector[
-			bind(DiagramServer).to(TestDiagramServer)
+			bind(DiagramServer).to(SimpleDiagramServer)
 		]
 		
 		val server = new Server(new InetSocketAddress('localhost', 62000))

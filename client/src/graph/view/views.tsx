@@ -41,7 +41,7 @@ export class StraightEdgeView implements View {
             const sourceAnchor = sourceView.getAnchor(source, target, 0)
             const targetView = (context.viewer.viewRegistry.get(target.type, target)) as SNodeView
             const targetAnchor = targetView.getAnchor(target, source, 0)
-            const path = `M ${sourceAnchor.x},${sourceAnchor.y} L ${targetAnchor.x},${targetAnchor.y}`
+            const path = `M ${sourceAnchor.x || 0},${sourceAnchor.y || 0} L ${targetAnchor.x || 0},${targetAnchor.y || 0}`
             return <path key={edge.id} id={edge.id} class-edge={true} d={path} />
         } else {
             return <text key={edge.id} id={edge.id} class-dangling-edge={true}>?</text>

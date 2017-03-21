@@ -3,6 +3,7 @@ package io.typefox.sprotte.example.multicore.web.diagram
 import com.google.inject.Inject
 import io.typefox.sprotte.api.DiagramServer
 import io.typefox.sprotte.api.RequestModelAction
+import io.typefox.sprotte.api.ResizeAction
 import io.typefox.sprotte.api.SelectAction
 import io.typefox.sprotte.api.SetModelAction
 import org.apache.log4j.Logger
@@ -50,6 +51,10 @@ class MulticoreAllocationDiagramServer implements DiagramServer {
 				]
 			]
 		]
+	}
+	
+	override resize(ResizeAction action) {
+		throw new UnsupportedOperationException
 	}
 
 	override elementSelected(SelectAction action) {

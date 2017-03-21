@@ -6,7 +6,9 @@ webAppDirName = 'src/main/webapp'
 
 dependencies {
 	compile project(':diagram-server')
+	compile project(':diagram-layout-engine')
 	compile project(':xtext-diagram-examples:io.typefox.sprotte.example.flow.ide')
+    compile "org.eclipse.elk:org.eclipse.elk.alg.layered:$versions.elk"
 	compile "org.eclipse.xtext:org.eclipse.xtext.xbase.web:$versions.xtext"
 	compile "org.eclipse.xtext:org.eclipse.xtext.web.servlet:$versions.xtext"
 	compile "org.eclipse.xtend:org.eclipse.xtend.lib:$versions.xtext"

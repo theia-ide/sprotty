@@ -2,15 +2,16 @@ package io.typefox.sprotte.server.examples
 
 import io.typefox.sprotte.api.DiagramServer
 import io.typefox.sprotte.api.RequestModelAction
+import io.typefox.sprotte.api.ResizeAction
+import io.typefox.sprotte.api.SEdge
+import io.typefox.sprotte.api.SModelRoot
+import io.typefox.sprotte.api.SNode
 import io.typefox.sprotte.api.SelectAction
 import io.typefox.sprotte.api.SetModelAction
 import java.util.concurrent.CompletableFuture
 import org.eclipse.jetty.util.log.Slf4jLog
-import io.typefox.sprotte.api.SModelRoot
-import io.typefox.sprotte.api.SNode
-import io.typefox.sprotte.api.SEdge
 
-class TestDiagramServer implements DiagramServer {
+class SimpleDiagramServer implements DiagramServer {
 
 	static val LOG = new Slf4jLog(SimpleServerLauncher.name)
 
@@ -42,6 +43,10 @@ class TestDiagramServer implements DiagramServer {
 			]
 		]
 		CompletableFuture.completedFuture(model)
+	}
+	
+	override resize(ResizeAction action) {
+		throw new UnsupportedOperationException
 	}
 
 	override elementSelected(SelectAction action) {

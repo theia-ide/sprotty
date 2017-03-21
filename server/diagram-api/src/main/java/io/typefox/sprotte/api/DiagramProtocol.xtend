@@ -12,6 +12,9 @@ interface DiagramServer {
 	
     @JsonRequest
     def CompletableFuture<SetModelAction> requestModel(RequestModelAction action)
+	
+    @JsonRequest
+    def CompletableFuture<SetModelAction> resize(ResizeAction action)
     
     @JsonNotification
     def void elementSelected(SelectAction action)
@@ -26,6 +29,24 @@ interface DiagramClient {
 class RequestModelAction {
 	String kind = 'requestModel'
 	Map<String, String> options
+}
+
+@JsonRpcData
+class ResizeAction {
+    String kind ='resize'
+	List<ElementResize> resizes
+}
+
+@JsonRpcData
+class ElementResize {
+    @NonNull String elementId
+    @NonNull Dimension newSize
+}
+
+@JsonRpcData
+class Dimension {
+    Double width
+    Double height
 }
 
 @JsonRpcData
@@ -69,6 +90,8 @@ class SNode extends SModelElement {
 	Double width
 	
 	Double height
+	
+	Boolean autosize
 	
 }
 

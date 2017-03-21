@@ -3,19 +3,15 @@ import {VNode} from "snabbdom/vnode"
 import {RenderingContext} from "../../../src/base"
 import {SNode, SNodeView} from "../../../src/graph"
 import {Point} from "../../../src/utils"
+import * as snabbdom from "snabbdom-jsx"
+
+const JSX = {createElement: snabbdom.svg}
 
 export class ExecutionNodeView extends SNodeView {
     render(node: SNode, context: RenderingContext): VNode {
-        return h('circle', {
-            class: {
-                node: true,
-            },
-            attrs: {
-                id: node.id,
-                key: node.id,
-                r: this.getRadius(node)
-            }
-        });
+        return <g key={node.id} id={node.id} >
+                <circle class-node={true} class-selected={node.selected} r={this.getRadius(node)}></circle>
+            </g>
     }
 
     private getRadius(node: SNode) {
@@ -26,8 +22,8 @@ export class ExecutionNodeView extends SNodeView {
         const dx = node.x - refPoint.x
         const dy = node.y - refPoint.y
         const distance = Math.sqrt(dx * dx + dy * dy)
-        const normX = (dx / distance) || 0
-        const normY = (dy / distance) || 0
+        const normX = dx / distance
+        const normY = dy / distance
         return {
             x: node.x - normX * (this.getRadius(node) + arrowLength),
             y: node.y - normY * (this.getRadius(node) + arrowLength)
@@ -37,17 +33,9 @@ export class ExecutionNodeView extends SNodeView {
 
 export class BarrierNodeView extends SNodeView {
     render(node: SNode, context: RenderingContext): VNode {
-        return h('rect', {
-            class: {
-                node: true,
-            },
-            attrs: {
-                id: node.id,
-                key: node.id,
-                width: this.getWidth(node),
-                height: this.getHeight(node)
-            }
-        });
+        return <g key={node.id} id={node.id} >
+                <rect class-node={true} class-selected={node.selected} width={this.getWidth(node)} height={this.getHeight(node)}></rect>
+            </g>
     }
 
     private getWidth(node: SNode) {

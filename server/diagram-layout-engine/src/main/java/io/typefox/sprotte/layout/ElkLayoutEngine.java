@@ -125,23 +125,25 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	}
 	
 	protected void transferLayout(LayoutContext context) {
-		for (SModelElement element: context.sgraph.getChildren()) {
-			if (element instanceof SNode)
-				transferLayout((SNode) element, context);
-		}
+		transferLayout(context.sgraph, context);
 	}
 	
-	protected void transferLayout(SNode snode, LayoutContext context) {
-		ElkNode elkNode = context.nodeMap.get(snode);
-		if (elkNode != null) {
-			snode.setX(elkNode.getX());
-			snode.setY(elkNode.getY());
-			snode.setWidth(elkNode.getWidth());
-			snode.setHeight(elkNode.getHeight());
+	protected void transferLayout(SModelElement element, LayoutContext context) {
+		if (element instanceof SNode) {
+			SNode snode = (SNode) element;
+			ElkNode elkNode = context.nodeMap.get(snode);
+			if (elkNode != null) {
+				snode.setX(elkNode.getX());
+				snode.setY(elkNode.getY());
+				snode.setWidth(elkNode.getWidth());
+				snode.setHeight(elkNode.getHeight());
+				snode.setAutosize(false);
+			}
 		}
-		for (SModelElement element: snode.getChildren()) {
-			if (element instanceof SNode)
-				transferLayout((SNode) element, context);
+		if (element.getChildren() != null) {
+			for (SModelElement child: element.getChildren()) {
+				transferLayout(child, context);
+			}
 		}
 	}
 	
