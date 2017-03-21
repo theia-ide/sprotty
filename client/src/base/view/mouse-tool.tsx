@@ -36,19 +36,24 @@ export class MouseTool implements VNodeDecorator {
     }
 
     private getTargetElement(model: SModelRoot, event: MouseEvent): SModelElement |undefined{
-        const target = event.target as Element
-        if(target && target.id) {
-            const element = model.index.getById(target.id)
-            return element
-        } else {
-            return undefined
+        let target = event.target as Element
+        if(target) {
+            while(target && !target.id) {
+                target = target.parentElement as Element
+            }
+            if(target) {
+                const element = model.index.getById(target.id)
+                return element
+            }
         }
+        return undefined
     }
 
     mouseDown(model: SModelRoot, event: MouseEvent) {
         const element = this.getTargetElement(model, event)
         if(!element)
             return
+        // console.log('Down on ' + element.id + ' button ' + event.button)
         if (event.button == 0) {
             if (isSelectable(element)) {
                 let deselectIds: string[] = []
@@ -134,6 +139,7 @@ export class MouseTool implements VNodeDecorator {
         const element = this.getTargetElement(model, event)
         if(!element)
             return
+        // console.log('Up on ' + element.id + ' button ' + event.button)
         if (event.button == 0) {
             if (!this.hasDragged) {
                 if (isSelectable(element) && this.wasSelected) {
