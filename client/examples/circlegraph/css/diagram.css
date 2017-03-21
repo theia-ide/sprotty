@@ -6,13 +6,18 @@
     ry: 4;
 }
 
+.text {
+    font-size: 16pt;
+    text-anchor: middle;
+}
+
 .edge {
     fill: #8cc;
     stroke: #488;
     stroke-width: 2;
 }
 
-.selected {
+.node.selected {
     stroke: #dd8;
     stroke-width: 6;
 }
