@@ -5,6 +5,8 @@ import {SGraphView, StraightEdgeView} from "./views"
 import { expect } from "chai"
 import { VNode } from "snabbdom/vnode";
 import * as snabbdom from "snabbdom-jsx"
+import {Container} from "inversify"
+import defaultContainerModule from "../../base/container-module"
 
 const toHTML = require('snabbdom-to-html')
 const JSX = {createElement: snabbdom.svg}
@@ -22,14 +24,16 @@ describe('graph views', () => {
         }
     }
 
-    const viewer = new Viewer()
-    const viewRegistry = new ViewRegistry()
-    viewer.viewRegistry = viewRegistry
+    const container = new Container()
+    container.load(defaultContainerModule)
+
+    const viewer = container.get(Viewer)
+    const viewRegistry = container.get(ViewRegistry)
     viewRegistry.register('graph', SGraphView)
     viewRegistry.register('node:circle', CircleNodeView)
     viewRegistry.register('edge:straight', StraightEdgeView)
     const context = {viewer: viewer}
-    const factory = new SGraphFactory
+    const factory = new SGraphFactory()
 
     it('render an empty graph', () => {
         const schema = {

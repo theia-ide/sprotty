@@ -39,16 +39,6 @@ export default function runSimpleServer() {
     viewRegistry.register('node:circle', CircleNodeView)
     viewRegistry.register('edge:straight', StraightEdgeView)
 
-    // Register tools
-    const mouseTool = container.get(MouseTool)
-    mouseTool.register(new SelectMouseListener())
-    mouseTool.register(new MoveMouseListener())
-    mouseTool.register(new ScrollMouseListener())
-    mouseTool.register(new ZoomMouseListener())
-
-    const keyTool = container.get(KeyTool)
-    keyTool.register(new UndoRedoKeyListener())
-
     // Connect to the diagram server
     const diagramServer = container.get(DiagramServer)
     diagramServer.connectWebSocket('ws://localhost:62000').then(connection => {

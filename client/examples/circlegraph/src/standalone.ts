@@ -40,16 +40,6 @@ export default function runStandalone() {
     viewRegistry.register('node:circle', CircleNodeView)
     viewRegistry.register('edge:straight', StraightEdgeView)
 
-    // Configure tools
-    const mouseTool = container.get(MouseTool)
-    mouseTool.register(new SelectMouseListener())
-    mouseTool.register(new MoveMouseListener())
-    mouseTool.register(new ScrollMouseListener())
-    mouseTool.register(new ZoomMouseListener())
-
-    const keyTool = container.get(KeyTool)
-    keyTool.register(new UndoRedoKeyListener())
-
     // Initialize gmodel
     const modelFactory = new SGraphFactory()
     const node0 = {id: 'node0', type: 'node:circle', x: 100, y: 100};

@@ -6,7 +6,7 @@ import {SModelRoot} from "../model/smodel"
 import {VNodeUtils} from "./vnode-utils"
 import * as snabbdom from "snabbdom-jsx"
 import {Action} from "../intent/actions"
-import {injectable, inject} from "inversify"
+import {injectable, inject, multiInject} from "inversify"
 import {ActionDispatcher, IActionDispatcher} from "../intent/action-dispatcher"
 import {TYPES} from "../types"
 
@@ -17,7 +17,7 @@ export class MouseTool implements VNodeDecorator {
 
     @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
 
-    protected mouseListeners: MouseListener[] = []
+    @multiInject(TYPES.MouseListener) protected mouseListeners: MouseListener[] = []
 
     register(mouseListener: MouseListener) {
         this.mouseListeners.push(mouseListener)
@@ -92,6 +92,7 @@ export class MouseTool implements VNodeDecorator {
     }
 }
 
+@injectable()
 export class MouseListener {
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {

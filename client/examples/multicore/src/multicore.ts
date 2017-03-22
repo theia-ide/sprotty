@@ -105,12 +105,6 @@ export default function runMulticore() {
     viewRegistry.register('crossbar', CrossbarView)
     viewRegistry.register('channel', ChannelView)
 
-    // Register tools
-    const mouseTool = container.get(MouseTool)
-    mouseTool.register(new SelectMouseListener())
-    mouseTool.register(new ScrollMouseListener())
-    mouseTool.register(new ZoomMouseListener())
-
     // Run
     const dispatcher = container.get(ActionDispatcher)
     const action = new SetModelAction(chip)

@@ -15,6 +15,11 @@ import {TYPES} from "./types"
 import {MouseTool} from "./view/mouse-tool"
 import {Autosizer} from "./view/autosizer"
 import {KeyTool} from "./view/key-tool"
+import {UndoRedoKeyListener} from "./behaviors/undo-redo"
+import {MoveMouseListener} from "./behaviors/move"
+import {SelectMouseListener} from "./behaviors/select"
+import {ScrollMouseListener} from "./behaviors/scroll"
+import {ZoomMouseListener} from "./behaviors/zoom"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
@@ -60,6 +65,15 @@ let defaultContainerModule = new ContainerModule(bind => {
     bind(MouseTool).toSelf().inSingletonScope()
     bind(KeyTool).toSelf().inSingletonScope()
     bind(Autosizer).toSelf().inSingletonScope()
+
+    // Key Listeners
+    bind(TYPES.KeyListener).to(UndoRedoKeyListener)
+
+    // Mouse Listeners
+    bind(TYPES.MouseListener).to(MoveMouseListener)
+    bind(TYPES.MouseListener).to(SelectMouseListener)
+    bind(TYPES.MouseListener).to(ScrollMouseListener)
+    bind(TYPES.MouseListener).to(ZoomMouseListener)
 
     // Registries ---------------------------------------------
     bind(ActionHandlerRegistry).toSelf().inSingletonScope()

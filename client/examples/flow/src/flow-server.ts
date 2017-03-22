@@ -29,13 +29,6 @@ export default function runFlowServer() {
     viewRegistry.register('barrier', BarrierNodeView)
     viewRegistry.register('edge', StraightEdgeView)
 
-    // Register tools
-    const mouseTool = container.get(MouseTool)
-    mouseTool.register(new SelectMouseListener())
-//    mouseTool.register(new MoveMouseListener())
-    mouseTool.register(new ScrollMouseListener())
-    mouseTool.register(new ZoomMouseListener())
-
     // Connect to the diagram server
     const diagramServer = container.get(DiagramServer)
     diagramServer.connectWebSocket('ws://localhost:8080/diagram').then(connection => {

@@ -31,12 +31,6 @@ export default function runMulticoreServer() {
     viewRegistry.register('crossbar', CrossbarView)
     viewRegistry.register('channel', ChannelView)
 
-    // Register tools
-    const mouseTool = container.get(MouseTool)
-    mouseTool.register(new SelectMouseListener())
-    mouseTool.register(new ScrollMouseListener())
-    mouseTool.register(new ZoomMouseListener())
-
     // Connect to the diagram server
     const diagramServer = container.get(DiagramServer)
     diagramServer.connectWebSocket('ws://localhost:8080/diagram').then(connection => {
