@@ -1,6 +1,15 @@
-import {SModelRoot, SChildElement, Selectable, isSelectable} from "../model"
-import {AbstractCommand} from "./commands"
-import {Action} from "./actions"
+import {AbstractCommand} from "../intent/commands"
+import {Action} from "../intent/actions"
+import {BehaviorSchema} from "../model/behavior"
+import {SModelElement, SChildElement, SModelRoot} from "../model/smodel"
+
+export interface Selectable extends BehaviorSchema {
+    selected: boolean
+}
+
+export function isSelectable(element: SModelElement | Selectable): element is Selectable {
+    return 'selected' in element
+}
 
 export class SelectAction implements Action {
     static readonly KIND = 'elementSelected'

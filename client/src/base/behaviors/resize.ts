@@ -1,9 +1,20 @@
-///<reference path="actions.ts"/>
-import {Action} from "./actions"
+///<reference path="../intent/actions.ts"/>
+import {Action} from "../intent/actions"
 import {SModelElement, SModelRoot} from "../model/smodel"
 import {Dimension, Bounds} from "../../utils/geometry"
-import {Sizeable, isSizeable} from "../model/behavior"
-import {CommandExecutionContext, AbstractCommand} from "./commands"
+import {BehaviorSchema} from "../model/behavior"
+import {CommandExecutionContext, AbstractCommand} from "../intent/commands"
+
+export interface Sizeable extends BehaviorSchema, Dimension {
+    autosize: boolean
+    clientBounds?: Bounds
+}
+
+export function isSizeable(element: SModelElement | Sizeable): element is Sizeable {
+    return 'autosize' in element
+        && 'width' in element
+        && 'height' in element
+}
 
 export class ResizeAction implements Action {
     static readonly KIND = 'resize'

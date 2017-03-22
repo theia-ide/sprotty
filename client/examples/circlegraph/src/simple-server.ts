@@ -13,7 +13,7 @@ import {SGraphView, StraightEdgeView} from "../../../src/graph"
 import {DiagramServer} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
-import {ViewportAction, ViewportCommand} from "../../../src/base/intent/viewport"
+import {ViewportAction, ViewportCommand} from "../../../src/base/behaviors/viewport"
 
 export default function runSimpleServer() {
     const container = createContainer()

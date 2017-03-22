@@ -1,10 +1,19 @@
 import {Point, Map} from "../../utils"
 import {Animation} from "../animations"
-import {SModelElement, SModelRoot, Moveable} from "../model"
-import {Action} from "./actions"
-import {Command, CommandExecutionContext, AbstractCommand} from "./commands"
-import {SModelIndex} from "../model/smodel"
+import {Moveable} from "./."
+import {Action} from "../intent/actions"
+import {Command, CommandExecutionContext, AbstractCommand} from "../intent/commands"
+import {SModelIndex, SModelElement, SModelRoot} from "../model/smodel"
+import {BehaviorSchema} from "../model/behavior"
 
+export interface Moveable extends BehaviorSchema, Point {
+    x: number
+    y: number
+}
+
+export function isMoveable(element: SModelElement | Moveable): element is Moveable {
+    return 'x' in element && 'y' in element
+}
 
 export class MoveAction implements Action {
     static readonly KIND = 'move'

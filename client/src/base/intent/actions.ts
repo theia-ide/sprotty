@@ -3,7 +3,7 @@ import {injectable, inject} from "inversify"
 import {TYPES} from "../types"
 import {InstanceRegistry} from "../../utils"
 import {Command, CommandActionHandler} from "./commands"
-import {SetModelAction, SetModelCommand} from "./model-manipulation"
+import {SetModelAction, SetModelCommand} from "../behaviors/model-manipulation"
 import {RequestActionHandlerFactory, NotificationActionHandlerFactory} from "./server-action-handlers"
 
 /**

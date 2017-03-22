@@ -1,7 +1,7 @@
-import {Map} from "../../utils"
-import {SModelRoot, SModelRootSchema} from "../model"
-import {CommandExecutionContext, AbstractCommand} from "./commands"
-import {Action} from "./actions"
+import {CommandExecutionContext, AbstractCommand} from "../intent/commands"
+import {Action} from "../intent/actions"
+import {SModelRootSchema, SModelRoot} from "../model/smodel"
+import {Map} from "../../utils/utils"
 
 export class SetModelAction implements Action {
     static readonly KIND = 'setModel'

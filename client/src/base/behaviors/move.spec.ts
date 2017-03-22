@@ -1,7 +1,7 @@
 import { MoveCommand, MoveAction, ElementMove } from "./move"
 import { expect } from "chai"
 import { SGraphFactory } from "../../graph/model/sgraph-factory"
-import { CommandExecutionContext } from "./commands"
+import { CommandExecutionContext } from "../intent/commands"
 import { SModel } from "../model/smodel"
 import { Point } from "../../utils/geometry"
 import { SNode } from "../../graph/index"

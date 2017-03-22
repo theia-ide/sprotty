@@ -1,8 +1,18 @@
-import {Animation} from "../animations"
-import {SModelElement, SModelRoot} from "../model"
-import {Action} from "./actions"
-import {Command, CommandExecutionContext, AbstractCommand} from "./commands"
-import {Viewport, isViewport} from "../model/behavior"
+import {Action} from "../intent/actions"
+import {Command, CommandExecutionContext, AbstractCommand} from "../intent/commands"
+import {BehaviorSchema} from "../model/behavior"
+import {Scrollable} from "./scroll"
+import {Zoomable} from "./zoom"
+import {SModelElement, SModelRoot} from "../model/smodel"
+import {Animation} from "../animations/animation"
+
+export interface Viewport extends BehaviorSchema, Scrollable, Zoomable {
+}
+
+export function isViewport(element: SModelElement | Viewport): element is Viewport & Scrollable & Zoomable {
+    return 'zoom' in element
+        && 'scroll' in element
+}
 
 export class ViewportAction implements Action {
     static readonly KIND = 'viewport'

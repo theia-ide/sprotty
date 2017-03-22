@@ -6,8 +6,8 @@ import {Command} from "./commands"
 import {ContainerModule, Container} from "inversify"
 import defaultModule from "../../../src/base/container-module"
 import {TYPES} from "../types"
-import {SetModelCommand, SetModelAction} from "./model-manipulation"
-import {MoveCommand, MoveAction} from "./move"
+import {SetModelCommand, SetModelAction} from "../behaviors/model-manipulation"
+import {MoveCommand, MoveAction} from "../behaviors/move"
 import {SModel} from "../model/smodel"
 import EMPTY_ROOT = SModel.EMPTY_ROOT
 

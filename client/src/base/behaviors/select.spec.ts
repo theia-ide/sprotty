@@ -1,10 +1,10 @@
 import {expect} from "chai"
-import {SModelRoot} from "../model"
-import {SNode, SGraphFactory} from "../../graph/model"
 import {SelectCommand, SelectAction} from "./select"
-import {CommandExecutionContext} from "./commands"
-import {SModel} from "../model/smodel"
+import {CommandExecutionContext} from "../intent/commands"
+import {SModel, SModelRoot} from "../model/smodel"
 import EMPTY_ROOT = SModel.EMPTY_ROOT
+import {SGraphFactory} from "../../graph/model/sgraph-factory"
+import {SNode} from "../../graph/model/sgraph"
 
 
 describe('test select command execution, undo, redo and merge', () => {

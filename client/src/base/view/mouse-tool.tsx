@@ -1,15 +1,16 @@
 import {VNode} from "snabbdom/vnode"
 import {Point} from "../../utils"
 import {SelectAction, ElementMove, MoveAction} from "../intent"
-import {SModelElement, isMoveable, isSelectable} from "../model"
+import {SModelElement} from "../model"
 import {VNodeDecorator} from "./vnode-decorators"
 import {Viewer} from "./viewer"
 import {SModelRoot, SChildElement} from "../model/smodel"
 import {VNodeUtils} from "./vnode-utils"
 import {isCtrlOrCmd} from "../../utils/utils"
 import * as snabbdom from "snabbdom-jsx"
-import {isViewport, Viewport} from "../model/behavior"
-import {ViewportAction} from "../intent/viewport"
+import {ViewportAction, Viewport, isViewport} from "../behaviors/viewport"
+import {isSelectable} from "../behaviors/select"
+import {isMoveable} from "../behaviors/move"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -35,7 +36,7 @@ export class MouseTool implements VNodeDecorator {
         }
     }
 
-    private getTargetElement(model: SModelRoot, event: MouseEvent): SModelElement |undefined{
+    private getTargetElement(model: SModelRoot, event: MouseEvent): SModelElement |undefined {
         let target = event.target as Element
         if(target) {
             while(target && !target.id) {

@@ -4,11 +4,12 @@ import {
     SParentElementSchema,
     SChildElement,
     SModelRoot,
-    Moveable,
-    Selectable
 } from "../../base/model"
-import {Sizeable, Viewport} from "../../base/model/behavior"
 import {Point, Bounds, EMPTY_BOUNDS} from "../../utils/geometry"
+import {Sizeable} from "../../base/behaviors/resize"
+import {Viewport} from "../../base/behaviors/viewport"
+import {Selectable} from "../../base/behaviors/select"
+import {Moveable} from "../../base/behaviors/move"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]

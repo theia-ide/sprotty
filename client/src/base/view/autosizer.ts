@@ -1,10 +1,9 @@
 import {VNodeDecorator} from "./vnode-decorators"
 import {VNode} from "snabbdom/vnode"
 import {SModelElement} from "../model/smodel"
-import {isSizeable, Sizeable} from "../model/behavior"
 import {almostEquals, Dimension, Bounds} from "../../utils/geometry"
 import {Viewer} from "./viewer"
-import {ElementResize, ResizeAction} from "../intent/resize"
+import {ElementResize, ResizeAction, Sizeable, isSizeable} from "../behaviors/resize"
 
 class VNodeAndSizeable {
     vnode: VNode

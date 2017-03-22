@@ -14,7 +14,7 @@ import {
 import {SGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
-import {ViewportAction, ViewportCommand} from "../../../src/base/intent/viewport"
+import {ViewportAction, ViewportCommand} from "../../../src/base/behaviors/viewport"
 import {SModelRootSchema} from "../../../src/base/model/smodel"
 
 export default function runStandalone() {
@@ -70,7 +70,7 @@ export default function runStandalone() {
     }
     dispatcher.dispatch(new SetModelAction(graph))
 
-    // button behavior
+    // button behaviors
     document.getElementById('addNode')!.addEventListener('click', () => {
         addNode()
         dispatcher.dispatch(new SetModelAction(graph))
