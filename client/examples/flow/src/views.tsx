@@ -21,16 +21,26 @@ export class ExecutionNodeView extends SNodeView {
         return 20
     }
 
-    getAnchor(node: ExecutionNode, refPoint: Point, arrowLength: number) {
+    getWidth(node: ExecutionNode): number {
+        return this.getRadius(node) * 2;
+    }
+
+    getHeight(node: ExecutionNode): number {
+        return this.getRadius(node) * 2;
+    }
+
+    getAnchor(node: ExecutionNode, refPoint: Point) {
         const radius = this.getRadius(node)
-        const dx = node.x - refPoint.x
-        const dy = node.y - refPoint.y
+        const cx = node.x + radius
+        const cy = node.y + radius
+        const dx = cx - refPoint.x
+        const dy = cy - refPoint.y
         const distance = Math.sqrt(dx * dx + dy * dy)
-        const normX = dx / distance
-        const normY = dy / distance
+        const normX = (dx / distance) || 0
+        const normY = (dy / distance) || 0
         return {
-            x: node.x + radius - normX * (radius + arrowLength),
-            y: node.y + radius - normY * (radius + arrowLength)
+            x: cx - normX * radius,
+            y: cy - normY * radius
         }
     }
 }
@@ -42,15 +52,15 @@ export class BarrierNodeView extends SNodeView {
             </g>
     }
 
-    private getWidth(node: BarrierNode) {
+    getWidth(node: BarrierNode): number {
         return 50
     }
 
-    private getHeight(node: BarrierNode) {
+    getHeight(node: BarrierNode): number {
         return 10
     }
 
-    getAnchor(node: BarrierNode, refPoint: Point, arrowLength: number) {
+    getAnchor(node: BarrierNode, refPoint: Point) {
         let x = refPoint.x
         if (x < node.x)
             x = node.x

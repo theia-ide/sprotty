@@ -111,4 +111,12 @@ class SEdge extends SModelElement {
 	
 	@NonNull String targetId
 	
+	List<Point> routingPoints
+	
+}
+
+@JsonRpcData
+class Point {
+	double x
+	double y
 }

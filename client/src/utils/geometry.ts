@@ -1,9 +1,11 @@
 export interface Point {
-    x,y: number
+    x: number
+    y: number
 }
 
 export interface Dimension {
-    width, height: number
+    width: number
+    height: number
 }
 
 export interface Bounds extends Point, Dimension {
@@ -11,8 +13,18 @@ export interface Bounds extends Point, Dimension {
 
 export const EMPTY_BOUNDS: Bounds = {x: 0, y: 0, width: -1, height: -1}
 
-export function almostEquals(a: number, b: number) {
-    return Math.abs(a - b) < 1e-3
+export enum Direction { left, right, up, down }
+
+export function euclideanDistance(a: Point, b: Point): number {
+    const dx = b.x - a.x
+    const dy = b.y - a.y
+    return Math.sqrt(dx * dx + dy * dy)
 }
 
-export enum Direction { left, right, up, down }
+export function manhattanDistance(a: Point, b: Point): number {
+    return Math.abs(b.x - a.x) + Math.abs(b.y - a.y)
+}
+
+export function almostEquals(a: number, b: number): boolean {
+    return Math.abs(a - b) < 1e-3
+}

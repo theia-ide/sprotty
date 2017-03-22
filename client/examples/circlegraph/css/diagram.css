@@ -12,7 +12,7 @@
 }
 
 .edge {
-    fill: #8cc;
+    fill: none;
     stroke: #488;
     stroke-width: 2;
 }
@@ -29,19 +29,4 @@
     font-family: SansSerif;
     font-size: 14pt;
     text-anchor: middle;
-}
-
-.sprotte {
-    /*
-        height: 480px;
-        width:  640px;
-        overflow: scroll;
-     */
-}
-
-.graph {
-    /*
-        width: 1024px;
-        height: 768px;
-     */
 }

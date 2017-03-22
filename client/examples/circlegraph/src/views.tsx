@@ -11,9 +11,10 @@ const JSX = {createElement: snabbdom.svg}
  */
 export class CircleNodeView extends SNodeView {
     render(node: SNode, context: RenderingContext): VNode {
+        const radius = this.getRadius(node)
         return <g key={node.id} id={node.id} >
-                <circle class-node={true} class-selected={node.selected} r={this.getRadius(node)}></circle>
-                <text y="7" class-text={true}>{node.id.substr(4)}</text>
+                <circle class-node={true} class-selected={node.selected} r={radius} cx={radius} cy={radius}></circle>
+                <text x={radius} y={radius + 7} class-text={true}>{node.id.substr(4)}</text>
             </g>
     }
 
@@ -21,15 +22,26 @@ export class CircleNodeView extends SNodeView {
         return 40
     }
 
-    getAnchor(node: SNode, refPoint: Point, arrowLength: number) {
-        const dx = node.x - refPoint.x
-        const dy = node.y - refPoint.y
+    getWidth(node: SNode): number {
+        return this.getRadius(node) * 2;
+    }
+
+    getHeight(node: SNode): number {
+        return this.getRadius(node) * 2;
+    }
+
+    getAnchor(node: SNode, refPoint: Point) {
+        const radius = this.getRadius(node)
+        const cx = node.x + radius
+        const cy = node.y + radius
+        const dx = cx - refPoint.x
+        const dy = cy - refPoint.y
         const distance = Math.sqrt(dx * dx + dy * dy)
         const normX = (dx / distance) || 0
         const normY = (dy / distance) || 0
         return {
-            x: node.x - normX * (this.getRadius(node) + arrowLength),
-            y: node.y - normY * (this.getRadius(node) + arrowLength)
+            x: cx - normX * radius,
+            y: cy - normY * radius
         }
     }
 }

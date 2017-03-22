@@ -33,32 +33,34 @@ export class SGraph extends SModelRoot implements SGraphSchema, Viewport, Sizeab
 }
 
 export interface SNodeSchema extends SParentElementSchema {
-    x: number
-    y: number
-    autosize?: boolean
+    x?: number
+    y?: number
     width?: number
     height?: number
+    autosize?: boolean
     children?: SGraphElementSchema[]
 }
 
 export class SNode extends SChildElement implements SNodeSchema, Selectable, Moveable, Sizeable {
     x: number
     y: number
-    autosize: boolean = true
     width: number = 0
     height: number = 0
-    selected: boolean = false
+    autosize: boolean = true
     children: SGraphElement[]
+    selected: boolean = false
 }
 
 export interface SEdgeSchema extends SModelElementSchema {
     sourceId: string
     targetId: string
+    routingPoints?: Point[]
 }
 
 export class SEdge extends SChildElement implements SEdgeSchema {
     sourceId: string
     targetId: string
+    routingPoints: Point[] = []
 
     get source(): SNode | undefined {
         return this.index.getById(this.sourceId) as SNode

@@ -12,7 +12,7 @@
 }
 
 .edge {
-    fill: #7b90a2;
+    fill: none;
     stroke: #222;
     stroke-width: 1;
 }
@@ -21,7 +21,7 @@
     stroke-width: 1;
     stroke: #000;
     fill: #000;
-    font-family: SansSerif;
+    font-family: sans-serif;
     font-size: 11pt;
     text-anchor: middle;
 }

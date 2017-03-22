@@ -1,5 +1,7 @@
 package io.typefox.sprotte.layout;
 
+import java.util.ArrayList;
+import java.util.List;
 import java.util.Map;
 
 import org.eclipse.elk.core.IGraphLayoutEngine;
@@ -8,13 +10,16 @@ import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkEdge;
+import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkGraphFactory;
 import org.eclipse.elk.graph.ElkNode;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.Maps;
 
+import io.typefox.sprotte.api.Point;
 import io.typefox.sprotte.api.SEdge;
 import io.typefox.sprotte.api.SGraph;
 import io.typefox.sprotte.api.SModelElement;
@@ -135,26 +140,58 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	
 	protected void transferLayout(SModelElement element, LayoutContext context) {
 		if (element instanceof SGraph) {
-			SGraph sgraph = (SGraph) element;
-//			ElkNode elkGraph = context.elkGraph;
-//			sgraph.setWidth(elkGraph.getWidth());
-//			sgraph.setHeight(elkGraph.getHeight());
-			sgraph.setAutosize(false);
+			transferGraphLayout((SGraph) element, context.elkGraph);
 		} else if (element instanceof SNode) {
 			SNode snode = (SNode) element;
 			ElkNode elkNode = context.nodeMap.get(snode);
-			if (elkNode != null) {
-				snode.setX(elkNode.getX());
-				snode.setY(elkNode.getY());
-				snode.setWidth(elkNode.getWidth());
-				snode.setHeight(elkNode.getHeight());
-				snode.setAutosize(false);
-			}
+			if (elkNode != null)
+				transferNodeLayout(snode, elkNode);
+		} else if (element instanceof SEdge) {
+			SEdge sedge = (SEdge) element;
+			ElkEdge elkEdge = context.edgeMap.get(sedge);
+			if (elkEdge != null)
+				transferEdgeLayout(sedge, elkEdge);
 		}
 		if (element.getChildren() != null) {
 			for (SModelElement child: element.getChildren()) {
 				transferLayout(child, context);
 			}
+		}
+	}
+	
+	protected void transferGraphLayout(SGraph sgraph, ElkNode elkGraph) {
+//		sgraph.setWidth(elkGraph.getWidth());
+//		sgraph.setHeight(elkGraph.getHeight());
+		sgraph.setAutosize(false);
+	}
+	
+	protected void transferNodeLayout(SNode snode, ElkNode elkNode) {
+		snode.setX(elkNode.getX());
+		snode.setY(elkNode.getY());
+		snode.setWidth(elkNode.getWidth());
+		snode.setHeight(elkNode.getHeight());
+		snode.setAutosize(false);
+	}
+	
+	protected void transferEdgeLayout(SEdge sedge, ElkEdge elkEdge) {
+		if (!elkEdge.getSections().isEmpty()) {
+			ElkEdgeSection section = elkEdge.getSections().get(0);
+			List<Point> routingPoints = new ArrayList<>();
+			Point p1 = new Point();
+			p1.setX(section.getStartX());
+			p1.setY(section.getStartY());
+			routingPoints.add(p1);
+			for (ElkBendPoint bendPoint : section.getBendPoints()) {
+				Point p2 = new Point();
+				p2.setX(bendPoint.getX());
+				p2.setY(bendPoint.getY());
+				routingPoints.add(p2);
+			}
+			Point p3 = new Point();
+			p3.setX(section.getEndX());
+			p3.setY(section.getEndY());
+			routingPoints.add(p3);
+			sedge.setRoutingPoints(routingPoints);
 		}
 	}
 	
