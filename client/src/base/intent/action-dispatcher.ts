@@ -2,8 +2,9 @@ import "reflect-metadata"
 import {injectable, inject} from "inversify"
 import {TYPES} from "../types"
 import {Logger} from "../../utils"
-import {Action, ActionHandlerRegistry, UndoAction, RedoAction} from "./actions"
-import { ICommandStack } from "./command-stack"
+import {Action, ActionHandlerRegistry} from "./actions"
+import {ICommandStack} from "./command-stack"
+import {UndoAction, RedoAction} from "../behaviors/undo-redo"
 
 export interface IActionDispatcher {
     dispatch(action: Action): void

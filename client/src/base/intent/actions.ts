@@ -51,12 +51,3 @@ export class ActionHandlerRegistry extends InstanceRegistry<IActionHandler> {
     }
 }
 
-export class UndoAction implements Action {
-    static readonly KIND = 'undo'
-    kind = UndoAction.KIND
-}
-
-export class RedoAction implements Action {
-    static readonly KIND = 'redo'
-    kind = RedoAction.KIND
-}

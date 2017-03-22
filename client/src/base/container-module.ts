@@ -12,7 +12,9 @@ import {
 import {Viewer, ViewRegistry, ViewerOptions} from "./view"
 import {SModelFactory} from "./model"
 import {TYPES} from "./types"
-import { IActionDispatcher } from "./intent/action-dispatcher"
+import {MouseTool} from "./view/mouse-tool"
+import {Autosizer} from "./view/autosizer"
+import {KeyTool} from "./view/key-tool"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
@@ -53,6 +55,11 @@ let defaultContainerModule = new ContainerModule(bind => {
     bind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
         baseDiv: 'sprotte'
     })
+
+    // Tools & Decorators --------------------------------------
+    bind(MouseTool).toSelf().inSingletonScope()
+    bind(KeyTool).toSelf().inSingletonScope()
+    bind(Autosizer).toSelf().inSingletonScope()
 
     // Registries ---------------------------------------------
     bind(ActionHandlerRegistry).toSelf().inSingletonScope()

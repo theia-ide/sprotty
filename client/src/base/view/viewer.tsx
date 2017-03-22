@@ -1,16 +1,15 @@
 import "reflect-metadata"
 import {injectable, inject} from "inversify"
 import {TYPES} from "../types"
-import {h, init} from "snabbdom"
+import {init} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
 import {Module} from "snabbdom/modules/module"
 import {propsModule} from "snabbdom/modules/props"
 import {attributesModule} from "snabbdom/modules/attributes"
 import {styleModule} from "snabbdom/modules/style"
 import {eventListenersModule} from "snabbdom/modules/eventlisteners"
-import {Action, IActionDispatcher, ActionDispatcherProvider} from "../intent"
 import {SModelRoot, SModelElement, SParentElement} from "../model"
-import {AddRemoveAnimationDecorator, VNodeDecorator} from "./vnode-decorators"
+import {VNodeDecorator} from "./vnode-decorators"
 import {RenderingContext, ViewRegistry} from "./views"
 import {KeyTool} from "./key-tool"
 import {MouseTool} from "./mouse-tool"
@@ -34,23 +33,24 @@ export class Viewer implements VNodeDecorator, IViewer {
 
     @inject(ViewRegistry) public viewRegistry: ViewRegistry
     @inject(TYPES.ViewerOptions) protected options: ViewerOptions
-    @inject(TYPES.ActionDispatcherProvider) protected actionDispatcherProvider: ActionDispatcherProvider
+
+    @inject(MouseTool) public mouseTool: MouseTool
+    @inject(KeyTool) public keyTool: KeyTool
+    @inject(Autosizer) public autosizer: Autosizer
 
     protected readonly patcher: Patcher
-    protected readonly decorators: VNodeDecorator[] = []
-    protected actionDispatcher?: IActionDispatcher
+    protected decorators: VNodeDecorator[]
     private lastVDOM: any
 
     constructor() {
         this.patcher = this.createPatcher()
-        this.decorators = this.createDecorators()
     }
 
-    createDecorators(): VNodeDecorator[] {
-        return [/*new AddRemoveAnimationDecorator(), */new KeyTool(this), new MouseTool(this), new Autosizer(this)]
+    protected createDecorators(): VNodeDecorator[] {
+        return [/*new AddRemoveAnimationDecorator(), */this.keyTool, this.mouseTool, this.autosizer]
     }
 
-    createModules(): Module[] {
+    protected createModules(): Module[] {
         return [
             propsModule,
             attributesModule,
@@ -60,17 +60,18 @@ export class Viewer implements VNodeDecorator, IViewer {
         ]
     }
 
-    createPatcher() {
+    protected createPatcher() {
         return init(this.createModules())
     }
 
-    createRenderingContext(model: SModelRoot): RenderingContext {
+    protected createRenderingContext(model: SModelRoot): RenderingContext {
         return {
             viewer: this,
         }
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
+        this.decorators = this.decorators || this.createDecorators().filter(d => d)
         return this.decorators.reduce(
             (vnode: VNode, decorator: VNodeDecorator) => decorator.decorate(vnode, element),
             vnode)
@@ -104,11 +105,6 @@ export class Viewer implements VNodeDecorator, IViewer {
         this.postUpdate()
     }
 
-    fireAction(action: Action) {
-        this.actionDispatcherProvider().then(actionDispatcher => {
-            actionDispatcher.dispatch(action)
-        })
-    }
 }
 
 export type Patcher = (oldRoot: VNode | Element, newRoot: VNode) => VNode

@@ -14,6 +14,13 @@ import {DiagramServer} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
 import {ViewportAction, ViewportCommand} from "../../../src/base/behaviors/viewport"
+import {MouseTool} from "../../../src/base/view/mouse-tool"
+import {SelectMouseListener} from "../../../src/base/behaviors/select"
+import {MoveMouseListener} from "../../../src/base/behaviors/move"
+import {ScrollMouseListener} from "../../../src/base/behaviors/scroll"
+import {ZoomMouseListener} from "../../../src/base/behaviors/zoom"
+import {KeyTool} from "../../../src/base/view/key-tool"
+import {UndoRedoKeyListener} from "../../../src/base/behaviors/undo-redo"
 
 export default function runSimpleServer() {
     const container = createContainer()
@@ -31,6 +38,16 @@ export default function runSimpleServer() {
     viewRegistry.register('graph', SGraphView)
     viewRegistry.register('node:circle', CircleNodeView)
     viewRegistry.register('edge:straight', StraightEdgeView)
+
+    // Register tools
+    const mouseTool = container.get(MouseTool)
+    mouseTool.register(new SelectMouseListener())
+    mouseTool.register(new MoveMouseListener())
+    mouseTool.register(new ScrollMouseListener())
+    mouseTool.register(new ZoomMouseListener())
+
+    const keyTool = container.get(KeyTool)
+    keyTool.register(new UndoRedoKeyListener())
 
     // Connect to the diagram server
     const diagramServer = container.get(DiagramServer)

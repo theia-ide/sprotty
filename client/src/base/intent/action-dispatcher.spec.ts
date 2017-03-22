@@ -1,15 +1,15 @@
 import {ActionDispatcher} from "./action-dispatcher"
-import {ICommandStack, CommandStack} from "./command-stack"
-import {UndoAction, RedoAction, ActionHandlerRegistry} from "./actions"
+import {ICommandStack} from "./command-stack"
+import {ActionHandlerRegistry} from "./actions"
 import {expect} from 'chai'
-import {Command} from "./commands"
 import {ContainerModule, Container} from "inversify"
 import defaultModule from "../../../src/base/container-module"
 import {TYPES} from "../types"
-import {SetModelCommand, SetModelAction} from "../behaviors/model-manipulation"
 import {MoveCommand, MoveAction} from "../behaviors/move"
 import {SModel} from "../model/smodel"
 import EMPTY_ROOT = SModel.EMPTY_ROOT
+import {UndoAction, RedoAction} from "../behaviors/undo-redo"
+import {SetModelAction} from "../behaviors/model-manipulation"
 
 describe('action dispatcher', () => {
 

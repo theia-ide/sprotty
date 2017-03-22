@@ -5,6 +5,7 @@ import {SModelRoot, SModel, SModelFactory} from "../model"
 import {IViewer} from "../view"
 import {Logger} from "../../utils"
 import {Command, CommandExecutionContext} from "./commands"
+import {ViewerProvider} from "../view/viewer"
 
 export interface ICommandStack {
     execute(commands: Command[]): void
@@ -21,7 +22,7 @@ export class CommandStack implements ICommandStack {
     defaultDuration = 250
 
     @inject(SModelFactory) protected modelFactory: SModelFactory
-    @inject(TYPES.IViewer) protected viewer: IViewer
+    @inject(TYPES.ViewerProvider) protected viewerProvider: ViewerProvider
     @inject(TYPES.Logger) protected logger: Logger
 
     protected currentPromise: Promise<SModelRoot> = Promise.resolve(SModel.EMPTY_ROOT)
@@ -151,7 +152,9 @@ export class CommandStack implements ICommandStack {
     }
 
     update(model: SModelRoot) {
-        this.viewer.update(model)
+        this.viewerProvider().then(viewer => {
+            viewer.update(model)
+        })
     }
 }
 

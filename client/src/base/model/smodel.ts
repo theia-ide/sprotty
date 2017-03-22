@@ -145,6 +145,17 @@ export namespace SModel {
             return schema.type
     }
 
+    export function getParent<T>(element: SModelElement | T, predicate: (SModelElement) => boolean): (SModelElement & T) | undefined {
+        if(predicate.call(undefined, element))
+            return element as (SModelElement & T)
+        else if(element instanceof SChildElement) {
+            const parent = element.parent
+            if(parent)
+                return getParent<T>(parent, predicate)
+        }
+        return undefined
+    }
+
     export const EMPTY_ROOT = new SModelFactory().createRoot({
         id: 'EMPTY',
         type: 'NONE'

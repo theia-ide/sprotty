@@ -1,28 +1,45 @@
+import "reflect-metadata"
 import {VNode} from "snabbdom/vnode"
 import {SModelElement, SModelRoot} from "../model"
-import {RedoAction, UndoAction} from "../intent"
 import {VNodeDecorator} from "./vnode-decorators"
-import {Viewer} from "./viewer"
 import {VNodeUtils} from "./vnode-utils"
-import {isCtrlOrCmd} from "../../utils/utils"
+import {Action} from "../intent/actions"
+import {injectable, inject} from "inversify"
+import {ActionDispatcher, IActionDispatcher} from "../intent/action-dispatcher"
+import {TYPES} from "../types"
 
+@injectable()
 export class KeyTool implements VNodeDecorator {
 
-    constructor(private viewer: Viewer) {
+    @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
+
+    protected keyListeners: KeyListener[] = []
+
+    register(keyListener: KeyListener) {
+        this.keyListeners.push(keyListener)
     }
 
-    keyPress(element: SModelElement, event: KeyboardEvent): void {
-        if (isCtrlOrCmd(event) && event.keyCode == 90) {
+    deregister(keyListener: KeyListener) {
+        const index = this.keyListeners.indexOf(keyListener)
+        if(index >= 0)
+            this.keyListeners.splice(index, 1)
+    }
+
+    protected handleEvent(methodName: string, model: SModelRoot, event: KeyboardEvent) {
+        const actions = this.keyListeners
+            .map(listener => listener[methodName].apply(listener, [model, event]))
+            .reduce((a, b)=>a.concat(b))
+        if(actions.length > 0) {
             event.preventDefault()
-            if (event.shiftKey)
-                this.viewer.fireAction(new RedoAction)
-            else
-                this.viewer.fireAction(new UndoAction)
+            this.actionDispatcher.dispatchAll(actions)
         }
     }
 
-    focus() {
+    keyPress(element: SModelRoot, event: KeyboardEvent): void {
+        this.handleEvent('keyPress', element, event)
     }
+
+    focus() {}
 
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (element instanceof SModelRoot) {
@@ -30,6 +47,7 @@ export class KeyTool implements VNodeDecorator {
             VNodeUtils.on(vnode, 'keypress', this.keyPress.bind(this), element)
             VNodeUtils.on(vnode, 'keydown', this.keyPress.bind(this), element)
             VNodeUtils.on(vnode, 'keyup', this.keyPress.bind(this), element)
+
         }
         return vnode
     }
@@ -37,3 +55,10 @@ export class KeyTool implements VNodeDecorator {
     postUpdate() {
     }
 }
+
+export class KeyListener {
+    keyPress(element: SModelElement, event: KeyboardEvent): Action[] {
+        return []
+    }
+}
+

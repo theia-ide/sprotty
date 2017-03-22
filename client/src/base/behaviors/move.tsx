@@ -3,8 +3,15 @@ import {Animation} from "../animations"
 import {Moveable} from "./."
 import {Action} from "../intent/actions"
 import {Command, CommandExecutionContext, AbstractCommand} from "../intent/commands"
-import {SModelIndex, SModelElement, SModelRoot} from "../model/smodel"
+import {SModelIndex, SModelElement, SModelRoot, SModel} from "../model/smodel"
 import {BehaviorSchema} from "../model/behavior"
+import {MouseListener} from "../view/mouse-tool"
+import {isViewport, Viewport} from "./viewport"
+import {isSelectable} from "./select"
+import {VNode} from "snabbdom/vnode"
+import * as snabbdom from "snabbdom-jsx"
+
+const JSX = {createElement: snabbdom.svg}
 
 export interface Moveable extends BehaviorSchema, Point {
     x: number
@@ -126,5 +133,71 @@ export class MoveAnimation extends Animation {
             }
         }
         return this.context.root
+    }
+}
+
+export class MoveMouseListener extends MouseListener {
+
+    hasDragged = false
+    lastDragPosition: Point | undefined
+
+    mouseDown(target: SModelElement, event: MouseEvent): Action[] {
+        if (event.button == 0) {
+            if (isMoveable(target)) {
+                this.lastDragPosition = {x: event.clientX, y: event.clientY}
+            } else {
+                this.lastDragPosition = undefined
+            }
+            this.hasDragged = false
+        }
+        return []
+    }
+
+    mouseMove(target: SModelElement, event: MouseEvent): Action[] {
+        if (this.lastDragPosition) {
+            const viewport = SModel.getParent<Viewport>(target, isViewport)
+            this.hasDragged = true
+            const zoom = viewport ? viewport.zoom : 1
+            const dx = (event.clientX - this.lastDragPosition.x) / zoom
+            const dy = (event.clientY - this.lastDragPosition.y) / zoom
+            const root = target.root
+            const nodeMoves: ElementMove[] = []
+            root
+                .index
+                .all()
+                .filter(
+                    element => isSelectable(element) && element.selected
+                )
+                .forEach(
+                    element => {
+                        if (isMoveable(element)) {
+                            nodeMoves.push({
+                                elementId: element.id,
+                                toPosition: {
+                                    x: element.x + dx,
+                                    y: element.y + dy
+                                }
+                            })
+                        }
+                    })
+            this.lastDragPosition = {x: event.clientX, y: event.clientY}
+            if (nodeMoves.length > 0)
+                return [new MoveAction(nodeMoves, false)]
+        }
+        return []
+    }
+
+    mouseUp(target: SModelElement, event: MouseEvent): Action[] {
+        this.hasDragged = false
+        this.lastDragPosition = undefined
+        return []
+    }
+
+    decorate(vnode: VNode, element: SModelElement): VNode {
+        if (isMoveable(element)) {
+            const translate = 'translate(' + element.x + ', ' + element.y + ')'
+            vnode = <g transform={translate}>{vnode}</g>
+        }
+        return vnode
     }
 }

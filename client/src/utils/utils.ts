@@ -7,7 +7,7 @@ export interface Map<T> {
 
 @injectable()
 export class ProviderRegistry<T, U> {
-    private elements: Map<new(U) => T> = {}
+    protected elements: Map<new(U) => T> = {}
 
     register(key: string, cstr: new (U) => T) {
         this.elements[key] = cstr
@@ -35,7 +35,7 @@ export class ProviderRegistry<T, U> {
 
 @injectable()
 export class InstanceRegistry<T> {
-    private elements: Map<T> = {}
+    protected elements: Map<T> = {}
 
     register(key: string, cstr: T) {
         this.elements[key] = cstr

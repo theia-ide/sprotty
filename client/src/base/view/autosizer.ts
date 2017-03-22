@@ -1,21 +1,24 @@
+import "reflect-metadata"
 import {VNodeDecorator} from "./vnode-decorators"
 import {VNode} from "snabbdom/vnode"
 import {SModelElement} from "../model/smodel"
 import {almostEquals, Dimension, Bounds} from "../../utils/geometry"
-import {Viewer} from "./viewer"
 import {ElementResize, ResizeAction, Sizeable, isSizeable} from "../behaviors/resize"
+import {injectable, inject} from "inversify"
+import {ActionDispatcher, IActionDispatcher} from "../intent/action-dispatcher"
+import {TYPES} from "../types"
 
 class VNodeAndSizeable {
     vnode: VNode
     element: Sizeable & SModelElement
 }
 
+@injectable()
 export class Autosizer implements VNodeDecorator {
 
-    sizeables: VNodeAndSizeable[] = []
+    @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
 
-    constructor(private viewer: Viewer) {
-    }
+    sizeables: VNodeAndSizeable[] = []
 
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (isSizeable(element) && element.autosize === true) {
@@ -56,7 +59,7 @@ export class Autosizer implements VNodeDecorator {
             )
             this.sizeables = []
             if (resizes.length > 0)
-                this.viewer.fireAction(new ResizeAction(resizes))
+                this.actionDispatcher.dispatch(new ResizeAction(resizes))
 
         })
     }
