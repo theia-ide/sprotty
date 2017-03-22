@@ -70,8 +70,8 @@ let defaultContainerModule = new ContainerModule(bind => {
     bind(TYPES.KeyListener).to(UndoRedoKeyListener)
 
     // Mouse Listeners
-    bind(TYPES.MouseListener).to(MoveMouseListener)
     bind(TYPES.MouseListener).to(SelectMouseListener)
+    bind(TYPES.MouseListener).to(MoveMouseListener)
     bind(TYPES.MouseListener).to(ScrollMouseListener)
     bind(TYPES.MouseListener).to(ZoomMouseListener)
 
