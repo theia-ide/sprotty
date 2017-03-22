@@ -1,13 +1,26 @@
+import { Viewer, ViewRegistry, RenderingContext } from "../../base"
+import { CircularNodeView } from "../../lib"
+import {SGraph, SEdge, SNode, SGraphFactory} from "../model"
 import {SGraphView, StraightEdgeView} from "./views"
-import {SGraph, SEdge, SNode} from "../../graph/model/sgraph"
-import {SGraphFactory} from "../model/sgraph-factory"
-import {Viewer} from "../../base/view/viewer"
-import {ViewRegistry} from "../../base/view/views"
-import {CircleNodeView} from "../../../examples/circlegraph/src/views"
-import {expect} from "chai"
+import { expect } from "chai"
+import { VNode } from "snabbdom/vnode";
+import * as snabbdom from "snabbdom-jsx"
+
 const toHTML = require('snabbdom-to-html')
+const JSX = {createElement: snabbdom.svg}
 
 describe('graph views', () => {
+    class CircleNodeView extends CircularNodeView {
+        render(node: SNode, context: RenderingContext): VNode {
+            const radius = this.getRadius(node)
+            return <g key={node.id} id={node.id} >
+                    <circle class-node={true} class-selected={node.selected} r={radius} cx={radius} cy={radius}></circle>
+                </g>
+        }
+        protected getRadius(node: SNode) {
+            return 40
+        }
+    }
 
     const viewer = new Viewer()
     const viewRegistry = new ViewRegistry()
@@ -48,7 +61,7 @@ describe('graph views', () => {
         const view = new CircleNodeView()
         const vnode = view.render(graph.index.getById('node0') as SNode, context)
         const html = toHTML(vnode)
-        expect(html).to.be.equal('<g id="node0"><circle class="node" r="40" cx="40" cy="40" /><text class="text" x="40" y="47">0</text></g>')
+        expect(html).to.be.equal('<g id="node0"><circle class="node" r="40" cx="40" cy="40" /></g>')
     })
 
     it('render a whole graph', () => {
@@ -58,8 +71,8 @@ describe('graph views', () => {
         expect(html).to.be.equal(
             '<svg id="graph" class="graph">'
             + '<g transform="scale(1) translate(0,0)">'
-            +   '<g transform="translate(100, 100)"><g id="node0"><circle class="node" r="40" cx="40" cy="40" /><text class="text" x="40" y="47">0</text></g></g>'
-            +   '<g transform="translate(200, 150)"><g id="node1" class="selected"><circle class="node selected" r="40" cx="40" cy="40" /><text class="text" x="40" y="47">1</text></g></g>'
+            +   '<g transform="translate(100, 100)"><g id="node0"><circle class="node" r="40" cx="40" cy="40" /></g></g>'
+            +   '<g transform="translate(200, 150)"><g id="node1" class="selected"><circle class="node selected" r="40" cx="40" cy="40" /></g></g>'
             +   '<path id="edge0" class="edge" d="M 175.77708763999664,157.88854381999832 L 204.22291236000336,172.11145618000168" />'
             + '</g>' 
             + '</svg>')

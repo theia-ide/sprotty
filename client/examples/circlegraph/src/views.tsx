@@ -1,6 +1,7 @@
 import {RenderingContext} from "../../../src/base"
 import {SNode, SNodeView} from "../../../src/graph"
 import {Point} from "../../../src/utils"
+import { CircularNodeView } from "../../../src/lib"
 import {VNode} from "snabbdom/vnode"
 import * as snabbdom from "snabbdom-jsx"
 
@@ -9,7 +10,7 @@ const JSX = {createElement: snabbdom.svg}
 /**
  * A very simple example node consisting of a plain circle.
  */
-export class CircleNodeView extends SNodeView {
+export class CircleNodeView extends CircularNodeView {
     render(node: SNode, context: RenderingContext): VNode {
         const radius = this.getRadius(node)
         return <g key={node.id} id={node.id} >
@@ -18,30 +19,7 @@ export class CircleNodeView extends SNodeView {
             </g>
     }
 
-    private getRadius(node: SNode) {
+    protected getRadius(node: SNode) {
         return 40
-    }
-
-    getWidth(node: SNode): number {
-        return this.getRadius(node) * 2;
-    }
-
-    getHeight(node: SNode): number {
-        return this.getRadius(node) * 2;
-    }
-
-    getAnchor(node: SNode, refPoint: Point) {
-        const radius = this.getRadius(node)
-        const cx = node.x + radius
-        const cy = node.y + radius
-        const dx = cx - refPoint.x
-        const dy = cy - refPoint.y
-        const distance = Math.sqrt(dx * dx + dy * dy)
-        const normX = (dx / distance) || 0
-        const normY = (dy / distance) || 0
-        return {
-            x: cx - normX * radius,
-            y: cy - normY * radius
-        }
     }
 }
