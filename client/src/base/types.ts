@@ -1,4 +1,5 @@
 export let TYPES = {
+    Logger: Symbol('Logger'),
     IActionDispatcher: Symbol('IActionDispatcher'),
     ActionDispatcherProvider: Symbol('ActionDispatcherProvider'),
     ICommandStack: Symbol('ICommandStack'),

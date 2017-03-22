@@ -29,7 +29,7 @@ export class ChipModelFactory extends SModelFactory {
                 } else if (this.isCrossbarSchema(schema))
                     return this.initializeChild(new Crossbar(), schema, parent)
             } catch (e) {
-                console.log(e.message)
+                console.error(e.message)
             }
         }
         return super.createElement(schema, parent)

@@ -3,6 +3,7 @@ import {injectable, inject} from "inversify"
 import {TYPES} from "../types"
 import {SModelRoot, SModel, SModelFactory} from "../model"
 import {IViewer} from "../view"
+import {Logger} from "../../utils"
 import {Command, CommandExecutionContext} from "./commands"
 
 export interface ICommandStack {
@@ -21,6 +22,7 @@ export class CommandStack implements ICommandStack {
 
     @inject(SModelFactory) protected modelFactory: SModelFactory
     @inject(TYPES.IViewer) protected viewer: IViewer
+    @inject(TYPES.Logger) protected logger: Logger
 
     protected currentPromise: Promise<SModelRoot> = Promise.resolve(SModel.EMPTY_ROOT)
 
@@ -34,6 +36,7 @@ export class CommandStack implements ICommandStack {
                     model => {
                         return new Promise(
                             (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
+                                this.logger.log('CommandStack: execute', command)
                                 const context: CommandExecutionContext = {
                                     modelChanged: this,
                                     modelFactory: this.modelFactory,

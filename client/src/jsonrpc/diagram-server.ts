@@ -3,7 +3,7 @@ const WebSocket = require('reconnecting-websocket')
 import "reflect-metadata"
 import {injectable} from "inversify"
 import {Action} from "../base/intent/actions"
-import {ConsoleLogger} from "./common"
+import {ConsoleLogger} from "../utils"
 import {WebSocketMessageReader, WebSocketMessageWriter} from "./webSocket"
 import {
     CancellationToken,

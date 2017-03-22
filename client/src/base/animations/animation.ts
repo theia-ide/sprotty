@@ -27,6 +27,7 @@ export abstract class Animation {
                     const current = this.tween(this.ease(t), this.context)
                     this.context.modelChanged.update(current)
                     if (t == 1) {
+                        // TODO remove this logging or use the Logger interface
                         console.log((frames * 1000 / this.context.duration) + ' fps')
                         resolve(current)
                     } else {

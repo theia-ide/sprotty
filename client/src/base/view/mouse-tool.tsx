@@ -165,6 +165,7 @@ export class MouseTool implements VNodeDecorator {
             const factor =  1./(newZoom * viewport.zoom) - 1./viewport.zoom
             const pivotX = event.offsetX - 0.5 * viewport.width
             const pivotY = event.offsetY - 0.5 * viewport.height
+            // TODO remove this logging or use the Logger interface
             console.log(pivotX + ' ' + pivotY)
             const newViewport: Viewport = {
                 centerX:  - (factor * pivotX - viewport.centerX),
