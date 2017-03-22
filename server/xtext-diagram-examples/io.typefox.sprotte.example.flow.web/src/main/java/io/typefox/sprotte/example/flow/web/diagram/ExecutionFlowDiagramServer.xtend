@@ -11,7 +11,6 @@ import io.typefox.sprotte.api.SetModelAction
 import io.typefox.sprotte.example.flow.dataFlow.Barrier
 import io.typefox.sprotte.example.flow.dataFlow.Execution
 import io.typefox.sprotte.example.flow.dataFlow.Flow
-import io.typefox.sprotte.layout.ElkLayoutEngine
 import io.typefox.sprotte.layout.ILayoutEngine
 import io.typefox.sprotte.layout.LayoutUtil
 import org.apache.log4j.Logger
@@ -49,7 +48,7 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 			for (declaration : flow.declarations.filter(Execution)) {
 				val enode = new ExecutionNode
 				enode.type = 'execution'
-				enode.id = 'execution' + (index++)
+				enode.id = declaration.name + '_' + (index++)
 				enode.taskName = declaration.task?.name
 				enode.autosize = true
 				nodes.put(declaration, enode)
@@ -66,7 +65,7 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 				for (triggered : declaration.triggered) {
 					val enode = new ExecutionNode
 					enode.type = 'execution'
-					enode.id = 'execution' + (index++)
+					enode.id = triggered.name + '_' + (index++)
 					enode.taskName = triggered.task?.name
 					enode.autosize = true
 					nodes.put(triggered, enode)
@@ -99,7 +98,7 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 	
 	protected def initializeLayoutEngine() {
 		if (layoutEngine === null) {
-			layoutEngine = new ElkLayoutEngine => [
+			layoutEngine = new ExecutionFlowLayoutEngine => [
 				initialize(new LayeredOptions)
 			]
 		}

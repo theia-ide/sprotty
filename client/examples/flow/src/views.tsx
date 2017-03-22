@@ -12,8 +12,8 @@ export class ExecutionNodeView extends SNodeView {
     render(node: ExecutionNode, context: RenderingContext): VNode {
         const radius = this.getRadius(node)
         return <g key={node.id} id={node.id} >
-                <circle class-node={true} class-execution={true} class-selected={node.selected} r={radius} x={radius / 2} y={radius / 2}></circle>
-                <text y="5" class-text={true}>{node.taskName}</text>
+                <circle class-node={true} class-execution={true} class-selected={node.selected} r={radius} cx={radius} cy={radius}></circle>
+                <text x={radius} y={radius + 5} class-text={true}>{node.taskName}</text>
             </g>
     }
 
@@ -22,14 +22,15 @@ export class ExecutionNodeView extends SNodeView {
     }
 
     getAnchor(node: ExecutionNode, refPoint: Point, arrowLength: number) {
+        const radius = this.getRadius(node)
         const dx = node.x - refPoint.x
         const dy = node.y - refPoint.y
         const distance = Math.sqrt(dx * dx + dy * dy)
         const normX = dx / distance
         const normY = dy / distance
         return {
-            x: node.x - normX * (this.getRadius(node) + arrowLength),
-            y: node.y - normY * (this.getRadius(node) + arrowLength)
+            x: node.x + radius - normX * (radius + arrowLength),
+            y: node.y + radius - normY * (radius + arrowLength)
         }
     }
 }
@@ -37,7 +38,7 @@ export class ExecutionNodeView extends SNodeView {
 export class BarrierNodeView extends SNodeView {
     render(node: BarrierNode, context: RenderingContext): VNode {
         return <g key={node.id} id={node.id} >
-                <rect class-node={true} class-barrier={true} class-selected={node.selected} width={this.getWidth(node)} height={this.getHeight(node)}></rect>
+                <rect class-node={true} class-barrier={true} class-selected={node.selected} x="0" y="0" width={this.getWidth(node)} height={this.getHeight(node)}></rect>
             </g>
     }
 
@@ -58,8 +59,8 @@ export class BarrierNodeView extends SNodeView {
         let y = refPoint.y
         if (y < node.y)
             y = node.y
-        else if (y > node.y + this.getWidth(node))
-            y = node.y + this.getWidth(node)
+        else if (y > node.y + this.getHeight(node))
+            y = node.y + this.getHeight(node)
         return {x, y}
     }
 }

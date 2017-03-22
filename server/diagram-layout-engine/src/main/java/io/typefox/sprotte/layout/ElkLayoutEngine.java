@@ -44,12 +44,17 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	protected LayoutContext transformGraph(SGraph sgraph) {
 		LayoutContext result = new LayoutContext();
 		result.sgraph = sgraph;
-		ElkNode rootNode = factory.createElkNode();
-		rootNode.setIdentifier(sgraph.getId());
+		ElkNode rootNode = createGraph(sgraph);
 		result.elkGraph = rootNode;
 		processChildren(sgraph, rootNode, result);
 		resolveReferences(result);
 		return result;
+	}
+	
+	protected ElkNode createGraph(SGraph sgraph) {
+		ElkNode elkGraph = factory.createElkNode();
+		elkGraph.setIdentifier(sgraph.getId());
+		return elkGraph;
 	}
 	
 	protected void processChildren(SModelElement element, ElkNode parent, LayoutContext context) {
