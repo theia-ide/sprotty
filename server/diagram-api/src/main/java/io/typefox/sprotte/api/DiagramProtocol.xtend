@@ -71,12 +71,21 @@ abstract class SModelElement {
 	
 	List<SModelElement> children
 	
-	SModelElement parent
-	
 }
 
 @JsonRpcData
 class SModelRoot extends SModelElement {
+	
+}
+
+@JsonRpcData
+class SGraph extends SModelRoot {
+	
+	Double width
+	
+	Double height
+	
+	Boolean autosize
 	
 }
 

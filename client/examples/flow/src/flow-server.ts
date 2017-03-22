@@ -1,6 +1,6 @@
 import {
     ActionDispatcher, MoveCommand, MoveAction, SelectCommand, SelectAction, ActionHandlerRegistry,
-    ViewRegistry, CommandActionHandler, RequestModelAction, ResizeAction, ResizeCommand
+    ViewRegistry, CommandActionHandler, RequestModelAction, ResizeAction
 } from "../../../src/base"
 import {SGraphView, StraightEdgeView} from "../../../src/graph"
 import {DiagramServer} from "../../../src/jsonrpc"

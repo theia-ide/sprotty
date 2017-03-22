@@ -52,6 +52,7 @@ export class Autosizer implements VNodeDecorator {
 
                 }
             )
+            this.sizeables = []
             if (resizes.length > 0)
                 this.viewer.fireAction(new ResizeAction(resizes))
 

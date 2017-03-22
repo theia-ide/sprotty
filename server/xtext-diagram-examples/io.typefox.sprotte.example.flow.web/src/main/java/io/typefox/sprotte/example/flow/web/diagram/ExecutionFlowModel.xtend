@@ -1,12 +1,12 @@
 package io.typefox.sprotte.example.flow.web.diagram
 
+import io.typefox.sprotte.api.SGraph
+import io.typefox.sprotte.api.SNode
 import org.eclipse.lsp4j.generator.JsonRpcData
 import org.eclipse.xtext.web.server.IServiceResult
-import io.typefox.sprotte.api.SModelRoot
-import io.typefox.sprotte.api.SNode
 
 @JsonRpcData
-class Program extends SModelRoot implements IServiceResult {
+class Program extends SGraph implements IServiceResult {
 }
 
 @JsonRpcData

@@ -32,7 +32,7 @@ export class ActionDispatcher implements IActionDispatcher {
         else if (this.actionHandlerRegistry.hasKey(action.kind))
             this.handleAction(action)
         else
-            this.logger.warn("Missing command for action '" + action.kind + "'")
+            this.logger.warn('ActionDispatcher: missing command for action', action)
     }
 
     protected handleAction(action: Action) {

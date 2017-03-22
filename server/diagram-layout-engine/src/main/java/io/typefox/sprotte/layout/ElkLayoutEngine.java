@@ -16,8 +16,8 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 import com.google.common.collect.Maps;
 
 import io.typefox.sprotte.api.SEdge;
+import io.typefox.sprotte.api.SGraph;
 import io.typefox.sprotte.api.SModelElement;
-import io.typefox.sprotte.api.SModelRoot;
 import io.typefox.sprotte.api.SNode;
 
 public class ElkLayoutEngine implements ILayoutEngine {
@@ -35,13 +35,13 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	private ElkGraphFactory factory = ElkGraphFactory.eINSTANCE;
 	
 	@Override
-	public void layout(SModelRoot sgraph) {
+	public void layout(SGraph sgraph) {
 		LayoutContext context = transformGraph(sgraph);
 		applyEngine(context.elkGraph);
 		transferLayout(context);
 	}
 	
-	protected LayoutContext transformGraph(SModelRoot sgraph) {
+	protected LayoutContext transformGraph(SGraph sgraph) {
 		LayoutContext result = new LayoutContext();
 		result.sgraph = sgraph;
 		ElkNode rootNode = factory.createElkNode();
@@ -129,7 +129,13 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	}
 	
 	protected void transferLayout(SModelElement element, LayoutContext context) {
-		if (element instanceof SNode) {
+		if (element instanceof SGraph) {
+			SGraph sgraph = (SGraph) element;
+//			ElkNode elkGraph = context.elkGraph;
+//			sgraph.setWidth(elkGraph.getWidth());
+//			sgraph.setHeight(elkGraph.getHeight());
+			sgraph.setAutosize(false);
+		} else if (element instanceof SNode) {
 			SNode snode = (SNode) element;
 			ElkNode elkNode = context.nodeMap.get(snode);
 			if (elkNode != null) {
@@ -148,7 +154,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	}
 	
 	protected static class LayoutContext {
-		public SModelRoot sgraph;
+		public SGraph sgraph;
 		public ElkNode elkGraph;
 		public final Map<SNode, ElkNode> nodeMap = Maps.newHashMap();
 		public final Map<SEdge, ElkEdge> edgeMap = Maps.newHashMap();

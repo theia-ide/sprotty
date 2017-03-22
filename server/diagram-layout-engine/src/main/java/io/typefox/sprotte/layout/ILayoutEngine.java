@@ -1,9 +1,9 @@
 package io.typefox.sprotte.layout;
 
-import io.typefox.sprotte.api.SModelRoot;
+import io.typefox.sprotte.api.SGraph;
 
 public interface ILayoutEngine {
 	
-	public void layout(SModelRoot sgraph);
+	public void layout(SGraph sgraph);
 
 }

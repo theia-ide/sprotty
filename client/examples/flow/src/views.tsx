@@ -9,8 +9,9 @@ const JSX = {createElement: snabbdom.svg}
 
 export class ExecutionNodeView extends SNodeView {
     render(node: SNode, context: RenderingContext): VNode {
+        const radius = this.getRadius(node)
         return <g key={node.id} id={node.id} >
-                <circle class-node={true} class-selected={node.selected} r={this.getRadius(node)}></circle>
+                <circle class-node={true} class-selected={node.selected} r={radius} x={radius / 2} y={radius / 2}></circle>
             </g>
     }
 

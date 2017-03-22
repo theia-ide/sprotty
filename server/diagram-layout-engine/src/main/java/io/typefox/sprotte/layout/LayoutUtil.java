@@ -7,6 +7,7 @@ import com.google.common.collect.Maps;
 import io.typefox.sprotte.api.Dimension;
 import io.typefox.sprotte.api.ElementResize;
 import io.typefox.sprotte.api.ResizeAction;
+import io.typefox.sprotte.api.SGraph;
 import io.typefox.sprotte.api.SModelElement;
 import io.typefox.sprotte.api.SModelRoot;
 import io.typefox.sprotte.api.SNode;
@@ -33,7 +34,7 @@ public final class LayoutUtil {
 		}
 	}
 	
-	public static void applyResizeAction(SModelRoot graph, ResizeAction action) {
+	public static void applyResizeAction(SGraph graph, ResizeAction action) {
 		Map<String, SNode> nodeMap = createId2NodeMap(graph);
 		for (ElementResize resize : action.getResizes()) {
 			SNode node = nodeMap.get(resize.getElementId());
