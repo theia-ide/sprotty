@@ -48,8 +48,8 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 			// Transform executions
 			for (declaration : flow.declarations.filter(Execution)) {
 				val enode = new ExecutionNode
-				enode.type = 'node:execution'
-				enode.id = 'node' + (index++)
+				enode.type = 'execution'
+				enode.id = 'execution' + (index++)
 				enode.taskName = declaration.task?.name
 				enode.autosize = true
 				nodes.put(declaration, enode)
@@ -58,15 +58,15 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 			// Transform barriers
 			for (declaration : flow.declarations.filter(Barrier)) {
 				val bnode = new BarrierNode
-				bnode.type = 'node:barrier'
-				bnode.id = 'node' + (index++)
+				bnode.type = 'barrier'
+				bnode.id = 'barrier' + (index++)
 				bnode.autosize = true
 				nodes.put(declaration, bnode)
 				program.children += bnode
 				for (triggered : declaration.triggered) {
 					val enode = new ExecutionNode
-					enode.type = 'node:execution'
-					enode.id = 'node' + (index++)
+					enode.type = 'execution'
+					enode.id = 'execution' + (index++)
 					enode.taskName = triggered.task?.name
 					enode.autosize = true
 					nodes.put(triggered, enode)
@@ -77,16 +77,16 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 			for (declaration : flow.declarations.filter(Barrier)) {
 				for (joined : declaration.joined) {
 					val edge = new SEdge
-					edge.type = 'edge:straight'
-					edge.id = 'edge' + (index++)
+					edge.type = 'edge'
+					edge.id = 'flow' + (index++)
 					edge.sourceId = nodes.get(joined)?.id
 					edge.targetId = nodes.get(declaration)?.id
 					program.children += edge
 				}
 				for (triggered : declaration.triggered) {
 					val edge = new SEdge
-					edge.type = 'edge:straight'
-					edge.id = 'edge' + (index++)
+					edge.type = 'edge'
+					edge.id = 'flow' + (index++)
 					edge.sourceId = nodes.get(declaration)?.id
 					edge.targetId = nodes.get(triggered)?.id
 					program.children += edge

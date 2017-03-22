@@ -1,25 +1,27 @@
 import {h} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
 import {RenderingContext} from "../../../src/base"
-import {SNode, SNodeView} from "../../../src/graph"
+import {SNodeView} from "../../../src/graph"
 import {Point} from "../../../src/utils"
 import * as snabbdom from "snabbdom-jsx"
+import { ExecutionNode, BarrierNode } from "./flowmodel"
 
 const JSX = {createElement: snabbdom.svg}
 
 export class ExecutionNodeView extends SNodeView {
-    render(node: SNode, context: RenderingContext): VNode {
+    render(node: ExecutionNode, context: RenderingContext): VNode {
         const radius = this.getRadius(node)
         return <g key={node.id} id={node.id} >
-                <circle class-node={true} class-selected={node.selected} r={radius} x={radius / 2} y={radius / 2}></circle>
+                <circle class-node={true} class-execution={true} class-selected={node.selected} r={radius} x={radius / 2} y={radius / 2}></circle>
+                <text y="5" class-text={true}>{node.taskName}</text>
             </g>
     }
 
-    private getRadius(node: SNode) {
-        return 30
+    private getRadius(node: ExecutionNode) {
+        return 20
     }
 
-    getAnchor(node: SNode, refPoint: Point, arrowLength: number) {
+    getAnchor(node: ExecutionNode, refPoint: Point, arrowLength: number) {
         const dx = node.x - refPoint.x
         const dy = node.y - refPoint.y
         const distance = Math.sqrt(dx * dx + dy * dy)
@@ -33,21 +35,21 @@ export class ExecutionNodeView extends SNodeView {
 }
 
 export class BarrierNodeView extends SNodeView {
-    render(node: SNode, context: RenderingContext): VNode {
+    render(node: BarrierNode, context: RenderingContext): VNode {
         return <g key={node.id} id={node.id} >
-                <rect class-node={true} class-selected={node.selected} width={this.getWidth(node)} height={this.getHeight(node)}></rect>
+                <rect class-node={true} class-barrier={true} class-selected={node.selected} width={this.getWidth(node)} height={this.getHeight(node)}></rect>
             </g>
     }
 
-    private getWidth(node: SNode) {
-        return 40
+    private getWidth(node: BarrierNode) {
+        return 50
     }
 
-    private getHeight(node: SNode) {
-        return 8
+    private getHeight(node: BarrierNode) {
+        return 10
     }
 
-    getAnchor(node: SNode, refPoint: Point, arrowLength: number) {
+    getAnchor(node: BarrierNode, refPoint: Point, arrowLength: number) {
         let x = refPoint.x
         if (x < node.x)
             x = node.x

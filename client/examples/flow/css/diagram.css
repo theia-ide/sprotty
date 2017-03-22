@@ -1,20 +1,34 @@
 .node {
-    fill: #aae;
-    stroke: #66b;
-    stroke-width: 3;
-    rx: 4;
-    ry: 4;
+    stroke: #444;
+    stroke-width: 1;
+}
+
+.execution {
+    fill: #c0e0fc;
+}
+
+.barrier {
+    fill: #f4daa6;
 }
 
 .edge {
-    fill: #8cc;
-    stroke: #488;
-    stroke-width: 2;
+    fill: #7b90a2;
+    stroke: #222;
+    stroke-width: 1;
+}
+
+.text {
+    stroke-width: 1;
+    stroke: #000;
+    fill: #000;
+    font-family: SansSerif;
+    font-size: 11pt;
+    text-anchor: middle;
 }
 
 .selected {
     stroke: #dd8;
-    stroke-width: 6;
+    stroke-width: 2;
 }
 
 .missing {

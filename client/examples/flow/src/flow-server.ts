@@ -6,6 +6,7 @@ import {SGraphView, StraightEdgeView} from "../../../src/graph"
 import {DiagramServer} from "../../../src/jsonrpc"
 import {ExecutionNodeView, BarrierNodeView} from "./views"
 import createContainer from "./inversify.config"
+import { ViewportAction, ViewportCommand } from "../../../src/base/intent/viewport"
 
 export default function runFlowServer() {
     const container = createContainer()
@@ -16,13 +17,14 @@ export default function runFlowServer() {
     actionHandlerRegistry.registerServerNotification(SelectAction.KIND, new CommandActionHandler(SelectCommand))
     actionHandlerRegistry.registerServerRequest(RequestModelAction.KIND)
     actionHandlerRegistry.registerServerRequest(ResizeAction.KIND)
+    actionHandlerRegistry.registerCommand(ViewportAction.KIND, ViewportCommand)
 
     // Register views
     const viewRegistry = container.get(ViewRegistry)
     viewRegistry.register('graph', SGraphView)
-    viewRegistry.register('node:execution', ExecutionNodeView)
-    viewRegistry.register('node:barrier', BarrierNodeView)
-    viewRegistry.register('edge:straight', StraightEdgeView)
+    viewRegistry.register('execution', ExecutionNodeView)
+    viewRegistry.register('barrier', BarrierNodeView)
+    viewRegistry.register('edge', StraightEdgeView)
 
     // Connect to the diagram server
     const diagramServer = container.get(DiagramServer)
