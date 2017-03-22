@@ -6,6 +6,10 @@ import {SGraphView, StraightEdgeView} from "../../../src/graph"
 import {DiagramServer} from "../../../src/jsonrpc"
 import {ExecutionNodeView, BarrierNodeView} from "./views"
 import createContainer from "./inversify.config"
+<<<<<<< HEAD
+=======
+import { ViewportAction, ViewportCommand } from "../../../src/base/behaviors/viewport"
+>>>>>>> fixed flow example
 
 export default function runFlowServer() {
     const container = createContainer()
