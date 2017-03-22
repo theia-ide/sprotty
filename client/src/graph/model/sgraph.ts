@@ -8,25 +8,27 @@ import {
     Selectable
 } from "../../base/model"
 import {Sizeable, Viewport} from "../../base/model/behavior"
+import {Point, Bounds, EMPTY_BOUNDS} from "../../utils/geometry"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
-    centerX?: number
-    centerY?: number
-    zoom?: number
     autosize?: boolean
     width?: number
     height?: number
+    scroll: Point
+    zoom: number
 }
 
 export class SGraph extends SModelRoot implements SGraphSchema, Viewport, Sizeable {
     children: SGraphElement[]
-    centerX: number = 0
-    centerY: number = 0
-    zoom: number = 1
+
+    autosize: boolean = true
     width: number = 0
     height: number = 0
-    autosize: boolean = true
+    clientBounds: Bounds = EMPTY_BOUNDS
+
+    scroll: Point = { x:0, y:0 }
+    zoom: number = 1
 }
 
 export interface SNodeSchema extends SParentElementSchema {

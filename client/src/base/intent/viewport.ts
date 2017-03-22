@@ -1,9 +1,7 @@
-import {Point, Map} from "../../utils"
 import {Animation} from "../animations"
-import {SModelElement, SModelRoot, Moveable} from "../model"
+import {SModelElement, SModelRoot} from "../model"
 import {Action} from "./actions"
 import {Command, CommandExecutionContext, AbstractCommand} from "./commands"
-import {SModelIndex} from "../model/smodel"
 import {Viewport, isViewport} from "../model/behavior"
 
 export class ViewportAction implements Action {
@@ -30,17 +28,17 @@ export class ViewportCommand extends AbstractCommand {
         if(element && isViewport(element)) {
             this.element = element
             this.oldViewport = {
-                centerX: this.element.centerX,
-                centerY: this.element.centerY,
-                width: this.element.width,
-                height: this.element.height,
-                zoom: this.element.zoom
+                scroll: {
+                    x: this.element.scroll.x,
+                    y: this.element.scroll.y
+                },
+                zoom: this.element.zoom,
             }
             if (this.action.animate)
                 return new ViewportAnimation(this.element, this.oldViewport, this.newViewport, context).start()
             else {
-                this.element.centerX = this.newViewport.centerX
-                this.element.centerY = this.newViewport.centerY
+                this.element.scroll.x = this.newViewport.scroll.x
+                this.element.scroll.y = this.newViewport.scroll.y
                 this.element.zoom = this.newViewport.zoom
             }
         }
@@ -74,8 +72,8 @@ export class ViewportAnimation extends Animation {
     }
 
     tween(t: number) {
-        this.element.centerX = (1 - t) * this.oldViewport.centerX + t * this.newViewport.centerX
-        this.element.centerY = (1 - t) * this.oldViewport.centerY + t * this.newViewport.centerY
+        this.element.scroll.x = (1 - t) * this.oldViewport.scroll.x + t * this.newViewport.scroll.x
+        this.element.scroll.y = (1 - t) * this.oldViewport.scroll.y + t * this.newViewport.scroll.y
         this.element.zoom = (1 - t) * this.oldViewport.zoom + t * this.newViewport.zoom
         return this.context.root
     }

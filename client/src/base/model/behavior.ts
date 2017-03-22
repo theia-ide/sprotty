@@ -1,6 +1,7 @@
 ///<reference path="smodel.ts"/>
 import {Point, Dimension} from "../../utils"
 import {SModelElement} from "./smodel"
+import {Bounds} from "../../utils/geometry"
 
 export interface Behavior {
 }
@@ -24,6 +25,7 @@ export function isSelectable(element: SModelElement | Selectable): element is Se
 
 export interface Sizeable extends Behavior, Dimension {
     autosize: boolean
+    clientBounds?: Bounds
 }
 
 export function isSizeable(element: SModelElement | Sizeable): element is Sizeable {
@@ -32,18 +34,26 @@ export function isSizeable(element: SModelElement | Sizeable): element is Sizeab
         && 'height' in element
 }
 
-export interface Viewport extends Behavior, Dimension {
-    width: number
-    height: number
-    centerX: number
-    centerY: number
+export interface Scrollable {
+    scroll: Point
+}
+
+export function isScrollable(element: SModelElement | Scrollable): element is Scrollable {
+    return 'scroll' in element
+}
+
+export interface Zoomable {
     zoom: number
 }
 
-export function isViewport(element: SModelElement | Viewport): element is Viewport {
-    return 'centerX' in element
-        && 'centerY' in element
-        && 'zoom' in element
-        && 'width' in element
-        && 'height' in element
+export function isZoomable(element: SModelElement | Zoomable): element is Zoomable {
+    return 'zoom' in element
+}
+
+export interface Viewport extends Behavior, Scrollable, Zoomable {
+}
+
+export function isViewport(element: SModelElement | Viewport): element is Viewport & Scrollable & Zoomable {
+    return 'zoom' in element
+        && 'scroll' in element
 }

@@ -1,7 +1,7 @@
 ///<reference path="actions.ts"/>
 import {Action} from "./actions"
 import {SModelElement, SModelRoot} from "../model/smodel"
-import {Dimension} from "../../utils/geometry"
+import {Dimension, Bounds} from "../../utils/geometry"
 import {Sizeable, isSizeable} from "../model/behavior"
 import {CommandExecutionContext, AbstractCommand} from "./commands"
 
@@ -16,12 +16,15 @@ export class ResizeAction implements Action {
 export type ElementResize = {
     elementId: string
     newSize: Dimension
+    newClientBounds?: Bounds
 }
 
 type ResolvedElementResize = {
     element: SModelElement & Sizeable
     oldSize: Dimension
     newSize: Dimension
+    oldClientBounds?: Bounds
+    newClientBounds?: Bounds
 }
 
 export class ResizeCommand extends AbstractCommand {
@@ -37,13 +40,19 @@ export class ResizeCommand extends AbstractCommand {
             resize => {
                 const element = root.index.getById(resize.elementId)
                 if (element && isSizeable(element)) {
+                    let oldClientBounds: Bounds | undefined
+                    if(element.clientBounds) {
+                        oldClientBounds = {...element.clientBounds}
+                    }
                     this.resizes.push({
                         element: element,
                         oldSize: {
                             width: element.width,
                             height: element.height
                         },
-                        newSize: resize.newSize
+                        newSize: resize.newSize,
+                        oldClientBounds: oldClientBounds,
+                        newClientBounds: resize.newClientBounds
                     })
                 }
             }
@@ -56,6 +65,8 @@ export class ResizeCommand extends AbstractCommand {
             resize => {
                 resize.element.width = resize.oldSize.width
                 resize.element.height = resize.oldSize.height
+                if(resize.oldClientBounds)
+                    resize.element.clientBounds = {...resize.oldClientBounds}
                 resize.element.autosize = true
             }
         )
@@ -67,6 +78,8 @@ export class ResizeCommand extends AbstractCommand {
             resize => {
                 resize.element.width = resize.newSize.width
                 resize.element.height = resize.newSize.height
+                if(resize.newClientBounds)
+                    resize.element.clientBounds = {...resize.newClientBounds}
                 resize.element.autosize = false
             }
         )

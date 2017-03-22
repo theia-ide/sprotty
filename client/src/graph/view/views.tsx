@@ -3,6 +3,7 @@ import {Point} from "../../utils"
 import {SGraph, SNode, SEdge} from "../model"
 import {VNode} from "snabbdom/vnode"
 import * as snabbdom from "snabbdom-jsx"
+import {EMPTY_BOUNDS} from "../../utils/geometry"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -12,17 +13,12 @@ const JSX = {createElement: snabbdom.svg}
 export class SGraphView implements View {
 
     render(model: SGraph, context: RenderingContext): VNode  {
-        const transform = `scale(${model.zoom}) translate(${-model.centerX},${-model.centerY})`
-        const vnode = <svg key={model.id} id={model.id} class-graph={true}>
+        const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
+        return <svg key={model.id} id={model.id} class-graph={true}>
             <g transform={transform}>
                 {context.viewer.renderChildren(model, context)}
             </g>
         </svg>
-        if(model.width != 0 && model.height != 0) {
-            const viewBox = `${-0.5 * model.width} ${-0.5 * model.height} ${model.width} ${model.height}`
-            vnode.data.attrs.viewBox = viewBox
-        }
-        return vnode
     }
 }
 

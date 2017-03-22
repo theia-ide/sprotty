@@ -2,7 +2,7 @@ import {VNodeDecorator} from "./vnode-decorators"
 import {VNode} from "snabbdom/vnode"
 import {SModelElement} from "../model/smodel"
 import {isSizeable, Sizeable} from "../model/behavior"
-import {almostEquals, Dimension} from "../../utils/geometry"
+import {almostEquals, Dimension, Bounds} from "../../utils/geometry"
 import {Viewer} from "./viewer"
 import {ElementResize, ResizeAction} from "../intent/resize"
 
@@ -36,16 +36,19 @@ export class Autosizer implements VNodeDecorator {
                     const vnode = sizeable.vnode
                     const element = sizeable.element
                     if (vnode.elm) {
-                        const bounds = this.getDimension(vnode.elm as Element)
-                        if (bounds
-                            && (!almostEquals(bounds.width, element.width)
-                            || !almostEquals(bounds.height, element.height))) {
+                        const newBounds = this.getBoundingBox(vnode.elm as Element)
+                        let shouldResize = !almostEquals(newBounds.width, element.width)
+                            || !almostEquals(newBounds.height, element.height)
+                        let newClientBounds: Bounds | undefined
+                        if(element.clientBounds) {
+                            newClientBounds = this.getClientBounds(vnode.elm as Element)
+                            shouldResize = shouldResize || this.differ(newBounds, element.clientBounds)
+                        }
+                        if(shouldResize) {
                             resizes.push({
                                 elementId: element.id,
-                                newSize: {
-                                    width: bounds.width,
-                                    height: bounds.height
-                                }
+                                newSize: newBounds,
+                                newClientBounds: newClientBounds
                             })
                         }
                     }
@@ -59,13 +62,30 @@ export class Autosizer implements VNodeDecorator {
         })
     }
 
-    private getDimension(elm: Element): Dimension {
-        if(elm.tagName == 'svg') {
-            const bounds = elm.getBoundingClientRect()
-            return { width: bounds.width, height: bounds.height }
-        } else {
-            const bounds = (elm as any).getBBox()
-            return { width: bounds.width, height: bounds.height }
+    protected getBoundingBox(elm: Element): Bounds {
+        const bounds = (elm as any).getBBox()
+        return {
+            x: bounds.x,
+            y: bounds.y,
+            width: bounds.width,
+            height: bounds.height
         }
+    }
+
+    protected getClientBounds(elm: Element): Bounds {
+        const clientBounds = elm.getBoundingClientRect()
+        return {
+            x: clientBounds.left,
+            y: clientBounds.top,
+            width: clientBounds.width,
+            height: clientBounds.height
+        }
+    }
+
+    protected differ(b0, b1: Bounds): boolean {
+        return !almostEquals(b0.width, b1.width)
+            || !almostEquals(b0.height, b1.height)
+            || !almostEquals(b0.x, b1.x)
+            || !almostEquals(b0.y, b1.y)
     }
 }
