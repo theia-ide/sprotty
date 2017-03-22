@@ -1,12 +1,11 @@
 import {
     ActionDispatcher, MoveCommand, MoveAction, SelectCommand, SelectAction, ActionHandlerRegistry,
-    ViewRegistry, CommandActionHandler, RequestModelAction, ResizeAction
+    ViewRegistry, CommandActionHandler, RequestModelAction, ResizeAction, ViewportAction, ViewportCommand
 } from "../../../src/base"
 import {SGraphView, StraightEdgeView} from "../../../src/graph"
 import {DiagramServer} from "../../../src/jsonrpc"
 import {ExecutionNodeView, BarrierNodeView} from "./views"
 import createContainer from "./inversify.config"
-import { ViewportAction, ViewportCommand } from "../../../src/base/intent/viewport"
 
 export default function runFlowServer() {
     const container = createContainer()
