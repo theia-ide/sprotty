@@ -4,3 +4,4 @@ bin/
 .project
 .classpath
 org.eclipse.buildship.core.prefs
+npm-debug.log

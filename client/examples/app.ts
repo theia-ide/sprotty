@@ -4,7 +4,7 @@ import runFlowServer from "./flow/src/flow-server"
 import runMulticore from "./multicore/src/multicore"
 import runMulticoreServer from "./multicore/src/multicore-server"
 
-let appMode = document.getElementById('sprotte')!.getAttribute('data-app')
+let appMode = document.getElementById('sprotty')!.getAttribute('data-app')
 
 if (appMode == 'standalone')
     runStandalone()

@@ -58,7 +58,7 @@ let defaultContainerModule = new ContainerModule(bind => {
         }
     })
     bind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
-        baseDiv: 'sprotte'
+        baseDiv: 'sprotty'
     })
 
     // Tools & Decorators --------------------------------------

@@ -1,10 +1,10 @@
 {
-  "name": "sprotte",
+  "name": "sprotty",
   "version": "0.0.1",
   "description": "A next-gen graphics framework",
   "repository": {
     "type": "git",
-    "url": "https://github.com/TypeFox/sprotte"
+    "url": "https://github.com/TypeFox/sprotty"
   },
   "main": "index.js",
   "scripts": {
