@@ -17,7 +17,7 @@ import {Autosizer} from "./view/autosizer"
 import {KeyTool} from "./view/key-tool"
 import {UndoRedoKeyListener} from "./behaviors/undo-redo"
 import {MoveMouseListener} from "./behaviors/move"
-import {SelectMouseListener} from "./behaviors/select"
+import {SelectMouseListener, SelectKeyboardListener} from "./behaviors/select"
 import {ScrollMouseListener} from "./behaviors/scroll"
 import {ZoomMouseListener} from "./behaviors/zoom"
 import {CenterKeyboardListener} from "./behaviors/center-fit"
@@ -70,6 +70,7 @@ let defaultContainerModule = new ContainerModule(bind => {
     // Key Listeners
     bind(TYPES.KeyListener).to(UndoRedoKeyListener)
     bind(TYPES.KeyListener).to(CenterKeyboardListener)
+    bind(TYPES.KeyListener).to(SelectKeyboardListener)
 
     // Mouse Listeners
     bind(TYPES.MouseListener).to(SelectMouseListener)

@@ -6,6 +6,7 @@ import {MouseListener} from "../view/mouse-tool"
 import {isCtrlOrCmd} from "../../utils/utils"
 import {VNode} from "snabbdom/vnode"
 import {VNodeUtils} from "../view/vnode-utils"
+import {KeyListener} from "../view/key-tool"
 
 export interface Selectable extends BehaviorSchema {
     selected: boolean
@@ -143,5 +144,15 @@ export class SelectMouseListener extends MouseListener {
         if (isSelectable(element))
             VNodeUtils.setClass(vnode, 'selected', element.selected)
         return vnode
+    }
+}
+
+export class SelectKeyboardListener extends KeyListener {
+    keyPress(element: SModelElement, event: KeyboardEvent): Action[] {
+        if (isCtrlOrCmd(event) && event.keyCode == 65) {
+            return [new SelectAction(
+                element.root.index.all().filter(e => isSelectable(e)).map(e => e.id), [])]
+        }
+        return []
     }
 }
