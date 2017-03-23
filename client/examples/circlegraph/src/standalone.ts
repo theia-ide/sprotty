@@ -15,14 +15,7 @@ import {SGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSc
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
 import {ViewportAction, ViewportCommand} from "../../../src/base/behaviors/viewport"
-import {SModelRootSchema} from "../../../src/base/model/smodel"
-import {SelectMouseListener} from "../../../src/base/behaviors/select"
-import {MouseTool} from "../../../src/base/view/mouse-tool"
-import {MoveMouseListener} from "../../../src/base/behaviors/move"
-import {ScrollMouseListener} from "../../../src/base/behaviors/scroll"
-import {ZoomMouseListener} from "../../../src/base/behaviors/zoom"
-import {UndoRedoKeyListener} from "../../../src/base/behaviors/undo-redo"
-import {KeyTool} from "../../../src/base/view/key-tool"
+import {CenterAction, CenterCommand, FitToScreenAction, FitToScreenCommand} from "../../../src/base/behaviors/center-fit"
 
 export default function runStandalone() {
     const container = createContainer()
@@ -33,6 +26,8 @@ export default function runStandalone() {
     actionHandlerRegistry.registerCommand(SelectAction.KIND, SelectCommand)
     actionHandlerRegistry.registerCommand(ResizeAction.KIND, ResizeCommand)
     actionHandlerRegistry.registerCommand(ViewportAction.KIND, ViewportCommand)
+    actionHandlerRegistry.registerCommand(CenterAction.KIND, CenterCommand)
+    actionHandlerRegistry.registerCommand(FitToScreenAction.KIND, FitToScreenCommand)
 
     // Register views
     const viewRegistry = container.get(ViewRegistry)

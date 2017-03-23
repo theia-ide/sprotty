@@ -4,6 +4,8 @@ import {BehaviorSchema} from "../model/behavior"
 import {MouseListener} from "../view/mouse-tool"
 import {Action} from "../intent/actions"
 import {isViewport, Viewport, ViewportAction} from "./viewport"
+import {KeyListener} from "../view/key-tool"
+import {isCtrlOrCmd} from "../../utils/utils"
 
 export interface Scrollable extends BehaviorSchema {
     scroll: Point

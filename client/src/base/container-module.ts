@@ -1,6 +1,6 @@
 import {ContainerModule, interfaces} from "inversify"
 import {DiagramServer} from "../jsonrpc"
-import { NullLogger } from "../utils";
+import {NullLogger} from "../utils"
 import {
     ActionDispatcher,
     CommandStack,
@@ -20,6 +20,7 @@ import {MoveMouseListener} from "./behaviors/move"
 import {SelectMouseListener} from "./behaviors/select"
 import {ScrollMouseListener} from "./behaviors/scroll"
 import {ZoomMouseListener} from "./behaviors/zoom"
+import {CenterKeyboardListener} from "./behaviors/center-fit"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
@@ -68,6 +69,7 @@ let defaultContainerModule = new ContainerModule(bind => {
 
     // Key Listeners
     bind(TYPES.KeyListener).to(UndoRedoKeyListener)
+    bind(TYPES.KeyListener).to(CenterKeyboardListener)
 
     // Mouse Listeners
     bind(TYPES.MouseListener).to(SelectMouseListener)

@@ -1,3 +1,4 @@
+export * from './center-fit'
 export * from './model-manipulation'
 export * from './move'
 export * from './resize'

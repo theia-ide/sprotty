@@ -109,7 +109,13 @@ export class SelectMouseListener extends MouseListener {
                     this.wasSelected = false
                     return [new SelectAction([target.id], deselectIds)]
                 } else {
-                    this.wasSelected = true
+
+                    if(isCtrlOrCmd(event)) {
+                        this.wasSelected = false
+                        return [new SelectAction([], [target.id])]
+                    } else {
+                        this.wasSelected = true
+                    }
                 }
             }
         }
