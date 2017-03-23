@@ -10,10 +10,6 @@ import {
 import {DiagramServer} from "../../../src/jsonrpc"
 import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
 import createContainer from "./inversify.config"
-import {MouseTool} from "../../../src/base/view/mouse-tool"
-import {SelectMouseListener} from "../../../src/features/select/select"
-import {ScrollMouseListener} from "../../../src/features/viewport/scroll"
-import {ZoomMouseListener} from "../../../src/features/viewport/zoom"
 
 export default function runMulticoreServer() {
     const container = createContainer()
@@ -21,7 +17,7 @@ export default function runMulticoreServer() {
     // Register commands
     const actionHandlerRegistry = container.get(ActionHandlerRegistry)
     const dispatcher = container.get(ActionDispatcher)
-    actionHandlerRegistry.registerServerNotification(SelectAction.KIND, new CommandActionHandler(SelectCommand))
+    actionHandlerRegistry.registerServerNotification(SelectCommand.KIND, new CommandActionHandler(SelectCommand))
     actionHandlerRegistry.registerServerRequest(RequestModelAction.KIND)
 
     // Register views

@@ -14,7 +14,7 @@ export default function runFlowServer() {
     // Register commands
     const actionHandlerRegistry = container.get(ActionHandlerRegistry)
     const dispatcher = container.get(ActionDispatcher)
-    actionHandlerRegistry.registerServerNotification(SelectAction.KIND, new CommandActionHandler(SelectCommand))
+    actionHandlerRegistry.registerServerNotification(SelectCommand.KIND, new CommandActionHandler(SelectCommand))
     actionHandlerRegistry.registerServerRequest(RequestModelAction.KIND)
     actionHandlerRegistry.registerServerRequest(ResizeCommand.KIND)
     actionHandlerRegistry.register(UpdateModelAction.KIND, new RequestOnUpdateHandler())
