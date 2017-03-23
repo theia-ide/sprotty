@@ -1,16 +1,16 @@
 import {DiagramServer} from "../../jsonrpc"
-import {Action, IActionHandler} from "./actions"
+import { Action, ActionHandler, ActionHandlerResult } from "./actions"
 import {Command} from "./commands"
 import {IActionDispatcher} from "./action-dispatcher"
 
-export class RequestActionHandler implements IActionHandler {
+export class RequestActionHandler implements ActionHandler {
 
     constructor(protected diagramServer: DiagramServer,
                 protected actionDispatcher: IActionDispatcher,
-                protected immediateHandler?: IActionHandler) {
+                protected immediateHandler?: ActionHandler) {
     }
 
-    handle(action: Action): Command[] {
+    handle(action: Action): ActionHandlerResult {
         const promise = this.diagramServer.request(action)
         if (promise) {
             promise.then(result => {
@@ -27,25 +27,25 @@ export class RequestActionHandler implements IActionHandler {
         if (this.immediateHandler)
             return this.immediateHandler.handle(action)
         else
-            return [];
+            return {}
     }
 }
 
-export type RequestActionHandlerFactory = (immediateHandler?: IActionHandler) => RequestActionHandler
+export type RequestActionHandlerFactory = (immediateHandler?: ActionHandler) => RequestActionHandler
 
-export class NotificationActionHandler implements IActionHandler {
+export class NotificationActionHandler implements ActionHandler {
 
     constructor(protected diagramServer: DiagramServer,
-                protected immediateHandler?: IActionHandler) {
+                protected immediateHandler?: ActionHandler) {
     }
 
-    handle(action: Action): Command[] {
+    handle(action: Action): ActionHandlerResult {
         this.diagramServer.notify(action)
         if (this.immediateHandler)
             return this.immediateHandler.handle(action)
         else
-            return [];
+            return {}
     }
 }
 
-export type NotificationActionHandlerFactory = (immediateHandler?: IActionHandler) => NotificationActionHandler
+export type NotificationActionHandlerFactory = (immediateHandler?: ActionHandler) => NotificationActionHandler

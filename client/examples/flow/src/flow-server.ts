@@ -22,7 +22,7 @@ export default function runFlowServer() {
     actionHandlerRegistry.registerServerRequest(RequestModelAction.KIND)
     actionHandlerRegistry.registerServerRequest(ResizeAction.KIND)
     actionHandlerRegistry.registerCommand(ViewportAction.KIND, ViewportCommand)
-    actionHandlerRegistry.register(UpdateModelAction.KIND, new RequestOnUpdateHandler(dispatcher))
+    actionHandlerRegistry.register(UpdateModelAction.KIND, new RequestOnUpdateHandler())
 
     // Register views
     const viewRegistry = container.get(ViewRegistry)

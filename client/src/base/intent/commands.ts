@@ -1,7 +1,7 @@
 import {SModelRoot} from "../model"
 import {SModelFactory} from "../model/smodel-factory"
 import {IViewer} from "../view"
-import {IActionHandler, Action} from "./actions"
+import { ActionHandler, Action, ActionHandlerResult } from "./actions"
 
 /**
  * A command holds the behaviour of an action.
@@ -39,13 +39,15 @@ export interface CommandExecutionContext {
     duration: number
 }
 
-export class CommandActionHandler implements IActionHandler {
+export class CommandActionHandler implements ActionHandler {
 
     constructor(private commandType: new (Action) => Command) {
     }
 
-    handle(action: Action): Command[] {
-        return [new this.commandType(action)];
+    handle(action: Action): ActionHandlerResult {
+        return {
+            commands: [new this.commandType(action)]
+        }
     }
 
 }

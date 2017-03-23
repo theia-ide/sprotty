@@ -15,33 +15,20 @@ export interface Action {
     readonly kind: string
 }
 
-export interface IActionHandler {
-    handle(action: Action): Command[]
+export interface ActionHandlerResult {
+    actions?: Action[]
+    commands?: Command[]
 }
 
-export abstract class TranslateActionHandler implements IActionHandler {
-    constructor(protected actionDispatcher: IActionDispatcher,
-                protected immediateHandler?: IActionHandler) {
-    }
-
-    handle(action: Action): Command[] {
-        const translatedActions = this.translate(action)
-        if (translatedActions.length > 0)
-            this.actionDispatcher.dispatchAll(translatedActions)
-        if (this.immediateHandler)
-            return this.immediateHandler.handle(action)
-        else
-            return [];
-    }
-
-    protected abstract translate(action: Action): Action[]
+export interface ActionHandler {
+    handle(action: Action): ActionHandlerResult
 }
 
 /**
  * The action handler registry maps actions to their handlers using the Action.kind property.
  */
 @injectable()
-export class ActionHandlerRegistry extends InstanceRegistry<IActionHandler> {
+export class ActionHandlerRegistry extends InstanceRegistry<ActionHandler> {
 
     @inject(TYPES.RequestActionHandlerFactory) protected requestActionHandlerFactory: RequestActionHandlerFactory
     @inject(TYPES.NotificationActionHandlerFactory) protected notificationActionHandlerFactory: NotificationActionHandlerFactory
@@ -59,12 +46,12 @@ export class ActionHandlerRegistry extends InstanceRegistry<IActionHandler> {
         this.register(kind, new CommandActionHandler(commandType))
     }
 
-    registerServerRequest(kind: string, immediateHandler?: IActionHandler) {
+    registerServerRequest(kind: string, immediateHandler?: ActionHandler) {
         const handler = this.requestActionHandlerFactory(immediateHandler)
         this.register(kind, handler)
     }
 
-    registerServerNotification(kind: string, immediateHandler?: IActionHandler) {
+    registerServerNotification(kind: string, immediateHandler?: ActionHandler) {
         const handler = this.notificationActionHandlerFactory(immediateHandler)
         this.register(kind, handler)
     }

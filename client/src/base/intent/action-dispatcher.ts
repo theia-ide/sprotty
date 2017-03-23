@@ -36,12 +36,15 @@ export class ActionDispatcher implements IActionDispatcher {
             this.logger.warn('ActionDispatcher: missing command for action', action)
     }
 
-    protected handleAction(action: Action) {
+    protected handleAction(action: Action): void {
         this.logger.log('ActionDispatcher: handle', action)
         const actionHandler = this.actionHandlerRegistry.get(action.kind)
-        const commands = actionHandler.handle(action)
-        if (commands.length > 0) {
-            this.commandStack.execute(commands)
+        const result = actionHandler.handle(action)
+        if (result.commands && result.commands.length > 0) {
+            this.commandStack.execute(result.commands)
+        }
+        if (result.actions && result.actions.length > 0) {
+            this.dispatchAll(result.actions)
         }
     }
 

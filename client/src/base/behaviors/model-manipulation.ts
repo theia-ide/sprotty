@@ -1,4 +1,6 @@
-import { CommandExecutionContext, AbstractCommand, Action, TranslateActionHandler, IActionDispatcher, IActionHandler } from "../intent"
+import {
+    CommandExecutionContext, AbstractCommand, Action, IActionDispatcher, ActionHandler, ActionHandlerResult
+} from "../intent"
 import {SModelRootSchema, SModelRoot} from "../model"
 import { Map } from "../../utils"
 
@@ -49,14 +51,13 @@ export class UpdateModelAction implements Action {
     }
 }
 
-export class RequestOnUpdateHandler extends TranslateActionHandler {
-    constructor(actionDispatcher: IActionDispatcher,
-                immediateHandler?: IActionHandler,
-                private readonly options?: Map<string>) {
-        super(actionDispatcher, immediateHandler)
+export class RequestOnUpdateHandler implements ActionHandler {
+    constructor(private readonly options?: Map<string>) {
     }
 
-    protected translate(action: UpdateModelAction): Action[] {
-        return [new RequestModelAction(this.options)]
+    handle(action: UpdateModelAction): ActionHandlerResult {
+        return {
+            actions: [new RequestModelAction(this.options)]
+        }
     }
 }

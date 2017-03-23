@@ -7,7 +7,7 @@ import {
     ActionHandlerRegistry,
     RequestActionHandler,
     NotificationActionHandler,
-    IActionHandler
+    ActionHandler
 } from "./intent"
 import {Viewer, ViewRegistry, ViewerOptions} from "./view"
 import {SModelFactory} from "./model"
@@ -87,14 +87,14 @@ let defaultContainerModule = new ContainerModule(bind => {
 
     // Action Handlers ---------------------------------------------
     bind(TYPES.RequestActionHandlerFactory).toFactory<RequestActionHandler>((context: interfaces.Context) => {
-        return (immediateHandler?: IActionHandler) => {
+        return (immediateHandler?: ActionHandler) => {
             const diagramServer = context.container.get(DiagramServer)
             const actionDispatcher = context.container.get(ActionDispatcher)
             return new RequestActionHandler(diagramServer, actionDispatcher, immediateHandler)
         }
     })
     bind(TYPES.NotificationActionHandlerFactory).toFactory<NotificationActionHandler>((context: interfaces.Context) => {
-        return (immediateHandler?: IActionHandler) => {
+        return (immediateHandler?: ActionHandler) => {
             const diagramServer = context.container.get(DiagramServer)
             return new NotificationActionHandler(diagramServer, immediateHandler)
         }
