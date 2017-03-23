@@ -1,5 +1,7 @@
 package io.typefox.sprotte.server.examples
 
+import io.typefox.sprotte.api.DiagramClient
+import io.typefox.sprotte.api.DiagramClientAware
 import io.typefox.sprotte.api.DiagramServer
 import io.typefox.sprotte.api.RequestModelAction
 import io.typefox.sprotte.api.ResizeAction
@@ -10,10 +12,14 @@ import io.typefox.sprotte.api.SelectAction
 import io.typefox.sprotte.api.SetModelAction
 import java.util.concurrent.CompletableFuture
 import org.eclipse.jetty.util.log.Slf4jLog
+import org.eclipse.xtend.lib.annotations.Accessors
 
-class SimpleDiagramServer implements DiagramServer {
+class SimpleDiagramServer implements DiagramServer, DiagramClientAware {
 
 	static val LOG = new Slf4jLog(SimpleServerLauncher.name)
+	
+	@Accessors
+	DiagramClient client
 
 	override requestModel(RequestModelAction action) {
 		val model = new SetModelAction => [

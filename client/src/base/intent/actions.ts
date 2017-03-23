@@ -4,7 +4,8 @@ import {TYPES} from "../types"
 import {InstanceRegistry} from "../../utils"
 import {Command, CommandActionHandler} from "./commands"
 import {SetModelAction, SetModelCommand} from "../behaviors/model-manipulation"
-import {RequestActionHandlerFactory, NotificationActionHandlerFactory} from "./server-action-handlers"
+import { RequestActionHandlerFactory, NotificationActionHandlerFactory } from "./server-action-handlers"
+import { IActionDispatcher } from "./action-dispatcher"
 
 /**
  * An action describes a change to the model declaratively.
@@ -16,6 +17,24 @@ export interface Action {
 
 export interface IActionHandler {
     handle(action: Action): Command[]
+}
+
+export abstract class TranslateActionHandler implements IActionHandler {
+    constructor(protected actionDispatcher: IActionDispatcher,
+                protected immediateHandler?: IActionHandler) {
+    }
+
+    handle(action: Action): Command[] {
+        const translatedActions = this.translate(action)
+        if (translatedActions.length > 0)
+            this.actionDispatcher.dispatchAll(translatedActions)
+        if (this.immediateHandler)
+            return this.immediateHandler.handle(action)
+        else
+            return [];
+    }
+
+    protected abstract translate(action: Action): Action[]
 }
 
 /**

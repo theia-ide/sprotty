@@ -18,6 +18,7 @@ import com.google.inject.Provider;
 import com.google.inject.Singleton;
 
 import io.typefox.sprotte.api.DiagramClient;
+import io.typefox.sprotte.api.DiagramClientAware;
 import io.typefox.sprotte.api.DiagramServer;
 
 @Singleton
@@ -45,6 +46,10 @@ public class DiagramServerEndpoint extends Endpoint {
             writer.consume(m);
         }, ServiceEndpoints.toEndpoint(diagramServer));
         jsonHandler.setMethodProvider(endpoint);
+        if (diagramServer instanceof DiagramClientAware) {
+	        DiagramClient remoteProxy = ServiceEndpoints.toServiceObject(endpoint, DiagramClient.class);
+	        ((DiagramClientAware) diagramServer).setClient(remoteProxy);
+        }
         
         reader.listen(m -> {
             logClientMessage(m);

@@ -1,8 +1,8 @@
 const WebSocket = require('reconnecting-websocket')
 
 import "reflect-metadata"
-import {injectable} from "inversify"
-import {Action} from "../base/intent/actions"
+import {injectable, inject} from "inversify"
+import { TYPES, Action, IActionDispatcher, UpdateModelAction } from "../base"
 import {ConsoleLogger} from "../utils"
 import {WebSocketMessageReader, WebSocketMessageWriter} from "./webSocket"
 import {
@@ -16,6 +16,8 @@ import {
 @injectable()
 export class DiagramServer {
 
+    @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
+
     protected webSocket?: WebSocket
     protected connection?: MessageConnection
 
@@ -27,6 +29,7 @@ export class DiagramServer {
                 const messageReader = new WebSocketMessageReader(socket)
                 const messageWriter = new WebSocketMessageWriter(socket)
                 const connection = createMessageConnection(messageReader, messageWriter, logger)
+                this.registerServerMessages(connection)
                 connection.onClose(() => connection.dispose())
                 connection.listen()
                 this.connection = connection
@@ -52,6 +55,12 @@ export class DiagramServer {
         return webSocket
     }
 
+    protected registerServerMessages(connection: MessageConnection): void {
+        connection.onNotification('modelChanged', (action: UpdateModelAction) => {
+            this.actionDispatcher.dispatch(action)
+        })
+    }
+
     disconnect() {
         if (this.webSocket) {
             this.webSocket.close()
@@ -67,14 +76,12 @@ export class DiagramServer {
         if (!this.connection)
             throw new Error("The diagram server is not connected.")
         token = token || CancellationToken.None
-        const requestType = new RequestType1<Action, Action[], void, void>(action.kind)
-        return this.connection.sendRequest(requestType, action, token)
+        return this.connection.sendRequest(action.kind, action, token)
     }
 
     notify(action: Action): void {
         if (!this.connection)
             throw new Error("The diagram server is not connected.")
-        const notificationType = new NotificationType1<Action, void>(action.kind)
-        return this.connection.sendNotification(notificationType, action)
+        return this.connection.sendNotification(action.kind, action)
     }
 }

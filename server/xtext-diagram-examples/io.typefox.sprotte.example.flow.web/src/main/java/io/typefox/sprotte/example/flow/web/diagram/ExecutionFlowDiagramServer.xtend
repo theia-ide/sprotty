@@ -2,6 +2,8 @@ package io.typefox.sprotte.example.flow.web.diagram
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
+import io.typefox.sprotte.api.DiagramClient
+import io.typefox.sprotte.api.DiagramClientAware
 import io.typefox.sprotte.api.DiagramServer
 import io.typefox.sprotte.api.RequestModelAction
 import io.typefox.sprotte.api.ResizeAction
@@ -16,15 +18,17 @@ import io.typefox.sprotte.layout.LayoutUtil
 import org.apache.log4j.Logger
 import org.eclipse.elk.alg.layered.options.LayeredOptions
 import org.eclipse.lsp4j.jsonrpc.CompletableFutures
+import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.ide.ExecutorServiceProvider
 import org.eclipse.xtext.util.CancelIndicator
 import org.eclipse.xtext.web.server.model.AbstractCachedService
 import org.eclipse.xtext.web.server.model.IXtextWebDocument
 
 import static io.typefox.sprotte.layout.ElkLayoutEngine.*
+import io.typefox.sprotte.api.UpdateModelAction
 
 @Singleton
-class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implements DiagramServer {
+class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implements DiagramServer, DiagramClientAware {
 	
 	static val LOG = Logger.getLogger(ExecutionFlowDiagramServer)
 	
@@ -33,6 +37,9 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 	ILayoutEngine layoutEngine
 	
 	static Program cachedProgram
+	
+	@Accessors
+	DiagramClient client
 	
 	override compute(IXtextWebDocument it, CancelIndicator cancelIndicator) {
 		val flow = resource.contents.head as Flow
@@ -93,6 +100,11 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 			}
 		}
 		cachedProgram = program
+		if (client !== null) {
+			client.modelChanged(new UpdateModelAction => [
+				modelId = program.id
+			])
+		}
 		return program
 	}
 	

@@ -1,7 +1,6 @@
-import {CommandExecutionContext, AbstractCommand} from "../intent/commands"
-import {Action} from "../intent/actions"
-import {SModelRootSchema, SModelRoot} from "../model/smodel"
-import {Map} from "../../utils/utils"
+import { CommandExecutionContext, AbstractCommand, Action, TranslateActionHandler, IActionDispatcher, IActionHandler } from "../intent"
+import {SModelRootSchema, SModelRoot} from "../model"
+import { Map } from "../../utils"
 
 export class SetModelAction implements Action {
     static readonly KIND = 'setModel'
@@ -42,3 +41,22 @@ export class RequestModelAction implements Action {
     }
 }
 
+export class UpdateModelAction implements Action {
+    static readonly KIND = 'updateModel'
+    kind = UpdateModelAction.KIND
+
+    constructor(public readonly modelId: string) {
+    }
+}
+
+export class RequestOnUpdateHandler extends TranslateActionHandler {
+    constructor(actionDispatcher: IActionDispatcher,
+                immediateHandler?: IActionHandler,
+                private readonly options?: Map<string>) {
+        super(actionDispatcher, immediateHandler)
+    }
+
+    protected translate(action: UpdateModelAction): Action[] {
+        return [new RequestModelAction(this.options)]
+    }
+}

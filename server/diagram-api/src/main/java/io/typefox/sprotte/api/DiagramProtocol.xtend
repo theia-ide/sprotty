@@ -23,6 +23,15 @@ interface DiagramServer {
 
 interface DiagramClient {
 	
+	@JsonNotification
+	def void modelChanged(UpdateModelAction action)
+	
+}
+
+interface DiagramClientAware {
+	
+	def void setClient(DiagramClient client)
+	
 }
 
 @JsonRpcData
@@ -63,56 +72,43 @@ class SelectAction {
 }
 
 @JsonRpcData
+class UpdateModelAction {
+	String kind = 'updateModel'
+	@NonNull String modelId
+}
+
+@JsonRpcData
 abstract class SModelElement {
-	
 	@NonNull String type
-	
 	@NonNull String id
-	
 	List<SModelElement> children
-	
 }
 
 @JsonRpcData
 class SModelRoot extends SModelElement {
-	
 }
 
 @JsonRpcData
 class SGraph extends SModelRoot {
-	
 	Double width
-	
 	Double height
-	
 	Boolean autosize
-	
 }
 
 @JsonRpcData
 class SNode extends SModelElement {
-	
 	Double x
-	
 	Double y
-	
 	Double width
-	
 	Double height
-	
 	Boolean autosize
-	
 }
 
 @JsonRpcData
 class SEdge extends SModelElement {
-	
 	@NonNull String sourceId
-	
 	@NonNull String targetId
-	
 	List<Point> routingPoints
-	
 }
 
 @JsonRpcData

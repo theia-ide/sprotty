@@ -1,6 +1,7 @@
 import {
-    ActionDispatcher, SelectCommand, SelectAction, ActionHandlerRegistry,
-    ViewRegistry, CommandActionHandler, RequestModelAction, ResizeAction, ViewportAction, ViewportCommand
+    ActionDispatcher, SelectCommand, SelectAction, ActionHandlerRegistry, RequestOnUpdateHandler,
+    ViewRegistry, CommandActionHandler, RequestModelAction, ResizeAction, ViewportAction, ViewportCommand,
+    UpdateModelAction
 } from "../../../src/base"
 import {SGraphView, StraightEdgeView} from "../../../src/graph"
 import {DiagramServer} from "../../../src/jsonrpc"
@@ -21,6 +22,7 @@ export default function runFlowServer() {
     actionHandlerRegistry.registerServerRequest(RequestModelAction.KIND)
     actionHandlerRegistry.registerServerRequest(ResizeAction.KIND)
     actionHandlerRegistry.registerCommand(ViewportAction.KIND, ViewportCommand)
+    actionHandlerRegistry.register(UpdateModelAction.KIND, new RequestOnUpdateHandler(dispatcher))
 
     // Register views
     const viewRegistry = container.get(ViewRegistry)

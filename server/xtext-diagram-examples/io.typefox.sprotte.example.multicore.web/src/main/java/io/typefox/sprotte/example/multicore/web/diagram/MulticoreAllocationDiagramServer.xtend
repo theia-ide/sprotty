@@ -1,6 +1,8 @@
 package io.typefox.sprotte.example.multicore.web.diagram
 
 import com.google.inject.Inject
+import io.typefox.sprotte.api.DiagramClient
+import io.typefox.sprotte.api.DiagramClientAware
 import io.typefox.sprotte.api.DiagramServer
 import io.typefox.sprotte.api.RequestModelAction
 import io.typefox.sprotte.api.ResizeAction
@@ -8,13 +10,17 @@ import io.typefox.sprotte.api.SelectAction
 import io.typefox.sprotte.api.SetModelAction
 import org.apache.log4j.Logger
 import org.eclipse.lsp4j.jsonrpc.CompletableFutures
+import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.ide.ExecutorServiceProvider
 
-class MulticoreAllocationDiagramServer implements DiagramServer {
+class MulticoreAllocationDiagramServer implements DiagramServer, DiagramClientAware {
 	
 	static val LOG = Logger.getLogger(MulticoreAllocationDiagramServer)
 	
 	@Inject ExecutorServiceProvider executorServiceProvider
+	
+	@Accessors
+	DiagramClient client
 	
 	override requestModel(RequestModelAction action) {
 		return CompletableFutures.computeAsync(executorServiceProvider.get) [
