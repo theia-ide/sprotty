@@ -10,11 +10,14 @@ import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
 import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
+import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
 import org.eclipse.elk.graph.ElkGraphFactory;
 import org.eclipse.elk.graph.ElkNode;
+import org.eclipse.elk.graph.properties.IProperty;
+import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.Maps;
@@ -26,6 +29,8 @@ import io.typefox.sprotty.api.SModelElement;
 import io.typefox.sprotty.api.SNode;
 
 public class ElkLayoutEngine implements ILayoutEngine {
+	
+	public static final IProperty<String> P_TYPE = new Property<>("io.typefox.sprotty.layout.type");
 	
 	public static void initialize(ILayoutMetaDataProvider ...providers) {
 		LayoutMetaDataService metaDataService = LayoutMetaDataService.getInstance();
@@ -41,7 +46,15 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	
 	@Override
 	public void layout(SGraph sgraph) {
+		layout(sgraph, null);
+	}
+
+	@Override
+	public void layout(SGraph sgraph, SprottyLayoutConfigurator configurator) {
 		LayoutContext context = transformGraph(sgraph);
+		if (configurator != null) {
+			ElkUtil.applyVisitors(context.elkGraph, configurator);
+		}
 		applyEngine(context.elkGraph);
 		transferLayout(context);
 	}
@@ -59,6 +72,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	protected ElkNode createGraph(SGraph sgraph) {
 		ElkNode elkGraph = factory.createElkNode();
 		elkGraph.setIdentifier(sgraph.getId());
+		elkGraph.setProperty(P_TYPE, sgraph.getType());
 		return elkGraph;
 	}
 	
@@ -108,6 +122,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	protected ElkNode createNode(SNode snode) {
 		ElkNode elkNode = factory.createElkNode();
 		elkNode.setIdentifier(snode.getId());
+		elkNode.setProperty(P_TYPE, snode.getType());
 		if (snode.getX() != null)
 			elkNode.setX(snode.getX());
 		if (snode.getY() != null)
@@ -122,6 +137,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	protected ElkEdge createEdge(SEdge sedge) {
 		ElkEdge elkEdge = factory.createElkEdge();
 		elkEdge.setIdentifier(sedge.getId());
+		elkEdge.setProperty(P_TYPE, sedge.getType());
 		// The source and target of the edge are resolved later
 		return elkEdge;
 	}

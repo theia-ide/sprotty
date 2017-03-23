@@ -8,16 +8,25 @@ import io.typefox.sprotty.api.DiagramServer
 import io.typefox.sprotty.api.RequestModelAction
 import io.typefox.sprotty.api.ResizeAction
 import io.typefox.sprotty.api.SEdge
+import io.typefox.sprotty.api.SGraph
 import io.typefox.sprotty.api.SelectAction
 import io.typefox.sprotty.api.SetModelAction
 import io.typefox.sprotty.api.UpdateModelAction
 import io.typefox.sprotty.example.flow.dataFlow.Barrier
 import io.typefox.sprotty.example.flow.dataFlow.Execution
 import io.typefox.sprotty.example.flow.dataFlow.Flow
+import io.typefox.sprotty.layout.ElkLayoutEngine
 import io.typefox.sprotty.layout.ILayoutEngine
 import io.typefox.sprotty.layout.LayoutUtil
+import io.typefox.sprotty.layout.SprottyLayoutConfigurator
 import org.apache.log4j.Logger
 import org.eclipse.elk.alg.layered.options.LayeredOptions
+import org.eclipse.elk.alg.layered.options.NodeFlexibility
+import org.eclipse.elk.alg.layered.options.NodePlacementStrategy
+import org.eclipse.elk.core.math.KVector
+import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.options.SizeConstraint
 import org.eclipse.lsp4j.jsonrpc.CompletableFutures
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.ide.ExecutorServiceProvider
@@ -110,10 +119,24 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 	
 	protected def initializeLayoutEngine() {
 		if (layoutEngine === null) {
-			layoutEngine = new ExecutionFlowLayoutEngine => [
+			layoutEngine = new ElkLayoutEngine => [
 				initialize(new LayeredOptions)
 			]
 		}
+	}
+	
+	protected def layout(SGraph graph) {
+		initializeLayoutEngine()
+		val configurator = new SprottyLayoutConfigurator
+		configurator.configureByType('graph')
+			.setProperty(CoreOptions.DIRECTION, Direction.DOWN)
+			.setProperty(CoreOptions.SPACING_NODE_NODE, 40.0)
+			.setProperty(LayeredOptions.NODE_PLACEMENT_STRATEGY, NodePlacementStrategy.NETWORK_SIMPLEX)
+			.setProperty(LayeredOptions.NODE_PLACEMENT_NETWORK_SIMPLEX_NODE_FLEXIBILITY, NodeFlexibility.NODE_SIZE)
+		configurator.configureByType('barrier')
+			.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.free())
+			.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(50, 10))
+		layoutEngine.layout(graph, configurator)
 	}
 	
 	override resize(ResizeAction action) {
@@ -122,7 +145,7 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 			val graph = cachedProgram
 			if (graph !== null) {
 				LayoutUtil.applyResizeAction(graph, action)
-				layoutEngine.layout(graph)
+				layout(graph)
 				return new SetModelAction => [
 					newRoot = graph
 				]

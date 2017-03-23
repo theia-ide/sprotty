@@ -5,5 +5,7 @@ import io.typefox.sprotty.api.SGraph;
 public interface ILayoutEngine {
 	
 	public void layout(SGraph sgraph);
+	
+	public void layout(SGraph sgraph, SprottyLayoutConfigurator configurator);
 
 }
