@@ -31,7 +31,10 @@ export abstract class AbstractViewportCommand extends AbstractCommand {
     protected initialize(model: SModelRoot) {
         if (isViewport(model) && isSizeable(model) && model.clientBounds) {
             this.oldViewport = {
-                scroll: model.scroll,
+                scroll: {
+                    x: model.scroll.x,
+                    y: model.scroll.y
+                },
                 zoom: model.zoom
             }
             const allBounds: Bounds[] = []
