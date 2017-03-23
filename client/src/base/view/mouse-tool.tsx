@@ -44,6 +44,11 @@ export class MouseTool implements VNodeDecorator {
     }
 
     protected handleEvent(methodName: string, model: SModelRoot, event: MouseEvent) {
+        if(document) {
+            const domElement = document.getElementById(model.id)
+            if(domElement)
+                domElement.focus()
+        }
         const element = this.getTargetElement(model, event)
         if (!element)
             return
