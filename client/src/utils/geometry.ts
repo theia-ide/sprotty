@@ -1,5 +1,5 @@
-import {Moveable} from "../base/behaviors/move"
-import {Sizeable} from "../base/behaviors/resize"
+import {Moveable} from "../features/move"
+import {Sizeable} from "../features/resize/resize"
 export interface Point {
     x: number
     y: number

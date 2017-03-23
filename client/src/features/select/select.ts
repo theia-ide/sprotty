@@ -1,12 +1,12 @@
-import {AbstractCommand} from "../intent/commands"
-import {Action} from "../intent/actions"
-import {BehaviorSchema} from "../model/behavior"
-import {SModelElement, SChildElement, SModelRoot} from "../model/smodel"
-import {MouseListener} from "../view/mouse-tool"
+import {AbstractCommand} from "../../base/intent/commands"
+import {Action} from "../../base/intent/actions"
+import {BehaviorSchema} from "../../base/model/behavior"
+import {SModelElement, SChildElement, SModelRoot} from "../../base/model/smodel"
+import {MouseListener} from "../../base/view/mouse-tool"
 import {isCtrlOrCmd} from "../../utils/utils"
-import {VNode} from "snabbdom/vnode"
-import {VNodeUtils} from "../view/vnode-utils"
-import {KeyListener} from "../view/key-tool"
+import {VNode} from "../../../../../snabbdom/vnode"
+import {VNodeUtils} from "../../base/view/vnode-utils"
+import {KeyListener} from "../../base/view/key-tool"
 
 export interface Selectable extends BehaviorSchema {
     selected: boolean
@@ -17,8 +17,7 @@ export function isSelectable(element: SModelElement | Selectable): element is Se
 }
 
 export class SelectAction implements Action {
-    static readonly KIND = 'elementSelected'
-    kind = SelectAction.KIND
+    kind = SelectCommand.KIND
 
     constructor(public readonly selectedElementsIDs: string[], public readonly deselectedElementsIDs: string[]) {
     }
@@ -30,6 +29,7 @@ type ElementSelection= {
 }
 
 export class SelectCommand extends AbstractCommand {
+    static readonly KIND = 'elementSelected'
 
     selected: ElementSelection[] = []
     deselected: ElementSelection[] = []

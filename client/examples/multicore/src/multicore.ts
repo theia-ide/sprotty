@@ -11,11 +11,6 @@ import {Core, ChipSchema, Crossbar, Channel, CoreSchema, ChannelSchema, Crossbar
 import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
 import {ChipModelFactory} from "./chipmodel-factory"
 import createContainer from "./inversify.config"
-import {MouseTool} from "../../../src/base/view/mouse-tool"
-import {SelectMouseListener} from "../../../src/base/behaviors/select"
-import {MoveMouseListener} from "../../../src/base/behaviors/move"
-import {ScrollMouseListener} from "../../../src/base/behaviors/scroll"
-import {ZoomMouseListener} from "../../../src/base/behaviors/zoom"
 
 export default function runMulticore() {
     const container = createContainer()
@@ -93,10 +88,6 @@ export default function runMulticore() {
         children: children
     }
     const chip = modelFactory.createRoot(chipSchema)
-
-    // Register commands
-    const actionHandlerRegistry = container.get(ActionHandlerRegistry)
-    actionHandlerRegistry.registerCommand(SelectAction.KIND, SelectCommand)
 
     // Register views
     const viewRegistry = container.get(ViewRegistry)

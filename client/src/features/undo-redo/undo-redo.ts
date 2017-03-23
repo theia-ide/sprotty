@@ -1,6 +1,6 @@
-import {Action} from "../intent/actions"
-import {KeyListener} from "../view/key-tool"
-import {SModelElement} from "../model/smodel"
+import {Action} from "../../base/intent/actions"
+import {KeyListener} from "../../base/view/key-tool"
+import {SModelElement} from "../../base/model/smodel"
 import {isCtrlOrCmd} from "../../utils/utils"
 
 export class UndoAction implements Action {

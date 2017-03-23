@@ -4,7 +4,7 @@ import {TYPES} from "../types"
 import {Logger} from "../../utils"
 import {Action, ActionHandlerRegistry} from "./actions"
 import {ICommandStack} from "./command-stack"
-import {UndoAction, RedoAction} from "../behaviors/undo-redo"
+import {UndoAction, RedoAction} from "../../features/undo-redo/undo-redo"
 
 export interface IActionDispatcher {
     dispatch(action: Action): void

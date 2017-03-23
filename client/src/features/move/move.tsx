@@ -1,14 +1,14 @@
-import {Point, Map} from "../../utils"
-import {Animation} from "../animations"
-import {Moveable} from "./."
-import {Action} from "../intent/actions"
-import {Command, CommandExecutionContext, AbstractCommand} from "../intent/commands"
-import {SModelIndex, SModelElement, SModelRoot, SModel} from "../model/smodel"
-import {BehaviorSchema} from "../model/behavior"
-import {MouseListener} from "../view/mouse-tool"
-import {isViewport, Viewport} from "./viewport"
-import {isSelectable} from "./select"
-import {VNode} from "snabbdom/vnode"
+import {VNode} from "../../../../../snabbdom/vnode"
+import {BehaviorSchema} from "../../base/model/behavior"
+import {Point} from "../../utils/geometry"
+import {SModelElement, SModelRoot, SModelIndex, SModel} from "../../base/model/smodel"
+import {Action} from "../../base/intent/actions"
+import {AbstractCommand, CommandExecutionContext, Command} from "../../base/intent/commands"
+import {Map} from "../../utils/utils"
+import {Animation} from "../../base/animations/animation"
+import {MouseListener} from "../../base/view/mouse-tool"
+import {isViewport, Viewport} from "../viewport/viewport"
+import {isSelectable} from "../select/select"
 import * as snabbdom from "snabbdom-jsx"
 
 const JSX = {createElement: snabbdom.svg}
@@ -23,8 +23,7 @@ export function isMoveable(element: SModelElement | Moveable): element is Moveab
 }
 
 export class MoveAction implements Action {
-    static readonly KIND = 'move'
-    kind = MoveAction.KIND
+    kind = MoveCommand.KIND
 
     constructor(public readonly moves: ElementMove[],
                 public readonly animate: boolean) {
@@ -45,6 +44,7 @@ export type ResolvedElementMove = {
 }
 
 export class MoveCommand extends AbstractCommand {
+    static readonly KIND = 'move'
 
     resolvedMoves: Map<ResolvedElementMove> = {}
 

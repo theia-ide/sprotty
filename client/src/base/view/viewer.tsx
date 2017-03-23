@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import {injectable, inject} from "inversify"
+import {injectable, inject, multiInject} from "inversify"
 import {TYPES} from "../types"
 import {init} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
@@ -13,7 +13,7 @@ import {VNodeDecorator} from "./vnode-decorators"
 import {RenderingContext, ViewRegistry} from "./views"
 import {KeyTool} from "./key-tool"
 import {MouseTool} from "./mouse-tool"
-import {Autosizer} from "./autosizer"
+import {Autosizer} from "../../features/resize/autosizer"
 import {classModule} from "snabbdom/modules/class"
 import {VNodeUtils} from "./vnode-utils"
 import * as snabbdom from "snabbdom-jsx"
@@ -34,20 +34,11 @@ export class Viewer implements VNodeDecorator, IViewer {
     @inject(ViewRegistry) public viewRegistry: ViewRegistry
     @inject(TYPES.ViewerOptions) protected options: ViewerOptions
 
-    @inject(MouseTool) public mouseTool: MouseTool
-    @inject(KeyTool) public keyTool: KeyTool
-    @inject(Autosizer) public autosizer: Autosizer
-
     protected readonly patcher: Patcher
-    protected decorators: VNodeDecorator[]
     private lastVDOM: any
 
-    constructor() {
+    constructor(@multiInject(TYPES.VNodeDecorator) protected decorators: VNodeDecorator[]) {
         this.patcher = this.createPatcher()
-    }
-
-    protected createDecorators(): VNodeDecorator[] {
-        return [/*new AddRemoveAnimationDecorator(), */this.keyTool, this.mouseTool, this.autosizer]
     }
 
     protected createModules(): Module[] {
@@ -71,7 +62,7 @@ export class Viewer implements VNodeDecorator, IViewer {
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        this.decorators = this.decorators || this.createDecorators().filter(d => d)
+        this.decorators = this.decorators
         return this.decorators.reduce(
             (vnode: VNode, decorator: VNodeDecorator) => decorator.decorate(vnode, element),
             vnode)

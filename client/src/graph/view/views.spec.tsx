@@ -7,6 +7,8 @@ import { VNode } from "snabbdom/vnode";
 import * as snabbdom from "snabbdom-jsx"
 import {Container} from "inversify"
 import defaultContainerModule from "../../base/container-module"
+import {selectModule} from "../../features/select/index"
+import {moveModule} from "../../features/move/index"
 
 const toHTML = require('snabbdom-to-html')
 const JSX = {createElement: snabbdom.svg}
@@ -25,7 +27,7 @@ describe('graph views', () => {
     }
 
     const container = new Container()
-    container.load(defaultContainerModule)
+    container.load(defaultContainerModule, selectModule, moveModule)
 
     const viewer = container.get(Viewer)
     const viewRegistry = container.get(ViewRegistry)

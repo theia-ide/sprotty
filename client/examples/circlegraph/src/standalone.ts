@@ -1,33 +1,16 @@
 import {
     ActionDispatcher,
-    MoveCommand,
     ElementMove,
     MoveAction,
-    SelectCommand,
     SetModelAction,
-    SelectAction,
-    ActionHandlerRegistry,
     ViewRegistry,
-    ResizeAction,
-    ResizeCommand
 } from "../../../src/base"
 import {SGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
-import {ViewportAction, ViewportCommand} from "../../../src/base/behaviors/viewport"
-import {CenterAction, CenterCommand, FitToScreenAction, FitToScreenCommand} from "../../../src/base/behaviors/center-fit"
 
 export default function runStandalone() {
     const container = createContainer()
-
-    // Register commands
-    const actionHandlerRegistry = container.get(ActionHandlerRegistry)
-    actionHandlerRegistry.registerCommand(MoveAction.KIND, MoveCommand)
-    actionHandlerRegistry.registerCommand(SelectAction.KIND, SelectCommand)
-    actionHandlerRegistry.registerCommand(ResizeAction.KIND, ResizeCommand)
-    actionHandlerRegistry.registerCommand(ViewportAction.KIND, ViewportCommand)
-    actionHandlerRegistry.registerCommand(CenterAction.KIND, CenterCommand)
-    actionHandlerRegistry.registerCommand(FitToScreenAction.KIND, FitToScreenCommand)
 
     // Register views
     const viewRegistry = container.get(ViewRegistry)
@@ -72,7 +55,7 @@ export default function runStandalone() {
     }
     dispatcher.dispatch(new SetModelAction(graph))
 
-    // button behaviors
+    // button features
     document.getElementById('addNode')!.addEventListener('click', () => {
         addNode()
         dispatcher.dispatch(new SetModelAction(graph))

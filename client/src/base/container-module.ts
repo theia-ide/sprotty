@@ -13,14 +13,8 @@ import {Viewer, ViewRegistry, ViewerOptions} from "./view"
 import {SModelFactory} from "./model"
 import {TYPES} from "./types"
 import {MouseTool} from "./view/mouse-tool"
-import {Autosizer} from "./view/autosizer"
 import {KeyTool} from "./view/key-tool"
-import {UndoRedoKeyListener} from "./behaviors/undo-redo"
-import {MoveMouseListener} from "./behaviors/move"
-import {SelectMouseListener, SelectKeyboardListener} from "./behaviors/select"
-import {ScrollMouseListener} from "./behaviors/scroll"
-import {ZoomMouseListener} from "./behaviors/zoom"
-import {CenterKeyboardListener} from "./behaviors/center-fit"
+import {SetModelCommand} from "./features/model-manipulation"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
@@ -63,20 +57,8 @@ let defaultContainerModule = new ContainerModule(bind => {
     })
 
     // Tools & Decorators --------------------------------------
-    bind(MouseTool).toSelf().inSingletonScope()
-    bind(KeyTool).toSelf().inSingletonScope()
-    bind(Autosizer).toSelf().inSingletonScope()
-
-    // Key Listeners
-    bind(TYPES.KeyListener).to(UndoRedoKeyListener)
-    bind(TYPES.KeyListener).to(CenterKeyboardListener)
-    bind(TYPES.KeyListener).to(SelectKeyboardListener)
-
-    // Mouse Listeners
-    bind(TYPES.MouseListener).to(SelectMouseListener)
-    bind(TYPES.MouseListener).to(MoveMouseListener)
-    bind(TYPES.MouseListener).to(ScrollMouseListener)
-    bind(TYPES.MouseListener).to(ZoomMouseListener)
+    bind(TYPES.VNodeDecorator).to(MouseTool).inSingletonScope()
+    bind(TYPES.VNodeDecorator).to(KeyTool).inSingletonScope()
 
     // Registries ---------------------------------------------
     bind(ActionHandlerRegistry).toSelf().inSingletonScope()
@@ -99,6 +81,9 @@ let defaultContainerModule = new ContainerModule(bind => {
             return new NotificationActionHandler(diagramServer, immediateHandler)
         }
     })
+
+    // Commands
+    bind(TYPES.ICommand).toConstructor(SetModelCommand)
 
     // Diagram Server ---------------------------------------------
     bind(DiagramServer).toSelf().inSingletonScope()

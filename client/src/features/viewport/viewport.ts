@@ -1,10 +1,10 @@
-import {Action} from "../intent/actions"
-import {Command, CommandExecutionContext, AbstractCommand} from "../intent/commands"
-import {BehaviorSchema} from "../model/behavior"
+import {Action} from "../../base/intent/actions"
+import {Command, CommandExecutionContext, AbstractCommand} from "../../base/intent/commands"
+import {BehaviorSchema} from "../../base/model/behavior"
 import {Scrollable} from "./scroll"
 import {Zoomable} from "./zoom"
-import {SModelElement, SModelRoot} from "../model/smodel"
-import {Animation} from "../animations/animation"
+import {SModelElement, SModelRoot} from "../../base/model/smodel"
+import {Animation} from "../../base/animations/animation"
 
 export interface Viewport extends BehaviorSchema, Scrollable, Zoomable {
 }
@@ -15,14 +15,14 @@ export function isViewport(element: SModelElement | Viewport): element is Viewpo
 }
 
 export class ViewportAction implements Action {
-    static readonly KIND = 'viewport'
-    kind = ViewportAction.KIND
+    kind = ViewportCommand.KIND
 
     constructor(public elementId: string, public readonly newViewport: Viewport, public animate: boolean) {
     }
 }
 
 export class ViewportCommand extends AbstractCommand {
+    static readonly KIND = 'viewport'
 
     element: SModelElement & Viewport
     oldViewport: Viewport

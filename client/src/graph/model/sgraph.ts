@@ -6,10 +6,10 @@ import {
     SModelRoot,
 } from "../../base/model"
 import {Point, Bounds, EMPTY_BOUNDS} from "../../utils/geometry"
-import {Sizeable} from "../../base/behaviors/resize"
-import {Viewport} from "../../base/behaviors/viewport"
-import {Selectable} from "../../base/behaviors/select"
-import {Moveable} from "../../base/behaviors/move"
+import {Sizeable} from "../../features/resize/resize"
+import {Viewport} from "../../features/viewport/viewport"
+import {Selectable} from "../../features/select/select"
+import {Moveable} from "../../features/move"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]

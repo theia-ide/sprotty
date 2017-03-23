@@ -5,11 +5,11 @@ import {expect} from 'chai'
 import {ContainerModule, Container} from "inversify"
 import defaultModule from "../../../src/base/container-module"
 import {TYPES} from "../types"
-import {MoveCommand, MoveAction} from "../behaviors/move"
+import {MoveCommand, MoveAction} from "../../features/move"
 import {SModel} from "../model/smodel"
 import EMPTY_ROOT = SModel.EMPTY_ROOT
-import {UndoAction, RedoAction} from "../behaviors/undo-redo"
-import {SetModelAction} from "../behaviors/model-manipulation"
+import {UndoAction, RedoAction} from "../../features/undo-redo/undo-redo"
+import {SetModelAction} from "../features/model-manipulation"
 
 describe('action dispatcher', () => {
 
@@ -61,7 +61,7 @@ describe('action dispatcher', () => {
         expect(redoCount).to.be.equal(1)
 
         const registry = container.get(ActionHandlerRegistry)
-        registry.registerCommand(MoveAction.KIND, MoveCommand)
+        registry.registerCommand(MoveCommand)
     
         actionDispatcher.dispatch(new MoveAction([], false))
         expect(execCount).to.be.equal(2)

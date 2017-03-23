@@ -3,16 +3,19 @@ import {
 } from "../intent"
 import {SModelRootSchema, SModelRoot} from "../model"
 import { Map } from "../../utils"
+import {injectable} from "inversify"
 
 export class SetModelAction implements Action {
-    static readonly KIND = 'setModel'
-    kind = SetModelAction.KIND
+    kind = SetModelCommand.KIND
 
     constructor(public readonly newRoot: SModelRootSchema) {
     }
 }
 
+@injectable()
 export class SetModelCommand extends AbstractCommand {
+    static readonly KIND = 'setModel'
+
     oldRoot: SModelRoot
     newRoot: SModelRoot
 

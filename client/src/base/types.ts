@@ -1,7 +1,9 @@
 export let TYPES = {
     ActionDispatcherProvider: Symbol('ActionDispatcherProvider'),
     CommandStackProvider: Symbol('CommandStackProvider'),
+    VNodeDecorator: Symbol('VNodeDecorator'),
     IActionDispatcher: Symbol('IActionDispatcher'),
+    ICommand: Symbol('ICommand'),
     ICommandStack: Symbol('ICommandStack'),
     IViewer: Symbol('IViewer'),
     KeyListener: Symbol('KeyListener'),

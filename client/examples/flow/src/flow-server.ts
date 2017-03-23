@@ -1,16 +1,12 @@
 import {
     ActionDispatcher, SelectCommand, SelectAction, ActionHandlerRegistry, RequestOnUpdateHandler,
-    ViewRegistry, CommandActionHandler, RequestModelAction, ResizeAction, ViewportAction, ViewportCommand,
-    UpdateModelAction
+    ViewRegistry, CommandActionHandler, RequestModelAction, UpdateModelAction
 } from "../../../src/base"
 import {SGraphView, StraightEdgeView} from "../../../src/graph"
 import {DiagramServer} from "../../../src/jsonrpc"
 import {ExecutionNodeView, BarrierNodeView} from "./views"
 import createContainer from "./inversify.config"
-import {MouseTool} from "../../../src/base/view/mouse-tool"
-import {SelectMouseListener} from "../../../src/base/behaviors/select"
-import {ScrollMouseListener} from "../../../src/base/behaviors/scroll"
-import {ZoomMouseListener} from "../../../src/base/behaviors/zoom"
+import {ResizeCommand} from "../../../src/features/resize/resize"
 
 export default function runFlowServer() {
     const container = createContainer()
@@ -20,8 +16,7 @@ export default function runFlowServer() {
     const dispatcher = container.get(ActionDispatcher)
     actionHandlerRegistry.registerServerNotification(SelectAction.KIND, new CommandActionHandler(SelectCommand))
     actionHandlerRegistry.registerServerRequest(RequestModelAction.KIND)
-    actionHandlerRegistry.registerServerRequest(ResizeAction.KIND)
-    actionHandlerRegistry.registerCommand(ViewportAction.KIND, ViewportCommand)
+    actionHandlerRegistry.registerServerRequest(ResizeCommand.KIND)
     actionHandlerRegistry.register(UpdateModelAction.KIND, new RequestOnUpdateHandler())
 
     // Register views

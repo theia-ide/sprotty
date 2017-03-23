@@ -1,25 +1,23 @@
-import {Action} from "../intent/actions"
-import {AbstractCommand, CommandExecutionContext} from "../intent/commands"
-import {SModelRoot, SModelElement} from "../model/smodel"
-import {isSelectable} from "./select"
-import {isSizeable, Sizeable} from "./resize"
+import {Action} from "../../base/intent/actions"
+import {AbstractCommand, CommandExecutionContext} from "../../base/intent/commands"
+import {SModelRoot, SModelElement} from "../../base/model/smodel"
+import {isSelectable} from "../select/select"
+import {isSizeable, Sizeable} from "../resize/resize"
 import {Bounds, getBounds, combine, EMPTY_BOUNDS, center} from "../../utils/geometry"
-import {isMoveable} from "./move"
+import {isMoveable} from "../move"
 import {Viewport, isViewport, ViewportAnimation} from "./viewport"
-import {KeyListener} from "../view/key-tool"
+import {KeyListener} from "../../base/view/key-tool"
 import {isCtrlOrCmd} from "../../utils/utils"
 
 export class CenterAction implements Action {
-    static readonly KIND = 'center'
-    readonly kind = CenterAction.KIND
+    readonly kind = CenterCommand.KIND
 
     constructor(public readonly elementIds: string[]) {
     }
 }
 
 export class FitToScreenAction implements Action {
-    static readonly KIND = 'fit'
-    readonly kind = FitToScreenAction.KIND
+    readonly kind = FitToScreenCommand.KIND
 
     constructor(public readonly elementIds: string[]) {
     }
@@ -91,6 +89,7 @@ export abstract class AbstractViewportCommand extends AbstractCommand {
 }
 
 export class CenterCommand extends AbstractViewportCommand {
+    static readonly KIND = 'center'
 
     constructor(protected action: CenterAction) {
         super()
@@ -113,6 +112,7 @@ export class CenterCommand extends AbstractViewportCommand {
 }
 
 export class FitToScreenCommand extends AbstractViewportCommand {
+    static readonly KIND = 'fit'
 
     constructor(protected action: CenterAction) {
         super()

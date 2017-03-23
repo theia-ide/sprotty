@@ -8,7 +8,7 @@ const toHTML = require('snabbdom-to-html')
 
 describe('base views', () => {
 
-    const context = {viewer: new Viewer()}
+    const context = {viewer: new Viewer([])}
 
     it('empty view', () => {
         const emptyView = new EmptyView()

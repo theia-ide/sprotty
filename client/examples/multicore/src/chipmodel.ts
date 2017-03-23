@@ -1,6 +1,6 @@
 import {SModelRoot, SModelElementSchema, SChildElement} from "../../../src/base/model/smodel"
 import {Direction} from "../../../src/utils/geometry"
-import {Selectable} from "../../../src/base/behaviors/select"
+import {Selectable} from "../../../src/features/select/select"
 
 export interface ChipSchema extends SModelElementSchema {
     rows: number

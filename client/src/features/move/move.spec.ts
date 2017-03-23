@@ -1,11 +1,11 @@
 import { MoveCommand, MoveAction, ElementMove } from "./move"
 import { expect } from "chai"
 import { SGraphFactory } from "../../graph/model/sgraph-factory"
-import { CommandExecutionContext } from "../intent/commands"
-import { SModel } from "../model/smodel"
+import { CommandExecutionContext } from "../../base/intent/commands"
+import { SModel } from "../../base/model/smodel"
 import { Point } from "../../utils/geometry"
 import { SNode } from "../../graph/index"
-import { SModelRoot } from "../index"
+import { SModelRoot } from "../../base/index"
 import EMPTY_ROOT = SModel.EMPTY_ROOT
 
 

@@ -11,9 +11,9 @@ import {DiagramServer} from "../../../src/jsonrpc"
 import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
 import createContainer from "./inversify.config"
 import {MouseTool} from "../../../src/base/view/mouse-tool"
-import {SelectMouseListener} from "../../../src/base/behaviors/select"
-import {ScrollMouseListener} from "../../../src/base/behaviors/scroll"
-import {ZoomMouseListener} from "../../../src/base/behaviors/zoom"
+import {SelectMouseListener} from "../../../src/features/select/select"
+import {ScrollMouseListener} from "../../../src/features/viewport/scroll"
+import {ZoomMouseListener} from "../../../src/features/viewport/zoom"
 
 export default function runMulticoreServer() {
     const container = createContainer()

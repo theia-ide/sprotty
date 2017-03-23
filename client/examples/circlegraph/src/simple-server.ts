@@ -13,14 +13,14 @@ import {SGraphView, StraightEdgeView} from "../../../src/graph"
 import {DiagramServer} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
-import {ViewportAction, ViewportCommand} from "../../../src/base/behaviors/viewport"
+import {ViewportAction, ViewportCommand} from "../../../src/features/viewport/viewport"
 import {MouseTool} from "../../../src/base/view/mouse-tool"
-import {SelectMouseListener} from "../../../src/base/behaviors/select"
-import {MoveMouseListener} from "../../../src/base/behaviors/move"
-import {ScrollMouseListener} from "../../../src/base/behaviors/scroll"
-import {ZoomMouseListener} from "../../../src/base/behaviors/zoom"
+import {SelectMouseListener} from "../../../src/features/select/select"
+import {MoveMouseListener} from "../../../src/features/move"
+import {ScrollMouseListener} from "../../../src/features/viewport/scroll"
+import {ZoomMouseListener} from "../../../src/features/viewport/zoom"
 import {KeyTool} from "../../../src/base/view/key-tool"
-import {UndoRedoKeyListener} from "../../../src/base/behaviors/undo-redo"
+import {UndoRedoKeyListener} from "../../../src/features/undo-redo/undo-redo"
 
 export default function runSimpleServer() {
     const container = createContainer()
@@ -28,9 +28,8 @@ export default function runSimpleServer() {
     // Register commands
     const actionHandlerRegistry = container.get(ActionHandlerRegistry)
     const dispatcher = container.get(ActionDispatcher)
-    actionHandlerRegistry.registerCommand(MoveAction.KIND, MoveCommand)
-    actionHandlerRegistry.registerCommand(ViewportAction.KIND, ViewportCommand)
-    actionHandlerRegistry.registerServerNotification(SelectAction.KIND, new CommandActionHandler(SelectCommand))
+
+    actionHandlerRegistry.registerServerNotification(SelectCommand.KIND, new CommandActionHandler(SelectCommand))
     actionHandlerRegistry.registerServerRequest(RequestModelAction.KIND)
 
     // Register views

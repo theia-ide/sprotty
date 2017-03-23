@@ -1,11 +1,12 @@
 import "reflect-metadata"
-import {injectable, inject} from "inversify"
+import {injectable, inject, multiInject} from "inversify"
 import {TYPES} from "../types"
 import {InstanceRegistry} from "../../utils"
 import {Command, CommandActionHandler} from "./commands"
-import {SetModelAction, SetModelCommand} from "../behaviors/model-manipulation"
+import {SetModelAction, SetModelCommand} from "../features/model-manipulation"
 import { RequestActionHandlerFactory, NotificationActionHandlerFactory } from "./server-action-handlers"
 import { IActionDispatcher } from "./action-dispatcher"
+import {Logger} from "../../utils/logging"
 
 /**
  * An action describes a change to the model declaratively.
@@ -33,17 +34,19 @@ export class ActionHandlerRegistry extends InstanceRegistry<ActionHandler> {
     @inject(TYPES.RequestActionHandlerFactory) protected requestActionHandlerFactory: RequestActionHandlerFactory
     @inject(TYPES.NotificationActionHandlerFactory) protected notificationActionHandlerFactory: NotificationActionHandlerFactory
 
-    constructor() {
+    constructor(@multiInject(TYPES.ICommand) commandCtrs: (new (Action) => Command)[],
+                @inject(TYPES.Logger) protected logger: Logger) {
         super()
-        this.registerDefaults()
+        commandCtrs.forEach(
+            commandCtr => this.registerCommand(commandCtr)
+        )
     }
 
-    protected registerDefaults() {
-        this.registerCommand(SetModelAction.KIND, SetModelCommand)
-    }
-
-    registerCommand(kind: string, commandType: new (Action) => Command) {
-        this.register(kind, new CommandActionHandler(commandType))
+    registerCommand(commandType: new (Action) => Command) {
+        if(commandType.hasOwnProperty('KIND'))
+            this.register(commandType['KIND'], new CommandActionHandler(commandType))
+        else
+            this.logger.error('Command ' + commandType.name + '  does not have a KIND property')
     }
 
     registerServerRequest(kind: string, immediateHandler?: ActionHandler) {

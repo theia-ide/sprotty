@@ -6,6 +6,8 @@ import { ActionHandler, Action, ActionHandlerResult } from "./actions"
 /**
  * A command holds the behaviour of an action.
  * It is executed on a command stack and can be undone / redone.
+ *
+ * Each command should define a static string property KIND that matches the associated action.
  */
 export interface Command {
 

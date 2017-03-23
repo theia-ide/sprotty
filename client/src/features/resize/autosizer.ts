@@ -1,12 +1,12 @@
 import "reflect-metadata"
-import {VNodeDecorator} from "./vnode-decorators"
-import {VNode} from "snabbdom/vnode"
-import {SModelElement} from "../model/smodel"
+import {VNodeDecorator} from "../../base/view/vnode-decorators"
+import {VNode} from "../../../../../snabbdom/vnode"
+import {SModelElement} from "../../base/model/smodel"
 import {almostEquals, Dimension, Bounds} from "../../utils/geometry"
-import {ElementResize, ResizeAction, Sizeable, isSizeable} from "../behaviors/resize"
+import {ElementResize, ResizeAction, Sizeable, isSizeable} from "./resize"
 import {injectable, inject} from "inversify"
-import {ActionDispatcher, IActionDispatcher} from "../intent/action-dispatcher"
-import {TYPES} from "../types"
+import {IActionDispatcher} from "../../base/intent/action-dispatcher"
+import {TYPES} from "../../base/types"
 
 class VNodeAndSizeable {
     vnode: VNode
