@@ -30,7 +30,7 @@ configure(subprojects.findAll {it.file('src').exists()}) {
 	apply plugin: 'eclipse'
 	apply plugin: 'idea'
 	
-	group = 'io.typefox.sprotte'
+	group = 'io.typefox.sprotty'
 	version = '0.1.0-SNAPSHOT'
 	
 	sourceCompatibility = '1.8'

@@ -1,0 +1,20 @@
+grammar io.typefox.sprotty.example.flow.ExecutionFlow with org.eclipse.xtext.common.Terminals
+
+generate dataFlow "http://www.typefox.io/sprotty/example/flow/ExecutionFlow"
+
+Flow:
+	'program' name=ID
+	declarations+=Declaration*;
+
+Declaration:
+	Task | Execution | Barrier;
+
+Task:
+	'task' name=ID ':' duration=INT 'ticks';
+
+Execution:
+	'execute' task=[Task] 'on' 'core' core=INT 'as' name=ID;
+
+Barrier:
+	'join' joined+=[Execution] (',' joined+=[Execution])*
+	('then' triggered+=Execution (',' triggered+=Execution)*)?;
