@@ -132,10 +132,10 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 			.setProperty(CoreOptions.DIRECTION, Direction.DOWN)
 			.setProperty(CoreOptions.SPACING_NODE_NODE, 40.0)
 			.setProperty(LayeredOptions.NODE_PLACEMENT_STRATEGY, NodePlacementStrategy.NETWORK_SIMPLEX)
-			.setProperty(LayeredOptions.NODE_PLACEMENT_NETWORK_SIMPLEX_NODE_FLEXIBILITY, NodeFlexibility.NODE_SIZE)
 		configurator.configureByType('barrier')
 			.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.free())
 			.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(50, 10))
+			.setProperty(LayeredOptions.NODE_PLACEMENT_NETWORK_SIMPLEX_NODE_FLEXIBILITY, NodeFlexibility.NODE_SIZE)
 		layoutEngine.layout(graph, configurator)
 	}
 	
