@@ -12,8 +12,8 @@ import {
 import {Viewer, ViewRegistry, ViewerOptions} from "./view"
 import {SModelFactory} from "./model"
 import {TYPES} from "./types"
-import {MouseTool} from "./view/mouse-tool"
-import {KeyTool} from "./view/key-tool"
+import {MouseTool, MouseListener} from "./view/mouse-tool"
+import {KeyTool, KeyListener} from "./view/key-tool"
 import {SetModelCommand} from "./features/model-manipulation"
 
 let defaultContainerModule = new ContainerModule(bind => {
@@ -58,7 +58,9 @@ let defaultContainerModule = new ContainerModule(bind => {
 
     // Tools & Decorators --------------------------------------
     bind(TYPES.VNodeDecorator).to(MouseTool).inSingletonScope()
+    bind(TYPES.MouseListener).to(MouseListener)
     bind(TYPES.VNodeDecorator).to(KeyTool).inSingletonScope()
+    bind(TYPES.KeyListener).to(KeyListener)
 
     // Registries ---------------------------------------------
     bind(ActionHandlerRegistry).toSelf().inSingletonScope()
