@@ -47,8 +47,8 @@ export default function runStandalone() {
             sourceId: 'node0',
             targetId: 'node' + count++
         }
-        graph.add(modelFactory.createElement(newEdge))
-        graph.add(modelFactory.createElement(newNode))
+        graph.add(modelFactory.createElement(newNode), 0)
+        graph.add(modelFactory.createElement(newEdge), 0)
     }
 
     for (let i = 0; i < 200; ++i) {
