@@ -7,6 +7,7 @@ import {isCtrlOrCmd} from "../../utils/utils"
 import {VNode} from "../../../../../snabbdom/vnode"
 import {VNodeUtils} from "../../base/view/vnode-utils"
 import {KeyListener} from "../../base/view/key-tool"
+import {SNode, SEdge} from "../../graph/model/sgraph"
 
 export interface Selectable extends BehaviorSchema {
     selected: boolean
@@ -24,7 +25,7 @@ export class SelectAction implements Action {
 }
 
 type ElementSelection= {
-    element: SChildElement & Selectable
+    element: SChildElement
     index: number
 }
 
@@ -39,6 +40,7 @@ export class SelectCommand extends AbstractCommand {
     }
 
     execute(model: SModelRoot): SModelRoot {
+        const selectedNodeIds: string[] = []
         this.action.selectedElementsIDs.forEach(
             id => {
                 const element = model.index.getById(id)
@@ -47,8 +49,25 @@ export class SelectCommand extends AbstractCommand {
                         element: element,
                         index: element.parent.children.indexOf(element)
                     })
+                    if(element instanceof SNode)
+                        selectedNodeIds.push(id)
                 }
             })
+        if(selectedNodeIds.length > 0) {
+            const connectedEdges: ElementSelection[] = []
+            model.index.all().forEach(
+                element => {
+                    if(element instanceof SEdge
+                        && (selectedNodeIds.indexOf(element.sourceId) >= 0
+                        || selectedNodeIds.indexOf(element.targetId) >= 0)) {
+                        connectedEdges.push({
+                            element: element,
+                            index: element.parent.children.indexOf(element)
+                        })
+                    }
+                })
+            this.selected = connectedEdges.concat(this.selected)
+        }
         this.action.deselectedElementsIDs.forEach(
             id => {
                 const element = model.index.getById(id)
@@ -66,11 +85,13 @@ export class SelectCommand extends AbstractCommand {
         for (let i = this.selected.length - 1; i >= 0; --i) {
             const selection = this.selected[i]
             const element = selection.element
-            element.selected = false
+            if(isSelectable(element))
+                element.selected = false
             element.parent.move(element, selection.index)
         }
         this.deselected.reverse().forEach(selection => {
-            selection.element.selected = true
+            if(isSelectable(selection.element))
+                selection.element.selected = true
         })
         return model
     }
@@ -82,8 +103,14 @@ export class SelectCommand extends AbstractCommand {
             const childrenLength = element.parent.children.length
             element.parent.move(element, childrenLength - 1)
         }
-        this.selected.forEach(selection => selection.element.selected = true)
-        this.deselected.forEach(selection => selection.element.selected = false)
+        this.selected.forEach(selection => {
+            if(isSelectable(selection.element))
+                selection.element.selected = true
+        })
+        this.deselected.forEach(selection => {
+            if(isSelectable(selection.element))
+                selection.element.selected = false
+        })
         return model
     }
 }

@@ -8,6 +8,7 @@ import {
 import {SGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
+import {SelectAction} from "../../../src/features/select/select"
 
 export default function runStandalone() {
     const container = createContainer()
@@ -36,11 +37,10 @@ export default function runStandalone() {
         const newNode: SNodeSchema = {
             id: 'node' + count,
             type: 'node:circle',
-            x: Math.random() * 1024 - 512,
-            y: Math.random() * 768 - 384,
+            x: Math.random() * 1024,
+            y: Math.random() * 768,
             width: 40
         }
-        graph.add(modelFactory.createElement(newNode))
         const newEdge: SEdgeSchema = {
             id: 'edge' + count,
             type: 'edge:straight',
@@ -48,6 +48,7 @@ export default function runStandalone() {
             targetId: 'node' + count++
         }
         graph.add(modelFactory.createElement(newEdge))
+        graph.add(modelFactory.createElement(newNode))
     }
 
     for (let i = 0; i < 200; ++i) {
@@ -69,8 +70,8 @@ export default function runStandalone() {
                 nodeMoves.push({
                     elementId: shape.id,
                     toPosition: {
-                        x: Math.random() * 1024 - 512,
-                        y: Math.random() * 768 - 384
+                        x: Math.random() * 1024,
+                        y: Math.random() * 768
                     }
                 })
             }
