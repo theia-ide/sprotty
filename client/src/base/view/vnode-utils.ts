@@ -3,6 +3,10 @@ import {SModelElement} from "../model/smodel"
 
 export namespace VNodeUtils {
 
+    export function setAttr(vnode: VNode, name: string, value: any) {
+        getAttrs(vnode).tabindex = 0
+    }
+
     export function setClass(vnode: VNode, name: string, value: boolean) {
         getClass(vnode)[name] = value
     }
@@ -16,6 +20,13 @@ export namespace VNodeUtils {
         if (on[event])
             throw new Error('EventListener for ' + event + ' already registered on VNode')
         on[event] = [listener, element]
+    }
+
+    function getAttrs(vnode: VNode) {
+        const data = getData(vnode)
+        if(!data.attrs)
+            data.attrs = {}
+        return data.attrs
     }
 
     function getData(vnode: VNode) {

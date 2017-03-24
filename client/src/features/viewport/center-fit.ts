@@ -7,7 +7,7 @@ import {Bounds, getBounds, combine, EMPTY_BOUNDS, center} from "../../utils/geom
 import {isMoveable} from "../move"
 import {Viewport, isViewport, ViewportAnimation} from "./viewport"
 import {KeyListener} from "../../base/view/key-tool"
-import {isCtrlOrCmd} from "../../utils/utils"
+import {isCtrlOrCmd} from "../../utils/browser"
 
 export class CenterAction implements Action {
     readonly kind = CenterCommand.KIND

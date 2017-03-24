@@ -15,6 +15,7 @@ import {TYPES} from "./types"
 import {MouseTool, MouseListener} from "./view/mouse-tool"
 import {KeyTool, KeyListener} from "./view/key-tool"
 import {SetModelCommand} from "./features/model-manipulation"
+import {FocusFixDecorator} from "./view/vnode-decorators"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
@@ -60,6 +61,7 @@ let defaultContainerModule = new ContainerModule(bind => {
     bind(TYPES.VNodeDecorator).to(MouseTool).inSingletonScope()
     bind(TYPES.MouseListener).to(MouseListener)
     bind(TYPES.VNodeDecorator).to(KeyTool).inSingletonScope()
+    bind(TYPES.VNodeDecorator).to(FocusFixDecorator).inSingletonScope()
     bind(TYPES.KeyListener).to(KeyListener)
 
     // Registries ---------------------------------------------
