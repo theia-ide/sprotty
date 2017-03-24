@@ -8,6 +8,7 @@ import {resizeModule} from "../../../src/features/resize/index"
 import {selectModule} from "../../../src/features/select/index"
 import {viewportModule} from "../../../src/features/viewport/index"
 import {undoRedoModule} from "../../../src/features/undo-redo/index"
+import {makeLoggerMiddleware} from 'inversify-logger-middleware'
 
 const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.Logger).to(ConsoleLogger).inSingletonScope()
@@ -16,6 +17,7 @@ const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) =>
 
 export default () => {
     const container = new Container()
+    container.applyMiddleware(makeLoggerMiddleware())
     container.load(defaultModule, selectModule, moveModule, resizeModule, undoRedoModule, viewportModule, circlegraphModule)
     return container
 }
