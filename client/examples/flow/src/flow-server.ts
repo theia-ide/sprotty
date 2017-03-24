@@ -1,5 +1,5 @@
 import {
-    ActionDispatcher, SelectCommand, SelectAction, ActionHandlerRegistry, RequestOnUpdateHandler,
+    ActionDispatcher, ActionHandlerRegistry, RequestOnUpdateHandler,
     ViewRegistry, CommandActionHandler, RequestModelAction, UpdateModelAction
 } from "../../../src/base"
 import {SGraphView, StraightEdgeView} from "../../../src/graph"
@@ -7,6 +7,7 @@ import {DiagramServer} from "../../../src/jsonrpc"
 import {ExecutionNodeView, BarrierNodeView} from "./views"
 import createContainer from "./inversify.config"
 import {ResizeCommand} from "../../../src/features/resize/resize"
+import {SelectCommand} from "../../../src/features/select/select"
 
 export default function runFlowServer() {
     const container = createContainer()

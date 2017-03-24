@@ -5,12 +5,15 @@ import {Scrollable} from "./scroll"
 import {Zoomable} from "./zoom"
 import {SModelElement, SModelRoot} from "../../base/model/smodel"
 import {Animation} from "../../base/animations/animation"
+import {isSizeable} from "../resize/resize"
+import {viewportFeature} from "./index"
 
 export interface Viewport extends BehaviorSchema, Scrollable, Zoomable {
 }
 
-export function isViewport(element: SModelElement | Viewport): element is Viewport & Scrollable & Zoomable {
-    return 'zoom' in element
+export function isViewport(element: SModelElement): element is SModelElement & Viewport & Scrollable & Zoomable {
+    return element.hasFeature(viewportFeature)
+        && 'zoom' in element
         && 'scroll' in element
 }
 
@@ -50,6 +53,8 @@ export class ViewportCommand extends AbstractCommand {
                 this.element.scroll.x = this.newViewport.scroll.x
                 this.element.scroll.y = this.newViewport.scroll.y
                 this.element.zoom = this.newViewport.zoom
+                if(isSizeable(this.element))
+                    this.element.autosize = true
             }
         }
         return model
@@ -88,6 +93,8 @@ export class ViewportAnimation extends Animation {
         this.element.scroll.x = (1 - t) * this.oldViewport.scroll.x + t * this.newViewport.scroll.x
         this.element.scroll.y = (1 - t) * this.oldViewport.scroll.y + t * this.newViewport.scroll.y
         this.element.zoom = this.oldViewport.zoom * Math.exp(t * this.zoomFactor)
+        if(isSizeable(this.element))
+            this.element.autosize = true
         return this.context.root
     }
 }

@@ -1,6 +1,5 @@
 import {
     ActionDispatcher,
-    SelectCommand,
     ActionHandlerRegistry,
     ViewRegistry,
     CommandActionHandler,
@@ -9,6 +8,7 @@ import {
 import {DiagramServer} from "../../../src/jsonrpc"
 import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
 import createContainer from "./inversify.config"
+import {SelectCommand} from "../../../src/features/select/select"
 
 export default function runMulticoreServer() {
     const container = createContainer()

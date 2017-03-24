@@ -10,6 +10,7 @@ import {MouseListener} from "../../base/view/mouse-tool"
 import {isViewport, Viewport} from "../viewport/viewport"
 import {isSelectable} from "../select/select"
 import * as snabbdom from "snabbdom-jsx"
+import {moveFeature} from "./index"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -18,8 +19,9 @@ export interface Moveable extends BehaviorSchema, Point {
     y: number
 }
 
-export function isMoveable(element: SModelElement | Moveable): element is Moveable {
-    return 'x' in element && 'y' in element
+export function isMoveable(element: SModelElement): element is SModelElement & Moveable {
+    return element.hasFeature(moveFeature)
+        && 'x' in element && 'y' in element
 }
 
 export class MoveAction implements Action {

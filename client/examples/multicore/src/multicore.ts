@@ -1,22 +1,16 @@
-import {
-    ActionDispatcher,
-    SetModelAction,
-    SelectCommand,
-    SelectAction,
-    ActionHandlerRegistry,
-    ViewRegistry
-} from "../../../src/base"
+import {ActionDispatcher, SetModelAction, ViewRegistry} from "../../../src/base"
 import {Direction} from "../../../src/utils"
 import {Core, ChipSchema, Crossbar, Channel, CoreSchema, ChannelSchema, CrossbarSchema} from "./chipmodel"
 import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
 import {ChipModelFactory} from "./chipmodel-factory"
 import createContainer from "./inversify.config"
+import {CenterAction} from "../../../src/features/viewport/center-fit"
 
 export default function runMulticore() {
     const container = createContainer()
 
     // init gmodel
-    const dim = 8
+    const dim = 32
     const cores: CoreSchema[] = []
     const channels: ChannelSchema[] = []
     for (let i = 0; i < dim; ++i) {
@@ -98,8 +92,8 @@ export default function runMulticore() {
 
     // Run
     const dispatcher = container.get(ActionDispatcher)
-    const action = new SetModelAction(chip)
-    dispatcher.dispatch(action)
+    dispatcher.dispatch(new SetModelAction(chip))
+    dispatcher.dispatch(new CenterAction([]))
 
     function changeModel() {
         for (let i = 0; i < chip.children.length; ++i) {
@@ -110,5 +104,5 @@ export default function runMulticore() {
         dispatcher.dispatch(action)
     }
 
-    setInterval(changeModel.bind(this), 50)
+    setInterval(changeModel.bind(this), 5000)
 }

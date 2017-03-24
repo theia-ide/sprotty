@@ -1,6 +1,5 @@
 import {
     ActionDispatcher,
-    SelectCommand,
     ActionHandlerRegistry,
     ViewRegistry,
     CommandActionHandler,
@@ -10,6 +9,7 @@ import {SGraphView, StraightEdgeView} from "../../../src/graph"
 import {DiagramServer} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
+import {SelectCommand} from "../../../src/features/select"
 
 export default function runSimpleServer() {
     const container = createContainer()

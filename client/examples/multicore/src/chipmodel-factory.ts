@@ -1,4 +1,4 @@
-import {SModelFactory} from "../../../src/base/model/smodel-factory"
+import {SModelFactory} from "../../../src/base"
 import {
     SModelElementSchema,
     SParentElement,
@@ -6,9 +6,9 @@ import {
     SModelRootSchema,
     SModelRoot,
     SModel
-} from "../../../src/base/model/smodel"
+} from "../../../src/base"
 import {ChipSchema, Chip, CoreSchema, ChannelSchema, Core, Channel, Crossbar, CrossbarSchema} from "./chipmodel"
-import {Direction} from "../../../src/utils/geometry"
+import {Direction} from "../../../src/utils"
 
 
 export class ChipModelFactory extends SModelFactory {

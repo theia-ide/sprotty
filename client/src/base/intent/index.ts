@@ -3,8 +3,4 @@ export * from './actions';
 export * from './command-stack';
 export * from './commands';
 export * from './index';
-export * from '../../features/move';
-export * from '../../features/resize/resize';
-export * from '../../features/select/select';
-export * from '../features/model-manipulation';
 export * from './server-action-handlers';

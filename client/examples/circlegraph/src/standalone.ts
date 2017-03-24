@@ -1,13 +1,12 @@
 import {
     ActionDispatcher,
-    ElementMove,
-    MoveAction,
     SetModelAction,
     ViewRegistry,
 } from "../../../src/base"
 import {SGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
+import {ElementMove, MoveAction} from "../../../src/features/move/move"
 
 export default function runStandalone() {
     const container = createContainer()
