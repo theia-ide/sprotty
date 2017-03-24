@@ -59,10 +59,8 @@ let defaultContainerModule = new ContainerModule(bind => {
 
     // Tools & Decorators --------------------------------------
     bind(TYPES.VNodeDecorator).to(MouseTool).inSingletonScope()
-    bind(TYPES.MouseListener).to(MouseListener)
     bind(TYPES.VNodeDecorator).to(KeyTool).inSingletonScope()
     bind(TYPES.VNodeDecorator).to(FocusFixDecorator).inSingletonScope()
-    bind(TYPES.KeyListener).to(KeyListener)
 
     // Registries ---------------------------------------------
     bind(ActionHandlerRegistry).toSelf().inSingletonScope()

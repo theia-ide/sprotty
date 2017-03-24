@@ -6,7 +6,7 @@ import {SModelRoot} from "../model/smodel"
 import {VNodeUtils} from "./vnode-utils"
 import * as snabbdom from "snabbdom-jsx"
 import {Action} from "../intent/actions"
-import {injectable, inject, multiInject} from "inversify"
+import {injectable, inject, multiInject, optional} from "inversify"
 import {ActionDispatcher, IActionDispatcher} from "../intent/action-dispatcher"
 import {TYPES} from "../types"
 
@@ -17,7 +17,7 @@ export class MouseTool implements VNodeDecorator {
 
     @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
 
-    @multiInject(TYPES.MouseListener) protected mouseListeners: MouseListener[] = []
+    @multiInject(TYPES.MouseListener)@optional() protected mouseListeners: MouseListener[] = []
 
     register(mouseListener: MouseListener) {
         this.mouseListeners.push(mouseListener)

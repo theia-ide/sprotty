@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import {injectable, inject, multiInject} from "inversify"
+import {injectable, inject, multiInject, optional} from "inversify"
 import {TYPES} from "../types"
 import {InstanceRegistry} from "../../utils"
 import {Command, CommandActionHandler} from "./commands"
@@ -34,7 +34,7 @@ export class ActionHandlerRegistry extends InstanceRegistry<ActionHandler> {
     @inject(TYPES.RequestActionHandlerFactory) protected requestActionHandlerFactory: RequestActionHandlerFactory
     @inject(TYPES.NotificationActionHandlerFactory) protected notificationActionHandlerFactory: NotificationActionHandlerFactory
 
-    constructor(@multiInject(TYPES.ICommand) commandCtrs: (new (Action) => Command)[],
+    constructor(@multiInject(TYPES.ICommand)@optional() commandCtrs: (new (Action) => Command)[],
                 @inject(TYPES.Logger) protected logger: Logger) {
         super()
         commandCtrs.forEach(

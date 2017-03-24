@@ -4,7 +4,7 @@ import {SModelElement, SModelRoot} from "../model"
 import {VNodeDecorator} from "./vnode-decorators"
 import {VNodeUtils} from "./vnode-utils"
 import {Action} from "../intent/actions"
-import {injectable, inject, multiInject} from "inversify"
+import {injectable, inject, multiInject, optional} from "inversify"
 import {ActionDispatcher, IActionDispatcher} from "../intent/action-dispatcher"
 import {TYPES} from "../types"
 
@@ -13,7 +13,7 @@ export class KeyTool implements VNodeDecorator {
 
     @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
 
-    @multiInject(TYPES.KeyListener) protected keyListeners: KeyListener[] = []
+    @multiInject(TYPES.KeyListener)@optional() protected keyListeners: KeyListener[] = []
 
     register(keyListener: KeyListener) {
         this.keyListeners.push(keyListener)

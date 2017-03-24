@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import {injectable, inject, multiInject} from "inversify"
+import {injectable, inject, multiInject, optional} from "inversify"
 import {TYPES} from "../types"
 import {init} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
@@ -11,9 +11,6 @@ import {eventListenersModule} from "snabbdom/modules/eventlisteners"
 import {SModelRoot, SModelElement, SParentElement} from "../model"
 import {VNodeDecorator} from "./vnode-decorators"
 import {RenderingContext, ViewRegistry} from "./views"
-import {KeyTool} from "./key-tool"
-import {MouseTool} from "./mouse-tool"
-import {Autosizer} from "../../features/resize/autosizer"
 import {classModule} from "snabbdom/modules/class"
 import {VNodeUtils} from "./vnode-utils"
 import * as snabbdom from "snabbdom-jsx"
@@ -37,7 +34,7 @@ export class Viewer implements VNodeDecorator, IViewer {
     protected readonly patcher: Patcher
     private lastVDOM: any
 
-    constructor(@multiInject(TYPES.VNodeDecorator) protected decorators: VNodeDecorator[]) {
+    constructor(@multiInject(TYPES.VNodeDecorator)@optional() protected decorators: VNodeDecorator[]) {
         this.patcher = this.createPatcher()
     }
 
