@@ -1,5 +1,5 @@
 dependencies {
     compile project(':diagram-api')
-    compile "com.google.inject:guice:$versions.guice"
+    compile "com.google.code.gson:gson:$versions.gson"
     compile "javax.websocket:javax.websocket-api:$versions.websocket"
 }

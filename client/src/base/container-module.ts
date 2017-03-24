@@ -1,12 +1,11 @@
 import {ContainerModule, interfaces} from "inversify"
-import {DiagramServer} from "../jsonrpc"
 import {NullLogger} from "../utils"
 import {
     ActionDispatcher,
     CommandStack,
     ActionHandlerRegistry,
-    RequestActionHandler,
-    NotificationActionHandler,
+    ServerActionHandler,
+    ServerActionHandlerFactory,
     ActionHandler
 } from "./intent"
 import {Viewer, ViewRegistry, ViewerOptions} from "./view"
@@ -14,7 +13,8 @@ import {SModelFactory} from "./model"
 import {TYPES} from "./types"
 import {MouseTool, MouseListener} from "./view/mouse-tool"
 import {KeyTool, KeyListener} from "./view/key-tool"
-import {SetModelCommand} from "./features/model-manipulation"
+import { SetModelCommand } from "./features/model-manipulation"
+import { DiagramServer } from "../remote"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
@@ -70,25 +70,15 @@ let defaultContainerModule = new ContainerModule(bind => {
     bind(SModelFactory).toSelf().inSingletonScope()
 
     // Action Handlers ---------------------------------------------
-    bind(TYPES.RequestActionHandlerFactory).toFactory<RequestActionHandler>((context: interfaces.Context) => {
+    bind(TYPES.ServerActionHandlerFactory).toFactory<ServerActionHandler>((context: interfaces.Context) => {
         return (immediateHandler?: ActionHandler) => {
-            const diagramServer = context.container.get(DiagramServer)
-            const actionDispatcher = context.container.get(ActionDispatcher)
-            return new RequestActionHandler(diagramServer, actionDispatcher, immediateHandler)
-        }
-    })
-    bind(TYPES.NotificationActionHandlerFactory).toFactory<NotificationActionHandler>((context: interfaces.Context) => {
-        return (immediateHandler?: ActionHandler) => {
-            const diagramServer = context.container.get(DiagramServer)
-            return new NotificationActionHandler(diagramServer, immediateHandler)
+            const diagramServer = context.container.get<DiagramServer>(TYPES.DiagramServer)
+            return new ServerActionHandler(diagramServer, immediateHandler)
         }
     })
 
     // Commands
     bind(TYPES.ICommand).toConstructor(SetModelCommand)
-
-    // Diagram Server ---------------------------------------------
-    bind(DiagramServer).toSelf().inSingletonScope()
 })
 
 export default defaultContainerModule

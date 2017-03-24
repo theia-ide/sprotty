@@ -7,4 +7,4 @@ export * from '../../features/move';
 export * from '../../features/resize/resize';
 export * from '../../features/select/select';
 export * from '../features/model-manipulation';
-export * from './server-action-handlers';
+export * from './server-action-handler';

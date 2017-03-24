@@ -1,9 +1,9 @@
 package io.typefox.sprotty.example.multicore.web
 
+import io.typefox.sprotty.api.Action
+import io.typefox.sprotty.example.multicore.web.diagram.MulticoreAllocationDiagramServer
 import io.typefox.sprotty.server.websocket.DiagramServerEndpoint
-import io.typefox.sprotty.server.websocket.GuiceEndpointConfigurator
 import java.net.InetSocketAddress
-import javax.websocket.CloseReason
 import javax.websocket.EndpointConfig
 import javax.websocket.Session
 import javax.websocket.server.ServerEndpointConfig
@@ -17,7 +17,6 @@ import org.eclipse.jetty.webapp.WebAppContext
 import org.eclipse.jetty.webapp.WebInfConfiguration
 import org.eclipse.jetty.webapp.WebXmlConfiguration
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer
-import org.eclipse.lsp4j.jsonrpc.messages.Message
 import org.eclipse.xtext.util.DisposableRegistry
 
 /**
@@ -35,28 +34,21 @@ class MulticoreServerLauncher {
     		super.onOpen(session, config)
     	}
     	
-		override protected logServerMessage(Message message) {
-			LOG.info('''SERVER: «message»''')
+		override accept(Action action) {
+			LOG.info('''SERVER: «action»''')
+			super.accept(action)
 		}
 		
-		override protected logClientMessage(Message message) {
-			LOG.info('''CLIENT: «message»''')
-		}
-		
-	    override onError(Session session, Throwable t) {
-			LOG.error('''Unhandled error occurred [«session.id»]''', t)
-			super.onError(session, t)
-		}
-		
-		override onClose(Session session, CloseReason closeReason) {
-			LOG.info('''Closed connection [«session.id»]''')
-			super.onClose(session, closeReason)
+		override protected fireActionReceived(Action action) {
+			LOG.info('''CLIENT: «action»''')
+			super.fireActionReceived(action)
 		}
 	}
 	
 	def static void main(String[] args) {
 		val injector = new MulticoreAllocationWebSetup().createInjectorAndDoEMFRegistration()
 		val disposableRegistry = injector.getInstance(DisposableRegistry)
+		val diagramServer = injector.getInstance(MulticoreAllocationDiagramServer)
 		
 		val server = new Server(new InetSocketAddress('localhost', 8080))
 		server.handler = new WebAppContext => [
@@ -75,7 +67,16 @@ class MulticoreServerLauncher {
 		
 		val container = WebSocketServerContainerInitializer.configureContext(server.handler as ServletContextHandler)
 		val endpointConfigBuilder = ServerEndpointConfig.Builder.create(TestServerEndpoint, '/diagram')
-				.configurator(new GuiceEndpointConfigurator(injector))
+		endpointConfigBuilder.configurator(new ServerEndpointConfig.Configurator {
+			override <T> getEndpointInstance(Class<T> endpointClass) throws InstantiationException {
+				super.getEndpointInstance(endpointClass) => [ instance |
+					val endpoint = instance as DiagramServerEndpoint
+					diagramServer.remoteEndpoint = endpoint
+					endpoint.addActionListener(diagramServer)
+					endpoint.addErrorListener[e | LOG.warn(e)]
+				]
+			}
+		})
 		container.addEndpoint(endpointConfigBuilder.build())
 		
 		val log = new Slf4jLog(MulticoreServerLauncher.name)

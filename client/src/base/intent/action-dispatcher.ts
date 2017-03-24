@@ -1,10 +1,11 @@
 import "reflect-metadata"
-import {injectable, inject} from "inversify"
+import {injectable, inject, optional} from "inversify"
 import {TYPES} from "../types"
 import {Logger} from "../../utils"
+import { UndoAction, RedoAction } from "../../features"
+import { DiagramServer } from "../../remote"
 import {Action, ActionHandlerRegistry} from "./actions"
 import {ICommandStack} from "./command-stack"
-import {UndoAction, RedoAction} from "../../features/undo-redo/undo-redo"
 
 export interface IActionDispatcher {
     dispatch(action: Action): void
@@ -20,6 +21,14 @@ export class ActionDispatcher implements IActionDispatcher {
     @inject(ActionHandlerRegistry) protected actionHandlerRegistry: ActionHandlerRegistry
     @inject(TYPES.ICommandStack) protected commandStack: ICommandStack
     @inject(TYPES.Logger) protected logger: Logger
+
+    constructor(@inject(TYPES.DiagramServer) @optional() diagramServer?: DiagramServer) {
+        if (diagramServer) {
+            diagramServer.onAction(action => {
+                this.dispatch(action)
+            })
+        }
+    }
 
     dispatchAll(actions: Action[]): void {
         actions.forEach(action => this.dispatch(action))

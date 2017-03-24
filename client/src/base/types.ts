@@ -1,16 +1,16 @@
 export let TYPES = {
-    ActionDispatcherProvider: Symbol('ActionDispatcherProvider'),
-    CommandStackProvider: Symbol('CommandStackProvider'),
-    VNodeDecorator: Symbol('VNodeDecorator'),
     IActionDispatcher: Symbol('IActionDispatcher'),
+    ActionDispatcherProvider: Symbol('ActionDispatcherProvider'),
     ICommand: Symbol('ICommand'),
     ICommandStack: Symbol('ICommandStack'),
-    IViewer: Symbol('IViewer'),
+    CommandStackProvider: Symbol('CommandStackProvider'),
+    DiagramServer: Symbol('DiagramServer'),
     KeyListener: Symbol('KeyListener'),
     Logger: Symbol('Logger'),
     MouseListener: Symbol('MouseListener'),
-    NotificationActionHandlerFactory: Symbol('NotificationActionHandlerFactory'),
+    ServerActionHandlerFactory: Symbol('NotificationActionHandlerFactory'),
+    IViewer: Symbol('IViewer'),
     ViewerOptions: Symbol('ViewerOptions'),
     ViewerProvider: Symbol('ViewerProvider'),
-    RequestActionHandlerFactory: Symbol('RequestActionHandlerFactory')
+    VNodeDecorator: Symbol('VNodeDecorator'),
 }

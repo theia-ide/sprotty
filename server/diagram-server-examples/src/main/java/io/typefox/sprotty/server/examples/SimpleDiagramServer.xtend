@@ -1,27 +1,29 @@
 package io.typefox.sprotty.server.examples
 
-import io.typefox.sprotty.api.DiagramClient
-import io.typefox.sprotty.api.DiagramClientAware
-import io.typefox.sprotty.api.DiagramServer
+import io.typefox.sprotty.api.Action
 import io.typefox.sprotty.api.RequestModelAction
-import io.typefox.sprotty.api.ResizeAction
 import io.typefox.sprotty.api.SEdge
 import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.api.SNode
 import io.typefox.sprotty.api.SelectAction
 import io.typefox.sprotty.api.SetModelAction
 import java.util.concurrent.CompletableFuture
+import java.util.function.Consumer
 import org.eclipse.jetty.util.log.Slf4jLog
 import org.eclipse.xtend.lib.annotations.Accessors
 
-class SimpleDiagramServer implements DiagramServer, DiagramClientAware {
+class SimpleDiagramServer implements Consumer<Action> {
 
 	static val LOG = new Slf4jLog(SimpleServerLauncher.name)
 	
 	@Accessors
-	DiagramClient client
+	Consumer<Action> remoteEndpoint
+	
+	override accept(Action action) {
+		
+	}
 
-	override requestModel(RequestModelAction action) {
+	def requestModel(RequestModelAction action) {
 		val model = new SetModelAction => [
 			newRoot = new SModelRoot => [
 				type = 'graph'
@@ -50,13 +52,8 @@ class SimpleDiagramServer implements DiagramServer, DiagramClientAware {
 		]
 		CompletableFuture.completedFuture(model)
 	}
-	
-	override resize(ResizeAction action) {
-		throw new UnsupportedOperationException
-	}
 
-	override elementSelected(SelectAction action) {
+	def elementSelected(SelectAction action) {
 		LOG.info('element selected: ' + action)
 	}
-
 }

@@ -1,4 +1,4 @@
-import {VNode} from "../../../../../snabbdom/vnode"
+import {VNode} from "snabbdom/vnode"
 import {BehaviorSchema} from "../../base/model/behavior"
 import {Point} from "../../utils/geometry"
 import {SModelElement, SModelRoot, SModelIndex, SModel} from "../../base/model/smodel"

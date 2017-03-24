@@ -8,7 +8,7 @@ buildscript {
 ext.versions = [
     guice: '3.0',
     xtext: '2.11.0',
-    lsp4j: '0.1.0',
+    gson: '2.8.0',
     websocket: '1.0',
     elk: '0.3.0-SNAPSHOT',
     slf4j: '1.7.24',

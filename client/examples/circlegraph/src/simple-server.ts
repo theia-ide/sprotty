@@ -6,11 +6,9 @@ import {
     SelectAction,
     ActionHandlerRegistry,
     ViewRegistry,
-    CommandActionHandler,
     RequestModelAction
 } from "../../../src/base"
 import {SGraphView, StraightEdgeView} from "../../../src/graph"
-import {DiagramServer} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
 import {ViewportAction, ViewportCommand} from "../../../src/features/viewport/viewport"
@@ -20,7 +18,8 @@ import {MoveMouseListener} from "../../../src/features/move"
 import {ScrollMouseListener} from "../../../src/features/viewport/scroll"
 import {ZoomMouseListener} from "../../../src/features/viewport/zoom"
 import {KeyTool} from "../../../src/base/view/key-tool"
-import {UndoRedoKeyListener} from "../../../src/features/undo-redo/undo-redo"
+import { UndoRedoKeyListener } from "../../../src/features/undo-redo/undo-redo"
+import { WebSocketDiagramServer } from "../../../src/remote"
 
 export default function runSimpleServer() {
     const container = createContainer()
@@ -29,8 +28,8 @@ export default function runSimpleServer() {
     const actionHandlerRegistry = container.get(ActionHandlerRegistry)
     const dispatcher = container.get(ActionDispatcher)
 
-    actionHandlerRegistry.registerServerNotification(SelectCommand.KIND, new CommandActionHandler(SelectCommand))
-    actionHandlerRegistry.registerServerRequest(RequestModelAction.KIND)
+    actionHandlerRegistry.registerServerMessage(SelectCommand.KIND, SelectCommand)
+    actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
 
     // Register views
     const viewRegistry = container.get(ViewRegistry)
@@ -39,8 +38,8 @@ export default function runSimpleServer() {
     viewRegistry.register('edge:straight', StraightEdgeView)
 
     // Connect to the diagram server
-    const diagramServer = container.get(DiagramServer)
-    diagramServer.connectWebSocket('ws://localhost:62000').then(connection => {
+    const diagramServer = container.get(WebSocketDiagramServer)
+    diagramServer.connect('ws://localhost:62000').then(() => {
         // Run
         const action = new RequestModelAction()
         dispatcher.dispatch(action)

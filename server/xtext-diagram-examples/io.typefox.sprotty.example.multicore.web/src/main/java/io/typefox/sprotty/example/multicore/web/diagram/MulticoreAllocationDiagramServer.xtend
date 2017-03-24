@@ -1,28 +1,31 @@
 package io.typefox.sprotty.example.multicore.web.diagram
 
 import com.google.inject.Inject
-import io.typefox.sprotty.api.DiagramClient
-import io.typefox.sprotty.api.DiagramClientAware
-import io.typefox.sprotty.api.DiagramServer
+import io.typefox.sprotty.api.Action
 import io.typefox.sprotty.api.RequestModelAction
 import io.typefox.sprotty.api.ResizeAction
 import io.typefox.sprotty.api.SelectAction
 import io.typefox.sprotty.api.SetModelAction
+import java.util.function.Consumer
 import org.apache.log4j.Logger
 import org.eclipse.lsp4j.jsonrpc.CompletableFutures
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.ide.ExecutorServiceProvider
 
-class MulticoreAllocationDiagramServer implements DiagramServer, DiagramClientAware {
+class MulticoreAllocationDiagramServer implements Consumer<Action> {
 	
 	static val LOG = Logger.getLogger(MulticoreAllocationDiagramServer)
 	
 	@Inject ExecutorServiceProvider executorServiceProvider
 	
 	@Accessors
-	DiagramClient client
+	Consumer<Action> remoteEndpoint
 	
-	override requestModel(RequestModelAction action) {
+	override accept(Action action) {
+		// TODO
+	}
+	
+	def requestModel(RequestModelAction action) {
 		return CompletableFutures.computeAsync(executorServiceProvider.get) [
 			val dim = 8
 			val cores = <Core>newArrayList
@@ -59,11 +62,11 @@ class MulticoreAllocationDiagramServer implements DiagramServer, DiagramClientAw
 		]
 	}
 	
-	override resize(ResizeAction action) {
+	def resize(ResizeAction action) {
 		throw new UnsupportedOperationException
 	}
 
-	override elementSelected(SelectAction action) {
+	def elementSelected(SelectAction action) {
 		LOG.info('element selected = ' + action)
 	}
 		

@@ -1,10 +1,10 @@
 import "reflect-metadata"
+import {injectable, inject} from "inversify"
+import {VNode} from "snabbdom/vnode"
 import {VNodeDecorator} from "../../base/view/vnode-decorators"
-import {VNode} from "../../../../../snabbdom/vnode"
 import {SModelElement} from "../../base/model/smodel"
 import {almostEquals, Dimension, Bounds} from "../../utils/geometry"
 import {ElementResize, ResizeAction, Sizeable, isSizeable} from "./resize"
-import {injectable, inject} from "inversify"
 import {IActionDispatcher} from "../../base/intent/action-dispatcher"
 import {TYPES} from "../../base/types"
 

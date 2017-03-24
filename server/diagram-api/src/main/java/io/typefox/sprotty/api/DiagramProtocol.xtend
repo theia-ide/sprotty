@@ -2,100 +2,81 @@ package io.typefox.sprotty.api
 
 import java.util.List
 import java.util.Map
-import java.util.concurrent.CompletableFuture
-import org.eclipse.lsp4j.generator.JsonRpcData
-import org.eclipse.lsp4j.jsonrpc.services.JsonNotification
-import org.eclipse.lsp4j.jsonrpc.services.JsonRequest
-import org.eclipse.lsp4j.jsonrpc.validation.NonNull
+import org.eclipse.xtend.lib.annotations.Accessors
+import org.eclipse.xtend.lib.annotations.EqualsHashCode
+import org.eclipse.xtend.lib.annotations.ToString
 
-interface DiagramServer {
-	
-    @JsonRequest
-    def CompletableFuture<SetModelAction> requestModel(RequestModelAction action)
-	
-    @JsonRequest
-    def CompletableFuture<SetModelAction> resize(ResizeAction action)
-    
-    @JsonNotification
-    def void elementSelected(SelectAction action)
-    
+interface Action {
+	def String getKind()
 }
 
-interface DiagramClient {
-	
-	@JsonNotification
-	def void modelChanged(UpdateModelAction action)
-	
-}
-
-interface DiagramClientAware {
-	
-	def void setClient(DiagramClient client)
-	
-}
-
-@JsonRpcData
-class RequestModelAction {
-	String kind = 'requestModel'
+@Accessors@EqualsHashCode@ToString
+class RequestModelAction implements Action {
+	public static val KIND = 'requestModel'
+	String kind = KIND
 	Map<String, String> options
 }
 
-@JsonRpcData
-class ResizeAction {
-    String kind ='resize'
+@Accessors@EqualsHashCode@ToString
+class ResizeAction implements Action {
+    public static val KIND ='resize'
+	String kind = KIND
 	List<ElementResize> resizes
 }
 
-@JsonRpcData
+@Accessors@EqualsHashCode@ToString
 class ElementResize {
-    @NonNull String elementId
-    @NonNull Dimension newSize
+    String elementId
+    Dimension newSize
 }
 
-@JsonRpcData
+@Accessors@EqualsHashCode@ToString
 class Dimension {
     Double width
     Double height
 }
 
-@JsonRpcData
-class SetModelAction {
-	String kind = 'setModel'
+@Accessors@EqualsHashCode@ToString
+class SetModelAction implements Action {
+	public static val KIND = 'setModel'
+	String kind = KIND
 	SModelRoot newRoot
 }
 
-@JsonRpcData
-class SelectAction {
-	String kind = 'elementSelected'
+@Accessors@EqualsHashCode@ToString
+class SelectAction implements Action {
+	public static val KIND = 'elementSelected'
+	String kind = KIND
 	List<String> selectedElementsIDs
 	List<String> deselectedElementsIDs
 }
 
-@JsonRpcData
-class UpdateModelAction {
-	String kind = 'updateModel'
-	@NonNull String modelId
+@Accessors@EqualsHashCode@ToString
+class UpdateModelAction implements Action {
+	public static val KIND = 'updateModel'
+	String kind = KIND
+	String modelId
 }
 
-@JsonRpcData
+@Accessors@EqualsHashCode@ToString
 abstract class SModelElement {
-	@NonNull String type
-	@NonNull String id
+	String type
+	String id
 	List<SModelElement> children
 }
 
-@JsonRpcData
+@Accessors@EqualsHashCode@ToString
 class SModelRoot extends SModelElement {
 }
 
-@JsonRpcData
+@Accessors@EqualsHashCode@ToString
 class SGraph extends SModelRoot {
 	Double width
 	Double height
 	Boolean autosize
 }
 
-@JsonRpcData
+@Accessors@EqualsHashCode@ToString
 class SNode extends SModelElement {
 	Double x
 	Double y
@@ -104,14 +85,14 @@ class SNode extends SModelElement {
 	Boolean autosize
 }
 
-@JsonRpcData
+@Accessors@EqualsHashCode@ToString
 class SEdge extends SModelElement {
-	@NonNull String sourceId
-	@NonNull String targetId
+	String sourceId
+	String targetId
 	List<Point> routingPoints
 }
 
-@JsonRpcData
+@Accessors@EqualsHashCode@ToString
 class Point {
 	double x
 	double y

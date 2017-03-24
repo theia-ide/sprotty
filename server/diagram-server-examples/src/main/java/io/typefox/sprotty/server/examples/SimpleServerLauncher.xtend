@@ -1,12 +1,7 @@
 package io.typefox.sprotty.server.examples
 
-import com.google.inject.Guice
-import io.typefox.sprotty.api.DiagramServer
-import io.typefox.sprotty.server.examples.SimpleDiagramServer
 import io.typefox.sprotty.server.websocket.DiagramServerEndpoint
-import io.typefox.sprotty.server.websocket.GuiceEndpointConfigurator
 import java.net.InetSocketAddress
-import javax.websocket.CloseReason
 import javax.websocket.EndpointConfig
 import javax.websocket.Session
 import javax.websocket.server.ServerEndpointConfig
@@ -14,7 +9,7 @@ import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletContextHandler
 import org.eclipse.jetty.util.log.Slf4jLog
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer
-import org.eclipse.lsp4j.jsonrpc.messages.Message
+import io.typefox.sprotty.api.Action
 
 class SimpleServerLauncher {
 	
@@ -27,29 +22,19 @@ class SimpleServerLauncher {
     		super.onOpen(session, config)
     	}
     	
-		override protected logServerMessage(Message message) {
-			LOG.info('''SERVER: «message»''')
+		override accept(Action action) {
+			LOG.info('''SERVER: «action»''')
+			super.accept(action)
 		}
 		
-		override protected logClientMessage(Message message) {
-			LOG.info('''CLIENT: «message»''')
-		}
-		
-	    override onError(Session session, Throwable t) {
-			LOG.warn('''Unhandled error occurred [«session.id»]''', t)
-			super.onError(session, t)
-		}
-		
-		override onClose(Session session, CloseReason closeReason) {
-			LOG.info('''Closed connection [«session.id»]''')
-			super.onClose(session, closeReason)
+		override protected fireActionReceived(Action action) {
+			LOG.info('''CLIENT: «action»''')
+			super.fireActionReceived(action)
 		}
 	}
 	
 	def static void main(String[] args) {
-		val injector = Guice.createInjector[
-			bind(DiagramServer).to(SimpleDiagramServer)
-		]
+		val diagramServer = new SimpleDiagramServer
 		
 		val server = new Server(new InetSocketAddress('localhost', 62000))
 		val context =  new ServletContextHandler => [
@@ -59,7 +44,16 @@ class SimpleServerLauncher {
 		
 		val container = WebSocketServerContainerInitializer.configureContext(context)
 		val endpointConfigBuilder = ServerEndpointConfig.Builder.create(TestServerEndpoint, '/')
-				.configurator(new GuiceEndpointConfigurator(injector))
+		endpointConfigBuilder.configurator(new ServerEndpointConfig.Configurator {
+			override <T> getEndpointInstance(Class<T> endpointClass) throws InstantiationException {
+				super.getEndpointInstance(endpointClass) => [ instance |
+					val endpoint = instance as DiagramServerEndpoint
+					diagramServer.remoteEndpoint = endpoint
+					endpoint.addActionListener(diagramServer)
+					endpoint.addErrorListener[e | LOG.warn(e)]
+				]
+			}
+		})
 		container.addEndpoint(endpointConfigBuilder.build())
 		
 		try {

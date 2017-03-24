@@ -2,9 +2,7 @@ package io.typefox.sprotty.example.flow.web.diagram
 
 import com.google.inject.Inject
 import com.google.inject.Singleton
-import io.typefox.sprotty.api.DiagramClient
-import io.typefox.sprotty.api.DiagramClientAware
-import io.typefox.sprotty.api.DiagramServer
+import io.typefox.sprotty.api.Action
 import io.typefox.sprotty.api.RequestModelAction
 import io.typefox.sprotty.api.ResizeAction
 import io.typefox.sprotty.api.SEdge
@@ -19,6 +17,7 @@ import io.typefox.sprotty.layout.ElkLayoutEngine
 import io.typefox.sprotty.layout.ILayoutEngine
 import io.typefox.sprotty.layout.LayoutUtil
 import io.typefox.sprotty.layout.SprottyLayoutConfigurator
+import java.util.function.Consumer
 import org.apache.log4j.Logger
 import org.eclipse.elk.alg.layered.options.LayeredOptions
 import org.eclipse.elk.alg.layered.options.NodeFlexibility
@@ -37,7 +36,7 @@ import org.eclipse.xtext.web.server.model.IXtextWebDocument
 import static io.typefox.sprotty.layout.ElkLayoutEngine.*
 
 @Singleton
-class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implements DiagramServer, DiagramClientAware {
+class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implements Consumer<Action> {
 	
 	static val LOG = Logger.getLogger(ExecutionFlowDiagramServer)
 	
@@ -48,7 +47,11 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 	static Program cachedProgram
 	
 	@Accessors
-	DiagramClient client
+	Consumer<Action> remoteEndpoint
+	
+	override accept(Action action) {
+		
+	}
 	
 	override compute(IXtextWebDocument it, CancelIndicator cancelIndicator) {
 		val flow = resource.contents.head as Flow
@@ -109,8 +112,8 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 			}
 		}
 		cachedProgram = program
-		if (client !== null) {
-			client.modelChanged(new UpdateModelAction => [
+		if (remoteEndpoint !== null) {
+			remoteEndpoint.accept(new UpdateModelAction => [
 				modelId = program.id
 			])
 		}
@@ -139,7 +142,7 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 		layoutEngine.layout(graph, configurator)
 	}
 	
-	override resize(ResizeAction action) {
+	def resize(ResizeAction action) {
 		return CompletableFutures.computeAsync(executorServiceProvider.get) [
 			initializeLayoutEngine()
 			val graph = cachedProgram
@@ -157,7 +160,7 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 	/**
 	 * Here the access to the computed program is hard-coded with a static field.
 	 */
-	override requestModel(RequestModelAction action) {
+	def requestModel(RequestModelAction action) {
 		return CompletableFutures.computeAsync(executorServiceProvider.get) [
 			return new SetModelAction => [
 				newRoot = cachedProgram ?: new Program
@@ -165,7 +168,7 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 		]
 	}
 
-	override elementSelected(SelectAction action) {
+	def elementSelected(SelectAction action) {
 		LOG.info('element selected = ' + action)
 	}
 		
