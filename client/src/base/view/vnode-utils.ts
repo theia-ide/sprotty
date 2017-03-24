@@ -24,7 +24,7 @@ export namespace VNodeUtils {
 
     function getAttrs(vnode: VNode) {
         const data = getData(vnode)
-        if(!data.attrs)
+        if (!data.attrs)
             data.attrs = {}
         return data.attrs
     }

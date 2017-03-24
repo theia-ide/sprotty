@@ -5,7 +5,7 @@ import {VNodeDecorator} from "./vnode-decorators"
 import {VNodeUtils} from "./vnode-utils"
 import {Action} from "../intent/actions"
 import {injectable, inject, multiInject, optional} from "inversify"
-import {ActionDispatcher, IActionDispatcher} from "../intent/action-dispatcher"
+import {IActionDispatcher} from "../intent/action-dispatcher"
 import {TYPES} from "../types"
 
 @injectable()
@@ -21,15 +21,15 @@ export class KeyTool implements VNodeDecorator {
 
     deregister(keyListener: KeyListener) {
         const index = this.keyListeners.indexOf(keyListener)
-        if(index >= 0)
+        if (index >= 0)
             this.keyListeners.splice(index, 1)
     }
 
     protected handleEvent(methodName: string, model: SModelRoot, event: KeyboardEvent) {
         const actions = this.keyListeners
             .map(listener => listener[methodName].apply(listener, [model, event]))
-            .reduce((a, b)=>a.concat(b))
-        if(actions.length > 0) {
+            .reduce((a, b) => a.concat(b))
+        if (actions.length > 0) {
             event.preventDefault()
             this.actionDispatcher.dispatchAll(actions)
         }

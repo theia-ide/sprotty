@@ -16,8 +16,8 @@ export interface VNodeDecorator {
 @injectable()
 export class FocusFixDecorator implements VNodeDecorator {
     decorate(vnode: VNode, element: SModelElement): VNode {
-        if(vnode.sel && vnode.sel.startsWith('svg'))
-            // allows to set focus in Firefox
+        if (vnode.sel && vnode.sel.startsWith('svg'))
+        // allows to set focus in Firefox
             VNodeUtils.setAttr(vnode, 'tabindex', 0)
         return vnode
     }

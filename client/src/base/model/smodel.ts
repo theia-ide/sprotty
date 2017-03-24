@@ -89,7 +89,7 @@ export class SModelRoot extends SParentElement implements SModelRootSchema {
     private _index: SModelIndex
 
     get index(): SModelIndex {
-        if(!this._index) {
+        if (!this._index) {
             this._index = new SModelIndex
             this._index.add(this)
         }
@@ -146,11 +146,11 @@ export namespace SModel {
     }
 
     export function getParent<T>(element: SModelElement | T, predicate: (SModelElement) => boolean): (SModelElement & T) | undefined {
-        if(predicate.call(undefined, element))
+        if (predicate.call(undefined, element))
             return element as (SModelElement & T)
-        else if(element instanceof SChildElement) {
+        else if (element instanceof SChildElement) {
             const parent = element.parent
-            if(parent)
+            if (parent)
                 return getParent<T>(parent, predicate)
         }
         return undefined

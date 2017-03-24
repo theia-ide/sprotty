@@ -2,16 +2,10 @@ const WebSocket = require('reconnecting-websocket')
 
 import "reflect-metadata"
 import {injectable, inject} from "inversify"
-import { TYPES, Action, IActionDispatcher, UpdateModelAction } from "../base"
+import {TYPES, Action, IActionDispatcher, UpdateModelAction} from "../base"
 import {ConsoleLogger} from "../utils"
 import {WebSocketMessageReader, WebSocketMessageWriter} from "./webSocket"
-import {
-    CancellationToken,
-    MessageConnection,
-    NotificationType1,
-    RequestType1,
-    createMessageConnection
-} from "vscode-jsonrpc"
+import {CancellationToken, MessageConnection, createMessageConnection} from "vscode-jsonrpc"
 
 @injectable()
 export class DiagramServer {

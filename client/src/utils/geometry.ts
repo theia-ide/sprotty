@@ -17,7 +17,7 @@ export const EMPTY_BOUNDS: Bounds = {x: 0, y: 0, width: -1, height: -1}
 
 export function getBounds(e: Moveable & Sizeable) {
     return {
-        x: e.x, y:e.y, width: e.width, height: e.height
+        x: e.x, y: e.y, width: e.width, height: e.height
     }
 }
 

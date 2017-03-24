@@ -2,7 +2,7 @@ import "reflect-metadata"
 import {VNodeDecorator} from "../../base/view/vnode-decorators"
 import {VNode} from "../../../../../snabbdom/vnode"
 import {SModelElement} from "../../base/model/smodel"
-import {almostEquals, Dimension, Bounds} from "../../utils/geometry"
+import {almostEquals, Bounds} from "../../utils/geometry"
 import {ElementResize, ResizeAction, Sizeable, isSizeable} from "./resize"
 import {injectable, inject} from "inversify"
 import {IActionDispatcher} from "../../base/intent/action-dispatcher"
@@ -42,11 +42,11 @@ export class Autosizer implements VNodeDecorator {
                         let shouldResize = !almostEquals(newBounds.width, element.width)
                             || !almostEquals(newBounds.height, element.height)
                         let newClientBounds: Bounds | undefined
-                        if(element.clientBounds) {
+                        if (element.clientBounds) {
                             newClientBounds = this.getClientBounds(vnode.elm as Element)
                             shouldResize = shouldResize || this.differ(newBounds, element.clientBounds)
                         }
-                        if(shouldResize) {
+                        if (shouldResize) {
                             resizes.push({
                                 elementId: element.id,
                                 newSize: newBounds,

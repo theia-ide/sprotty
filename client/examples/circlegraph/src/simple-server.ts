@@ -1,9 +1,6 @@
 import {
     ActionDispatcher,
-    MoveCommand,
-    MoveAction,
     SelectCommand,
-    SelectAction,
     ActionHandlerRegistry,
     ViewRegistry,
     CommandActionHandler,
@@ -13,14 +10,6 @@ import {SGraphView, StraightEdgeView} from "../../../src/graph"
 import {DiagramServer} from "../../../src/jsonrpc"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
-import {ViewportAction, ViewportCommand} from "../../../src/features/viewport/viewport"
-import {MouseTool} from "../../../src/base/view/mouse-tool"
-import {SelectMouseListener} from "../../../src/features/select/select"
-import {MoveMouseListener} from "../../../src/features/move"
-import {ScrollMouseListener} from "../../../src/features/viewport/scroll"
-import {ZoomMouseListener} from "../../../src/features/viewport/zoom"
-import {KeyTool} from "../../../src/base/view/key-tool"
-import {UndoRedoKeyListener} from "../../../src/features/undo-redo/undo-redo"
 
 export default function runSimpleServer() {
     const container = createContainer()

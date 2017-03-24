@@ -1,6 +1,5 @@
 import {DiagramServer} from "../../jsonrpc"
-import { Action, ActionHandler, ActionHandlerResult } from "./actions"
-import {Command} from "./commands"
+import {Action, ActionHandler, ActionHandlerResult} from "./actions"
 import {IActionDispatcher} from "./action-dispatcher"
 
 export class RequestActionHandler implements ActionHandler {

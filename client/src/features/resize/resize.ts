@@ -51,7 +51,7 @@ export class ResizeCommand extends AbstractCommand {
                 const element = root.index.getById(resize.elementId)
                 if (element && isSizeable(element)) {
                     let oldClientBounds: Bounds | undefined
-                    if(element.clientBounds) {
+                    if (element.clientBounds) {
                         oldClientBounds = {...element.clientBounds}
                     }
                     this.resizes.push({
@@ -75,7 +75,7 @@ export class ResizeCommand extends AbstractCommand {
             resize => {
                 resize.element.width = resize.oldSize.width
                 resize.element.height = resize.oldSize.height
-                if(resize.oldClientBounds)
+                if (resize.oldClientBounds)
                     resize.element.clientBounds = {...resize.oldClientBounds}
                 resize.element.autosize = true
             }
@@ -88,7 +88,7 @@ export class ResizeCommand extends AbstractCommand {
             resize => {
                 resize.element.width = resize.newSize.width
                 resize.element.height = resize.newSize.height
-                if(resize.newClientBounds)
+                if (resize.newClientBounds)
                     resize.element.clientBounds = {...resize.newClientBounds}
                 resize.element.autosize = false
             }

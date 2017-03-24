@@ -1,8 +1,6 @@
-import {
-    CommandExecutionContext, AbstractCommand, Action, IActionDispatcher, ActionHandler, ActionHandlerResult
-} from "../intent"
+import {CommandExecutionContext, AbstractCommand, Action, ActionHandler, ActionHandlerResult} from "../intent"
 import {SModelRootSchema, SModelRoot} from "../model"
-import { Map } from "../../utils"
+import {Map} from "../../utils"
 import {injectable} from "inversify"
 
 export class SetModelAction implements Action {

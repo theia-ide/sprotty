@@ -12,8 +12,8 @@ import {
 import {Viewer, ViewRegistry, ViewerOptions} from "./view"
 import {SModelFactory} from "./model"
 import {TYPES} from "./types"
-import {MouseTool, MouseListener} from "./view/mouse-tool"
-import {KeyTool, KeyListener} from "./view/key-tool"
+import {MouseTool} from "./view/mouse-tool"
+import {KeyTool} from "./view/key-tool"
 import {SetModelCommand} from "./features/model-manipulation"
 import {FocusFixDecorator} from "./view/vnode-decorators"
 

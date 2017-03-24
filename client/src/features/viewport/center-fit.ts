@@ -77,14 +77,14 @@ export abstract class AbstractViewportCommand extends AbstractCommand {
     }
 
     undo(model: SModelRoot, context: CommandExecutionContext) {
-        if(isViewport(model) && this.newViewport)
+        if (isViewport(model) && this.newViewport)
             return new ViewportAnimation(model, this.newViewport, this.oldViewport, context).start()
         else
             return model
     }
 
     redo(model: SModelRoot, context: CommandExecutionContext) {
-        if(isViewport(model) && this.newViewport)
+        if (isViewport(model) && this.newViewport)
             return new ViewportAnimation(model, this.oldViewport, this.newViewport, context).start()
         else
             return model

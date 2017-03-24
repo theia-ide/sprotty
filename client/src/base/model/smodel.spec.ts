@@ -16,6 +16,7 @@ describe('SModelRoot', () => {
         element.add(child3)
         return element
     }
+
     it('contains children after adding them', () => {
         const element = setup()
         expect(element.children.map(c => c.id)).to.deep.equal(['child1', 'child2', 'child3'])
@@ -50,6 +51,7 @@ describe('SModelIndex', () => {
         index.add(child2)
         return {index, child1, child2}
     }
+
     it('contains elements after adding them', () => {
         const ctx = setup()
         expect(ctx.index.contains(ctx.child1)).to.be.true

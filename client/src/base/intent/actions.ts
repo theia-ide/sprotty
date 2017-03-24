@@ -3,9 +3,7 @@ import {injectable, inject, multiInject, optional} from "inversify"
 import {TYPES} from "../types"
 import {InstanceRegistry} from "../../utils"
 import {Command, CommandActionHandler} from "./commands"
-import {SetModelAction, SetModelCommand} from "../features/model-manipulation"
-import { RequestActionHandlerFactory, NotificationActionHandlerFactory } from "./server-action-handlers"
-import { IActionDispatcher } from "./action-dispatcher"
+import {RequestActionHandlerFactory, NotificationActionHandlerFactory} from "./server-action-handlers"
 import {Logger} from "../../utils/logging"
 
 /**
@@ -34,7 +32,7 @@ export class ActionHandlerRegistry extends InstanceRegistry<ActionHandler> {
     @inject(TYPES.RequestActionHandlerFactory) protected requestActionHandlerFactory: RequestActionHandlerFactory
     @inject(TYPES.NotificationActionHandlerFactory) protected notificationActionHandlerFactory: NotificationActionHandlerFactory
 
-    constructor(@multiInject(TYPES.ICommand)@optional() commandCtrs: (new (Action) => Command)[],
+    constructor(@multiInject(TYPES.ICommand) @optional() commandCtrs: (new (Action) => Command)[],
                 @inject(TYPES.Logger) protected logger: Logger) {
         super()
         commandCtrs.forEach(
@@ -43,7 +41,7 @@ export class ActionHandlerRegistry extends InstanceRegistry<ActionHandler> {
     }
 
     registerCommand(commandType: new (Action) => Command) {
-        if(commandType.hasOwnProperty('KIND'))
+        if (commandType.hasOwnProperty('KIND'))
             this.register(commandType['KIND'], new CommandActionHandler(commandType))
         else
             this.logger.error('Command ' + commandType.name + '  does not have a KIND property')
