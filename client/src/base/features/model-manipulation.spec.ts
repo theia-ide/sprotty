@@ -57,7 +57,7 @@ describe('SetModelCommand', () => {
         expect(model1).equal(cmd.undo(/* note: param ignored */ modelBogus))
     });
 
-    it('redo() works as expected)', () => {
+    it('redo() works as expected', () => {
         // test "redo": returns new model
         expect(model2).equal(cmd.redo(/* note: param ignored */ modelBogus))
 
