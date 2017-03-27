@@ -1,4 +1,4 @@
-import {ActionDispatcher} from "./action-dispatcher"
+import {IActionDispatcher} from "./action-dispatcher"
 import {ICommandStack} from "./command-stack"
 import {ActionHandlerRegistry} from "./actions"
 import {expect} from 'chai'
@@ -30,7 +30,7 @@ describe('action dispatcher', () => {
     const container = new Container()
     container.load(defaultModule, module)
 
-    const actionDispatcher = container.get(ActionDispatcher)
+    const actionDispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
 
     it('undo/redo/execute', () => {
         actionDispatcher.dispatch(new UndoAction)

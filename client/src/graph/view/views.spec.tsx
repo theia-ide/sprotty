@@ -1,4 +1,4 @@
-import { Viewer, ViewRegistry, RenderingContext, TYPES } from "../../base"
+import { IViewer, Viewer, ViewRegistry, RenderingContext, TYPES } from "../../base"
 import { CircularNodeView } from "../../lib"
 import {SGraph, SEdge, SNode, SGraphFactory} from "../model"
 import {SGraphView, StraightEdgeView} from "./views"
@@ -29,7 +29,7 @@ describe('graph views', () => {
     const container = new Container()
     container.load(defaultContainerModule, selectModule, moveModule)
 
-    const viewer = container.get(Viewer)
+    const viewer = container.get<Viewer>(TYPES.IViewer)
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
     viewRegistry.register('graph', SGraphView)
     viewRegistry.register('node:circle', CircleNodeView)
