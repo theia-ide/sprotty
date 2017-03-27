@@ -10,6 +10,8 @@ export * from './scroll'
 export * from './viewport'
 export * from './zoom'
 
+export const viewportFeature = Symbol('viewportFeature')
+
 export const viewportModule = new ContainerModule(bind => {
     bind(TYPES.ICommand).toConstructor(CenterCommand)
     bind(TYPES.ICommand).toConstructor(FitToScreenCommand)

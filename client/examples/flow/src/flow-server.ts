@@ -1,11 +1,11 @@
 import {
-    TYPES, IActionDispatcher, SelectCommand, SelectAction, ActionHandlerRegistry, RequestOnUpdateHandler,
-    ViewRegistry, RequestModelAction, UpdateModelAction
+    TYPES, IActionDispatcher, ActionHandlerRegistry, RequestOnUpdateHandler, ViewRegistry,
+    RequestModelAction, UpdateModelAction
 } from "../../../src/base"
 import {SGraphView, StraightEdgeView} from "../../../src/graph"
+import { SelectCommand, ResizeCommand } from "../../../src/features"
 import {ExecutionNodeView, BarrierNodeView} from "./views"
 import createContainer from "./inversify.config"
-import { ResizeCommand } from "../../../src/features/resize/resize"
 import { WebSocketDiagramServer } from "../../../src/remote"
 
 export default function runFlowServer() {

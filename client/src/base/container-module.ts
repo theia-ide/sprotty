@@ -3,11 +3,12 @@ import {NullLogger} from "../utils"
 import { IDiagramServer } from "../remote"
 import {
     ActionDispatcher, IActionDispatcher, CommandStack, ICommandStack, ActionHandlerRegistry,
-    ServerActionHandler, ServerActionHandlerFactory, ActionHandler, SetModelCommand
+    ServerActionHandler, ServerActionHandlerFactory, ActionHandler
 } from "./intent"
 import {
     Viewer, IViewer, ViewRegistry, IViewerOptions, FocusFixDecorator, MouseTool, KeyTool
 } from "./view"
+import {SetModelCommand} from "./features"
 import {SModelFactory} from "./model"
 import { TYPES } from "./types"
 

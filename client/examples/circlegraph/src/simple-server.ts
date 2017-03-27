@@ -1,10 +1,10 @@
 import {
-    TYPES, IActionDispatcher, SelectCommand, ActionHandlerRegistry, ViewRegistry, RequestModelAction,
+    TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction,
     MouseTool, KeyTool
 } from "../../../src/base"
 import {
     SelectMouseListener, MoveMouseListener, ScrollMouseListener, ZoomMouseListener, ViewportAction,
-    ViewportCommand, UndoRedoKeyListener
+    ViewportCommand, UndoRedoKeyListener, SelectCommand
 } from "../../../src/features"
 import {SGraphView, StraightEdgeView} from "../../../src/graph"
 import { WebSocketDiagramServer } from "../../../src/remote"

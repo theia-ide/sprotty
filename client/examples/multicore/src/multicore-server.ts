@@ -1,6 +1,7 @@
 import {
-    TYPES, IActionDispatcher, SelectCommand, ActionHandlerRegistry, ViewRegistry, RequestModelAction
+    TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction
 } from "../../../src/base"
+import {SelectCommand} from "../../../src/features"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
 import createContainer from "./inversify.config"

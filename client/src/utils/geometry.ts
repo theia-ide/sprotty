@@ -1,8 +1,14 @@
 import {Moveable} from "../features/move"
 import {Sizeable} from "../features/resize/resize"
+
 export interface Point {
     x: number
     y: number
+}
+
+export const ORIGIN_POINT: Point = {
+    x: 0,
+    y: 0
 }
 
 export interface Dimension {
@@ -41,6 +47,24 @@ export function center(b: Bounds): Point {
 
 export function isEmpty(b: Bounds) {
     return b.width < 0 || b.height < 0
+}
+
+export interface TransformMatrix {
+    a: number
+    b: number
+    c: number
+    d: number
+    e: number
+    f: number
+}
+
+export const IDENTITY_MATRIX: TransformMatrix = {
+    a: 1,
+    b: 0,
+    c: 0,
+    d: 0,
+    e: 1,
+    f: 0
 }
 
 export enum Direction { left, right, up, down }

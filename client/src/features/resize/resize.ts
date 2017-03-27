@@ -1,16 +1,20 @@
 import {Action} from "../../base/intent/actions"
 import {SModelElement, SModelRoot} from "../../base/model/smodel"
-import {Dimension, Bounds} from "../../utils/geometry"
+import {Dimension, Bounds, TransformMatrix} from "../../utils/geometry"
 import {BehaviorSchema} from "../../base/model/behavior"
 import {CommandExecutionContext, AbstractCommand} from "../../base/intent/commands"
+import {resizeFeature} from "./index"
 
 export interface Sizeable extends BehaviorSchema, Dimension {
     autosize: boolean
+    boundingBox?: Bounds
     clientBounds?: Bounds
+    currentTransformMatrix?: TransformMatrix
 }
 
-export function isSizeable(element: SModelElement | Sizeable): element is Sizeable {
-    return 'autosize' in element
+export function isSizeable(element: SModelElement): element is SModelElement & Sizeable {
+    return element.hasFeature(resizeFeature)
+        &&'autosize' in element
         && 'width' in element
         && 'height' in element
 }
@@ -26,6 +30,7 @@ export type ElementResize = {
     elementId: string
     newSize: Dimension
     newClientBounds?: Bounds
+    newCurrentTransformMatrix?: TransformMatrix
 }
 
 type ResolvedElementResize = {
@@ -34,6 +39,8 @@ type ResolvedElementResize = {
     newSize: Dimension
     oldClientBounds?: Bounds
     newClientBounds?: Bounds
+    oldCurrentTransformMatrix?: TransformMatrix,
+    newCurrentTransformMatrix?: TransformMatrix
 }
 
 export class ResizeCommand extends AbstractCommand {
@@ -54,6 +61,10 @@ export class ResizeCommand extends AbstractCommand {
                     if (element.clientBounds) {
                         oldClientBounds = {...element.clientBounds}
                     }
+                    let oldCurrentTransformMatrix: TransformMatrix | undefined
+                    if (element.currentTransformMatrix) {
+                        oldCurrentTransformMatrix = {...element.currentTransformMatrix}
+                    }
                     this.resizes.push({
                         element: element,
                         oldSize: {
@@ -62,7 +73,9 @@ export class ResizeCommand extends AbstractCommand {
                         },
                         newSize: resize.newSize,
                         oldClientBounds: oldClientBounds,
-                        newClientBounds: resize.newClientBounds
+                        newClientBounds: resize.newClientBounds,
+                        oldCurrentTransformMatrix: oldCurrentTransformMatrix,
+                        newCurrentTransformMatrix: resize.newCurrentTransformMatrix
                     })
                 }
             }
@@ -77,6 +90,8 @@ export class ResizeCommand extends AbstractCommand {
                 resize.element.height = resize.oldSize.height
                 if (resize.oldClientBounds)
                     resize.element.clientBounds = {...resize.oldClientBounds}
+                if (resize.oldCurrentTransformMatrix)
+                    resize.element.currentTransformMatrix = {...resize.oldCurrentTransformMatrix}
                 resize.element.autosize = true
             }
         )
@@ -90,6 +105,8 @@ export class ResizeCommand extends AbstractCommand {
                 resize.element.height = resize.newSize.height
                 if (resize.newClientBounds)
                     resize.element.clientBounds = {...resize.newClientBounds}
+                if (resize.newCurrentTransformMatrix)
+                    resize.element.currentTransformMatrix = {...resize.newCurrentTransformMatrix}
                 resize.element.autosize = false
             }
         )

@@ -5,6 +5,8 @@ import {Autosizer} from "./autosizer"
 
 export * from './resize'
 
+export const resizeFeature = Symbol('resizeFeature')
+
 export const resizeModule = new ContainerModule(bind => {
     bind(TYPES.ICommand).toConstructor(ResizeCommand)
     bind(TYPES.VNodeDecorator).to(Autosizer).inSingletonScope()

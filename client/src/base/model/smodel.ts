@@ -30,6 +30,10 @@ export class SModelElement implements SModelElementSchema {
     get index(): SModelIndex {
         return this.root.index
     }
+
+    hasFeature(feature: symbol): boolean {
+        return false
+    }
 }
 
 export interface SParentElementSchema extends SModelElementSchema {

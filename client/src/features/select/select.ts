@@ -8,13 +8,15 @@ import {isCtrlOrCmd} from "../../utils/browser"
 import {VNodeUtils} from "../../base/view/vnode-utils"
 import {KeyListener} from "../../base/view/key-tool"
 import {SNode, SEdge} from "../../graph/model/sgraph"
+import {selectFeature} from "./index"
 
 export interface Selectable extends BehaviorSchema {
     selected: boolean
 }
 
-export function isSelectable(element: SModelElement | Selectable): element is Selectable {
-    return 'selected' in element
+export function isSelectable(element: SModelElement): element is SModelElement & Selectable {
+    return element.hasFeature(selectFeature)
+        && 'selected' in element
 }
 
 export class SelectAction implements Action {

@@ -1,9 +1,10 @@
 import {
-    TYPES, IActionDispatcher, ElementMove, MoveAction, SetModelAction, ViewRegistry
+    TYPES, IActionDispatcher, SetModelAction, ViewRegistry,
 } from "../../../src/base"
 import {
     SGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema
 } from "../../../src/graph"
+import {ElementMove, MoveAction} from "../../../src/features"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
 

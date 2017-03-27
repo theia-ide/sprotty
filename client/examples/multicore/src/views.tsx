@@ -9,12 +9,8 @@ const JSX = {createElement: snabbdom.svg}
 
 export class ChipView implements View {
     render(model: Chip, context: RenderingContext): VNode {
-        const viewBox = "0 0 "
-            + model.columns * (CoreView.width + CoreView.dist)
-            + " "
-            + (model.columns + 1) * (CoreView.width + CoreView.dist)
-        const transform = 'translate(' + CoreView.width + ',' + CoreView.width + ')'
-        return <svg key={model.id} id={model.id} viewBox={viewBox}>
+        const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
+        return <svg key={model.id} id={model.id}>
                 <g transform={transform}>
                     {context.viewer.renderChildren(model, context)}
                 </g>
@@ -116,6 +112,8 @@ export class ChannelView implements View {
     static readonly width = 2
 
     render(model: Channel, context: RenderingContext): VNode {
+        if ((model.root as Chip).zoom * ChannelView.width < 1)
+            return <g id={model.id} key={model.id}></g>
         let points: number[]
         switch (model.direction) {
             case Direction.up:
