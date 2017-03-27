@@ -95,7 +95,7 @@ export default function runMulticore() {
     // Run
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
     dispatcher.dispatch(new SetModelAction(chip))
-    dispatcher.dispatch(new CenterAction([]))
+    dispatcher.dispatchNextFrame(new CenterAction([]))
 
     function changeModel() {
         for (let i = 0; i < chip.children.length; ++i) {
@@ -106,5 +106,5 @@ export default function runMulticore() {
         dispatcher.dispatch(action)
     }
 
-    setInterval(changeModel.bind(this), 5000)
+    // setInterval(changeModel.bind(this), 5000)
 }

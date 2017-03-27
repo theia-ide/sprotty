@@ -4,6 +4,7 @@ import {Chip, Core, Channel, Crossbar} from "./chipmodel"
 import {Direction} from "../../../src/utils/geometry"
 import {ColorMap, RGBColor} from "../../../src/utils/color"
 import * as snabbdom from "snabbdom-jsx"
+import {thunk} from "../../../src/base/view/thunk"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -23,6 +24,10 @@ export class CoreView implements View {
     static readonly dist = 20
 
     render(model: Core, context: RenderingContext): VNode {
+        return thunk('g', model.id, () => this.doRender(model, context), [model.load])
+    }
+
+    doRender(model: Core, context: RenderingContext): VNode {
         const position = {
             x: model.column * (CoreView.width + CoreView.dist),
             y: model.row * (CoreView.width + CoreView.dist),
@@ -112,7 +117,12 @@ export class ChannelView implements View {
     static readonly width = 2
 
     render(model: Channel, context: RenderingContext): VNode {
-        if ((model.root as Chip).zoom * ChannelView.width < 1)
+        const isVisible = (model.root as Chip).zoom * ChannelView.width < 3
+        return thunk('polygon', model.id, () => this.doRender(model, context), [model.load, isVisible])
+    }
+
+    doRender(model: Channel, context: RenderingContext): VNode {
+        if ((model.root as Chip).zoom * ChannelView.width < 3)
             return <g id={model.id} key={model.id}></g>
         let points: number[]
         switch (model.direction) {

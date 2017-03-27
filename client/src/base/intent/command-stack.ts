@@ -4,7 +4,8 @@ import {TYPES} from "../types"
 import {SModelRoot, SModel, SModelFactory} from "../model"
 import {ILogger} from "../../utils"
 import {Command, CommandExecutionContext} from "./commands"
-import {IViewerProvider} from "../view/viewer"
+import {IViewerProvider, IViewer} from "../view/viewer"
+import {IModelFactory} from "../model/smodel-factory"
 
 export interface ICommandStack {
     execute(commands: Command[]): void
@@ -20,12 +21,12 @@ export class CommandStack implements ICommandStack {
 
     defaultDuration = 250
 
-    @inject(TYPES.IModelFactory) protected modelFactory: SModelFactory
+    @inject(TYPES.IModelFactory) protected modelFactory: IModelFactory
     @inject(TYPES.IViewerProvider) protected viewerProvider: IViewerProvider
     @inject(TYPES.ILogger) protected logger: ILogger
 
     protected currentPromise: Promise<SModelRoot> = Promise.resolve(SModel.EMPTY_ROOT)
-
+    protected viewer: IViewer
     protected undoStack: Command[] = []
     protected redoStack: Command[] = []
 
@@ -150,11 +151,16 @@ export class CommandStack implements ICommandStack {
         )
     }
 
-    update(model: SModelRoot) {
+    update(model: SModelRoot): void {
+        if(this.viewer) {
+            this.viewer.update(model)
+            return
+        }
         this.viewerProvider().then(viewer => {
-            viewer.update(model)
+            this.viewer = viewer
+            this.update(model)
         })
     }
 }
 
-export type ICommandStackProvider = () => Promise<ICommandStack>
+export type CommandStackProvider = () => Promise<CommandStack>

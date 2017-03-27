@@ -31,50 +31,48 @@ export class Autosizer implements VNodeDecorator {
     }
 
     postUpdate() {
-        // window.requestAnimationFrame(() => {
-            const resizes: ElementResize[] = []
-            this.sizeables.forEach(
-                sizeable => {
-                    const vnode = sizeable.vnode
-                    const element = sizeable.element
-                    if (vnode.elm) {
-                        const newBounds = this.getBoundingBox(vnode.elm)
-                        let shouldResize = element.autosize
-                            || !almostEquals(newBounds.width, element.width)
-                            || !almostEquals(newBounds.height, element.height)
-                        let newClientBounds: Bounds | undefined
-                        let newCurrentTransformMatrix: TransformMatrix | undefined
-                        if (element.clientBounds) {
-                            newClientBounds = this.getClientBounds(vnode.elm)
-                            shouldResize = shouldResize || this.differ(newBounds, element.clientBounds)
-                        }
-                        if (element.currentTransformMatrix) {
-                            newCurrentTransformMatrix = this.getCurrentTransformMatrix(vnode.elm)
-                            shouldResize = shouldResize
-                                || !almostEquals(element.currentTransformMatrix.a, newCurrentTransformMatrix.a)
-                                || !almostEquals(element.currentTransformMatrix.b, newCurrentTransformMatrix.b)
-                                || !almostEquals(element.currentTransformMatrix.c, newCurrentTransformMatrix.c)
-                                || !almostEquals(element.currentTransformMatrix.d, newCurrentTransformMatrix.d)
-                                || !almostEquals(element.currentTransformMatrix.e, newCurrentTransformMatrix.e)
-                                || !almostEquals(element.currentTransformMatrix.f, newCurrentTransformMatrix.f)
-                        }
-                        if (shouldResize) {
-                            resizes.push({
-                                elementId: element.id,
-                                newSize: newBounds,
-                                newClientBounds: newClientBounds,
-                                newCurrentTransformMatrix: newCurrentTransformMatrix
-                            })
-                        }
+        const resizes: ElementResize[] = []
+        this.sizeables.forEach(
+            sizeable => {
+                const vnode = sizeable.vnode
+                const element = sizeable.element
+                if (vnode.elm) {
+                    const newBounds = this.getBoundingBox(vnode.elm)
+                    let shouldResize = element.autosize
+                        || !almostEquals(newBounds.width, element.width)
+                        || !almostEquals(newBounds.height, element.height)
+                    let newClientBounds: Bounds | undefined
+                    let newCurrentTransformMatrix: TransformMatrix | undefined
+                    if (element.clientBounds) {
+                        newClientBounds = this.getClientBounds(vnode.elm)
+                        shouldResize = shouldResize || this.differ(newBounds, element.clientBounds)
                     }
-
+                    if (element.currentTransformMatrix) {
+                        newCurrentTransformMatrix = this.getCurrentTransformMatrix(vnode.elm)
+                        shouldResize = shouldResize
+                            || !almostEquals(element.currentTransformMatrix.a, newCurrentTransformMatrix.a)
+                            || !almostEquals(element.currentTransformMatrix.b, newCurrentTransformMatrix.b)
+                            || !almostEquals(element.currentTransformMatrix.c, newCurrentTransformMatrix.c)
+                            || !almostEquals(element.currentTransformMatrix.d, newCurrentTransformMatrix.d)
+                            || !almostEquals(element.currentTransformMatrix.e, newCurrentTransformMatrix.e)
+                            || !almostEquals(element.currentTransformMatrix.f, newCurrentTransformMatrix.f)
+                    }
+                    if (shouldResize) {
+                        resizes.push({
+                            elementId: element.id,
+                            newSize: newBounds,
+                            newClientBounds: newClientBounds,
+                            newCurrentTransformMatrix: newCurrentTransformMatrix
+                        })
+                    }
                 }
-            )
-            this.sizeables = []
-            if (resizes.length > 0)
-                this.actionDispatcher.dispatch(new ResizeAction(resizes))
 
-        // })
+            }
+        )
+        this.sizeables = []
+        if (resizes.length > 0)
+            this.actionDispatcher.dispatchNextFrame(new ResizeAction(resizes))
+
     }
 
     protected getBoundingBox(elm: any): Bounds {

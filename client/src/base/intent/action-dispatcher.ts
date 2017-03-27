@@ -1,15 +1,16 @@
 import "reflect-metadata"
-import {injectable, inject, optional} from "inversify"
+import {injectable, inject} from "inversify"
 import {TYPES} from "../types"
 import {ILogger} from "../../utils"
-import { UndoAction, RedoAction } from "../../features"
-import { IDiagramServer } from "../../remote"
 import {Action, ActionHandlerRegistry} from "./actions"
 import {ICommandStack} from "./command-stack"
+import {UndoAction, RedoAction} from "../../features/undo-redo/undo-redo"
+import {Command} from "./commands"
 
 export interface IActionDispatcher {
     dispatch(action: Action): void
     dispatchAll(actions: Action[]): void
+    dispatchNextFrame(action: Action): void
 }
 
 /**
@@ -22,41 +23,70 @@ export class ActionDispatcher implements IActionDispatcher {
     @inject(TYPES.ICommandStack) protected commandStack: ICommandStack
     @inject(TYPES.ILogger) protected logger: ILogger
 
-    constructor(@inject(TYPES.IDiagramServer) @optional() diagramServer?: IDiagramServer) {
-        if (diagramServer) {
-            diagramServer.onAction(action => {
-                this.dispatch(action)
-            })
-        }
+    nextFrameActions: Action[] = []
+    thisFrameActions: Action[] = []
+
+    constructor() {
+        this.nextFrame()
+    }
+
+    protected nextFrame() {
+        if(this.thisFrameActions.length > 0)
+            this.doDispatch(this.thisFrameActions)
+        this.thisFrameActions = this.nextFrameActions
+        this.nextFrameActions = []
+        window.requestAnimationFrame(() => this.nextFrame())
+    }
+
+    dispatchNextFrame(action: Action) {
+        this.nextFrameActions.push(action)
     }
 
     dispatchAll(actions: Action[]): void {
-        actions.forEach(action => this.dispatch(action))
+        this.thisFrameActions = this.thisFrameActions.concat(actions)
     }
 
     dispatch(action: Action): void {
-        if (action.kind == UndoAction.KIND)
-            this.commandStack.undo()
-        else if (action.kind == RedoAction.KIND)
-            this.commandStack.redo()
-        else if (this.actionHandlerRegistry.hasKey(action.kind))
-            this.handleAction(action)
-        else
-            this.logger.warn('ActionDispatcher: missing command for action', action)
+        this.thisFrameActions.push(action)
     }
 
-    protected handleAction(action: Action): void {
+    protected doDispatch(actions: Action[]) {
+        let commands: Command[] = []
+        let newActions: Action[] = []
+        this.thisFrameActions.forEach(
+            action => {
+                if (action.kind == UndoAction.KIND) {
+                    this.commandStack.undo()
+                } else if (action.kind == RedoAction.KIND) {
+                    this.commandStack.redo()
+                } else {
+                    const result = this.handleAction(action)
+                    if(result){
+                        if (result.commands)
+                            commands = commands.concat(result.commands)
+
+                        if (result.actions && result.actions.length > 0)
+                            newActions = newActions.concat(result.actions)
+                    }
+                }
+            }
+        )
+        if(commands.length > 0)
+            this.commandStack.execute(commands)
+        if(newActions.length > 0)
+            this.nextFrameActions = this.nextFrameActions.concat(newActions)
+    }
+
+    protected handleAction(action: Action) {
         this.logger.log('ActionDispatcher: handle', action)
-        const actionHandler = this.actionHandlerRegistry.get(action.kind)
-        const result = actionHandler.handle(action)
-        if (result.commands && result.commands.length > 0) {
-            this.commandStack.execute(result.commands)
-        }
-        if (result.actions && result.actions.length > 0) {
-            this.dispatchAll(result.actions)
+        if(this.actionHandlerRegistry.hasKey(action.kind)) {
+            const actionHandler = this.actionHandlerRegistry.get(action.kind)
+            return actionHandler.handle(action)
+        } else {
+            this.logger.warn('ActionDispatcher: missing command for action', action)
+            return undefined
         }
     }
-
 }
 
-export type IActionDispatcherProvider = () => Promise<IActionDispatcher>
+export type ActionDispatcherProvider = () => Promise<IActionDispatcher>

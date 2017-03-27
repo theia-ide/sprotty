@@ -59,6 +59,8 @@ export class Viewer implements VNodeDecorator, IViewer {
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
+        if(vnode.data && vnode.data.hook && vnode.data.hook.prepatch)
+            return vnode
         this.decorators = this.decorators
         return this.decorators.reduce(
             (vnode: VNode, decorator: VNodeDecorator) => decorator.decorate(vnode, element),
