@@ -9,7 +9,7 @@ import { SModelRoot } from "../../base/index"
 import EMPTY_ROOT = SModel.EMPTY_ROOT
 
 
-describe('test move command execution, undo, redo and merge', () => {
+describe('move', () => {
 
     const graphFactory = new SGraphFactory()
 
@@ -80,7 +80,7 @@ describe('test move command execution, undo, redo and merge', () => {
     // from test case to test case (i,e, select, undo, redo, merge)
     var newModel: SModelRoot | Promise<SModelRoot>
 
-    it('move command', () => {
+    it('execute() works as expected', () => {
         // execute command
         newModel = cmd.execute(model, context)
 
@@ -103,7 +103,7 @@ describe('test move command execution, undo, redo and merge', () => {
     // Should undo()/redo() check whether the move action wants 
     // animation, and if not just return an updated model? 
 
-    it('undo move command', () => {
+    it('undo() works as expected', () => {
         // test "undo"
         cmd.undo(<SModelRoot>newModel, context).then(
             newModel => {
@@ -120,7 +120,7 @@ describe('test move command execution, undo, redo and merge', () => {
             })
     })
 
-    it('redo move command', () => {
+    it('redo() works as expected', () => {
         // test "redo": 
         cmd.redo(<SModelRoot>newModel, context).then(
             newModel => {

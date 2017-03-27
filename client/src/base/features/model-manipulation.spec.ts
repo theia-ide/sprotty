@@ -8,7 +8,7 @@ import EMPTY_ROOT = SModel.EMPTY_ROOT
 // note: it looks like the API for the set-model command is not
 // finalized. Let's still give the tests a first shot - we can adjust
 // as the command evolves.
-describe('test set model command execution, undo, redo and merge', () => {
+describe('SetModelCommand', () => {
 
     const graphFactory = new SGraphFactory()
 
@@ -44,7 +44,7 @@ describe('test set model command execution, undo, redo and merge', () => {
     }
 
 
-    it('set model command', () => {
+    it('execute() works as expected', () => {
         // execute command
         const newModel = cmd.execute(model1 /* the old model */, context)
         expect(model2).equal(newModel)
@@ -52,21 +52,21 @@ describe('test set model command execution, undo, redo and merge', () => {
         expect(model2).equal(cmd.newRoot)
     });
 
-    it('undo set model command', () => {
+    it('undo() works as expected', () => {
         // test "undo": returns old model
         expect(model1).equal(cmd.undo(/* note: param ignored */ modelBogus))
     });
 
-    it('redo set model command', () => {
+    it('redo() works as expected)', () => {
         // test "redo": returns new model
         expect(model2).equal(cmd.redo(/* note: param ignored */ modelBogus))
 
     });
 
     // "merge" is N/A
-    it('merge set model command (N/A)', () => {
+/*    it('merge() works as expected', () => {
         // test "merge"
-        const result = cmd.merge(/* note: param ignored */ cmd, context);
+        const result = cmd.merge(cmd, context);
         expect(false).to.equal(result)
-    });
+    }); */
 })
