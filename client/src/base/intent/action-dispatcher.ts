@@ -1,9 +1,9 @@
 import "reflect-metadata"
 import {injectable, inject, optional} from "inversify"
 import {TYPES} from "../types"
-import {Logger} from "../../utils"
+import {ILogger} from "../../utils"
 import { UndoAction, RedoAction } from "../../features"
-import { DiagramServer } from "../../remote"
+import { IDiagramServer } from "../../remote"
 import {Action, ActionHandlerRegistry} from "./actions"
 import {ICommandStack} from "./command-stack"
 
@@ -18,11 +18,11 @@ export interface IActionDispatcher {
 @injectable()
 export class ActionDispatcher implements IActionDispatcher {
 
-    @inject(ActionHandlerRegistry) protected actionHandlerRegistry: ActionHandlerRegistry
+    @inject(TYPES.ActionHandlerRegistry) protected actionHandlerRegistry: ActionHandlerRegistry
     @inject(TYPES.ICommandStack) protected commandStack: ICommandStack
-    @inject(TYPES.Logger) protected logger: Logger
+    @inject(TYPES.ILogger) protected logger: ILogger
 
-    constructor(@inject(TYPES.DiagramServer) @optional() diagramServer?: DiagramServer) {
+    constructor(@inject(TYPES.IDiagramServer) @optional() diagramServer?: IDiagramServer) {
         if (diagramServer) {
             diagramServer.onAction(action => {
                 this.dispatch(action)
@@ -59,4 +59,4 @@ export class ActionDispatcher implements IActionDispatcher {
 
 }
 
-export type ActionDispatcherProvider = () => Promise<IActionDispatcher>
+export type IActionDispatcherProvider = () => Promise<IActionDispatcher>

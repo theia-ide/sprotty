@@ -28,8 +28,8 @@ export interface IViewer {
 @injectable()
 export class Viewer implements VNodeDecorator, IViewer {
 
-    @inject(ViewRegistry) public viewRegistry: ViewRegistry
-    @inject(TYPES.ViewerOptions) protected options: ViewerOptions
+    @inject(TYPES.ViewRegistry) public viewRegistry: ViewRegistry
+    @inject(TYPES.IViewerOptions) protected options: IViewerOptions
 
     protected readonly patcher: Patcher
     private lastVDOM: any
@@ -97,8 +97,8 @@ export class Viewer implements VNodeDecorator, IViewer {
 
 export type Patcher = (oldRoot: VNode | Element, newRoot: VNode) => VNode
 
-export interface ViewerOptions {
+export interface IViewerOptions {
     baseDiv: string
 }
 
-export type ViewerProvider = () => Promise<Viewer>
+export type IViewerProvider = () => Promise<Viewer>

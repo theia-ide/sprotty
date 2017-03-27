@@ -11,8 +11,14 @@ import {
     SModelIndex
 } from "./smodel"
 
+export interface IModelFactory {
+    createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement
+
+    createRoot(schema: SModelRootSchema): SModelRoot
+}
+
 @injectable()
-export class SModelFactory {
+export class SModelFactory implements IModelFactory {
 
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
         if (schema instanceof SChildElement) {

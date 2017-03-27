@@ -2,13 +2,13 @@ import "reflect-metadata"
 import WebSocket = require("reconnecting-websocket")
 import {injectable, inject} from "inversify"
 import { TYPES, Action, isAction } from "../base"
-import { Logger } from "../utils"
-import { DiagramServer } from "./diagram-server"
+import { ILogger } from "../utils"
+import { IDiagramServer } from "./diagram-server"
 
 @injectable()
-export class WebSocketDiagramServer implements DiagramServer {
+export class WebSocketDiagramServer implements IDiagramServer {
 
-    @inject(TYPES.Logger) protected logger: Logger
+    @inject(TYPES.ILogger) protected logger: ILogger
 
     protected webSocket?: WebSocket
     protected readonly actionListeners: ((Action: any) => void)[] = []

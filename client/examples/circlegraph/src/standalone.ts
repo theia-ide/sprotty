@@ -1,11 +1,9 @@
 import {
-    ActionDispatcher,
-    ElementMove,
-    MoveAction,
-    SetModelAction,
-    ViewRegistry,
+    TYPES, IActionDispatcher, ElementMove, MoveAction, SetModelAction, ViewRegistry
 } from "../../../src/base"
-import {SGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph"
+import {
+    SGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema
+} from "../../../src/graph"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
 
@@ -13,20 +11,20 @@ export default function runStandalone() {
     const container = createContainer()
 
     // Register views
-    const viewRegistry = container.get(ViewRegistry)
+    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
     viewRegistry.register('graph', SGraphView)
     viewRegistry.register('node:circle', CircleNodeView)
     viewRegistry.register('edge:straight', StraightEdgeView)
 
     // Initialize gmodel
-    const modelFactory = new SGraphFactory()
+    const modelFactory = container.get<SGraphFactory>(TYPES.IModelFactory)
     const node0 = {id: 'node0', type: 'node:circle', x: 100, y: 100};
     const node1 = {id: 'node1', type: 'node:circle', x: 200, y: 150, selected: true};
     const edge0 = {id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1'};
     const graph = modelFactory.createRoot({id: 'graph', type: 'graph', children: [node0, node1, edge0]});
 
     // Run
-    const dispatcher = container.get(ActionDispatcher)
+    const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
     const action = new SetModelAction(graph);
     dispatcher.dispatch(action);
 

@@ -10,7 +10,6 @@ import { ActionHandler, Action, ActionHandlerResult } from "./actions"
  * Each command should define a static string property KIND that matches the associated action.
  */
 export interface Command {
-
     execute(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
 
     undo(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
@@ -22,7 +21,13 @@ export interface Command {
     isPushable(): boolean
 }
 
-export abstract class AbstractCommand {
+export abstract class AbstractCommand implements Command {
+    abstract execute(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
+
+    abstract undo(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
+
+    abstract redo(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
+
     merge(command: Command, context: CommandExecutionContext): boolean {
         return false
     }

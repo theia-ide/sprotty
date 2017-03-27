@@ -1,11 +1,11 @@
-import { DiagramServer } from "../../remote"
+import { IDiagramServer } from "../../remote"
 import { Action, ActionHandler, ActionHandlerResult } from "./actions"
 import {Command} from "./commands"
 import { IActionDispatcher } from "./action-dispatcher"
 
 export class ServerActionHandler implements ActionHandler {
 
-    constructor(protected diagramServer: DiagramServer,
+    constructor(protected diagramServer: IDiagramServer,
                 protected immediateHandler?: ActionHandler) {
     }
 

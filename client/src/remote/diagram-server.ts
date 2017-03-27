@@ -1,6 +1,6 @@
 import { Action } from "../base"
 
-export interface DiagramServer {
+export interface IDiagramServer {
     sendAction(action: Action): void
 
     onAction(listener: (Action) => void)

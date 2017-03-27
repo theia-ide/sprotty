@@ -7,10 +7,9 @@ import defaultModule from "../../../src/base/container-module"
 import {resizeModule, selectModule, viewportModule} from "../../../src/features"
 
 const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-    rebind(TYPES.Logger).to(ConsoleLogger).inSingletonScope()
-    rebind(SModelFactory).to(ChipModelFactory).inSingletonScope()
-    bind(TYPES.DiagramServer).to(WebSocketDiagramServer).inSingletonScope()
-    bind(WebSocketDiagramServer).toSelf().inSingletonScope()
+    rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
+    rebind(TYPES.IModelFactory).to(ChipModelFactory).inSingletonScope()
+    bind(TYPES.IDiagramServer).to(WebSocketDiagramServer).inSingletonScope()
 })
 
 export default () => {

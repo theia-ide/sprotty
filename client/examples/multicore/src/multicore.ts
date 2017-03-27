@@ -1,9 +1,5 @@
 import {
-    ActionDispatcher,
-    SetModelAction,
-    SelectCommand,
-    SelectAction,
-    ActionHandlerRegistry,
+    TYPES, IActionDispatcher, SetModelAction, SelectCommand, SelectAction, ActionHandlerRegistry,
     ViewRegistry
 } from "../../../src/base"
 import {Direction} from "../../../src/utils"
@@ -79,7 +75,7 @@ export default function runMulticore() {
     children = children.concat(crossbars)
     children = children.concat(cores)
 
-    const modelFactory = new ChipModelFactory()
+    const modelFactory = container.get<ChipModelFactory>(TYPES.IModelFactory)
     const chipSchema: ChipSchema = {
         id: 'chip',
         type: 'chip',
@@ -90,14 +86,14 @@ export default function runMulticore() {
     const chip = modelFactory.createRoot(chipSchema)
 
     // Register views
-    const viewRegistry = container.get(ViewRegistry)
+    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
     viewRegistry.register('chip', ChipView)
     viewRegistry.register('core', CoreView)
     viewRegistry.register('crossbar', CrossbarView)
     viewRegistry.register('channel', ChannelView)
 
     // Run
-    const dispatcher = container.get(ActionDispatcher)
+    const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
     const action = new SetModelAction(chip)
     dispatcher.dispatch(action)
 

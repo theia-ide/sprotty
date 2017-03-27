@@ -1,7 +1,7 @@
 import "reflect-metadata"
 import {injectable} from "inversify"
 
-export interface Logger {
+export interface ILogger {
     error(message: string, ...params: any[]): void
     warn(message: string, ...params: any[]): void
     info(message: string, ...params: any[]): void
@@ -9,7 +9,7 @@ export interface Logger {
 }
 
 @injectable()
-export class NullLogger implements Logger {
+export class NullLogger implements ILogger {
     error(message: string, ...params: any[]): void {}
     warn(message: string, ...params: any[]): void {}
     info(message: string, ...params: any[]): void {}
@@ -17,7 +17,7 @@ export class NullLogger implements Logger {
 }
 
 @injectable()
-export class ConsoleLogger implements Logger {
+export class ConsoleLogger implements ILogger {
     error(message: string, ...params: any[]): void {
         console.error.apply(this, arguments)
     }

@@ -60,7 +60,7 @@ describe('action dispatcher', () => {
         expect(undoCount).to.be.equal(1)
         expect(redoCount).to.be.equal(1)
 
-        const registry = container.get(ActionHandlerRegistry)
+        const registry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
         registry.registerCommand(MoveCommand)
     
         actionDispatcher.dispatch(new MoveAction([], false))

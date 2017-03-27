@@ -6,7 +6,7 @@ import {Command, CommandActionHandler} from "./commands"
 import {SetModelAction, SetModelCommand} from "../features/model-manipulation"
 import { ServerActionHandlerFactory } from "./server-action-handler"
 import { IActionDispatcher } from "./action-dispatcher"
-import {Logger} from "../../utils/logging"
+import {ILogger} from "../../utils/logging"
 
 /**
  * An action describes a change to the model declaratively.
@@ -42,7 +42,7 @@ export class ActionHandlerRegistry extends InstanceRegistry<ActionHandler> {
     @inject(TYPES.ServerActionHandlerFactory) protected serverActionHandlerFactory: ServerActionHandlerFactory
 
     constructor(@multiInject(TYPES.ICommand) @optional() commandCtrs: (new (Action) => Command)[],
-                @inject(TYPES.Logger) protected logger: Logger) {
+                @inject(TYPES.ILogger) protected logger: ILogger) {
         super()
         commandCtrs.forEach(
             commandCtr => this.registerCommand(commandCtr)

@@ -2,9 +2,9 @@ import "reflect-metadata"
 import {injectable, inject} from "inversify"
 import {TYPES} from "../types"
 import {SModelRoot, SModel, SModelFactory} from "../model"
-import {Logger} from "../../utils"
+import {ILogger} from "../../utils"
 import {Command, CommandExecutionContext} from "./commands"
-import {ViewerProvider} from "../view/viewer"
+import {IViewerProvider} from "../view/viewer"
 
 export interface ICommandStack {
     execute(commands: Command[]): void
@@ -20,9 +20,9 @@ export class CommandStack implements ICommandStack {
 
     defaultDuration = 250
 
-    @inject(SModelFactory) protected modelFactory: SModelFactory
-    @inject(TYPES.ViewerProvider) protected viewerProvider: ViewerProvider
-    @inject(TYPES.Logger) protected logger: Logger
+    @inject(TYPES.IModelFactory) protected modelFactory: SModelFactory
+    @inject(TYPES.IViewerProvider) protected viewerProvider: IViewerProvider
+    @inject(TYPES.ILogger) protected logger: ILogger
 
     protected currentPromise: Promise<SModelRoot> = Promise.resolve(SModel.EMPTY_ROOT)
 
@@ -157,4 +157,4 @@ export class CommandStack implements ICommandStack {
     }
 }
 
-export type CommandStackProvider = () => Promise<CommandStack>
+export type ICommandStackProvider = () => Promise<ICommandStack>

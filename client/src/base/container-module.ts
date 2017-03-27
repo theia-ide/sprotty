@@ -1,53 +1,50 @@
 import {ContainerModule, interfaces} from "inversify"
 import {NullLogger} from "../utils"
-import { DiagramServer } from "../remote"
+import { IDiagramServer } from "../remote"
 import {
-    ActionDispatcher, CommandStack, ActionHandlerRegistry, ServerActionHandler, ServerActionHandlerFactory,
-    ActionHandler, SetModelCommand
+    ActionDispatcher, IActionDispatcher, CommandStack, ICommandStack, ActionHandlerRegistry,
+    ServerActionHandler, ServerActionHandlerFactory, ActionHandler, SetModelCommand
 } from "./intent"
 import {
-    Viewer, ViewRegistry, ViewerOptions, FocusFixDecorator, MouseTool, KeyTool
+    Viewer, IViewer, ViewRegistry, IViewerOptions, FocusFixDecorator, MouseTool, KeyTool
 } from "./view"
 import {SModelFactory} from "./model"
 import { TYPES } from "./types"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
-    bind(TYPES.Logger).to(NullLogger).inSingletonScope()
+    bind(TYPES.ILogger).to(NullLogger).inSingletonScope()
 
     // Action Dispatcher ---------------------------------------------
-    bind(ActionDispatcher).toSelf().inSingletonScope()
     bind(TYPES.IActionDispatcher).to(ActionDispatcher).inSingletonScope()
-    bind(TYPES.ActionDispatcherProvider).toProvider<ActionDispatcher>((context) => {
+    bind(TYPES.IActionDispatcherProvider).toProvider<IActionDispatcher>((context) => {
         return () => {
-            return new Promise<ActionDispatcher>((resolve) => {
-                resolve(context.container.get(ActionDispatcher))
+            return new Promise<IActionDispatcher>((resolve) => {
+                resolve(context.container.get<IActionDispatcher>(TYPES.IActionDispatcher))
             })
         }
     })
 
     // Command Stack ---------------------------------------------
-    bind(CommandStack).toSelf().inSingletonScope()
     bind(TYPES.ICommandStack).to(CommandStack).inSingletonScope()
-    bind(TYPES.CommandStackProvider).toProvider<CommandStack>((context) => {
+    bind(TYPES.ICommandStackProvider).toProvider<ICommandStack>((context) => {
         return () => {
-            return new Promise<CommandStack>((resolve) => {
-                resolve(context.container.get(CommandStack))
+            return new Promise<ICommandStack>((resolve) => {
+                resolve(context.container.get<ICommandStack>(TYPES.ICommandStack))
             })
         }
     })
 
     // Viewer ---------------------------------------------
-    bind(Viewer).toSelf().inSingletonScope()
     bind(TYPES.IViewer).to(Viewer).inSingletonScope()
-    bind(TYPES.ViewerProvider).toProvider<Viewer>((context) => {
+    bind(TYPES.IViewerProvider).toProvider<IViewer>((context) => {
         return () => {
-            return new Promise<Viewer>((resolve) => {
-                resolve(context.container.get(Viewer))
+            return new Promise<IViewer>((resolve) => {
+                resolve(context.container.get<IViewer>(TYPES.IViewer))
             })
         }
     })
-    bind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
+    bind<IViewerOptions>(TYPES.IViewerOptions).toConstantValue({
         baseDiv: 'sprotty'
     })
 
@@ -57,21 +54,21 @@ let defaultContainerModule = new ContainerModule(bind => {
     bind(TYPES.VNodeDecorator).to(FocusFixDecorator).inSingletonScope()
 
     // Registries ---------------------------------------------
-    bind(ActionHandlerRegistry).toSelf().inSingletonScope()
-    bind(ViewRegistry).toSelf().inSingletonScope()
+    bind(TYPES.ActionHandlerRegistry).to(ActionHandlerRegistry).inSingletonScope()
+    bind(TYPES.ViewRegistry).to(ViewRegistry).inSingletonScope()
 
     // Model Factory ---------------------------------------------
-    bind(SModelFactory).toSelf().inSingletonScope()
+    bind(TYPES.IModelFactory).to(SModelFactory).inSingletonScope()
 
     // Action Handlers ---------------------------------------------
     bind(TYPES.ServerActionHandlerFactory).toFactory<ServerActionHandler>((context: interfaces.Context) => {
         return (immediateHandler?: ActionHandler) => {
-            const diagramServer = context.container.get<DiagramServer>(TYPES.DiagramServer)
+            const diagramServer = context.container.get<IDiagramServer>(TYPES.IDiagramServer)
             return new ServerActionHandler(diagramServer, immediateHandler)
         }
     })
 
-    // Commands
+    // Default commands
     bind(TYPES.ICommand).toConstructor(SetModelCommand)
 })
 

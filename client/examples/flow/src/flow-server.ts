@@ -1,5 +1,5 @@
 import {
-    ActionDispatcher, SelectCommand, SelectAction, ActionHandlerRegistry, RequestOnUpdateHandler,
+    TYPES, IActionDispatcher, SelectCommand, SelectAction, ActionHandlerRegistry, RequestOnUpdateHandler,
     ViewRegistry, RequestModelAction, UpdateModelAction
 } from "../../../src/base"
 import {SGraphView, StraightEdgeView} from "../../../src/graph"
@@ -12,22 +12,22 @@ export default function runFlowServer() {
     const container = createContainer()
 
     // Register commands
-    const actionHandlerRegistry = container.get(ActionHandlerRegistry)
-    const dispatcher = container.get(ActionDispatcher)
+    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
+    const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
     actionHandlerRegistry.registerServerMessage(SelectCommand.KIND, SelectCommand)
     actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
     actionHandlerRegistry.registerServerMessage(ResizeCommand.KIND)
     actionHandlerRegistry.register(UpdateModelAction.KIND, new RequestOnUpdateHandler())
 
     // Register views
-    const viewRegistry = container.get(ViewRegistry)
+    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
     viewRegistry.register('graph', SGraphView)
     viewRegistry.register('execution', ExecutionNodeView)
     viewRegistry.register('barrier', BarrierNodeView)
     viewRegistry.register('edge', StraightEdgeView)
 
     // Connect to the diagram server
-    const diagramServer = container.get(WebSocketDiagramServer)
+    const diagramServer = container.get<WebSocketDiagramServer>(TYPES.IDiagramServer)
     diagramServer.connect('ws://localhost:8080/diagram').then(connection => {
         // Run
         const action = new RequestModelAction()
