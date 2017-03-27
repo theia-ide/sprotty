@@ -35,7 +35,7 @@ export class ViewportCommand extends AbstractCommand {
 
     execute(model: SModelRoot, context: CommandExecutionContext) {
         const element = model.index.getById(this.action.elementId)
-        if(element && isViewport(element)) {
+        if (element && isViewport(element)) {
             this.element = element
             this.oldViewport = {
                 scroll: {

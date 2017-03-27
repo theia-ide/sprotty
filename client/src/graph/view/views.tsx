@@ -1,5 +1,5 @@
 import {View, RenderingContext} from "../../base/view"
-import { Point, manhattanDistance, EMPTY_BOUNDS } from "../../utils"
+import {Point, manhattanDistance} from "../../utils"
 import {SGraph, SNode, SEdge} from "../model"
 import {VNode} from "snabbdom/vnode"
 import * as snabbdom from "snabbdom-jsx"
@@ -11,7 +11,7 @@ const JSX = {createElement: snabbdom.svg}
  */
 export class SGraphView implements View {
 
-    render(model: SGraph, context: RenderingContext): VNode  {
+    render(model: SGraph, context: RenderingContext): VNode {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
         return <svg key={model.id} id={model.id} class-graph={true}>
             <g transform={transform}>
@@ -52,7 +52,7 @@ export class StraightEdgeView implements View {
         const targetView = context.viewer.viewRegistry.get(target.type, target)
         if (!(targetView instanceof SNodeView))
             return this.renderDanglingEdge("expected target view type: SNodeView", edge, context)
-        
+
         let path: string
         if (edge.routingPoints && edge.routingPoints.length >= 1) {
             // Use the first routing point as start anchor reference
@@ -61,12 +61,12 @@ export class StraightEdgeView implements View {
             if (!sourceAnchor.x)
                 sourceAnchor.x = source.x || 0
             if (!sourceAnchor.y)
-                sourceAnchor.y = source.y || 0
+                sourceAnchor.y = source.y || 0
             if (manhattanDistance(sourceAnchor, p0) > 2)
                 path = `M ${sourceAnchor.x},${sourceAnchor.y} L ${p0.x},${p0.y}`
             else
                 path = `M ${sourceAnchor.x},${sourceAnchor.y}`
-            
+
             // Add the remaining routing points except the last one
             for (let i = 1; i < edge.routingPoints.length - 1; i++) {
                 let pi = edge.routingPoints[i]
@@ -76,13 +76,13 @@ export class StraightEdgeView implements View {
             // Use the target center as start anchor reference
             const reference = {
                 x: target.x + (targetView.getWidth(target) / 2 || 0),
-                y: target.y + (targetView.getHeight(target) / 2 || 0)
+                y: target.y + (targetView.getHeight(target) / 2 || 0)
             }
             const sourceAnchor = sourceView.getAnchor(source, reference)
             if (!sourceAnchor.x)
                 sourceAnchor.x = source.x || 0
             if (!sourceAnchor.y)
-                sourceAnchor.y = source.y || 0
+                sourceAnchor.y = source.y || 0
             path = `M ${sourceAnchor.x},${sourceAnchor.y}`
         }
 
@@ -93,7 +93,7 @@ export class StraightEdgeView implements View {
             if (!targetAnchor.x)
                 targetAnchor.x = target.x || 0
             if (!targetAnchor.y)
-                targetAnchor.y = target.y || 0
+                targetAnchor.y = target.y || 0
             if (manhattanDistance(targetAnchor, pn) > 2)
                 path += ` L ${pn.x},${pn.y} L ${targetAnchor.x},${targetAnchor.y}`
             else
@@ -102,17 +102,17 @@ export class StraightEdgeView implements View {
             // Use the source center as end anchor reference
             const reference = {
                 x: source.x + (sourceView.getWidth(source) / 2 || 0),
-                y: source.y + (sourceView.getHeight(source) / 2 || 0)
+                y: source.y + (sourceView.getHeight(source) / 2 || 0)
             }
             const targetAnchor = targetView.getAnchor(target, reference)
             if (!targetAnchor.x)
                 targetAnchor.x = target.x || 0
             if (!targetAnchor.y)
-                targetAnchor.y = target.y || 0
+                targetAnchor.y = target.y || 0
             path += ` L ${targetAnchor.x},${targetAnchor.y}`
         }
 
-        return <path key={edge.id} id={edge.id} class-edge={true} d={path} />
+        return <path key={edge.id} id={edge.id} class-edge={true} d={path}/>
     }
 
     protected renderDanglingEdge(message: string, edge: SEdge, context: RenderingContext) {

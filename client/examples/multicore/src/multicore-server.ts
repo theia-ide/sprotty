@@ -1,7 +1,6 @@
 import {
     ActionDispatcher,
     SelectCommand,
-    SelectAction,
     ActionHandlerRegistry,
     ViewRegistry,
     RequestModelAction

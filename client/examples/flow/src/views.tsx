@@ -1,9 +1,8 @@
-import {h} from "snabbdom"
 import {VNode} from "snabbdom/vnode"
 import {RenderingContext} from "../../../src/base"
-import { CircularNodeView, RectangularNodeView } from "../../../src/lib"
+import {CircularNodeView, RectangularNodeView} from "../../../src/lib"
 import * as snabbdom from "snabbdom-jsx"
-import { ExecutionNode, BarrierNode } from "./flowmodel"
+import {ExecutionNode, BarrierNode} from "./flowmodel"
 
 const JSX = {createElement: snabbdom.svg}
 

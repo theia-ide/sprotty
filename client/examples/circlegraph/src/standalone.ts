@@ -8,7 +8,6 @@ import {
 import {SGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema} from "../../../src/graph"
 import {CircleNodeView} from "./views"
 import createContainer from "./inversify.config"
-import {SelectAction} from "../../../src/features/select/select"
 
 export default function runStandalone() {
     const container = createContainer()

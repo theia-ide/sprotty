@@ -1,20 +1,15 @@
 import {ContainerModule, interfaces} from "inversify"
 import {NullLogger} from "../utils"
-import {
-    ActionDispatcher,
-    CommandStack,
-    ActionHandlerRegistry,
-    ServerActionHandler,
-    ServerActionHandlerFactory,
-    ActionHandler
-} from "./intent"
-import {Viewer, ViewRegistry, ViewerOptions} from "./view"
-import {SModelFactory} from "./model"
-import {TYPES} from "./types"
-import {MouseTool, MouseListener} from "./view/mouse-tool"
-import {KeyTool, KeyListener} from "./view/key-tool"
-import { SetModelCommand } from "./features/model-manipulation"
 import { DiagramServer } from "../remote"
+import {
+    ActionDispatcher, CommandStack, ActionHandlerRegistry, ServerActionHandler, ServerActionHandlerFactory,
+    ActionHandler, SetModelCommand
+} from "./intent"
+import {
+    Viewer, ViewRegistry, ViewerOptions, FocusFixDecorator, MouseTool, KeyTool
+} from "./view"
+import {SModelFactory} from "./model"
+import { TYPES } from "./types"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
@@ -58,9 +53,8 @@ let defaultContainerModule = new ContainerModule(bind => {
 
     // Tools & Decorators --------------------------------------
     bind(TYPES.VNodeDecorator).to(MouseTool).inSingletonScope()
-    bind(TYPES.MouseListener).to(MouseListener)
     bind(TYPES.VNodeDecorator).to(KeyTool).inSingletonScope()
-    bind(TYPES.KeyListener).to(KeyListener)
+    bind(TYPES.VNodeDecorator).to(FocusFixDecorator).inSingletonScope()
 
     // Registries ---------------------------------------------
     bind(ActionHandlerRegistry).toSelf().inSingletonScope()

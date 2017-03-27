@@ -4,7 +4,7 @@ import {Action} from "../../base/intent/actions"
 import {BehaviorSchema} from "../../base/model/behavior"
 import {SModelElement, SChildElement, SModelRoot} from "../../base/model/smodel"
 import {MouseListener} from "../../base/view/mouse-tool"
-import {isCtrlOrCmd} from "../../utils/utils"
+import {isCtrlOrCmd} from "../../utils/browser"
 import {VNodeUtils} from "../../base/view/vnode-utils"
 import {KeyListener} from "../../base/view/key-tool"
 import {SNode, SEdge} from "../../graph/model/sgraph"
@@ -49,15 +49,15 @@ export class SelectCommand extends AbstractCommand {
                         element: element,
                         index: element.parent.children.indexOf(element)
                     })
-                    if(element instanceof SNode)
+                    if (element instanceof SNode)
                         selectedNodeIds.push(id)
                 }
             })
-        if(selectedNodeIds.length > 0) {
+        if (selectedNodeIds.length > 0) {
             const connectedEdges: ElementSelection[] = []
             model.index.all().forEach(
                 element => {
-                    if(element instanceof SEdge
+                    if (element instanceof SEdge
                         && (selectedNodeIds.indexOf(element.sourceId) >= 0
                         || selectedNodeIds.indexOf(element.targetId) >= 0)) {
                         connectedEdges.push({
@@ -85,12 +85,12 @@ export class SelectCommand extends AbstractCommand {
         for (let i = this.selected.length - 1; i >= 0; --i) {
             const selection = this.selected[i]
             const element = selection.element
-            if(isSelectable(element))
+            if (isSelectable(element))
                 element.selected = false
             element.parent.move(element, selection.index)
         }
         this.deselected.reverse().forEach(selection => {
-            if(isSelectable(selection.element))
+            if (isSelectable(selection.element))
                 selection.element.selected = true
         })
         return model
@@ -104,11 +104,11 @@ export class SelectCommand extends AbstractCommand {
             element.parent.move(element, childrenLength - 1)
         }
         this.selected.forEach(selection => {
-            if(isSelectable(selection.element))
+            if (isSelectable(selection.element))
                 selection.element.selected = true
         })
         this.deselected.forEach(selection => {
-            if(isSelectable(selection.element))
+            if (isSelectable(selection.element))
                 selection.element.selected = false
         })
         return model
@@ -138,7 +138,7 @@ export class SelectMouseListener extends MouseListener {
                     return [new SelectAction([target.id], deselectIds)]
                 } else {
 
-                    if(isCtrlOrCmd(event)) {
+                    if (isCtrlOrCmd(event)) {
                         this.wasSelected = false
                         return [new SelectAction([], [target.id])]
                     } else {

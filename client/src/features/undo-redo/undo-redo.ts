@@ -1,7 +1,7 @@
 import {Action} from "../../base/intent/actions"
 import {KeyListener} from "../../base/view/key-tool"
 import {SModelElement} from "../../base/model/smodel"
-import {isCtrlOrCmd} from "../../utils/utils"
+import {isCtrlOrCmd} from "../../utils/browser"
 
 export class UndoAction implements Action {
     static readonly KIND = 'undo'

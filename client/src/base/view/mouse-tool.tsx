@@ -6,8 +6,8 @@ import {SModelRoot} from "../model/smodel"
 import {VNodeUtils} from "./vnode-utils"
 import * as snabbdom from "snabbdom-jsx"
 import {Action} from "../intent/actions"
-import {injectable, inject, multiInject} from "inversify"
-import {ActionDispatcher, IActionDispatcher} from "../intent/action-dispatcher"
+import {injectable, inject, multiInject, optional} from "inversify"
+import {IActionDispatcher} from "../intent/action-dispatcher"
 import {TYPES} from "../types"
 
 const JSX = {createElement: snabbdom.svg}
@@ -17,7 +17,7 @@ export class MouseTool implements VNodeDecorator {
 
     @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
 
-    @multiInject(TYPES.MouseListener) protected mouseListeners: MouseListener[] = []
+    @multiInject(TYPES.MouseListener)@optional() protected mouseListeners: MouseListener[] = []
 
     register(mouseListener: MouseListener) {
         this.mouseListeners.push(mouseListener)
@@ -25,7 +25,7 @@ export class MouseTool implements VNodeDecorator {
 
     deregister(mouseListener: MouseListener) {
         const index = this.mouseListeners.indexOf(mouseListener)
-        if(index >= 0)
+        if (index >= 0)
             this.mouseListeners.splice(index, 1)
     }
 
@@ -44,9 +44,9 @@ export class MouseTool implements VNodeDecorator {
     }
 
     protected handleEvent(methodName: string, model: SModelRoot, event: MouseEvent) {
-        if(document) {
+        if (document) {
             const domElement = document.getElementById(model.id)
-            if(domElement)
+            if (domElement)
                 domElement.focus()
         }
         const element = this.getTargetElement(model, event)
@@ -54,8 +54,8 @@ export class MouseTool implements VNodeDecorator {
             return
         const actions = this.mouseListeners
             .map(listener => listener[methodName].apply(listener, [element, event]))
-            .reduce((a, b)=>a.concat(b))
-        if(actions.length > 0) {
+            .reduce((a, b) => a.concat(b))
+        if (actions.length > 0) {
             event.preventDefault()
             this.actionDispatcher.dispatchAll(actions)
         }

@@ -1,4 +1,5 @@
 import {ContainerModule, Container} from "inversify"
+import {makeLoggerMiddleware} from 'inversify-logger-middleware'
 import {SModelFactory, TYPES} from "../../../src/base"
 import {SGraphFactory} from "../../../src/graph"
 import {ConsoleLogger} from "../../../src/utils"
@@ -15,6 +16,7 @@ const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) =>
 
 export default () => {
     const container = new Container()
+    container.applyMiddleware(makeLoggerMiddleware())
     container.load(defaultModule, selectModule, moveModule, resizeModule, undoRedoModule, viewportModule, circlegraphModule)
     return container
 }

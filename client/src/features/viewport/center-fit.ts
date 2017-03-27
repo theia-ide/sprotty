@@ -7,7 +7,7 @@ import {Bounds, getBounds, combine, EMPTY_BOUNDS, center} from "../../utils/geom
 import {isMoveable} from "../move"
 import {Viewport, isViewport, ViewportAnimation} from "./viewport"
 import {KeyListener} from "../../base/view/key-tool"
-import {isCtrlOrCmd} from "../../utils/utils"
+import {isCtrlOrCmd} from "../../utils/browser"
 
 export class CenterAction implements Action {
     readonly kind = CenterCommand.KIND
@@ -77,14 +77,14 @@ export abstract class AbstractViewportCommand extends AbstractCommand {
     }
 
     undo(model: SModelRoot, context: CommandExecutionContext) {
-        if(isViewport(model) && this.newViewport)
+        if (isViewport(model) && this.newViewport)
             return new ViewportAnimation(model, this.newViewport, this.oldViewport, context).start()
         else
             return model
     }
 
     redo(model: SModelRoot, context: CommandExecutionContext) {
-        if(isViewport(model) && this.newViewport)
+        if (isViewport(model) && this.newViewport)
             return new ViewportAnimation(model, this.oldViewport, this.newViewport, context).start()
         else
             return model

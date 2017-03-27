@@ -1,7 +1,4 @@
-import {h} from "snabbdom"
-import {VNode} from "snabbdom/vnode"
-import {RenderingContext} from "../base"
-import { SNodeView, SNode } from "../graph"
+import {SNodeView, SNode} from "../graph"
 import {Point} from "../utils"
 import * as snabbdom from "snabbdom-jsx"
 

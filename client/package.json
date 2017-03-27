@@ -31,6 +31,7 @@
     "webpack": "^2.2.1"
   },
   "dependencies": {
+    "inversify-logger-middleware": "^3.0.0",
     "reconnecting-websocket": "^3.0.3",
     "snabbdom": "^0.6.4"
   }
