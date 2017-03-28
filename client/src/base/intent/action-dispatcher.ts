@@ -5,7 +5,7 @@ import { TYPES } from "../types"
 import { UndoAction, RedoAction } from "../../features/undo-redo/undo-redo"
 import { Action, ActionHandlerRegistry } from "./actions"
 import { ICommandStack } from "./command-stack"
-import { Command } from "./commands"
+import {AnimationFrameSyncer} from "../animations/animation-frame-syncer"
 
 export interface IActionDispatcher {
     dispatch(action: Action): void
@@ -22,60 +22,44 @@ export class ActionDispatcher implements IActionDispatcher {
     @inject(TYPES.ActionHandlerRegistry) protected actionHandlerRegistry: ActionHandlerRegistry
     @inject(TYPES.ICommandStack) protected commandStack: ICommandStack
     @inject(TYPES.ILogger) protected logger: ILogger
+    @inject(TYPES.IAnimationFrameSyncer) protected syncer: AnimationFrameSyncer
 
-    nextFrameActions: Action[] = []
-    thisFrameActions: Action[] = []
-
-    constructor() {
-        if(typeof window !== 'undefined')
-            this.nextFrame()
-    }
-
-    protected nextFrame() {
-        if(this.thisFrameActions.length > 0)
-            this.doDispatch(this.thisFrameActions)
-        this.thisFrameActions = this.nextFrameActions
-        this.nextFrameActions = []
-        window.requestAnimationFrame(() => this.nextFrame())
-    }
+    nextFrameActions:Action[] = []
 
     dispatchNextFrame(action: Action) {
+        const trigger = this.nextFrameActions.length === 0
         this.nextFrameActions.push(action)
+        if(trigger) {
+            this.syncer.onNextFrame(() => {
+                const allActions = this.nextFrameActions
+                this.nextFrameActions = []
+                this.dispatchAll(allActions)
+            })
+        }
     }
 
     dispatchAll(actions: Action[]): void {
-        this.thisFrameActions = this.thisFrameActions.concat(actions)
+        actions.forEach(action => this.dispatch(action))
     }
 
     dispatch(action: Action): void {
-        this.thisFrameActions.push(action)
-    }
-
-    protected doDispatch(actions: Action[]) {
-        let commands: Command[] = []
-        let newActions: Action[] = []
-        actions.forEach(
-            action => {
-                if (action.kind == UndoAction.KIND) {
-                    this.commandStack.undo()
-                } else if (action.kind == RedoAction.KIND) {
-                    this.commandStack.redo()
-                } else {
-                    const result = this.handleAction(action)
-                    if(result){
-                        if (result.commands)
-                            commands = commands.concat(result.commands)
-
-                        if (result.actions && result.actions.length > 0)
-                            newActions = newActions.concat(result.actions)
-                    }
-                }
+        if(this.nextFrameActions.length > 0) {
+            this.dispatchNextFrame(action)
+            return
+        }
+        if (action.kind == UndoAction.KIND) {
+            this.commandStack.undo()
+        } else if (action.kind == RedoAction.KIND) {
+            this.commandStack.redo()
+        } else {
+            const result = this.handleAction(action)
+            if (result) {
+                if (result.commands)
+                    this.commandStack.execute(result.commands)
+                if (result.actions)
+                    this.dispatchAll(result.actions)
             }
-        )
-        if(commands.length > 0)
-            this.commandStack.execute(commands)
-        if(newActions.length > 0)
-            this.nextFrameActions = this.nextFrameActions.concat(newActions)
+        }
     }
 
     protected handleAction(action: Action) {
@@ -90,4 +74,3 @@ export class ActionDispatcher implements IActionDispatcher {
     }
 }
 
-export type ActionDispatcherProvider = () => Promise<IActionDispatcher>

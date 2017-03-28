@@ -60,7 +60,6 @@ export class ResizeCommand extends AbstractCommand {
     redo(root: SModelRoot, context: CommandExecutionContext) {
         this.resizes.forEach(
             resize => {
-                console.log(JSON.stringify(resize.element.bounds))
                 resize.element.bounds = resize.newBounds
                 resize.element.autosize = false
             }

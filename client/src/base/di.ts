@@ -13,10 +13,15 @@ import { SModelFactory } from "./model/smodel-factory"
 import { ServerActionHandler } from "./intent/server-action-handler"
 import { SetModelCommand } from "./features/model-manipulation"
 import { TYPES } from "./types"
+import {ViewerCache} from "./view/viewer-cache"
+import {AnimationFrameSyncer} from "./animations/animation-frame-syncer"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
     bind(TYPES.ILogger).to(NullLogger).inSingletonScope()
+
+    // Animation Frame Sync ------------------------------------------
+    bind(TYPES.IAnimationFrameSyncer).to(AnimationFrameSyncer).inSingletonScope()
 
     // Action Dispatcher ---------------------------------------------
     bind(TYPES.IActionDispatcher).to(ActionDispatcher).inSingletonScope()
@@ -39,7 +44,8 @@ let defaultContainerModule = new ContainerModule(bind => {
     })
 
     // Viewer ---------------------------------------------
-    bind(TYPES.IViewer).to(Viewer).inSingletonScope()
+    bind(TYPES.IViewer).to(Viewer).inSingletonScope().whenTargetNamed('delegate')
+    bind(TYPES.IViewer).to(ViewerCache).inSingletonScope().whenTargetIsDefault()
     bind(TYPES.IViewerProvider).toProvider<IViewer>((context) => {
         return () => {
             return new Promise<IViewer>((resolve) => {

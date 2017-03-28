@@ -2,6 +2,7 @@ export let TYPES = {
     IActionDispatcher: Symbol('IActionDispatcher'),
     IActionDispatcherProvider: Symbol('IActionDispatcherProvider'),
     ActionHandlerRegistry: Symbol('ActionHandlerRegistry'),
+    IAnimationFrameSyncer: Symbol('IAnimationFrameSyncer'),
     ICommand: Symbol('ICommand'),
     ICommandStack: Symbol('ICommandStack'),
     ICommandStackProvider: Symbol('ICommandStackProvider'),
