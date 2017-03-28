@@ -2,7 +2,7 @@ import {SModelElement, SModel} from "../../base/model/smodel"
 import {BehaviorSchema} from "../../base/model/behavior"
 import {MouseListener} from "../../base/view/mouse-tool"
 import {Action} from "../../base/intent/actions"
-import {isViewport, Viewport, ViewportAction} from "./"
+import {Viewport, isViewport, ViewportAction} from "./viewport"
 
 export interface Zoomable extends BehaviorSchema {
     zoom: number

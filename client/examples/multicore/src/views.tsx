@@ -4,7 +4,7 @@ import {Chip, Core, Channel, Crossbar} from "./chipmodel"
 import {Direction} from "../../../src/utils/geometry"
 import {ColorMap, RGBColor} from "../../../src/utils/color"
 import * as snabbdom from "snabbdom-jsx"
-import {thunk} from "../../../src/base/view/thunk"
+import {ThunkView} from "../../../src/base/view/thunk-view"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -19,12 +19,16 @@ export class ChipView implements View {
     }
 }
 
-export class CoreView implements View {
+export class CoreView extends ThunkView {
     static readonly width = 45
     static readonly dist = 20
 
-    render(model: Core, context: RenderingContext): VNode {
-        return thunk('g', model.id, () => this.doRender(model, context), [model.load])
+    selector(model: Core) {
+        return 'g'
+    }
+
+    arguments(model: Core) {
+        return [model.load, model.selected]
     }
 
     doRender(model: Core, context: RenderingContext): VNode {
@@ -113,12 +117,20 @@ class LoadColor {
     }
 }
 
-export class ChannelView implements View {
+export class ChannelView extends ThunkView {
+
     static readonly width = 2
 
-    render(model: Channel, context: RenderingContext): VNode {
-        const isVisible = (model.root as Chip).zoom * ChannelView.width < 3
-        return thunk('polygon', model.id, () => this.doRender(model, context), [model.load, isVisible])
+    arguments(model: Channel): any[] {
+        return [model.load, this.isVisible(model)]
+    }
+
+    selector(model: Channel): string {
+        return 'polygon'
+    }
+
+    isVisible(model: Channel) {
+        (model.root as Chip).zoom * ChannelView.width < 3
     }
 
     doRender(model: Channel, context: RenderingContext): VNode {
