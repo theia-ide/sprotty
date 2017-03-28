@@ -7,6 +7,10 @@ export class AnimationFrameSyncer {
     endTasks: ((number?)=>void) [] = []
     triggered: boolean = false
 
+    isAvailable(): boolean {
+        return typeof requestAnimationFrame === "function"
+    }
+
     onNextFrame(task: (number?)=>void) {
         this.tasks.push(task)
         this.trigger()
@@ -20,7 +24,10 @@ export class AnimationFrameSyncer {
     protected trigger() {
         if(!this.triggered) {
             this.triggered = true
-            window.requestAnimationFrame((time: number) => this.run(time))
+            if(this.isAvailable())
+                requestAnimationFrame((time: number) => this.run(time))
+            else
+                setTimeout((time)=>this.run(time))
         }
     }
 

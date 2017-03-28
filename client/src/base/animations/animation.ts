@@ -27,17 +27,16 @@ export abstract class Animation {
                     const current = this.tween(this.ease(t), this.context)
                     this.context.modelChanged.update(current)
                     if (t == 1) {
-                        // TODO remove this logging or use the Logger interface
-                        console.log((frames * 1000 / this.context.duration) + ' fps')
+                        this.context.logger.log((frames * 1000 / this.context.duration) + ' fps')
                         resolve(current)
                     } else {
-                        requestAnimationFrame(lambda)
+                        this.context.syncer.onNextFrame(lambda)
                     }
                 }
                 let start: number | undefined = undefined
                 let frames = 0
-                if (typeof requestAnimationFrame === "function") {
-                    requestAnimationFrame(lambda)
+                if (this.context.syncer.isAvailable()) {
+                    this.context.syncer.onNextFrame(lambda)
                 } else {
                     const finalModel = this.tween(1, this.context)
                     resolve(finalModel)

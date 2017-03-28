@@ -7,6 +7,7 @@ import { ILogger } from "../../utils/logging"
 import { TYPES } from "../types"
 import { SModelRoot } from "../model/smodel"
 import { EMPTY_ROOT } from "../model/smodel-factory"
+import {AnimationFrameSyncer} from "../animations/animation-frame-syncer"
 
 export interface ICommandStack {
     execute(commands: Command[]): void
@@ -25,6 +26,7 @@ export class CommandStack implements ICommandStack {
     @inject(TYPES.IModelFactory) protected modelFactory: IModelFactory
     @inject(TYPES.IViewerProvider) protected viewerProvider: IViewerProvider
     @inject(TYPES.ILogger) protected logger: ILogger
+    @inject(TYPES.IAnimationFrameSyncer) protected syncer: AnimationFrameSyncer
 
     protected currentPromise: Promise<SModelRoot> = Promise.resolve(EMPTY_ROOT)
     protected viewer: IViewer
@@ -43,7 +45,9 @@ export class CommandStack implements ICommandStack {
                                     modelChanged: this,
                                     modelFactory: this.modelFactory,
                                     duration: this.defaultDuration,
-                                    root: model
+                                    root: model,
+                                    logger: this.logger,
+                                    syncer: this.syncer
                                 }
                                 const modelOrPromise = command.execute(model, context)
                                 if (modelOrPromise instanceof Promise)
@@ -93,7 +97,9 @@ export class CommandStack implements ICommandStack {
                                 modelChanged: this,
                                 modelFactory: this.modelFactory,
                                 duration: this.defaultDuration,
-                                root: model
+                                root: model,
+                                logger: this.logger,
+                                syncer: this.syncer
                             }
                             const modelOrPromise = command.undo(model, context)
                             if (modelOrPromise instanceof Promise)
@@ -129,7 +135,9 @@ export class CommandStack implements ICommandStack {
                                 modelChanged: this,
                                 modelFactory: this.modelFactory,
                                 duration: this.defaultDuration,
-                                root: model
+                                root: model,
+                                logger: this.logger,
+                                syncer: this.syncer
                             }
                             const modelOrPromise = command.redo(model, context)
                             if (modelOrPromise instanceof Promise)

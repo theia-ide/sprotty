@@ -2,6 +2,8 @@ import { SModelRoot } from "../model/smodel"
 import { IModelFactory } from "../model/smodel-factory"
 import { IViewer } from "../view/viewer"
 import { ActionHandler, Action, ActionHandlerResult } from "./actions"
+import {ILogger} from "../../utils/logging"
+import {AnimationFrameSyncer} from "../animations/animation-frame-syncer"
 
 /**
  * A command holds the behaviour of an action.
@@ -44,6 +46,8 @@ export interface CommandExecutionContext {
     modelFactory: IModelFactory
     modelChanged: IViewer
     duration: number
+    logger: ILogger
+    syncer: AnimationFrameSyncer
 }
 
 export class CommandActionHandler implements ActionHandler {

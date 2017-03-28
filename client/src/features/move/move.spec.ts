@@ -7,6 +7,8 @@ import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { Point } from "../../utils/geometry"
 import { SNode } from "../../graph/model/sgraph"
 import { MoveCommand, MoveAction, ElementMove } from "./move"
+import {ConsoleLogger} from "../../utils/logging"
+import {AnimationFrameSyncer} from "../../base/animations/animation-frame-syncer"
 
 describe('move', () => {
 
@@ -72,7 +74,9 @@ describe('move', () => {
         root: EMPTY_ROOT,
         modelFactory: graphFactory,
         duration: 0,
-        modelChanged: undefined!
+        modelChanged: undefined!,
+        logger: new ConsoleLogger(),
+        syncer: new AnimationFrameSyncer()
     }
 
     // global so we can carry-over the model, as it's updated, 

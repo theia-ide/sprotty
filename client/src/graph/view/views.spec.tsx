@@ -33,7 +33,7 @@ describe('graph views', () => {
     const container = new Container()
     container.load(defaultModule, selectModule, moveModule)
 
-    const viewer = container.get<Viewer>(TYPES.IViewer)
+    const viewer = container.getNamed<Viewer>(TYPES.IViewer, 'delegate')
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
     viewRegistry.register('graph', SGraphView)
     viewRegistry.register('node:circle', CircleNodeView)

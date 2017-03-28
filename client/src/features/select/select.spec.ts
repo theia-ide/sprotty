@@ -6,6 +6,8 @@ import { SGraphFactory } from "../../graph/model/sgraph-factory"
 import { CommandExecutionContext } from "../../base/intent/commands"
 import { SNode } from "../../graph/model/sgraph"
 import { SelectAction, SelectCommand } from "./select"
+import {ConsoleLogger} from "../../utils/logging"
+import {AnimationFrameSyncer} from "../../base/animations/animation-frame-syncer"
 
 describe('select', () => {
     // setup the GModel
@@ -37,7 +39,9 @@ describe('select', () => {
         root: EMPTY_ROOT,
         modelFactory: modelFactory,
         duration: 0,
-        modelChanged: undefined!
+        modelChanged: undefined!,
+        logger: new ConsoleLogger(),
+        syncer: new AnimationFrameSyncer()
     }
 
     it('execute() works as expected', () => {

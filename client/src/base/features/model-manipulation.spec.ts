@@ -4,6 +4,8 @@ import { EMPTY_ROOT } from "../model/smodel-factory"
 import { SGraphFactory } from "../../graph/model/sgraph-factory"
 import { CommandExecutionContext } from "../intent/commands"
 import { SetModelAction, SetModelCommand } from "./model-manipulation"
+import {ConsoleLogger} from "../../utils/logging"
+import {AnimationFrameSyncer} from "../animations/animation-frame-syncer"
 
 // note: it looks like the API for the set-model command is not
 // finalized. Let's still give the tests a first shot - we can adjust
@@ -40,7 +42,9 @@ describe('SetModelCommand', () => {
         root: EMPTY_ROOT,
         modelFactory: graphFactory,
         duration: 0,
-        modelChanged: undefined!
+        modelChanged: undefined!,
+        logger: new ConsoleLogger(),
+        syncer: new AnimationFrameSyncer()
     }
 
 
