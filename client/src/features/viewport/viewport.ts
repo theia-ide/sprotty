@@ -1,12 +1,25 @@
-import {Action} from "../../base/intent/actions"
-import {Command, CommandExecutionContext, AbstractCommand} from "../../base/intent/commands"
-import {BehaviorSchema} from "../../base/model/behavior"
-import {Scrollable} from "./scroll"
-import {Zoomable} from "./zoom"
-import {SModelElement, SModelRoot} from "../../base/model/smodel"
-import {Animation} from "../../base/animations/animation"
-import {isSizeable} from "../resize/resize"
-import {viewportFeature} from "./index"
+import { ContainerModule } from "inversify"
+import { TYPES } from "../../base/types";
+import { BehaviorSchema } from "../../base/model/behavior"
+import { SModelElement, SModelRoot } from "../../base/model/smodel"
+import { Action } from "../../base/intent/actions"
+import { AbstractCommand, CommandExecutionContext, Command } from "../../base/intent/commands"
+import { isSizeable } from "../resize/resize"
+import { Animation } from "../../base/animations/animation"
+import { CenterCommand, FitToScreenCommand, CenterKeyboardListener } from "./center-fit"
+import { ScrollMouseListener, Scrollable } from "./scroll"
+import { ZoomMouseListener, Zoomable } from "./zoom"
+
+export const viewportFeature = Symbol('viewportFeature')
+
+export const viewportModule = new ContainerModule(bind => {
+    bind(TYPES.ICommand).toConstructor(CenterCommand)
+    bind(TYPES.ICommand).toConstructor(FitToScreenCommand)
+    bind(TYPES.ICommand).toConstructor(ViewportCommand)
+    bind(TYPES.KeyListener).to(CenterKeyboardListener)
+    bind(TYPES.MouseListener).to(ScrollMouseListener)
+    bind(TYPES.MouseListener).to(ZoomMouseListener)
+})
 
 export interface Viewport extends BehaviorSchema, Scrollable, Zoomable {
 }

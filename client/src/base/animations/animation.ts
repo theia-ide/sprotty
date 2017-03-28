@@ -1,6 +1,6 @@
-import {SModelRoot} from "../model"
-import {CommandExecutionContext} from "../intent"
-import {easeInOut} from "./easing"
+import { CommandExecutionContext } from "../intent/commands"
+import { SModelRoot } from "../model/smodel"
+import { easeInOut } from "./easing"
 
 /**
  * An animation uses the rendering loop of the browser to smoothly

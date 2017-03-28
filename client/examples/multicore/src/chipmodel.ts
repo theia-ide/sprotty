@@ -1,8 +1,8 @@
 import {SModelRoot, SModelElementSchema, SChildElement} from "../../../src/base"
 import {Direction, Point, ORIGIN_POINT, EMPTY_BOUNDS, Bounds} from "../../../src/utils"
-import {Selectable, selectFeature} from "../../../src/features/select"
-import {BoundsAware, resizeFeature} from "../../../src/features/resize"
-import {Viewport, viewportFeature} from "../../../src/features/viewport"
+import {
+    Selectable, selectFeature, BoundsAware, resizeFeature, Viewport, viewportFeature
+} from "../../../src/features"
 import {ViewportRootElement} from "../../../src/features/viewport/viewport-root"
 
 export interface ChipSchema extends SModelElementSchema {

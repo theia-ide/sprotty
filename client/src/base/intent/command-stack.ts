@@ -1,11 +1,11 @@
 import "reflect-metadata"
-import {injectable, inject} from "inversify"
-import {TYPES} from "../types"
-import {SModelRoot, SModel, SModelFactory} from "../model"
-import {ILogger} from "../../utils"
-import {Command, CommandExecutionContext} from "./commands"
-import {IViewerProvider, IViewer} from "../view/viewer"
-import {IModelFactory} from "../model/smodel-factory"
+import { injectable, inject } from "inversify"
+import { Command, CommandExecutionContext } from "./commands"
+import { IModelFactory } from "../model/smodel-factory"
+import { IViewerProvider, IViewer } from "../view/viewer"
+import { ILogger } from "../../utils/logging"
+import { TYPES } from "../types"
+import { SModelRoot, SModel } from "../model/smodel"
 
 export interface ICommandStack {
     execute(commands: Command[]): void

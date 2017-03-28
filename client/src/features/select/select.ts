@@ -1,14 +1,23 @@
-import {VNode} from "snabbdom/vnode"
-import {AbstractCommand} from "../../base/intent/commands"
-import {Action} from "../../base/intent/actions"
-import {BehaviorSchema} from "../../base/model/behavior"
-import {SModelElement, SChildElement, SModelRoot} from "../../base/model/smodel"
-import {MouseListener} from "../../base/view/mouse-tool"
-import {isCtrlOrCmd} from "../../utils/browser"
-import {VNodeUtils} from "../../base/view/vnode-utils"
-import {KeyListener} from "../../base/view/key-tool"
-import {SNode, SEdge} from "../../graph/model/sgraph"
-import {selectFeature} from "./index"
+import { ContainerModule } from "inversify"
+import { VNode } from "snabbdom/vnode"
+import { TYPES } from "../../base/types"
+import { BehaviorSchema } from "../../base/model/behavior"
+import { SModelElement, SChildElement, SModelRoot } from "../../base/model/smodel"
+import { Action } from "../../base/intent/actions"
+import { AbstractCommand } from "../../base/intent/commands"
+import { SEdge, SNode } from "../../graph/model/sgraph"
+import { MouseListener } from "../../base/view/mouse-tool"
+import { isCtrlOrCmd } from "../../utils/browser"
+import { VNodeUtils } from "../../base/view/vnode-utils"
+import { KeyListener } from "../../base/view/key-tool"
+
+export const selectFeature = Symbol('selectFeature')
+
+export const selectModule = new ContainerModule(bind => {
+    bind(TYPES.ICommand).toConstructor(SelectCommand)
+    bind(TYPES.KeyListener).to(SelectKeyboardListener)
+    bind(TYPES.MouseListener).to(SelectMouseListener)
+})
 
 export interface Selectable extends BehaviorSchema {
     selected: boolean

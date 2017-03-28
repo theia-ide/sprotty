@@ -1,7 +1,7 @@
-import {VNode} from "snabbdom/vnode"
-import {SModelElement} from "../model"
-import {VNodeUtils} from "./vnode-utils"
-import {injectable} from "inversify"
+import { injectable } from "inversify"
+import { VNode } from "snabbdom/vnode"
+import { SModelElement } from "../model/smodel"
+import { VNodeUtils } from "./vnode-utils"
 
 /**
  * Manipulates a created VNode after it has been created.

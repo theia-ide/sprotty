@@ -1,10 +1,10 @@
 import "reflect-metadata"
-import {injectable} from "inversify"
-import {SModelElement, SModelRoot, SModel} from "../model"
-import {ProviderRegistry} from "../../utils"
-import {Viewer} from "./viewer"
-import {VNode} from "snabbdom/vnode"
 import * as snabbdom from "snabbdom-jsx"
+import { injectable } from "inversify"
+import { VNode } from "snabbdom/vnode"
+import { SModelElement, SModel, SModelRoot } from "../model/smodel"
+import { ProviderRegistry } from "../../utils/utils"
+import { Viewer } from "./viewer"
 
 const JSX = {createElement: snabbdom.svg}
 

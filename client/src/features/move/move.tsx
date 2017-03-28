@@ -1,16 +1,25 @@
-import {VNode} from "snabbdom/vnode"
-import {BehaviorSchema} from "../../base/model/behavior"
-import {Point} from "../../utils/geometry"
-import {SModelElement, SModelRoot, SModelIndex, SModel} from "../../base/model/smodel"
-import {Action} from "../../base/intent/actions"
-import {AbstractCommand, CommandExecutionContext, Command} from "../../base/intent/commands"
-import {Map} from "../../utils/utils"
-import {Animation} from "../../base/animations/animation"
-import {MouseListener} from "../../base/view/mouse-tool"
-import {isViewport, Viewport} from "../viewport/viewport"
-import {isSelectable} from "../select/select"
 import * as snabbdom from "snabbdom-jsx"
-import {moveFeature} from "./index"
+import { ContainerModule } from "inversify"
+import { VNode } from "snabbdom/vnode"
+import { VNodeUtils } from "../../base/view/vnode-utils"
+import { TYPES } from "../../base/types"
+import { BehaviorSchema } from "../../base/model/behavior"
+import { Point } from "../../utils/geometry"
+import { Map } from "../../utils/utils"
+import { SModelElement, SModelRoot, SModelIndex, SModel } from "../../base/model/smodel"
+import { Action } from "../../base/intent/actions"
+import { AbstractCommand, CommandExecutionContext, Command } from "../../base/intent/commands"
+import { Animation } from "../../base/animations/animation"
+import { MouseListener } from "../../base/view/mouse-tool"
+import { isSelectable } from "../select/select"
+import { Viewport, isViewport } from "../viewport/viewport"
+
+export const moveFeature = Symbol('moveFeature')
+
+export const moveModule = new ContainerModule(bind => {
+    bind(TYPES.MouseListener).to(MoveMouseListener)
+    bind(TYPES.ICommand).toConstructor(MoveCommand)
+})
 
 const JSX = {createElement: snabbdom.svg}
 

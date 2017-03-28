@@ -1,3 +1,5 @@
+var CircularDependencyPlugin = require('circular-dependency-plugin');
+
 module.exports = {
     entry: './examples/app.ts',
     devtool: 'source-map',
@@ -14,5 +16,10 @@ module.exports = {
             { test: /\.tsx?$/, loader: 'ts-loader' }
         ]
     },
-    node : { fs: 'empty', net: 'empty' }
+    node : { fs: 'empty', net: 'empty' },
+    plugins: [
+        new CircularDependencyPlugin({
+            failOnError: true
+        })
+    ]
 };

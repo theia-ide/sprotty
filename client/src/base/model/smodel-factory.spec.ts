@@ -1,6 +1,6 @@
-import {expect} from "chai"
-import {SParentElementSchema} from "./smodel"
-import {SModelFactory} from "./smodel-factory"
+import { expect } from "chai"
+import { SParentElementSchema } from "./smodel"
+import { SModelFactory } from "./smodel-factory"
 
 describe('model factory', () => {
     function setup() {

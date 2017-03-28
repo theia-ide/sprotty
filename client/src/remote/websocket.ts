@@ -1,8 +1,9 @@
 import "reflect-metadata"
 import WebSocket = require("reconnecting-websocket")
-import {injectable, inject} from "inversify"
-import { TYPES, Action, isAction } from "../base"
-import { ILogger } from "../utils"
+import { injectable, inject } from "inversify"
+import { TYPES } from "../base/types"
+import { ILogger } from "../utils/logging"
+import { Action, isAction } from "../base/intent/actions"
 import { IDiagramServer } from "./diagram-server"
 
 @injectable()

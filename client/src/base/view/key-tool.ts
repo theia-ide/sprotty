@@ -1,12 +1,12 @@
 import "reflect-metadata"
-import {VNode} from "snabbdom/vnode"
-import {SModelElement, SModelRoot} from "../model"
-import {VNodeDecorator} from "./vnode-decorators"
-import {VNodeUtils} from "./vnode-utils"
-import {Action} from "../intent/actions"
-import {injectable, inject, multiInject, optional} from "inversify"
-import {IActionDispatcher} from "../intent/action-dispatcher"
-import {TYPES} from "../types"
+import { injectable, inject, multiInject, optional } from "inversify"
+import { VNode } from "snabbdom/vnode"
+import { IActionDispatcher } from "../intent/action-dispatcher"
+import { TYPES } from "../types"
+import { SModelRoot, SModelElement } from "../model/smodel"
+import { Action } from "../intent/actions"
+import { VNodeUtils } from "./vnode-utils"
+import { VNodeDecorator } from "./vnode-decorators"
 
 @injectable()
 export class KeyTool implements VNodeDecorator {

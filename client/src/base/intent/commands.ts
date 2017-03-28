@@ -1,6 +1,6 @@
-import {SModelRoot} from "../model"
-import {SModelFactory, IModelFactory} from "../model/smodel-factory"
-import {IViewer} from "../view"
+import { SModelRoot } from "../model/smodel"
+import { IModelFactory } from "../model/smodel-factory"
+import { IViewer } from "../view/viewer"
 import { ActionHandler, Action, ActionHandlerResult } from "./actions"
 
 /**

@@ -1,8 +1,10 @@
-import {SetModelCommand, SetModelAction} from "./model-manipulation"
-import {expect} from "chai"
-import {SGraphFactory} from "../../graph/model/sgraph-factory"
-import {CommandExecutionContext} from "../intent/commands"
-import {SModel} from "../model/smodel"
+import "mocha"
+import { expect } from "chai"
+import { SModel } from "../model/smodel"
+import { SGraphFactory } from "../../graph/model/sgraph-factory"
+import { CommandExecutionContext } from "../intent/commands"
+import { SetModelAction, SetModelCommand } from "./model-manipulation"
+
 import EMPTY_ROOT = SModel.EMPTY_ROOT
 
 // note: it looks like the API for the set-model command is not

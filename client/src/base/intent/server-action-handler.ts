@@ -1,7 +1,6 @@
-import { IDiagramServer } from "../../remote"
-import { Action, ActionHandler, ActionHandlerResult } from "./actions"
-import {Command} from "./commands"
-import { IActionDispatcher } from "./action-dispatcher"
+
+import { IDiagramServer } from "../../remote/diagram-server"
+import { ActionHandler, Action, ActionHandlerResult } from "./actions"
 
 export class ServerActionHandler implements ActionHandler {
 

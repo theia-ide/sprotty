@@ -9,7 +9,8 @@
   "main": "index.js",
   "scripts": {
     "prepublish": "typings install --overwrite --save",
-    "watch": "webpack --watch",
+    "build": "webpack",
+    "watch": "webpack --progress --watch",
     "test": "mocha --opts ./mocha.opts"
   },
   "keywords": [],
@@ -28,7 +29,8 @@
     "ts-node": "^2.1.0",
     "typescript": "^2.2.1",
     "typings": "^2.1.0",
-    "webpack": "^2.2.1"
+    "webpack": "^2.2.1",
+    "circular-dependency-plugin": "^2.0.0"
   },
   "dependencies": {
     "inversify-logger-middleware": "^3.0.0",

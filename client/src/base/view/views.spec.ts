@@ -1,8 +1,9 @@
-import {SModel} from "../model/smodel"
-import {EmptyView, MissingView} from "./views"
-import {Viewer} from "./viewer"
-import {SNode} from "../../graph/model/sgraph"
-import {expect} from "chai"
+import "mocha"
+import { expect } from "chai"
+import { SModel } from "../model/smodel"
+import { SNode } from "../../graph/model/sgraph"
+import { EmptyView, MissingView } from "./views"
+import { Viewer } from "./viewer"
 
 const toHTML = require('snabbdom-to-html')
 

@@ -1,14 +1,8 @@
 import "reflect-metadata"
-import {injectable} from "inversify"
+import { injectable } from "inversify"
 import {
-    SModelElementSchema,
-    SModelElement,
-    SModelRootSchema,
-    SModelRoot,
-    SParentElementSchema,
-    SParentElement,
-    SChildElement,
-    SModelIndex
+    SModelElementSchema, SModelElement, SModelRootSchema, SModelRoot, SParentElementSchema, SParentElement,
+    SChildElement, SModelIndex
 } from "./smodel"
 
 export interface IModelFactory {

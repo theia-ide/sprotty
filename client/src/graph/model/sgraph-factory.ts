@@ -1,15 +1,10 @@
 import "reflect-metadata"
-import {injectable} from "inversify"
+import { injectable } from "inversify"
+import { SModelFactory } from "../../base/model/smodel-factory"
 import {
-    SModel,
-    SModelFactory,
-    SModelElementSchema,
-    SModelRootSchema,
-    SParentElement,
-    SModelRoot,
-    SChildElement
-} from "../../base/model"
-import {SGraph, SGraphSchema, SNodeSchema, SEdgeSchema, SNode, SEdge} from "./sgraph"
+    SModelElementSchema, SParentElement, SChildElement, SModelRootSchema, SModelRoot, SModel
+} from "../../base/model/smodel"
+import { SGraph, SGraphSchema, SNodeSchema, SEdgeSchema, SNode, SEdge } from "./sgraph"
 
 @injectable()
 export class SGraphFactory extends SModelFactory {

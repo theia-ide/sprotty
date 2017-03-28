@@ -1,5 +1,5 @@
-import {expect} from "chai"
-import {ProviderRegistry, InstanceRegistry} from "./utils"
+import { expect } from "chai"
+import { ProviderRegistry, InstanceRegistry } from "./utils"
 
 describe('ProviderRegistry', () => {
     function setup() {

@@ -1,14 +1,18 @@
-import { IViewer, Viewer, ViewRegistry, RenderingContext, TYPES } from "../../base"
-import { CircularNodeView } from "../../lib"
-import {SGraph, SEdge, SNode, SGraphFactory} from "../model"
-import {SGraphView, StraightEdgeView} from "./views"
+import "mocha"
 import { expect } from "chai"
-import { VNode } from "snabbdom/vnode";
 import * as snabbdom from "snabbdom-jsx"
-import {Container} from "inversify"
+import { Container } from "inversify"
+import { VNode } from "snabbdom/vnode"
+import { CircularNodeView } from "../../lib/views"
+import { SNode, SGraph, SEdge } from "../model/sgraph"
+import { RenderingContext, ViewRegistry } from "../../base/view/views"
 import defaultContainerModule from "../../base/container-module"
-import {selectModule} from "../../features/select/index"
-import {moveModule} from "../../features/move/index"
+import { selectModule } from "../../features/select/select"
+import { moveModule } from "../../features/move/move"
+import { Viewer } from "../../base/view/viewer"
+import { TYPES } from "../../base/types"
+import { SGraphFactory } from "../model/sgraph-factory"
+import { SGraphView, StraightEdgeView } from "./views"
 
 const toHTML = require('snabbdom-to-html')
 const JSX = {createElement: snabbdom.svg}

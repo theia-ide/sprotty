@@ -1,18 +1,10 @@
-import {
-    SModelRootSchema,
-    SModelElementSchema,
-    SParentElementSchema,
-    SChildElement,
-    SModelRoot,
-} from "../../base/model"
-import {Point, Bounds, EMPTY_BOUNDS, IDENTITY_MATRIX} from "../../utils/geometry"
-import {BoundsAware} from "../../features/resize/resize"
-import {Selectable} from "../../features/select/select"
-import {resizeFeature} from "../../features/resize"
-import {viewportFeature} from "../../features/viewport"
-import {moveFeature} from "../../features/move"
-import {selectFeature} from "../../features/select"
-import {ViewportRootElement} from "../../features/viewport/viewport-root"
+
+import { SModelRootSchema, SParentElementSchema, SChildElement, SModelElementSchema } from "../../base/model/smodel"
+import { Point, IDENTITY_MATRIX, Bounds } from "../../utils/geometry"
+import { ViewportRootElement } from "../../features/viewport/viewport-root"
+import { Selectable, selectFeature } from "../../features/select/select"
+import { BoundsAware, resizeFeature } from "../../features/resize/resize"
+import { moveFeature } from "../../features/move/move"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
@@ -24,6 +16,14 @@ export interface SGraphSchema extends SModelRootSchema {
 }
 
 export class SGraph extends ViewportRootElement implements SGraphSchema {
+    autosize: boolean | undefined;
+    width: number | undefined;
+    height: number | undefined;
+    scroll: Point;
+    zoom: number;
+    type: string;
+    id: string;
+
     children: SGraphElement[]
     currentTransformMatrix = IDENTITY_MATRIX
 }

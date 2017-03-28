@@ -1,12 +1,13 @@
-import {Action} from "../../base/intent/actions"
-import {AbstractCommand, CommandExecutionContext} from "../../base/intent/commands"
-import {SModelRoot, SModelElement} from "../../base/model/smodel"
-import {isSelectable} from "../select/select"
-import {isSizeable, BoundsAware, isBoundsAware} from "../resize/resize"
-import {Bounds, combine, EMPTY_BOUNDS, center} from "../../utils/geometry"
-import {Viewport, isViewport, ViewportAnimation} from "./viewport"
-import {KeyListener} from "../../base/view/key-tool"
-import {isCtrlOrCmd} from "../../utils/browser"
+import { Action } from "../../base/intent/actions"
+import { AbstractCommand, CommandExecutionContext } from "../../base/intent/commands"
+import { SModelRoot, SModelElement } from "../../base/model/smodel"
+import { isSizeable, BoundsAware } from "../resize/resize"
+import { Bounds, combine, EMPTY_BOUNDS, center } from "../../utils/geometry"
+import { isSelectable } from "../select/select"
+import { KeyListener } from "../../base/view/key-tool"
+import { isCtrlOrCmd } from "../../utils/browser"
+import { isBoundsAware } from "../move/model"
+import { Viewport, isViewport, ViewportAnimation } from "./viewport"
 
 export class CenterAction implements Action {
     readonly kind = CenterCommand.KIND

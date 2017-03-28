@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import {injectable} from "inversify"
+import { injectable } from "inversify"
 
 export interface ILogger {
     error(message: string, ...params: any[]): void

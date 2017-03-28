@@ -1,5 +1,5 @@
 import "reflect-metadata"
-import {injectable} from "inversify"
+import { injectable } from "inversify"
 
 export interface Map<T> {
     [key: string]: T

@@ -1,12 +1,10 @@
 import "reflect-metadata"
-import {injectable, inject, multiInject, optional} from "inversify"
-import {TYPES} from "../types"
-import {InstanceRegistry} from "../../utils"
-import {Command, CommandActionHandler} from "./commands"
-import {SetModelAction, SetModelCommand} from "../features/model-manipulation"
+import { injectable, inject, multiInject, optional } from "inversify"
+import { InstanceRegistry } from "../../utils/utils"
+import { ILogger } from "../../utils/logging"
+import { TYPES } from "../types"
+import { Command, CommandActionHandler } from "./commands"
 import { ServerActionHandlerFactory } from "./server-action-handler"
-import { IActionDispatcher } from "./action-dispatcher"
-import {ILogger} from "../../utils/logging"
 
 /**
  * An action describes a change to the model declaratively.

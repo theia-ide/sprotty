@@ -1,4 +1,5 @@
-import {expect} from "chai"
+import "mocha"
+import { expect } from "chai"
 import { almostEquals, euclideanDistance, manhattanDistance } from "./geometry"
 
 describe('euclideanDistance', () => {

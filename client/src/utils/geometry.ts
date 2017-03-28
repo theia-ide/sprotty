@@ -1,4 +1,4 @@
-import {BoundsAware} from "../features/resize/resize"
+import { BoundsAware } from "../features/resize/resize"
 
 export interface Point {
     readonly x: number

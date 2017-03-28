@@ -1,15 +1,17 @@
-import {IActionDispatcher} from "./action-dispatcher"
-import {ICommandStack} from "./command-stack"
-import {ActionHandlerRegistry} from "./actions"
-import {expect} from 'chai'
-import {ContainerModule, Container} from "inversify"
-import defaultModule from "../../../src/base/container-module"
-import {TYPES} from "../types"
-import {MoveCommand, MoveAction} from "../../features/move"
-import {SModel} from "../model/smodel"
+import "mocha"
+import { ContainerModule, Container } from "inversify"
+import { expect } from 'chai'
+import { SModel } from "../model/smodel"
+import { TYPES } from "../types"
+import defaultModule from "../container-module"
+import { UndoAction, RedoAction } from "../../features/undo-redo/undo-redo"
+import { SetModelAction } from "../features/model-manipulation"
+import { MoveAction, MoveCommand } from "../../features/move/move"
+import { ICommandStack } from "./command-stack"
+import { IActionDispatcher } from "./action-dispatcher"
+import { ActionHandlerRegistry } from "./actions"
+
 import EMPTY_ROOT = SModel.EMPTY_ROOT
-import {UndoAction, RedoAction} from "../../features/undo-redo/undo-redo"
-import {SetModelAction} from "../features/model-manipulation"
 
 describe('action dispatcher', () => {
 

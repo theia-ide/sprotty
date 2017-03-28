@@ -1,13 +1,13 @@
-import { MoveCommand, MoveAction, ElementMove } from "./move"
+import "mocha"
 import { expect } from "chai"
 import { SGraphFactory } from "../../graph/model/sgraph-factory"
 import { CommandExecutionContext } from "../../base/intent/commands"
-import { SModel } from "../../base/model/smodel"
+import { SModel, SModelRoot } from "../../base/model/smodel"
 import { Point } from "../../utils/geometry"
-import { SNode } from "../../graph/index"
-import { SModelRoot } from "../../base/index"
-import EMPTY_ROOT = SModel.EMPTY_ROOT
+import { SNode } from "../../graph/model/sgraph"
+import { MoveCommand, MoveAction, ElementMove } from "./move"
 
+import EMPTY_ROOT = SModel.EMPTY_ROOT
 
 describe('move', () => {
 

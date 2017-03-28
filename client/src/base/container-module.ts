@@ -1,15 +1,17 @@
-import {ContainerModule, interfaces} from "inversify"
-import {NullLogger} from "../utils"
-import { IDiagramServer } from "../remote"
-import {
-    ActionDispatcher, IActionDispatcher, CommandStack, ICommandStack, ActionHandlerRegistry,
-    ServerActionHandler, ServerActionHandlerFactory, ActionHandler
-} from "./intent"
-import {
-    Viewer, IViewer, ViewRegistry, IViewerOptions, FocusFixDecorator, MouseTool, KeyTool
-} from "./view"
-import {SetModelCommand} from "./features"
-import {SModelFactory} from "./model"
+import { ContainerModule, interfaces } from "inversify"
+import { NullLogger } from "../utils/logging"
+import { IDiagramServer } from "../remote/diagram-server"
+import { ActionDispatcher, IActionDispatcher } from "./intent/action-dispatcher"
+import { CommandStack, ICommandStack } from "./intent/command-stack"
+import { Viewer, IViewer, IViewerOptions } from "./view/viewer"
+import { MouseTool } from "./view/mouse-tool"
+import { KeyTool } from "./view/key-tool"
+import { FocusFixDecorator } from "./view/vnode-decorators"
+import { ActionHandlerRegistry, ActionHandler } from "./intent/actions"
+import { ViewRegistry } from "./view/views"
+import { SModelFactory } from "./model/smodel-factory"
+import { ServerActionHandler } from "./intent/server-action-handler"
+import { SetModelCommand } from "./features/model-manipulation"
 import { TYPES } from "./types"
 
 let defaultContainerModule = new ContainerModule(bind => {

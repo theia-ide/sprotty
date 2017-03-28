@@ -1,5 +1,5 @@
-import {VNode} from "snabbdom/vnode"
-import {SModelElement} from "../model/smodel"
+import { VNode } from "snabbdom/vnode"
+import { SModelElement } from "../model/smodel"
 
 export namespace VNodeUtils {
 

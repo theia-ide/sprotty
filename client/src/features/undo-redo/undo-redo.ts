@@ -1,7 +1,13 @@
-import {Action} from "../../base/intent/actions"
-import {KeyListener} from "../../base/view/key-tool"
-import {SModelElement} from "../../base/model/smodel"
-import {isCtrlOrCmd} from "../../utils/browser"
+import { ContainerModule } from "inversify"
+import { Action } from "../../base/intent/actions"
+import { KeyListener } from "../../base/view/key-tool"
+import { SModelElement } from "../../base/model/smodel"
+import { isCtrlOrCmd } from "../../utils/browser"
+import { TYPES } from "../../base/types"
+
+export const undoRedoModule = new ContainerModule(bind => {
+    bind(TYPES.KeyListener).to(UndoRedoKeyListener)
+})
 
 export class UndoAction implements Action {
     static readonly KIND = 'undo'
