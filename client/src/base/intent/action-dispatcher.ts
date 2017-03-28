@@ -27,7 +27,8 @@ export class ActionDispatcher implements IActionDispatcher {
     thisFrameActions: Action[] = []
 
     constructor() {
-        this.nextFrame()
+        if(typeof window !== 'undefined')
+            this.nextFrame()
     }
 
     protected nextFrame() {
@@ -53,7 +54,7 @@ export class ActionDispatcher implements IActionDispatcher {
     protected doDispatch(actions: Action[]) {
         let commands: Command[] = []
         let newActions: Action[] = []
-        this.thisFrameActions.forEach(
+        actions.forEach(
             action => {
                 if (action.kind == UndoAction.KIND) {
                     this.commandStack.undo()

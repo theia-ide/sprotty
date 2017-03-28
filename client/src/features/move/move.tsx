@@ -11,7 +11,6 @@ import {isViewport, Viewport} from "../viewport/viewport"
 import {isSelectable} from "../select/select"
 import * as snabbdom from "snabbdom-jsx"
 import {moveFeature} from "./index"
-import {VNodeUtils} from "../../base/view/vnode-utils"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -198,7 +197,7 @@ export class MoveMouseListener extends MouseListener {
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (isMoveable(element)) {
             const translate = 'translate(' + element.position.x + ', ' + element.position.y + ')'
-            VNodeUtils.setAttr(vnode, 'transform', translate)
+            vnode = <g transform={translate}>{vnode}</g>
         }
         return vnode
     }
