@@ -129,12 +129,12 @@ export class ChannelView extends ThunkView {
         return 'polygon'
     }
 
-    isVisible(model: Channel) {
-        (model.root as Chip).zoom * ChannelView.width < 3
+    isVisible(model: Channel): boolean {
+        return (model.root as Chip).zoom * ChannelView.width > 3
     }
 
     doRender(model: Channel, context: RenderingContext): VNode {
-        if ((model.root as Chip).zoom * ChannelView.width < 3)
+        if (!this.isVisible(model))
             return <g id={model.id} key={model.id}></g>
         let points: number[]
         switch (model.direction) {
