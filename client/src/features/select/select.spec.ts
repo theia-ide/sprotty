@@ -7,7 +7,7 @@ import {SNode} from "../../graph/model/sgraph"
 import EMPTY_ROOT = SModel.EMPTY_ROOT
 
 
-describe('test select command execution, undo, redo and merge', () => {
+describe('select', () => {
     // setup the GModel
     const modelFactory = new SGraphFactory()
     const myNode0 = {id: 'node0', type: 'node:circle', x: 100, y: 100, selected: true};
@@ -40,7 +40,7 @@ describe('test select command execution, undo, redo and merge', () => {
         modelChanged: undefined!
     }
 
-    it('select command', () => {
+    it('execute() works as expected', () => {
         // execute command
         newModel = cmd.execute(initialModel)
 
@@ -53,7 +53,7 @@ describe('test select command execution, undo, redo and merge', () => {
         expect(0).to.equal(getNodeIndex('node0', newModel))
     });
 
-    it('undo select command', () => {
+    it('undo() works as expected', () => {
         // test "undo"
         newModel = cmd.undo(newModel);
 
@@ -72,7 +72,7 @@ describe('test select command execution, undo, redo and merge', () => {
 
     });
 
-    it('redo select command', () => {
+    it('redo() works as expected', () => {
         // test "redo"
         newModel = cmd.redo(newModel);
 
@@ -86,7 +86,8 @@ describe('test select command execution, undo, redo and merge', () => {
     });
 
     // "merge" is N/A for selection
-    it('merge select command (N/A)', () => {
+/*    
+    it('merge() works as expected (N/A)', () => {
         // test "merge"
         const result = cmd.merge(cmd, context);
         expect(false).to.equal(result)
@@ -98,7 +99,7 @@ describe('test select command execution, undo, redo and merge', () => {
         // the selected node is moved at the end of the array  (i.e. unchanged)
         expect(lastIndex).to.equal(getNodeIndex('node1', newModel))
         expect(0).to.equal(getNodeIndex('node0', newModel))
-    });
+    }); */
 })
 
 
