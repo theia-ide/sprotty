@@ -1,5 +1,5 @@
 import {SModelRoot} from "../model"
-import {SModelFactory} from "../model/smodel-factory"
+import {SModelFactory, IModelFactory} from "../model/smodel-factory"
 import {IViewer} from "../view"
 import { ActionHandler, Action, ActionHandlerResult } from "./actions"
 
@@ -41,7 +41,7 @@ type GModelRootOrPromise = SModelRoot | Promise<SModelRoot>
 
 export interface CommandExecutionContext {
     root: SModelRoot
-    modelFactory: SModelFactory
+    modelFactory: IModelFactory
     modelChanged: IViewer
     duration: number
 }
