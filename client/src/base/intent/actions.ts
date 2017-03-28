@@ -1,10 +1,10 @@
 import "reflect-metadata"
 import { injectable, inject, multiInject, optional } from "inversify"
-import { InstanceRegistry } from "../../utils/utils"
+import { MultiInstanceRegistry } from "../../utils/registry"
 import { ILogger } from "../../utils/logging"
+import { IDiagramServer, ServerActionHandler } from "../../remote/diagram-server"
 import { TYPES } from "../types"
 import { Command, CommandActionHandler } from "./commands"
-import { ServerActionHandlerFactory } from "./server-action-handler"
 
 /**
  * An action describes a change to the model declaratively.
@@ -15,57 +15,45 @@ export interface Action {
 }
 
 export function isAction(object?: any): object is Action {
-    return object && object.hasOwnProperty('kind') && typeof(object['kind']) == 'string'
-}
-
-export interface ActionHandlerResult {
-    actions?: Action[]
-    commands?: Command[]
+    return object !== undefined && object.hasOwnProperty('kind') && typeof(object['kind']) == 'string'
 }
 
 export interface ActionHandler {
-    handle(action: Action): ActionHandlerResult
+    handle(action: Action): Command | Action | undefined
 }
 
 export function isActionHandler(object?: any): object is ActionHandler {
-    return object && object.hasOwnProperty('handle') && typeof(object['handle']) == 'function'
+    return object !== undefined && object.hasOwnProperty('handle') && typeof(object['handle']) == 'function'
 }
 
 /**
  * The action handler registry maps actions to their handlers using the Action.kind property.
  */
 @injectable()
-export class ActionHandlerRegistry extends InstanceRegistry<ActionHandler> {
+export class ActionHandlerRegistry extends MultiInstanceRegistry<ActionHandler> {
 
-    @inject(TYPES.ServerActionHandlerFactory) protected serverActionHandlerFactory: ServerActionHandlerFactory
-
-    constructor(@multiInject(TYPES.ICommand) @optional() commandCtrs: (new (Action) => Command)[],
-                @inject(TYPES.ILogger) protected logger: ILogger) {
+    constructor(
+        @multiInject(TYPES.ICommand) @optional() commandCtrs: (new (Action) => Command)[],
+        @inject(TYPES.ILogger) protected logger: ILogger,
+        @inject(TYPES.IDiagramServer) @optional() protected diagramServer?: IDiagramServer
+    ) {
         super()
         commandCtrs.forEach(
             commandCtr => this.registerCommand(commandCtr)
         )
     }
 
-    registerCommand(commandType: new (Action) => Command) {
+    registerCommand(commandType: new (Action) => Command): void {
         if (commandType.hasOwnProperty('KIND'))
             this.register(commandType['KIND'], new CommandActionHandler(commandType))
         else
-            this.logger.error('Command ' + commandType.name + '  does not have a KIND property')
+            this.logger.error('Command ' + commandType.name + '  does not have a KIND property.')
     }
 
-    registerServerMessage(kind: string, immediate?: ActionHandler | (new (Action) => Command)) {
-        const handler = this.serverActionHandlerFactory(this.toHandler(immediate))
-        this.register(kind, handler)
-    }
-
-    protected toHandler(immediate?: ActionHandler | (new (Action) => Command)): ActionHandler | undefined {
-        if (isActionHandler(immediate))
-            return immediate
-        else if (immediate !== undefined)
-            return new CommandActionHandler(immediate)
+    registerServerMessage(kind: string): void {
+        if (this.diagramServer !== undefined)
+            this.register(kind, new ServerActionHandler(this.diagramServer))
         else
-            return undefined
+            this.logger.error('No implementation of IDiagramServer has been configured.')
     }
 }
-

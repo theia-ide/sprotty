@@ -19,6 +19,7 @@ describe('action dispatcher', () => {
 
     const mockCommandStack: ICommandStack = {
         execute() { ++execCount },
+        executeAll() { ++execCount },
         undo() { ++undoCount },
         redo() { ++redoCount }
     }

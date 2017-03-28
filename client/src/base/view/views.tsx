@@ -4,7 +4,7 @@ import { injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { SModelElement, SModelRoot } from "../model/smodel"
 import { EMPTY_ROOT } from "../model/smodel-factory"
-import { ProviderRegistry } from "../../utils/utils"
+import { ProviderRegistry } from "../../utils/registry"
 import { Viewer } from "./viewer"
 
 const JSX = {createElement: snabbdom.svg}

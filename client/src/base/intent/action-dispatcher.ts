@@ -4,7 +4,7 @@ import { ILogger } from "../../utils/logging"
 import { TYPES } from "../types"
 import { UndoAction, RedoAction } from "../../features/undo-redo/undo-redo"
 import { IDiagramServer } from "../../remote/diagram-server"
-import { Action, ActionHandlerRegistry } from "./actions"
+import { Action, ActionHandlerRegistry, isAction } from "./actions"
 import { ICommandStack } from "./command-stack"
 import {AnimationFrameSyncer} from "../animations/animation-frame-syncer"
 
@@ -50,7 +50,7 @@ export class ActionDispatcher implements IActionDispatcher {
     }
 
     dispatch(action: Action): void {
-        if(this.nextFrameActions.length > 0) {
+        if (this.nextFrameActions.length > 0) {
             this.dispatchNextFrame(action)
             return
         }
@@ -59,24 +59,23 @@ export class ActionDispatcher implements IActionDispatcher {
         } else if (action.kind == RedoAction.KIND) {
             this.commandStack.redo()
         } else {
-            const result = this.handleAction(action)
-            if (result) {
-                if (result.commands)
-                    this.commandStack.execute(result.commands)
-                if (result.actions)
-                    this.dispatchAll(result.actions)
-            }
+            this.handleAction(action)
         }
     }
 
-    protected handleAction(action: Action) {
+    protected handleAction(action: Action): void {
         this.logger.log('ActionDispatcher: handle', action)
-        if(this.actionHandlerRegistry.hasKey(action.kind)) {
-            const actionHandler = this.actionHandlerRegistry.get(action.kind)
-            return actionHandler.handle(action)
+        const handlers = this.actionHandlerRegistry.get(action.kind)
+        if (handlers.length > 0) {
+            for (let handler of handlers) {
+                const result = handler.handle(action)
+                if (isAction(result))
+                    this.dispatch(result)
+                else if (result !== undefined)
+                    this.commandStack.execute(result)
+            }
         } else {
-            this.logger.warn('ActionDispatcher: missing command for action', action)
-            return undefined
+            this.logger.warn('ActionDispatcher: missing handler for action', action)
         }
     }
 }

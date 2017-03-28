@@ -11,7 +11,6 @@ export let TYPES = {
     ILogger: Symbol('ILogger'),
     IModelFactory: Symbol('IModelFactory'),
     MouseListener: Symbol('MouseListener'),
-    ServerActionHandlerFactory: Symbol('ServerActionHandlerFactory'),
     IViewer: Symbol('IViewer'),
     IViewerOptions: Symbol('IViewerOptions'),
     IViewerProvider: Symbol('IViewerProvider'),

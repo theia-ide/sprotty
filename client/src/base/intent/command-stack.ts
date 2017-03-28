@@ -10,7 +10,8 @@ import { EMPTY_ROOT } from "../model/smodel-factory"
 import {AnimationFrameSyncer} from "../animations/animation-frame-syncer"
 
 export interface ICommandStack {
-    execute(commands: Command[]): void
+    execute(command: Command): void
+    executeAll(commands: Command[]): void
     undo(): void
     redo(): void
 }
@@ -33,7 +34,11 @@ export class CommandStack implements ICommandStack {
     protected undoStack: Command[] = []
     protected redoStack: Command[] = []
 
-    execute(commands: Command[]): void {
+    execute(command: Command): void {
+        this.executeAll([command])
+    }
+
+    executeAll(commands: Command[]): void {
         commands.forEach(
             (command) => {
                 this.currentPromise = this.currentPromise.then(

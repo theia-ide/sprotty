@@ -1,7 +1,7 @@
 import { injectable } from "inversify"
-import { Action, ActionHandler, ActionHandlerResult } from "../intent/actions"
+import { Action, ActionHandler } from "../intent/actions"
 import { SModelRootSchema, SModelRoot } from "../model/smodel"
-import { AbstractCommand, CommandExecutionContext } from "../intent/commands"
+import { AbstractCommand, CommandExecutionContext, Command } from "../intent/commands"
 import { Map } from "../../utils/utils"
 
 export class SetModelAction implements Action {
@@ -57,9 +57,7 @@ export class RequestOnUpdateHandler implements ActionHandler {
     constructor(private readonly options?: Map<string>) {
     }
 
-    handle(action: UpdateModelAction): ActionHandlerResult {
-        return {
-            actions: [new RequestModelAction(this.options)]
-        }
+    handle(action: UpdateModelAction): Command | Action | undefined {
+        return new RequestModelAction(this.options)
     }
 }

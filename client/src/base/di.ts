@@ -10,7 +10,6 @@ import { FocusFixDecorator } from "./view/vnode-decorators"
 import { ActionHandlerRegistry, ActionHandler } from "./intent/actions"
 import { ViewRegistry } from "./view/views"
 import { SModelFactory } from "./model/smodel-factory"
-import { ServerActionHandler } from "./intent/server-action-handler"
 import { SetModelCommand } from "./features/model-manipulation"
 import { TYPES } from "./types"
 import {ViewerCache} from "./view/viewer-cache"
@@ -68,14 +67,6 @@ let defaultContainerModule = new ContainerModule(bind => {
 
     // Model Factory ---------------------------------------------
     bind(TYPES.IModelFactory).to(SModelFactory).inSingletonScope()
-
-    // Action Handlers ---------------------------------------------
-    bind(TYPES.ServerActionHandlerFactory).toFactory<ServerActionHandler>((context: interfaces.Context) => {
-        return (immediateHandler?: ActionHandler) => {
-            const diagramServer = context.container.get<IDiagramServer>(TYPES.IDiagramServer)
-            return new ServerActionHandler(diagramServer, immediateHandler)
-        }
-    })
 
     // Default commands
     bind(TYPES.ICommand).toConstructor(SetModelCommand)

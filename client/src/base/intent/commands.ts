@@ -1,9 +1,9 @@
 import { SModelRoot } from "../model/smodel"
 import { IModelFactory } from "../model/smodel-factory"
 import { IViewer } from "../view/viewer"
-import { ActionHandler, Action, ActionHandlerResult } from "./actions"
 import {ILogger} from "../../utils/logging"
 import {AnimationFrameSyncer} from "../animations/animation-frame-syncer"
+import { ActionHandler, Action } from "./actions"
 
 /**
  * A command holds the behaviour of an action.
@@ -51,14 +51,10 @@ export interface CommandExecutionContext {
 }
 
 export class CommandActionHandler implements ActionHandler {
-
     constructor(private commandType: new (Action) => Command) {
     }
 
-    handle(action: Action): ActionHandlerResult {
-        return {
-            commands: [new this.commandType(action)]
-        }
+    handle(action: Action): Command | Action | undefined {
+        return new this.commandType(action)
     }
-
 }
