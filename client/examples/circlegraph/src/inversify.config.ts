@@ -1,10 +1,9 @@
 import {ContainerModule, Container} from "inversify"
 import {makeLoggerMiddleware} from 'inversify-logger-middleware'
-import {SModelFactory, TYPES} from "../../../src/base"
+import {SModelFactory, TYPES, defaultModule} from "../../../src/base"
 import {SGraphFactory} from "../../../src/graph"
 import {ConsoleLogger} from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
-import defaultModule from "../../../src/base/container-module"
 import {moveModule, resizeModule, selectModule, viewportModule, undoRedoModule} from "../../../src/features"
 
 const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) => {

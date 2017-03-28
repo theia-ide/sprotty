@@ -5,7 +5,8 @@ import { IModelFactory } from "../model/smodel-factory"
 import { IViewerProvider, IViewer } from "../view/viewer"
 import { ILogger } from "../../utils/logging"
 import { TYPES } from "../types"
-import { SModelRoot, SModel } from "../model/smodel"
+import { SModelRoot } from "../model/smodel"
+import { EMPTY_ROOT } from "../model/smodel-factory"
 
 export interface ICommandStack {
     execute(commands: Command[]): void
@@ -25,7 +26,7 @@ export class CommandStack implements ICommandStack {
     @inject(TYPES.IViewerProvider) protected viewerProvider: IViewerProvider
     @inject(TYPES.ILogger) protected logger: ILogger
 
-    protected currentPromise: Promise<SModelRoot> = Promise.resolve(SModel.EMPTY_ROOT)
+    protected currentPromise: Promise<SModelRoot> = Promise.resolve(EMPTY_ROOT)
     protected viewer: IViewer
     protected undoStack: Command[] = []
     protected redoStack: Command[] = []

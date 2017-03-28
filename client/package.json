@@ -9,7 +9,7 @@
   "main": "index.js",
   "scripts": {
     "prepublish": "typings install --overwrite --save",
-    "build": "webpack",
+    "build": "webpack --progress",
     "watch": "webpack --progress --watch",
     "test": "mocha --opts ./mocha.opts"
   },

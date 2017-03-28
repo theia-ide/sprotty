@@ -73,3 +73,8 @@ export class SModelFactory implements IModelFactory {
         })
     }
 }
+
+export const EMPTY_ROOT = new SModelFactory().createRoot({
+    id: 'EMPTY',
+    type: 'NONE'
+})

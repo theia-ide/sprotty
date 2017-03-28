@@ -1,9 +1,8 @@
 import {ContainerModule, Container} from "inversify"
-import {SModelFactory, TYPES} from "../../../src/base"
+import {SModelFactory, TYPES, defaultModule} from "../../../src/base"
 import {ChipModelFactory} from "./chipmodel-factory"
 import {ConsoleLogger} from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
-import defaultModule from "../../../src/base/container-module"
 import {resizeModule, selectModule, viewportModule} from "../../../src/features"
 
 const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {

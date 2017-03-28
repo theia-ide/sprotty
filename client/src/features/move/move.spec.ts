@@ -2,12 +2,11 @@ import "mocha"
 import { expect } from "chai"
 import { SGraphFactory } from "../../graph/model/sgraph-factory"
 import { CommandExecutionContext } from "../../base/intent/commands"
-import { SModel, SModelRoot } from "../../base/model/smodel"
+import { SModelRoot } from "../../base/model/smodel"
+import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { Point } from "../../utils/geometry"
 import { SNode } from "../../graph/model/sgraph"
 import { MoveCommand, MoveAction, ElementMove } from "./move"
-
-import EMPTY_ROOT = SModel.EMPTY_ROOT
 
 describe('move', () => {
 

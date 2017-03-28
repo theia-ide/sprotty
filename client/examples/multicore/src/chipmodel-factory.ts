@@ -1,13 +1,9 @@
-import {SModelFactory} from "../../../src/base"
 import {
-    SModelElementSchema,
-    SParentElement,
-    SChildElement,
-    SModelRootSchema,
-    SModelRoot,
-    SModel
+    SModelElementSchema, SParentElement, SChildElement, SModelRootSchema, SModelRoot, SModelFactory, getBasicType
 } from "../../../src/base"
-import {ChipSchema, Chip, CoreSchema, ChannelSchema, Core, Channel, Crossbar, CrossbarSchema} from "./chipmodel"
+import {
+    ChipSchema, Chip, CoreSchema, ChannelSchema, Core, Channel, Crossbar, CrossbarSchema
+} from "./chipmodel"
 import {Direction} from "../../../src/utils"
 
 
@@ -68,18 +64,18 @@ export class ChipModelFactory extends SModelFactory {
     }
 
     isChipSchema(schema: SModelElementSchema): schema is ChipSchema {
-        return SModel.getBasicType(schema) == 'chip'
+        return getBasicType(schema) == 'chip'
     }
 
     isCoreSchema(schema: SModelElementSchema): schema is CoreSchema {
-        return SModel.getBasicType(schema) == 'core'
+        return getBasicType(schema) == 'core'
     }
 
     isChannelSchema(schema: SModelElementSchema): schema is ChannelSchema {
-        return SModel.getBasicType(schema) == 'channel'
+        return getBasicType(schema) == 'channel'
     }
 
     isCrossbarSchema(schema: SModelElementSchema): schema is CrossbarSchema {
-        return SModel.getBasicType(schema) == 'crossbar'
+        return getBasicType(schema) == 'crossbar'
     }
 }

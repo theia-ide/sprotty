@@ -1,12 +1,11 @@
 import "mocha"
 import { expect } from "chai"
-import { SModel, SModelRoot } from "../../base/model/smodel"
+import { SModelRoot } from "../../base/model/smodel"
+import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { SGraphFactory } from "../../graph/model/sgraph-factory"
 import { CommandExecutionContext } from "../../base/intent/commands"
 import { SNode } from "../../graph/model/sgraph"
 import { SelectAction, SelectCommand } from "./select"
-
-import EMPTY_ROOT = SModel.EMPTY_ROOT
 
 describe('select', () => {
     // setup the GModel

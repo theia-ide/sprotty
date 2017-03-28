@@ -1,32 +1,8 @@
-import { ContainerModule } from "inversify"
-import { Autosizer } from "./autosizer"
-import { TYPES } from "../../base/types"
-import { BehaviorSchema } from "../../base/model/behavior"
-import { Locateable } from "../move/move"
 import { Bounds, TransformMatrix } from "../../utils/geometry"
 import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
 import { AbstractCommand, CommandExecutionContext } from "../../base/intent/commands"
-
-export const resizeFeature = Symbol('resizeFeature')
-
-export const resizeModule = new ContainerModule(bind => {
-    bind(TYPES.ICommand).toConstructor(ResizeCommand)
-    bind(TYPES.VNodeDecorator).to(Autosizer).inSingletonScope()
-})
-
-export interface BoundsAware extends BehaviorSchema {
-    autosize: boolean
-    bounds: Bounds
-}
-
-export function isSizeable(element: SModelElement): element is SModelElement & BoundsAware {
-    return element.hasFeature(resizeFeature)
-}
-
-export function isBoundsAware(element: SModelElement): element is SModelElement & BoundsAware {
-    return 'bounds' in element
-}
+import { BoundsAware, isSizeable } from "./model"
 
 export class ResizeAction implements Action {
     readonly kind = ResizeCommand.KIND

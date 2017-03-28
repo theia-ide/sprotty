@@ -1,6 +1,10 @@
-import { SModelElementSchema, SParentElement, SChildElement, SModel } from "../../../src/base"
+import {
+    SModelElementSchema, SParentElement, SChildElement, getBasicType
+} from "../../../src/base"
 import { SGraphFactory } from "../../../src/graph"
-import { ExecutionNode, BarrierNode, ExecutionNodeSchema, BarrierNodeSchema } from "./flowmodel"
+import {
+    ExecutionNode, BarrierNode, ExecutionNodeSchema, BarrierNodeSchema
+} from "./flowmodel"
 
 export class FlowModelFactory extends SGraphFactory {
 
@@ -18,10 +22,10 @@ export class FlowModelFactory extends SGraphFactory {
     }
 
     isExecutionNodeSchema(schema: SModelElementSchema): schema is ExecutionNodeSchema {
-        return SModel.getBasicType(schema) == 'execution'
+        return getBasicType(schema) == 'execution'
     }
 
     isBarrierNodeSchema(schema: SModelElementSchema): schema is BarrierNodeSchema {
-        return SModel.getBasicType(schema) == 'barrier'
+        return getBasicType(schema) == 'barrier'
     }
 }

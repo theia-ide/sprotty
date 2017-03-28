@@ -19,6 +19,7 @@ module.exports = {
     node : { fs: 'empty', net: 'empty' },
     plugins: [
         new CircularDependencyPlugin({
+            exclude: /(node_modules|examples)\/./,
             failOnError: true
         })
     ]

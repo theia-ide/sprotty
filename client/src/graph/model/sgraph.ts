@@ -2,9 +2,9 @@
 import { SModelRootSchema, SParentElementSchema, SChildElement, SModelElementSchema } from "../../base/model/smodel"
 import { Point, IDENTITY_MATRIX, Bounds } from "../../utils/geometry"
 import { ViewportRootElement } from "../../features/viewport/viewport-root"
-import { Selectable, selectFeature } from "../../features/select/select"
-import { BoundsAware, resizeFeature } from "../../features/resize/resize"
-import { moveFeature } from "../../features/move/move"
+import { selectFeature, Selectable } from "../../features/select/model"
+import { moveFeature } from "../../features/move/model"
+import { resizeFeature, BoundsAware } from "../../features/resize/model"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
@@ -16,9 +16,9 @@ export interface SGraphSchema extends SModelRootSchema {
 }
 
 export class SGraph extends ViewportRootElement implements SGraphSchema {
-    autosize: boolean | undefined;
-    width: number | undefined;
-    height: number | undefined;
+    autosize: boolean;
+    width: number;
+    height: number;
     scroll: Point;
     zoom: number;
     type: string;

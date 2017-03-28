@@ -6,13 +6,13 @@ import { VNode } from "snabbdom/vnode"
 import { CircularNodeView } from "../../lib/views"
 import { SNode, SGraph, SEdge } from "../model/sgraph"
 import { RenderingContext, ViewRegistry } from "../../base/view/views"
-import defaultContainerModule from "../../base/container-module"
-import { selectModule } from "../../features/select/select"
-import { moveModule } from "../../features/move/move"
 import { Viewer } from "../../base/view/viewer"
 import { TYPES } from "../../base/types"
 import { SGraphFactory } from "../model/sgraph-factory"
 import { SGraphView, StraightEdgeView } from "./views"
+import defaultModule from "../../base/di"
+import selectModule from "../../features/select/di"
+import moveModule from "../../features/move/di"
 
 const toHTML = require('snabbdom-to-html')
 const JSX = {createElement: snabbdom.svg}
@@ -31,7 +31,7 @@ describe('graph views', () => {
     }
 
     const container = new Container()
-    container.load(defaultContainerModule, selectModule, moveModule)
+    container.load(defaultModule, selectModule, moveModule)
 
     const viewer = container.get<Viewer>(TYPES.IViewer)
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)

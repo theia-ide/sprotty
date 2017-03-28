@@ -2,7 +2,7 @@ import "reflect-metadata"
 import { injectable } from "inversify"
 import { SModelFactory } from "../../base/model/smodel-factory"
 import {
-    SModelElementSchema, SParentElement, SChildElement, SModelRootSchema, SModelRoot, SModel
+    SModelElementSchema, SParentElement, SChildElement, SModelRootSchema, SModelRoot, getBasicType
 } from "../../base/model/smodel"
 import { SGraph, SGraphSchema, SNodeSchema, SEdgeSchema, SNode, SEdge } from "./sgraph"
 
@@ -32,15 +32,15 @@ export class SGraphFactory extends SModelFactory {
     }
 
     isGraphSchema(schema: SModelElementSchema): schema is SGraphSchema {
-        return SModel.getBasicType(schema) == 'graph'
+        return getBasicType(schema) == 'graph'
     }
 
     isNodeSchema(schema: SModelElementSchema): schema is SNodeSchema {
-        return SModel.getBasicType(schema) == 'node'
+        return getBasicType(schema) == 'node'
     }
 
     isEdgeSchema(schema: SModelElementSchema): schema is SEdgeSchema {
-        return SModel.getBasicType(schema) == 'edge'
+        return getBasicType(schema) == 'edge'
     }
 
 }

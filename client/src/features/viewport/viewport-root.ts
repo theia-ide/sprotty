@@ -1,8 +1,8 @@
 
 import { SModelRoot } from "../../base/model/smodel"
-import { BoundsAware, resizeFeature } from "../resize/resize"
 import { Bounds, EMPTY_BOUNDS, Point } from "../../utils/geometry"
-import { viewportFeature, Viewport } from "./viewport"
+import { BoundsAware, resizeFeature } from "../resize/model"
+import { Viewport, viewportFeature } from "./model"
 
 export class ViewportRootElement extends SModelRoot implements BoundsAware, Viewport {
     autosize: boolean = true

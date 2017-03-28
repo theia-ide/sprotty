@@ -1,7 +1,4 @@
-import { ContainerModule } from "inversify"
 import { VNode } from "snabbdom/vnode"
-import { TYPES } from "../../base/types"
-import { BehaviorSchema } from "../../base/model/behavior"
 import { SModelElement, SChildElement, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
 import { AbstractCommand } from "../../base/intent/commands"
@@ -10,22 +7,7 @@ import { MouseListener } from "../../base/view/mouse-tool"
 import { isCtrlOrCmd } from "../../utils/browser"
 import { VNodeUtils } from "../../base/view/vnode-utils"
 import { KeyListener } from "../../base/view/key-tool"
-
-export const selectFeature = Symbol('selectFeature')
-
-export const selectModule = new ContainerModule(bind => {
-    bind(TYPES.ICommand).toConstructor(SelectCommand)
-    bind(TYPES.KeyListener).to(SelectKeyboardListener)
-    bind(TYPES.MouseListener).to(SelectMouseListener)
-})
-
-export interface Selectable extends BehaviorSchema {
-    selected: boolean
-}
-
-export function isSelectable(element: SModelElement): element is SModelElement & Selectable {
-    return element.hasFeature(selectFeature)
-}
+import { isSelectable } from "./model"
 
 export class SelectAction implements Action {
     kind = SelectCommand.KIND
@@ -34,7 +16,7 @@ export class SelectAction implements Action {
     }
 }
 
-type ElementSelection= {
+type ElementSelection = {
     element: SChildElement
     index: number
 }

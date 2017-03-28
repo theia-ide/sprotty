@@ -2,7 +2,8 @@ import "reflect-metadata"
 import * as snabbdom from "snabbdom-jsx"
 import { injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
-import { SModelElement, SModel, SModelRoot } from "../model/smodel"
+import { SModelElement, SModelRoot } from "../model/smodel"
+import { EMPTY_ROOT } from "../model/smodel-factory"
 import { ProviderRegistry } from "../../utils/utils"
 import { Viewer } from "./viewer"
 
@@ -33,7 +34,7 @@ export class ViewRegistry extends ProviderRegistry<View, SModelElement> {
     }
 
     protected registerDefaults() {
-        this.register(SModel.EMPTY_ROOT.type, EmptyView)
+        this.register(EMPTY_ROOT.type, EmptyView)
     }
 
     missing(key: string, element: SModelElement) {

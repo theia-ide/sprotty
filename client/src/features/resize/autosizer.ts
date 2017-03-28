@@ -6,7 +6,8 @@ import { VNodeDecorator } from "../../base/view/vnode-decorators"
 import { TYPES } from "../../base/types"
 import { IActionDispatcher } from "../../base/intent/action-dispatcher"
 import { almostEquals, Bounds, TransformMatrix } from "../../utils/geometry"
-import { BoundsAware, isSizeable, ElementResize, ResizeAction } from "./resize"
+import { ElementResize, ResizeAction } from "./resize"
+import { BoundsAware, isSizeable } from "./model"
 
 class VNodeAndSizeable {
     vnode: VNode

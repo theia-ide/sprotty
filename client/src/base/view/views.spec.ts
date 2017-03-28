@@ -1,6 +1,6 @@
 import "mocha"
 import { expect } from "chai"
-import { SModel } from "../model/smodel"
+import { EMPTY_ROOT } from "../model/smodel-factory"
 import { SNode } from "../../graph/model/sgraph"
 import { EmptyView, MissingView } from "./views"
 import { Viewer } from "./viewer"
@@ -13,7 +13,7 @@ describe('base views', () => {
 
     it('empty view', () => {
         const emptyView = new EmptyView()
-        const vnode = emptyView.render(SModel.EMPTY_ROOT, context)
+        const vnode = emptyView.render(EMPTY_ROOT, context)
         const html = toHTML(vnode)
         expect(html).to.be.equal('<g id="EMPTY"></g>')
     })
@@ -21,7 +21,7 @@ describe('base views', () => {
     const missingView = new MissingView
 
     it('missing view', () => {
-        const vnode = missingView.render(SModel.EMPTY_ROOT, context)
+        const vnode = missingView.render(EMPTY_ROOT, context)
         expect(toHTML(vnode)).to.be.equal('<text id="EMPTY" class="missing" x="0" y="0">?EMPTY?</text>')
         const model = new SNode()
         model.x = 42

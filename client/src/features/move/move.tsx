@@ -1,35 +1,18 @@
 import * as snabbdom from "snabbdom-jsx"
-import { ContainerModule } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { VNodeUtils } from "../../base/view/vnode-utils"
-import { TYPES } from "../../base/types"
-import { BehaviorSchema } from "../../base/model/behavior"
 import { Point } from "../../utils/geometry"
 import { Map } from "../../utils/utils"
-import { SModelElement, SModelRoot, SModelIndex, SModel } from "../../base/model/smodel"
+import { SModelElement, SModelRoot, SModelIndex, getParent } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
 import { AbstractCommand, CommandExecutionContext, Command } from "../../base/intent/commands"
 import { Animation } from "../../base/animations/animation"
 import { MouseListener } from "../../base/view/mouse-tool"
-import { isSelectable } from "../select/select"
-import { Viewport, isViewport } from "../viewport/viewport"
-
-export const moveFeature = Symbol('moveFeature')
-
-export const moveModule = new ContainerModule(bind => {
-    bind(TYPES.MouseListener).to(MoveMouseListener)
-    bind(TYPES.ICommand).toConstructor(MoveCommand)
-})
+import { Viewport, isViewport } from "../viewport/model"
+import { isSelectable } from "../select/model"
+import { Locateable, isMoveable } from "./model"
 
 const JSX = {createElement: snabbdom.svg}
-
-export interface Locateable extends BehaviorSchema {
-    position: Point
-}
-
-export function isMoveable(element: SModelElement): element is SModelElement & Locateable {
-    return element.hasFeature(moveFeature)
-}
 
 export class MoveAction implements Action {
     kind = MoveCommand.KIND
@@ -165,7 +148,7 @@ export class MoveMouseListener extends MouseListener {
 
     mouseMove(target: SModelElement, event: MouseEvent): Action[] {
         if (this.lastDragPosition) {
-            const viewport = SModel.getParent<Viewport>(target, isViewport)
+            const viewport = getParent<Viewport>(target, isViewport)
             this.hasDragged = true
             const zoom = viewport ? viewport.zoom : 1
             const dx = (event.clientX - this.lastDragPosition.x) / zoom

@@ -1,9 +1,10 @@
 
 import { BehaviorSchema } from "../../base/model/behavior"
-import { SModelElement, SModel } from "../../base/model/smodel"
+import { SModelElement, getParent } from "../../base/model/smodel"
 import { MouseListener } from "../../base/view/mouse-tool"
 import { Action } from "../../base/intent/actions"
-import { isViewport, Viewport, ViewportAction } from "./viewport"
+import { ViewportAction } from "./viewport"
+import { Viewport, isViewport } from "./model"
 
 export interface Zoomable extends BehaviorSchema {
     zoom: number
@@ -16,7 +17,7 @@ export function isZoomable(element: SModelElement | Zoomable): element is Zoomab
 export class ZoomMouseListener extends MouseListener {
 
     wheel(target: SModelElement, event: WheelEvent): Action[] {
-        const viewport = SModel.getParent<Viewport>(target, isViewport)
+        const viewport = getParent<Viewport>(target, isViewport)
         if (viewport) {
             const newZoom = Math.exp(-event.deltaY * 0.005)
             const factor = 1. / (newZoom * viewport.zoom) - 1. / viewport.zoom
