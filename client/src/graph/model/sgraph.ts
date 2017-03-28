@@ -1,6 +1,6 @@
 
 import { SModelRootSchema, SParentElementSchema, SChildElement, SModelElementSchema } from "../../base/model/smodel"
-import { Point, IDENTITY_MATRIX, Bounds } from "../../utils/geometry"
+import { Point, IDENTITY_MATRIX, Bounds, EMPTY_BOUNDS } from "../../utils/geometry"
 import { ViewportRootElement } from "../../features/viewport/viewport-root"
 import { selectFeature, Selectable } from "../../features/select/model"
 import { moveFeature } from "../../features/move/model"
