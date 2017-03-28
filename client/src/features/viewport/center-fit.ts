@@ -2,7 +2,7 @@ import {Action} from "../../base/intent/actions"
 import {AbstractCommand, CommandExecutionContext} from "../../base/intent/commands"
 import {SModelRoot, SModelElement} from "../../base/model/smodel"
 import {isSelectable} from "../select/select"
-import {isSizeable, BoundsAware} from "../resize/resize"
+import {isSizeable, BoundsAware, isBoundsAware} from "../resize/resize"
 import {Bounds, combine, EMPTY_BOUNDS, center} from "../../utils/geometry"
 import {Viewport, isViewport, ViewportAnimation} from "./viewport"
 import {KeyListener} from "../../base/view/key-tool"
@@ -28,7 +28,7 @@ export abstract class AbstractViewportCommand extends AbstractCommand {
     newViewport: Viewport
 
     protected initialize(model: SModelRoot) {
-        if (isViewport(model) && isSizeable(model) && model.clientBounds) {
+        if (isViewport(model) && isSizeable(model)) {
             this.oldViewport = {
                 scroll: model.scroll,
                 zoom: model.zoom
@@ -37,14 +37,14 @@ export abstract class AbstractViewportCommand extends AbstractCommand {
             this.getElementIds().forEach(
                 id => {
                     const element = model.index.getById(id)
-                    if (element && isSizeable(element))
+                    if (element && isBoundsAware(element))
                         allBounds.push(element.bounds)
                 }
             )
             if (allBounds.length == 0) {
                 model.index.all().forEach(
                     element => {
-                        if (isSelectable(element) && element.selected && isSizeable(element))
+                        if (isSelectable(element) && element.selected && isBoundsAware(element))
                             allBounds.push(element.bounds)
                     }
                 )
@@ -52,7 +52,7 @@ export abstract class AbstractViewportCommand extends AbstractCommand {
             if (allBounds.length == 0) {
                 model.index.all().forEach(
                     element => {
-                        if (isSizeable(element))
+                        if (isBoundsAware(element))
                             allBounds.push(element.bounds)
                     }
                 )
@@ -97,12 +97,12 @@ export class CenterCommand extends AbstractViewportCommand {
         return this.action.elementIds
     }
 
-    getNewViewport(bounds, model) {
+    getNewViewport(bounds: Bounds, model: SModelRoot & BoundsAware) {
         const c = center(bounds)
         return {
             scroll: {
-                x: c.x - 0.5 * model.clientBounds.width,
-                y: c.y - 0.5 * model.clientBounds.height
+                x: c.x - 0.5 * model.bounds.width,
+                y: c.y - 0.5 * model.bounds.height
             },
             zoom: 1
         }
@@ -120,15 +120,15 @@ export class FitToScreenCommand extends AbstractViewportCommand {
         return this.action.elementIds
     }
 
-    getNewViewport(bounds, model) {
+    getNewViewport(bounds: Bounds, model: SModelRoot & BoundsAware) {
         const c = center(bounds)
         const zoom = Math.min(
-            model.clientBounds.width / bounds.width,
-            model.clientBounds.height / bounds.height)
+            model.bounds.width / bounds.width,
+            model.bounds.height / bounds.height)
         return {
             scroll: {
-                x: c.x - 0.5 * model.clientBounds.width / zoom,
-                y: c.y - 0.5 * model.clientBounds.height / zoom
+                x: c.x - 0.5 * model.bounds.width / zoom,
+                y: c.y - 0.5 * model.bounds.height / zoom
             },
             zoom: zoom
         }

@@ -11,7 +11,6 @@ export class ViewportRootElement extends SModelRoot implements BoundsAware, View
     y: number = 0
     width: number = 0
     height: number = 0
-    clientBounds: Bounds = EMPTY_BOUNDS
 
     scroll: Point = { x:0, y:0 }
     zoom: number = 1

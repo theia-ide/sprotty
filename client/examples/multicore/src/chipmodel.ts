@@ -45,13 +45,15 @@ export interface CrossbarSchema extends SModelElementSchema {
 }
 
 
-export class Crossbar extends SChildElement implements CrossbarSchema, Selectable {
+export class Crossbar extends SChildElement implements CrossbarSchema, Selectable, BoundsAware {
     readonly direction: Direction
     load: number
     selected: boolean = false
+    autosize: boolean = true
+    bounds: Bounds = EMPTY_BOUNDS
 
     hasFeature(feature: symbol): boolean {
-        return feature === selectFeature
+        return feature === selectFeature || feature === resizeFeature
     }
 }
 

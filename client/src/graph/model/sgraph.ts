@@ -43,6 +43,7 @@ export class SNode extends SChildElement implements SNodeSchema, Selectable, Bou
     width: number = 0
     height: number = 0
     autosize: boolean = true
+    clientBounds: Bounds = EMPTY_BOUNDS
     children: SGraphElement[]
     selected: boolean = false
 
