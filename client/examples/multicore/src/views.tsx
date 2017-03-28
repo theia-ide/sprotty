@@ -27,7 +27,7 @@ export class CoreView extends ThunkView {
         return 'g'
     }
 
-    arguments(model: Core) {
+    watchedArgs(model: Core) {
         return [model.load, model.selected]
     }
 
@@ -121,7 +121,7 @@ export class ChannelView extends ThunkView {
 
     static readonly width = 2
 
-    arguments(model: Channel): any[] {
+    watchedArgs(model: Channel): any[] {
         return [model.load, this.isVisible(model)]
     }
 

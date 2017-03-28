@@ -3,12 +3,26 @@ import {SModelElement} from "../model/smodel"
 import {VNode, VNodeData} from "snabbdom/vnode"
 import {h} from "snabbdom"
 
+/**
+ * An view that avoids calculation and patching of VNodes unless some model properties have changed.
+ * Based on snabbdom's thunks.
+ */
 export abstract class ThunkView implements View {
 
-    abstract arguments(model: SModelElement) : any[]
+    /**
+     * Returns the array of values that are watched for changes.
+     * If they haven't change since the last rendering, the VNode is neither recalculated nor patched.
+     */
+    abstract watchedArgs(model: SModelElement) : any[]
 
+    /**
+     * Returns the selector of the VNode root, i.e. it's element type.
+     */
     abstract selector(model: SModelElement) : string
 
+    /**
+     * Calculate the VNode from the input data. Only called if the watched properties change.
+     */
     abstract doRender(model: SModelElement, context: RenderingContext): VNode
 
     render(model: SModelElement, context: RenderingContext): VNode {
@@ -18,7 +32,7 @@ export abstract class ThunkView implements View {
                 init: this.init.bind(this),
                 prepatch: this.prepatch.bind(this)},
             fn: () => this.renderAndDecorate(model, context),
-            args: this.arguments(model),
+            args: this.watchedArgs(model),
             thunk: true
         })
     }
