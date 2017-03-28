@@ -4,7 +4,7 @@ import {SModelElement} from "../model/smodel"
 export namespace VNodeUtils {
 
     export function setAttr(vnode: VNode, name: string, value: any) {
-        getAttrs(vnode).tabindex = 0
+        getAttrs(vnode)[name] = value
     }
 
     export function setClass(vnode: VNode, name: string, value: boolean) {
