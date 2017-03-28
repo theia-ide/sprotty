@@ -11,17 +11,16 @@ import {isViewport, Viewport} from "../viewport/viewport"
 import {isSelectable} from "../select/select"
 import * as snabbdom from "snabbdom-jsx"
 import {moveFeature} from "./index"
+import {VNodeUtils} from "../../base/view/vnode-utils"
 
 const JSX = {createElement: snabbdom.svg}
 
-export interface Moveable extends BehaviorSchema, Point {
-    x: number
-    y: number
+export interface Locateable extends BehaviorSchema {
+    position: Point
 }
 
-export function isMoveable(element: SModelElement): element is SModelElement & Moveable {
+export function isMoveable(element: SModelElement): element is SModelElement & Locateable {
     return element.hasFeature(moveFeature)
-        && 'x' in element && 'y' in element
 }
 
 export class MoveAction implements Action {
@@ -41,7 +40,7 @@ export type ElementMove = {
 export type ResolvedElementMove = {
     fromPosition: Point
     elementId: string
-    element: SModelElement & Moveable
+    element: SModelElement & Locateable
     toPosition: Point
 }
 
@@ -61,8 +60,7 @@ export class MoveCommand extends AbstractCommand {
                 if (resolvedMove) {
                     this.resolvedMoves[resolvedMove.elementId] = resolvedMove
                     if (!this.action.animate) {
-                        resolvedMove.element.x = move.toPosition.x
-                        resolvedMove.element.y = move.toPosition.y
+                        resolvedMove.element.position = move.toPosition
                     }
                 }
             }
@@ -74,10 +72,9 @@ export class MoveCommand extends AbstractCommand {
     }
 
     private resolve(move: ElementMove, index: SModelIndex): ResolvedElementMove | undefined {
-        const element = index.getById(move.elementId) as (SModelElement & Moveable)
+        const element = index.getById(move.elementId) as (SModelElement & Locateable)
         if (element) {
-            const fromPosition = move.fromPosition
-                || {x: element.x, y: element.y}
+            const fromPosition = move.fromPosition || {...element.position}
             return {
                 fromPosition: fromPosition,
                 elementId: move.elementId,
@@ -126,12 +123,15 @@ export class MoveAnimation extends Animation {
         for (let elementId in this.elementMoves) {
             const elementMove = this.elementMoves[elementId]
             if (this.reverse) {
-                elementMove.element.x = (1 - t) * elementMove.toPosition.x + t * elementMove.fromPosition.x
-                elementMove.element.y = (1 - t) * elementMove.toPosition.y + t * elementMove.fromPosition.y
+                elementMove.element.position = {
+                    x: (1 - t) * elementMove.toPosition.x + t * elementMove.fromPosition.x,
+                    y: (1 - t) * elementMove.toPosition.y + t * elementMove.fromPosition.y
+                }
             } else {
-                elementMove.element.x = (1 - t) * elementMove.fromPosition.x + t * elementMove.toPosition.x
-                elementMove.element.y = (1 - t) * elementMove.fromPosition.y + t * elementMove.toPosition.y
-
+                elementMove.element.position = {
+                    x: (1 - t) * elementMove.fromPosition.x + t * elementMove.toPosition.x,
+                    y: (1 - t) * elementMove.fromPosition.y + t * elementMove.toPosition.y
+                }
             }
         }
         return this.context.root
@@ -176,8 +176,8 @@ export class MoveMouseListener extends MouseListener {
                             nodeMoves.push({
                                 elementId: element.id,
                                 toPosition: {
-                                    x: element.x + dx,
-                                    y: element.y + dy
+                                    x: element.position.x + dx,
+                                    y: element.position.y + dy
                                 }
                             })
                         }
@@ -197,8 +197,8 @@ export class MoveMouseListener extends MouseListener {
 
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (isMoveable(element)) {
-            const translate = 'translate(' + element.x + ', ' + element.y + ')'
-            vnode = <g transform={translate}>{vnode}</g>
+            const translate = 'translate(' + element.position.x + ', ' + element.position.y + ')'
+            VNodeUtils.setAttr(vnode, 'transform', translate)
         }
         return vnode
     }

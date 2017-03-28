@@ -2,9 +2,8 @@ import {Action} from "../../base/intent/actions"
 import {AbstractCommand, CommandExecutionContext} from "../../base/intent/commands"
 import {SModelRoot, SModelElement} from "../../base/model/smodel"
 import {isSelectable} from "../select/select"
-import {isSizeable, Sizeable} from "../resize/resize"
-import {Bounds, getBounds, combine, EMPTY_BOUNDS, center} from "../../utils/geometry"
-import {isMoveable} from "../move"
+import {isSizeable, BoundsAware} from "../resize/resize"
+import {Bounds, combine, EMPTY_BOUNDS, center} from "../../utils/geometry"
 import {Viewport, isViewport, ViewportAnimation} from "./viewport"
 import {KeyListener} from "../../base/view/key-tool"
 import {isCtrlOrCmd} from "../../utils/browser"
@@ -31,43 +30,39 @@ export abstract class AbstractViewportCommand extends AbstractCommand {
     protected initialize(model: SModelRoot) {
         if (isViewport(model) && isSizeable(model) && model.clientBounds) {
             this.oldViewport = {
-                scroll: {
-                    x: model.scroll.x,
-                    y: model.scroll.y
-                },
+                scroll: model.scroll,
                 zoom: model.zoom
             }
             const allBounds: Bounds[] = []
             this.getElementIds().forEach(
                 id => {
                     const element = model.index.getById(id)
-                    if (element && isSizeable(element) && isMoveable(element))
-                        allBounds.push(getBounds(element))
+                    if (element && isSizeable(element))
+                        allBounds.push(element.bounds)
                 }
             )
             if (allBounds.length == 0) {
                 model.index.all().forEach(
                     element => {
-                        if (isSelectable(element) && element.selected && isSizeable(element) && isMoveable(element))
-                            allBounds.push(getBounds(element))
+                        if (isSelectable(element) && element.selected && isSizeable(element))
+                            allBounds.push(element.bounds)
                     }
                 )
             }
             if (allBounds.length == 0) {
                 model.index.all().forEach(
                     element => {
-                        if (isSizeable(element) && isMoveable(element))
-                            allBounds.push(getBounds(element))
+                        if (isSizeable(element))
+                            allBounds.push(element.bounds)
                     }
                 )
             }
             const bounds = allBounds.reduce((b0, b1) => combine(b0, b1), EMPTY_BOUNDS)
             this.newViewport = this.getNewViewport(bounds, model)
         }
-        return undefined
     }
 
-    protected abstract getNewViewport(bounds: Bounds, model: SModelRoot & Sizeable): Viewport
+    protected abstract getNewViewport(bounds: Bounds, model: SModelRoot & BoundsAware): Viewport
 
     protected abstract getElementIds(): string[]
 

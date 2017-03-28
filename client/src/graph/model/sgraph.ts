@@ -6,14 +6,13 @@ import {
     SModelRoot,
 } from "../../base/model"
 import {Point, Bounds, EMPTY_BOUNDS, IDENTITY_MATRIX} from "../../utils/geometry"
-import {Sizeable} from "../../features/resize/resize"
-import {Viewport} from "../../features/viewport/viewport"
+import {BoundsAware} from "../../features/resize/resize"
 import {Selectable} from "../../features/select/select"
-import {Moveable} from "../../features/move"
 import {resizeFeature} from "../../features/resize"
 import {viewportFeature} from "../../features/viewport"
 import {moveFeature} from "../../features/move"
 import {selectFeature} from "../../features/select"
+import {ViewportRootElement} from "../../features/viewport/viewport-root"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
@@ -24,19 +23,9 @@ export interface SGraphSchema extends SModelRootSchema {
     zoom: number
 }
 
-export class SGraph extends SModelRoot implements SGraphSchema, Viewport, Sizeable {
+export class SGraph extends ViewportRootElement implements SGraphSchema {
     children: SGraphElement[]
-    autosize: boolean = true
-    width: number = 0
-    height: number = 0
-    clientBounds: Bounds = EMPTY_BOUNDS
     currentTransformMatrix = IDENTITY_MATRIX
-    scroll: Point = { x:0, y:0 }
-    zoom: number = 1
-
-    hasFeature(feature: symbol): boolean {
-        return feature === viewportFeature || feature == resizeFeature
-    }
 }
 
 export interface SNodeSchema extends SParentElementSchema {
@@ -48,7 +37,7 @@ export interface SNodeSchema extends SParentElementSchema {
     children?: SGraphElementSchema[]
 }
 
-export class SNode extends SChildElement implements SNodeSchema, Selectable, Moveable, Sizeable {
+export class SNode extends SChildElement implements SNodeSchema, Selectable, BoundsAware {
     x: number = 0
     y: number = 0
     width: number = 0
@@ -57,8 +46,28 @@ export class SNode extends SChildElement implements SNodeSchema, Selectable, Mov
     children: SGraphElement[]
     selected: boolean = false
 
+    get bounds(): Bounds {
+        return {x: this.x, y: this.y, width: this.width, height: this.height}
+    }
+
+    set bounds(bounds: Bounds) {
+        this.x = bounds.x
+        this.y = bounds.y
+        this.width = bounds.width
+        this.height = bounds.height
+    }
+
+    get position(): Point {
+        return { x: this.x, y: this.y }
+    }
+
+    set position(point: Point) {
+        this.x = point.x
+        this.y = point.y
+    }
+
     hasFeature(feature: symbol): boolean {
-        return feature === selectFeature || feature === moveFeature ||feature === resizeFeature
+        return feature === selectFeature || feature === moveFeature || feature === resizeFeature
     }
 }
 

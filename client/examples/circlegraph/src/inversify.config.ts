@@ -15,7 +15,7 @@ const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) =>
 
 export default () => {
     const container = new Container()
-    container.applyMiddleware(makeLoggerMiddleware())
+    // container.applyMiddleware(makeLoggerMiddleware())
     container.load(defaultModule, selectModule, moveModule, resizeModule, undoRedoModule, viewportModule, circlegraphModule)
     return container
 }

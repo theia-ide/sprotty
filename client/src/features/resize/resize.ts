@@ -1,22 +1,21 @@
 import {Action} from "../../base/intent/actions"
 import {SModelElement, SModelRoot} from "../../base/model/smodel"
-import {Dimension, Bounds, TransformMatrix} from "../../utils/geometry"
+import {Bounds, TransformMatrix} from "../../utils/geometry"
 import {BehaviorSchema} from "../../base/model/behavior"
 import {CommandExecutionContext, AbstractCommand} from "../../base/intent/commands"
 import {resizeFeature} from "./index"
+import {Locateable} from "../move/move"
 
-export interface Sizeable extends BehaviorSchema, Dimension {
+export interface BoundsAware extends BehaviorSchema, Locateable {
     autosize: boolean
+    bounds: Bounds
     boundingBox?: Bounds
     clientBounds?: Bounds
     currentTransformMatrix?: TransformMatrix
 }
 
-export function isSizeable(element: SModelElement): element is SModelElement & Sizeable {
+export function isSizeable(element: SModelElement): element is SModelElement & BoundsAware {
     return element.hasFeature(resizeFeature)
-        &&'autosize' in element
-        && 'width' in element
-        && 'height' in element
 }
 
 export class ResizeAction implements Action {
@@ -28,15 +27,15 @@ export class ResizeAction implements Action {
 
 export type ElementResize = {
     elementId: string
-    newSize: Dimension
+    newBounds: Bounds
     newClientBounds?: Bounds
     newCurrentTransformMatrix?: TransformMatrix
 }
 
 type ResolvedElementResize = {
-    element: SModelElement & Sizeable
-    oldSize: Dimension
-    newSize: Dimension
+    element: SModelElement & BoundsAware
+    oldBounds: Bounds
+    newBounds: Bounds
     oldClientBounds?: Bounds
     newClientBounds?: Bounds
     oldCurrentTransformMatrix?: TransformMatrix,
@@ -59,19 +58,16 @@ export class ResizeCommand extends AbstractCommand {
                 if (element && isSizeable(element)) {
                     let oldClientBounds: Bounds | undefined
                     if (element.clientBounds) {
-                        oldClientBounds = {...element.clientBounds}
+                        oldClientBounds = element.clientBounds
                     }
                     let oldCurrentTransformMatrix: TransformMatrix | undefined
                     if (element.currentTransformMatrix) {
-                        oldCurrentTransformMatrix = {...element.currentTransformMatrix}
+                        oldCurrentTransformMatrix = element.currentTransformMatrix
                     }
                     this.resizes.push({
                         element: element,
-                        oldSize: {
-                            width: element.width,
-                            height: element.height
-                        },
-                        newSize: resize.newSize,
+                        oldBounds: element.bounds,
+                        newBounds: resize.newBounds,
                         oldClientBounds: oldClientBounds,
                         newClientBounds: resize.newClientBounds,
                         oldCurrentTransformMatrix: oldCurrentTransformMatrix,
@@ -86,12 +82,11 @@ export class ResizeCommand extends AbstractCommand {
     undo(root: SModelRoot, context: CommandExecutionContext) {
         this.resizes.forEach(
             resize => {
-                resize.element.width = resize.oldSize.width
-                resize.element.height = resize.oldSize.height
+                resize.element.bounds = resize.oldBounds
                 if (resize.oldClientBounds)
-                    resize.element.clientBounds = {...resize.oldClientBounds}
+                    resize.element.clientBounds = resize.oldClientBounds
                 if (resize.oldCurrentTransformMatrix)
-                    resize.element.currentTransformMatrix = {...resize.oldCurrentTransformMatrix}
+                    resize.element.currentTransformMatrix = resize.oldCurrentTransformMatrix
                 resize.element.autosize = true
             }
         )
@@ -101,10 +96,10 @@ export class ResizeCommand extends AbstractCommand {
     redo(root: SModelRoot, context: CommandExecutionContext) {
         this.resizes.forEach(
             resize => {
-                resize.element.width = resize.newSize.width
-                resize.element.height = resize.newSize.height
+                console.log(JSON.stringify(resize.element.bounds))
+                resize.element.bounds = resize.newBounds
                 if (resize.newClientBounds)
-                    resize.element.clientBounds = {...resize.newClientBounds}
+                    resize.element.clientBounds = resize.newClientBounds
                 if (resize.newCurrentTransformMatrix)
                     resize.element.currentTransformMatrix = {...resize.newCurrentTransformMatrix}
                 resize.element.autosize = false

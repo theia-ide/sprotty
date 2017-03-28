@@ -1,8 +1,9 @@
 import {SModelRoot, SModelElementSchema, SChildElement} from "../../../src/base"
 import {Direction, Point, ORIGIN_POINT, EMPTY_BOUNDS, Bounds} from "../../../src/utils"
 import {Selectable, selectFeature} from "../../../src/features/select"
-import {Sizeable, resizeFeature} from "../../../src/features/resize"
+import {BoundsAware, resizeFeature} from "../../../src/features/resize"
 import {Viewport, viewportFeature} from "../../../src/features/viewport"
+import {ViewportRootElement} from "../../../src/features/viewport/viewport-root"
 
 export interface ChipSchema extends SModelElementSchema {
     rows: number
@@ -10,20 +11,13 @@ export interface ChipSchema extends SModelElementSchema {
     children: SModelElementSchema[]
 }
 
-export class Chip extends SModelRoot implements ChipSchema, Viewport, Sizeable {
+export class Chip extends ViewportRootElement implements ChipSchema {
     readonly rows: number
     readonly columns: number
-    autosize: boolean = true
-    width: number = 0
-    height: number = 0
-    clientBounds: Bounds = EMPTY_BOUNDS
-    scroll: Point = ORIGIN_POINT
-    zoom: number = 1
 
     hasFeature(feature: symbol): boolean {
         return feature === viewportFeature || feature === resizeFeature
     }
-
 }
 
 export interface CoreSchema extends SModelElementSchema {

@@ -41,17 +41,13 @@ export class ViewportCommand extends AbstractCommand {
         if (element && isViewport(element)) {
             this.element = element
             this.oldViewport = {
-                scroll: {
-                    x: this.element.scroll.x,
-                    y: this.element.scroll.y
-                },
+                scroll: this.element.scroll,
                 zoom: this.element.zoom,
             }
             if (this.action.animate)
                 return new ViewportAnimation(this.element, this.oldViewport, this.newViewport, context).start()
             else {
-                this.element.scroll.x = this.newViewport.scroll.x
-                this.element.scroll.y = this.newViewport.scroll.y
+                this.element.scroll = this.newViewport.scroll
                 this.element.zoom = this.newViewport.zoom
                 if(isSizeable(this.element))
                     this.element.autosize = true
@@ -90,8 +86,10 @@ export class ViewportAnimation extends Animation {
     }
 
     tween(t: number) {
-        this.element.scroll.x = (1 - t) * this.oldViewport.scroll.x + t * this.newViewport.scroll.x
-        this.element.scroll.y = (1 - t) * this.oldViewport.scroll.y + t * this.newViewport.scroll.y
+        this.element.scroll = {
+            x: (1 - t) * this.oldViewport.scroll.x + t * this.newViewport.scroll.x,
+            y: (1 - t) * this.oldViewport.scroll.y + t * this.newViewport.scroll.y
+        }
         this.element.zoom = this.oldViewport.zoom * Math.exp(t * this.zoomFactor)
         if(isSizeable(this.element))
             this.element.autosize = true

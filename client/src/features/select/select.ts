@@ -16,7 +16,6 @@ export interface Selectable extends BehaviorSchema {
 
 export function isSelectable(element: SModelElement): element is SModelElement & Selectable {
     return element.hasFeature(selectFeature)
-        && 'selected' in element
 }
 
 export class SelectAction implements Action {

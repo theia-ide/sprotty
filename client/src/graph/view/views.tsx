@@ -58,10 +58,6 @@ export class StraightEdgeView implements View {
             // Use the first routing point as start anchor reference
             let p0 = edge.routingPoints[0]
             const sourceAnchor = sourceView.getAnchor(source, p0)
-            if (!sourceAnchor.x)
-                sourceAnchor.x = source.x || 0
-            if (!sourceAnchor.y)
-                sourceAnchor.y = source.y || 0
             if (manhattanDistance(sourceAnchor, p0) > 2)
                 path = `M ${sourceAnchor.x},${sourceAnchor.y} L ${p0.x},${p0.y}`
             else
@@ -79,10 +75,6 @@ export class StraightEdgeView implements View {
                 y: target.y + (targetView.getHeight(target) / 2 || 0)
             }
             const sourceAnchor = sourceView.getAnchor(source, reference)
-            if (!sourceAnchor.x)
-                sourceAnchor.x = source.x || 0
-            if (!sourceAnchor.y)
-                sourceAnchor.y = source.y || 0
             path = `M ${sourceAnchor.x},${sourceAnchor.y}`
         }
 
@@ -90,10 +82,6 @@ export class StraightEdgeView implements View {
             // Use the last routing point as end anchor reference
             let pn = edge.routingPoints[edge.routingPoints.length - 1]
             const targetAnchor = targetView.getAnchor(target, pn)
-            if (!targetAnchor.x)
-                targetAnchor.x = target.x || 0
-            if (!targetAnchor.y)
-                targetAnchor.y = target.y || 0
             if (manhattanDistance(targetAnchor, pn) > 2)
                 path += ` L ${pn.x},${pn.y} L ${targetAnchor.x},${targetAnchor.y}`
             else
@@ -105,10 +93,6 @@ export class StraightEdgeView implements View {
                 y: source.y + (sourceView.getHeight(source) / 2 || 0)
             }
             const targetAnchor = targetView.getAnchor(target, reference)
-            if (!targetAnchor.x)
-                targetAnchor.x = target.x || 0
-            if (!targetAnchor.y)
-                targetAnchor.y = target.y || 0
             path += ` L ${targetAnchor.x},${targetAnchor.y}`
         }
 

@@ -1,9 +1,8 @@
-import {Moveable} from "../features/move"
-import {Sizeable} from "../features/resize/resize"
+import {BoundsAware} from "../features/resize/resize"
 
 export interface Point {
-    x: number
-    y: number
+    readonly x: number
+    readonly y: number
 }
 
 export const ORIGIN_POINT: Point = {
@@ -12,20 +11,14 @@ export const ORIGIN_POINT: Point = {
 }
 
 export interface Dimension {
-    width: number
-    height: number
+    readonly width: number
+    readonly height: number
 }
 
 export interface Bounds extends Point, Dimension {
 }
 
 export const EMPTY_BOUNDS: Bounds = {x: 0, y: 0, width: -1, height: -1}
-
-export function getBounds(e: Moveable & Sizeable) {
-    return {
-        x: e.x, y: e.y, width: e.width, height: e.height
-    }
-}
 
 export function combine(b0: Bounds, b1: Bounds) {
     if (isEmpty(b0))
@@ -82,3 +75,4 @@ export function manhattanDistance(a: Point, b: Point): number {
 export function almostEquals(a: number, b: number): boolean {
     return Math.abs(a - b) < 1e-3
 }
+

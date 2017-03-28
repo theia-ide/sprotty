@@ -1,16 +1,16 @@
 import "reflect-metadata"
-import {injectable, inject} from "inversify"
-import {VNode} from "snabbdom/vnode"
 import {VNodeDecorator} from "../../base/view/vnode-decorators"
+import {VNode} from "../../../../../snabbdom/vnode"
 import {SModelElement} from "../../base/model/smodel"
 import {almostEquals, Bounds, TransformMatrix} from "../../utils/geometry"
-import {ElementResize, ResizeAction, Sizeable, isSizeable} from "./resize"
+import {ElementResize, ResizeAction, BoundsAware, isSizeable} from "./resize"
+import {injectable, inject} from "inversify"
 import {IActionDispatcher} from "../../base/intent/action-dispatcher"
 import {TYPES} from "../../base/types"
 
 class VNodeAndSizeable {
     vnode: VNode
-    element: Sizeable & SModelElement
+    element: BoundsAware & SModelElement
 }
 
 @injectable()
@@ -37,10 +37,16 @@ export class Autosizer implements VNodeDecorator {
                 const vnode = sizeable.vnode
                 const element = sizeable.element
                 if (vnode.elm) {
-                    const newBounds = this.getBoundingBox(vnode.elm)
+                    let boundingBox = this.getBoundingBox(vnode.elm)
+                    const newBounds = {
+                        x: element.position.x,
+                        y: element.position.y,
+                        width: boundingBox.width,
+                        height: boundingBox.height
+                    }
                     let shouldResize = element.autosize
-                        || !almostEquals(newBounds.width, element.width)
-                        || !almostEquals(newBounds.height, element.height)
+                        || !almostEquals(newBounds.width, element.bounds.width)
+                        || !almostEquals(newBounds.height, element.bounds.height)
                     let newClientBounds: Bounds | undefined
                     let newCurrentTransformMatrix: TransformMatrix | undefined
                     if (element.clientBounds) {
@@ -60,7 +66,7 @@ export class Autosizer implements VNodeDecorator {
                     if (shouldResize) {
                         resizes.push({
                             elementId: element.id,
-                            newSize: newBounds,
+                            newBounds: newBounds,
                             newClientBounds: newClientBounds,
                             newCurrentTransformMatrix: newCurrentTransformMatrix
                         })
