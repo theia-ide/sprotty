@@ -36,7 +36,7 @@ public class ActionTypeAdapter extends PropertyBasedTypeAdapter<Action> {
 			addActionKind(SetModelAction.KIND, SetModelAction.class);
 			addActionKind(ResizeAction.KIND, ResizeAction.class);
 			addActionKind(SelectAction.KIND, SelectAction.class);
-			actionKinds.put(UpdateModelAction.KIND, UpdateModelAction.class);
+			addActionKind(UpdateModelAction.KIND, UpdateModelAction.class);
 		}
 		
 		public void addActionKind(String kind, Class<? extends Action> clazz) {

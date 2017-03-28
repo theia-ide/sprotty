@@ -27,13 +27,7 @@ class ResizeAction implements Action {
 @Accessors@EqualsHashCode@ToString
 class ElementResize {
     String elementId
-    Dimension newSize
-}
-
-@Accessors@EqualsHashCode@ToString
-class Dimension {
-    Double width
-    Double height
+    Bounds newBounds
 }
 
 @Accessors@EqualsHashCode@ToString
@@ -94,6 +88,20 @@ class SEdge extends SModelElement {
 
 @Accessors@EqualsHashCode@ToString
 class Point {
-	double x
-	double y
+    Double x
+    Double y
+}
+
+@Accessors@EqualsHashCode@ToString
+class Dimension {
+    Double width
+    Double height
+}
+
+@Accessors@EqualsHashCode@ToString
+class Bounds {
+    Double x
+    Double y
+    Double width
+    Double height
 }

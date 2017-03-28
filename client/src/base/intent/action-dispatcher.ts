@@ -1,8 +1,9 @@
 import "reflect-metadata"
-import { injectable, inject } from "inversify"
+import { injectable, inject, optional } from "inversify"
 import { ILogger } from "../../utils/logging"
 import { TYPES } from "../types"
 import { UndoAction, RedoAction } from "../../features/undo-redo/undo-redo"
+import { IDiagramServer } from "../../remote/diagram-server"
 import { Action, ActionHandlerRegistry } from "./actions"
 import { ICommandStack } from "./command-stack"
 import {AnimationFrameSyncer} from "../animations/animation-frame-syncer"
@@ -24,7 +25,13 @@ export class ActionDispatcher implements IActionDispatcher {
     @inject(TYPES.ILogger) protected logger: ILogger
     @inject(TYPES.IAnimationFrameSyncer) protected syncer: AnimationFrameSyncer
 
-    nextFrameActions:Action[] = []
+    nextFrameActions: Action[] = []
+
+    constructor(@inject(TYPES.IDiagramServer) @optional() diagramServer: IDiagramServer) {
+        if (diagramServer !== undefined) {
+            diagramServer.onAction(action => {this.dispatch(action)})
+        }
+    }
 
     dispatchNextFrame(action: Action) {
         const trigger = this.nextFrameActions.length === 0

@@ -4,7 +4,7 @@ import java.util.Map;
 
 import com.google.common.collect.Maps;
 
-import io.typefox.sprotty.api.Dimension;
+import io.typefox.sprotty.api.Bounds;
 import io.typefox.sprotty.api.ElementResize;
 import io.typefox.sprotty.api.ResizeAction;
 import io.typefox.sprotty.api.SGraph;
@@ -39,11 +39,11 @@ public final class LayoutUtil {
 		for (ElementResize resize : action.getResizes()) {
 			SNode node = nodeMap.get(resize.getElementId());
 			if (node != null) {
-				Dimension newSize = resize.getNewSize();
-				if (newSize.getWidth() != null)
-					node.setWidth(newSize.getWidth());
-				if (newSize.getHeight() != null)
-					node.setHeight(newSize.getHeight());
+				Bounds newBounds = resize.getNewBounds();
+				if (newBounds.getWidth() != null)
+					node.setWidth(newBounds.getWidth());
+				if (newBounds.getHeight() != null)
+					node.setHeight(newBounds.getHeight());
 			}
 		}
 	}
