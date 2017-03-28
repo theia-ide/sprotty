@@ -1,8 +1,7 @@
 package io.typefox.sprotty.example.flow.web.diagram
 
-import com.google.inject.Inject
 import com.google.inject.Singleton
-import io.typefox.sprotty.api.Action
+import io.typefox.sprotty.api.AbstractDiagramServer
 import io.typefox.sprotty.api.RequestModelAction
 import io.typefox.sprotty.api.ResizeAction
 import io.typefox.sprotty.api.SEdge
@@ -17,7 +16,6 @@ import io.typefox.sprotty.layout.ElkLayoutEngine
 import io.typefox.sprotty.layout.ILayoutEngine
 import io.typefox.sprotty.layout.LayoutUtil
 import io.typefox.sprotty.layout.SprottyLayoutConfigurator
-import java.util.function.Consumer
 import org.apache.log4j.Logger
 import org.eclipse.elk.alg.layered.options.LayeredOptions
 import org.eclipse.elk.alg.layered.options.NodeFlexibility
@@ -26,35 +24,20 @@ import org.eclipse.elk.core.math.KVector
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.SizeConstraint
-import org.eclipse.lsp4j.jsonrpc.CompletableFutures
-import org.eclipse.xtend.lib.annotations.Accessors
-import org.eclipse.xtext.ide.ExecutorServiceProvider
 import org.eclipse.xtext.util.CancelIndicator
-import org.eclipse.xtext.web.server.model.AbstractCachedService
-import org.eclipse.xtext.web.server.model.IXtextWebDocument
 
 import static io.typefox.sprotty.layout.ElkLayoutEngine.*
 
 @Singleton
-class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implements Consumer<Action> {
+class ExecutionFlowDiagramServer extends AbstractDiagramServer {
 	
 	static val LOG = Logger.getLogger(ExecutionFlowDiagramServer)
-	
-	@Inject ExecutorServiceProvider executorServiceProvider
 	
 	ILayoutEngine layoutEngine
 	
 	static Program cachedProgram
 	
-	@Accessors
-	Consumer<Action> remoteEndpoint
-	
-	override accept(Action action) {
-		
-	}
-	
-	override compute(IXtextWebDocument it, CancelIndicator cancelIndicator) {
-		val flow = resource.contents.head as Flow
+	def Program generateDiagram(Flow flow, CancelIndicator cancelIndicator) {
 		val program = new Program => [
 			type = 'graph'
 			id = 'graph'
@@ -112,11 +95,9 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 			}
 		}
 		cachedProgram = program
-		if (remoteEndpoint !== null) {
-			remoteEndpoint.accept(new UpdateModelAction => [
-				modelId = program.id
-			])
-		}
+		remoteEndpoint?.accept(new UpdateModelAction => [
+			modelId = program.id
+		])
 		return program
 	}
 	
@@ -142,34 +123,30 @@ class ExecutionFlowDiagramServer extends AbstractCachedService<Program> implemen
 		layoutEngine.layout(graph, configurator)
 	}
 	
-	def resize(ResizeAction action) {
-		return CompletableFutures.computeAsync(executorServiceProvider.get) [
-			initializeLayoutEngine()
-			val graph = cachedProgram
-			if (graph !== null) {
-				LayoutUtil.applyResizeAction(graph, action)
-				layout(graph)
-				return new SetModelAction => [
-					newRoot = graph
-				]
-			} else
-				throw new IllegalStateException("requestModel must be called before layout")
-		]
+	override handle(ResizeAction action) {
+		initializeLayoutEngine()
+		val graph = cachedProgram
+		if (graph !== null) {
+			LayoutUtil.applyResizeAction(graph, action)
+			layout(graph)
+			remoteEndpoint?.accept(new SetModelAction => [
+				newRoot = graph
+			])
+		} else
+			throw new IllegalStateException("requestModel must be called before layout")
 	}
 	
 	/**
 	 * Here the access to the computed program is hard-coded with a static field.
 	 */
-	def requestModel(RequestModelAction action) {
-		return CompletableFutures.computeAsync(executorServiceProvider.get) [
-			return new SetModelAction => [
-				newRoot = cachedProgram ?: new Program
-			]
-		]
+	override handle(RequestModelAction action) {
+		remoteEndpoint?.accept(new SetModelAction => [
+			newRoot = cachedProgram ?: new Program
+		])
 	}
 
-	def elementSelected(SelectAction action) {
+	override handle(SelectAction action) {
 		LOG.info('element selected = ' + action)
 	}
-		
+	
 }
