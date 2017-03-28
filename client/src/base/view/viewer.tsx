@@ -59,7 +59,7 @@ export class Viewer implements VNodeDecorator, IViewer {
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        if(vnode.hasOwnProperty('thunk') && vnode['thunk'])
+        if(vnode['thunk'])
             return vnode
         this.decorators = this.decorators
         return this.decorators.reduce(
