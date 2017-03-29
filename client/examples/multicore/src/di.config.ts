@@ -1,12 +1,13 @@
 import {ContainerModule, Container} from "inversify"
 import {SModelFactory, TYPES, defaultModule} from "../../../src/base"
 import {ChipModelFactory} from "./chipmodel-factory"
-import {ConsoleLogger} from "../../../src/utils"
+import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import {boundsModule, selectModule, viewportModule} from "../../../src/features"
 
 const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
+    rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
     rebind(TYPES.IModelFactory).to(ChipModelFactory).inSingletonScope()
     bind(TYPES.IDiagramServer).to(WebSocketDiagramServer).inSingletonScope()
 })

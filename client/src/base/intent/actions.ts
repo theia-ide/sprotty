@@ -22,10 +22,6 @@ export interface ActionHandler {
     handle(action: Action): Command | Action | undefined
 }
 
-export function isActionHandler(object?: any): object is ActionHandler {
-    return object !== undefined && object.hasOwnProperty('handle') && typeof(object['handle']) == 'function'
-}
-
 export class TranslatingActionHandler implements ActionHandler {
     constructor(private translator: (Action) => Action) {
     }

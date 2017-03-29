@@ -1,7 +1,7 @@
 import {
     TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction, UpdateModelAction, Action
 } from "../../../src/base"
-import { SelectCommand } from "../../../src/features"
+import { SelectCommand, SetBoundsCommand, CenterAction } from "../../../src/features"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { ProcessorView, CoreView, ChannelView, CrossbarView } from "./views"
 import createContainer from "./di.config"
@@ -15,6 +15,7 @@ export default function runMulticoreServer() {
     actionHandlerRegistry.registerServerMessage(SelectCommand.KIND)
     actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
     actionHandlerRegistry.registerTranslator(UpdateModelAction.KIND, update => new RequestModelAction('processor'))
+    actionHandlerRegistry.registerTranslator(SetBoundsCommand.KIND, update => new CenterAction([]))
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
