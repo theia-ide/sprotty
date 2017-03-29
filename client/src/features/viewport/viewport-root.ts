@@ -1,7 +1,7 @@
 
 import { SModelRoot } from "../../base/model/smodel"
 import { Bounds, EMPTY_BOUNDS, Point } from "../../utils/geometry"
-import { BoundsAware, resizeFeature } from "../resize/model"
+import { BoundsAware, boundsFeature } from "../bounds/model"
 import { Viewport, viewportFeature } from "./model"
 
 export class ViewportRootElement extends SModelRoot implements BoundsAware, Viewport {
@@ -35,6 +35,6 @@ export class ViewportRootElement extends SModelRoot implements BoundsAware, View
     }
 
     hasFeature(feature: symbol) {
-        return feature === viewportFeature || feature === resizeFeature
+        return feature === viewportFeature || feature === boundsFeature
     }
 }

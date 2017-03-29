@@ -1,7 +1,7 @@
 import {SModelRoot, SModelElementSchema, SChildElement} from "../../../src/base"
 import {Direction, Point, ORIGIN_POINT, EMPTY_BOUNDS, Bounds} from "../../../src/utils"
 import {
-    Selectable, selectFeature, BoundsAware, resizeFeature, Viewport, viewportFeature
+    Selectable, selectFeature, BoundsAware, boundsFeature, Viewport, viewportFeature
 } from "../../../src/features"
 import {ViewportRootElement} from "../../../src/features/viewport/viewport-root"
 
@@ -16,7 +16,7 @@ export class Chip extends ViewportRootElement implements ChipSchema {
     readonly columns: number
 
     hasFeature(feature: symbol): boolean {
-        return feature === viewportFeature || feature === resizeFeature
+        return feature === viewportFeature || feature === boundsFeature
     }
 }
 
@@ -53,7 +53,7 @@ export class Crossbar extends SChildElement implements CrossbarSchema, Selectabl
     bounds: Bounds = EMPTY_BOUNDS
 
     hasFeature(feature: symbol): boolean {
-        return feature === selectFeature || feature === resizeFeature
+        return feature === selectFeature || feature === boundsFeature
     }
 }
 

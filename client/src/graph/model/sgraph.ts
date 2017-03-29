@@ -4,7 +4,7 @@ import { Point, IDENTITY_MATRIX, Bounds, EMPTY_BOUNDS } from "../../utils/geomet
 import { ViewportRootElement } from "../../features/viewport/viewport-root"
 import { selectFeature, Selectable } from "../../features/select/model"
 import { moveFeature } from "../../features/move/model"
-import { resizeFeature, BoundsAware } from "../../features/resize/model"
+import { boundsFeature, BoundsAware } from "../../features/bounds/model"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
@@ -68,7 +68,7 @@ export class SNode extends SChildElement implements SNodeSchema, Selectable, Bou
     }
 
     hasFeature(feature: symbol): boolean {
-        return feature === selectFeature || feature === moveFeature || feature === resizeFeature
+        return feature === selectFeature || feature === moveFeature || feature === boundsFeature
     }
 }
 

@@ -3,7 +3,7 @@ import {
     RequestModelAction, UpdateModelAction
 } from "../../../src/base"
 import {SGraphView, StraightEdgeView} from "../../../src/graph"
-import { SelectCommand, ResizeCommand } from "../../../src/features"
+import { SelectCommand, SetBoundsCommand } from "../../../src/features"
 import {ExecutionNodeView, BarrierNodeView} from "./views"
 import createContainer from "./inversify.config"
 import { WebSocketDiagramServer } from "../../../src/remote"
@@ -16,7 +16,7 @@ export default function runFlowServer() {
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
     actionHandlerRegistry.registerServerMessage(SelectCommand.KIND)
     actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
-    actionHandlerRegistry.registerServerMessage(ResizeCommand.KIND)
+    actionHandlerRegistry.registerServerMessage(SetBoundsCommand.KIND)
     actionHandlerRegistry.register(UpdateModelAction.KIND, new RequestOnUpdateHandler())
 
     // Register views

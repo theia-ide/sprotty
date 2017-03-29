@@ -3,7 +3,7 @@ import { Locateable } from "../move/model"
 import { Bounds, TransformMatrix } from "../../utils/geometry"
 import { SModelElement } from "../../base/model/smodel"
 
-export const resizeFeature = Symbol('resizeFeature')
+export const boundsFeature = Symbol('boundsFeature')
 
 export interface BoundsAware extends BehaviorSchema {
     autosize: boolean
@@ -15,6 +15,6 @@ export function isBoundsAware(element: SModelElement): element is SModelElement 
 }
 
 export function isSizeable(element: SModelElement): element is SModelElement & BoundsAware {
-    return element.hasFeature(resizeFeature) && isBoundsAware(element)
+    return element.hasFeature(boundsFeature) && isBoundsAware(element)
 }
 

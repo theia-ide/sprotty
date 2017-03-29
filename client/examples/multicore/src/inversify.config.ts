@@ -3,7 +3,7 @@ import {SModelFactory, TYPES, defaultModule} from "../../../src/base"
 import {ChipModelFactory} from "./chipmodel-factory"
 import {ConsoleLogger} from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
-import {resizeModule, selectModule, viewportModule} from "../../../src/features"
+import {boundsModule, selectModule, viewportModule} from "../../../src/features"
 
 const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     // rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
@@ -13,6 +13,6 @@ const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
 
 export default () => {
     const container = new Container()
-    container.load(defaultModule, resizeModule, selectModule, viewportModule, multicoreModule)
+    container.load(defaultModule, boundsModule, selectModule, viewportModule, multicoreModule)
     return container
 }

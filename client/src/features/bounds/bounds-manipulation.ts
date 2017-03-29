@@ -4,30 +4,30 @@ import { Action } from "../../base/intent/actions"
 import { AbstractCommand, CommandExecutionContext } from "../../base/intent/commands"
 import { BoundsAware, isSizeable } from "./model"
 
-export class ResizeAction implements Action {
-    readonly kind = ResizeCommand.KIND
+export class SetBoundsAction implements Action {
+    readonly kind = SetBoundsCommand.KIND
 
-    constructor(public readonly resizes: ElementResize[]) {
+    constructor(public readonly resizes: ElementAndBounds[]) {
     }
 }
 
-export type ElementResize = {
+export type ElementAndBounds = {
     elementId: string
     newBounds: Bounds
 }
 
-type ResolvedElementResize = {
+type ResolvedElementAndBounds = {
     element: SModelElement & BoundsAware
     oldBounds: Bounds
     newBounds: Bounds
 }
 
-export class ResizeCommand extends AbstractCommand {
-    static readonly KIND = 'resize'
+export class SetBoundsCommand extends AbstractCommand {
+    static readonly KIND = 'bounds'
 
-    private resizes: ResolvedElementResize[] = []
+    private resizes: ResolvedElementAndBounds[] = []
 
-    constructor(private action: ResizeAction) {
+    constructor(private action: SetBoundsAction) {
         super()
     }
 

@@ -6,7 +6,7 @@ import { VNodeDecorator } from "../../base/view/vnode-decorators"
 import { TYPES } from "../../base/types"
 import { IActionDispatcher } from "../../base/intent/action-dispatcher"
 import { almostEquals, Bounds, TransformMatrix } from "../../utils/geometry"
-import { ElementResize, ResizeAction } from "./resize"
+import { ElementAndBounds, SetBoundsAction } from "./bounds-manipulation"
 import { BoundsAware, isSizeable } from "./model"
 
 class VNodeAndSizeable {
@@ -14,8 +14,16 @@ class VNodeAndSizeable {
     element: BoundsAware & SModelElement
 }
 
+/**
+ * Grabs the bounds from the SVG element and fires a SetBoundsAction.
+ *
+ * The actual bounds of an element can usually not be determined from the SModel
+ * as they depend on the view implementation and CSS stylings. So the best way is
+ * to grab them from the live SVG using getBBox(). In order to avoid additional
+ * layout passes per frame, we defer the calculation in the next animation frame.
+ */
 @injectable()
-export class Autosizer implements VNodeDecorator {
+export class BoundsGrabber implements VNodeDecorator {
 
     @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
 
@@ -32,7 +40,7 @@ export class Autosizer implements VNodeDecorator {
     }
 
     postUpdate() {
-        const resizes: ElementResize[] = []
+        const resizes: ElementAndBounds[] = []
         this.sizeables.forEach(
             sizeable => {
                 const vnode = sizeable.vnode
@@ -52,7 +60,7 @@ export class Autosizer implements VNodeDecorator {
         )
         this.sizeables = []
         if (resizes.length > 0)
-            this.actionDispatcher.dispatchNextFrame(new ResizeAction(resizes))
+            this.actionDispatcher.dispatchNextFrame(new SetBoundsAction(resizes))
 
     }
 
