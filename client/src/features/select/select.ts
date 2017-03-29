@@ -5,9 +5,9 @@ import { AbstractCommand } from "../../base/intent/commands"
 import { SEdge, SNode } from "../../graph/model/sgraph"
 import { MouseListener } from "../../base/view/mouse-tool"
 import { isCtrlOrCmd } from "../../utils/browser"
-import { VNodeUtils } from "../../base/view/vnode-utils"
 import { KeyListener } from "../../base/view/key-tool"
 import { isSelectable } from "./model"
+import {setClass} from "../../base/view/vnode-utils"
 
 export class SelectAction implements Action {
     kind = SelectCommand.KIND
@@ -161,7 +161,7 @@ export class SelectMouseListener extends MouseListener {
 
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (isSelectable(element))
-            VNodeUtils.setClass(vnode, 'selected', element.selected)
+            setClass(vnode, 'selected', element.selected)
         return vnode
     }
 }

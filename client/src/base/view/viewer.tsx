@@ -13,7 +13,7 @@ import { SModelRoot, SModelElement, SParentElement } from "../model/smodel"
 import { TYPES } from "../types"
 import { VNodeDecorator } from "./vnode-decorators"
 import { ViewRegistry, RenderingContext } from "./views"
-import { VNodeUtils } from "./vnode-utils"
+import {setClass} from "./vnode-utils"
 
 const JSX = {createElement: snabbdom.html}  // must be html here, as we're creating a div
 
@@ -85,7 +85,7 @@ export class Viewer implements VNodeDecorator, IViewer {
         const newVDOM = <div id={this.options.baseDiv}>
                 {this.renderElement(model, context) as VNode}
             </div>
-        VNodeUtils.setClass(newVDOM, this.options.baseDiv, true)
+        setClass(newVDOM, this.options.baseDiv, true)
         if (this.lastVDOM) {
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
         } else {

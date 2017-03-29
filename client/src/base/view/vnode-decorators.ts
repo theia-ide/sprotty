@@ -1,7 +1,7 @@
 import { injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { SModelElement } from "../model/smodel"
-import { VNodeUtils } from "./vnode-utils"
+import {setAttr, mergeStyle} from "./vnode-utils"
 
 /**
  * Manipulates a created VNode after it has been created.
@@ -18,7 +18,7 @@ export class FocusFixDecorator implements VNodeDecorator {
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (vnode.sel && vnode.sel.startsWith('svg'))
         // allows to set focus in Firefox
-            VNodeUtils.setAttr(vnode, 'tabindex', 0)
+            setAttr(vnode, 'tabindex', 0)
         return vnode
     }
 
@@ -36,7 +36,7 @@ export class AddRemoveAnimationDecorator implements VNodeDecorator {
     }
 
     decorate(vnode: VNode, element: SModelElement) {
-        VNodeUtils.mergeStyle(vnode, this.appearFadeStyle)
+        mergeStyle(vnode, this.appearFadeStyle)
         return vnode
     }
 

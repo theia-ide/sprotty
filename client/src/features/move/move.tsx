@@ -1,6 +1,5 @@
 import * as snabbdom from "snabbdom-jsx"
 import { VNode } from "snabbdom/vnode"
-import { VNodeUtils } from "../../base/view/vnode-utils"
 import { Point } from "../../utils/geometry"
 import { Map } from "../../utils/utils"
 import { SModelElement, SModelRoot, SModelIndex, getParent } from "../../base/model/smodel"

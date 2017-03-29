@@ -5,8 +5,8 @@ import { IActionDispatcher } from "../intent/action-dispatcher"
 import { TYPES } from "../types"
 import { SModelRoot, SModelElement } from "../model/smodel"
 import { Action } from "../intent/actions"
-import { VNodeUtils } from "./vnode-utils"
 import { VNodeDecorator } from "./vnode-decorators"
+import {on} from "./vnode-utils"
 
 @injectable()
 export class KeyTool implements VNodeDecorator {
@@ -43,10 +43,10 @@ export class KeyTool implements VNodeDecorator {
 
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (element instanceof SModelRoot) {
-            VNodeUtils.on(vnode, 'focus', this.focus.bind(this), element)
-            VNodeUtils.on(vnode, 'keypress', this.keyPress.bind(this), element)
-            VNodeUtils.on(vnode, 'keydown', this.keyPress.bind(this), element)
-            VNodeUtils.on(vnode, 'keyup', this.keyPress.bind(this), element)
+            on(vnode, 'focus', this.focus.bind(this), element)
+            on(vnode, 'keypress', this.keyPress.bind(this), element)
+            on(vnode, 'keydown', this.keyPress.bind(this), element)
+            on(vnode, 'keyup', this.keyPress.bind(this), element)
 
         }
         return vnode

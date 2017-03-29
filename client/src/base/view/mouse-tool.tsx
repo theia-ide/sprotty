@@ -7,7 +7,7 @@ import { TYPES } from "../types"
 import { SModelRoot, SModelElement } from "../model/smodel"
 import { Action } from "../intent/actions"
 import { VNodeDecorator } from "./vnode-decorators"
-import { VNodeUtils } from "./vnode-utils"
+import {on} from "./vnode-utils"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -78,11 +78,11 @@ export class MouseTool implements VNodeDecorator {
 
     decorate(vnode: VNode, element: SModelElement) {
         if (element instanceof SModelRoot) {
-            VNodeUtils.on(vnode, 'mousedown', this.mouseDown.bind(this), element)
-            VNodeUtils.on(vnode, 'mouseup', this.mouseUp.bind(this), element)
-            VNodeUtils.on(vnode, 'mousemove', this.mouseMove.bind(this), element)
-            VNodeUtils.on(vnode, 'wheel', this.wheel.bind(this), element)
-            VNodeUtils.on(vnode, 'contextmenu', (element, event) => {
+            on(vnode, 'mousedown', this.mouseDown.bind(this), element)
+            on(vnode, 'mouseup', this.mouseUp.bind(this), element)
+            on(vnode, 'mousemove', this.mouseMove.bind(this), element)
+            on(vnode, 'wheel', this.wheel.bind(this), element)
+            on(vnode, 'contextmenu', (element, event) => {
                 event.preventDefault()
             }, element)
         }
