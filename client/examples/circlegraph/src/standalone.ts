@@ -6,7 +6,7 @@ import {
 } from "../../../src/graph"
 import {ElementMove, MoveAction} from "../../../src/features"
 import {CircleNodeView} from "./views"
-import createContainer from "./inversify.config"
+import createContainer from "./di.config"
 
 export default function runStandalone() {
     const container = createContainer()

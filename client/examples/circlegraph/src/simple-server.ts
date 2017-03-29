@@ -9,7 +9,7 @@ import {
 import {SGraphView, StraightEdgeView} from "../../../src/graph"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import {CircleNodeView} from "./views"
-import createContainer from "./inversify.config"
+import createContainer from "./di.config"
 
 export default function runSimpleServer() {
     const container = createContainer()

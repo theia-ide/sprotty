@@ -11,13 +11,13 @@ export * from "./viewport/scroll"
 export * from "./viewport/zoom"
 export * from "./viewport/model"
 
-import moveModule from "./move/di"
+import moveModule from "./move/di.config"
 export { moveModule }
-import boundsModule from "./bounds/di"
+import boundsModule from "./bounds/di.config"
 export { boundsModule }
-import selectModule from "./select/di"
+import selectModule from "./select/di.config"
 export { selectModule }
-import undoRedoModule from "./undo-redo/di"
+import undoRedoModule from "./undo-redo/di.config"
 export { undoRedoModule }
-import viewportModule from "./viewport/di"
+import viewportModule from "./viewport/di.config"
 export { viewportModule }

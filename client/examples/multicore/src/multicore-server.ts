@@ -4,7 +4,7 @@ import {
 import {SelectCommand} from "../../../src/features"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
-import createContainer from "./inversify.config"
+import createContainer from "./di.config"
 
 export default function runMulticoreServer() {
     const container = createContainer()

@@ -6,7 +6,7 @@ import {CenterAction, SelectCommand } from "../../../src/features"
 import {Core, ChipSchema, Crossbar, Channel, CoreSchema, ChannelSchema, CrossbarSchema} from "./chipmodel"
 import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
 import {ChipModelFactory} from "./chipmodel-factory"
-import createContainer from "./inversify.config"
+import createContainer from "./di.config"
 
 export default function runMulticore() {
     const container = createContainer()

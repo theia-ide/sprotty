@@ -9,5 +9,5 @@ export * from "./view/mouse-tool"
 export * from "./features/model-manipulation"
 export * from "./animations/animation-frame-syncer"
 
-import defaultModule from "./di"
+import defaultModule from "./di.config"
 export { defaultModule }

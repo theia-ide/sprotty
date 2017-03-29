@@ -9,7 +9,7 @@ import { MoveAction, MoveCommand } from "../../features/move/move"
 import { ICommandStack } from "./command-stack"
 import { IActionDispatcher } from "./action-dispatcher"
 import { ActionHandlerRegistry } from "./actions"
-import defaultModule from "../di"
+import defaultModule from "../di.config"
 
 describe('action dispatcher', () => {
 

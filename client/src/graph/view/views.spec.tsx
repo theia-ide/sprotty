@@ -10,9 +10,9 @@ import { Viewer } from "../../base/view/viewer"
 import { TYPES } from "../../base/types"
 import { SGraphFactory } from "../model/sgraph-factory"
 import { SGraphView, StraightEdgeView } from "./views"
-import defaultModule from "../../base/di"
-import selectModule from "../../features/select/di"
-import moveModule from "../../features/move/di"
+import defaultModule from "../../base/di.config"
+import selectModule from "../../features/select/di.config"
+import moveModule from "../../features/move/di.config"
 
 const toHTML = require('snabbdom-to-html')
 const JSX = {createElement: snabbdom.svg}
