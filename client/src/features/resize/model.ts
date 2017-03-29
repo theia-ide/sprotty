@@ -10,10 +10,11 @@ export interface BoundsAware extends BehaviorSchema {
     bounds: Bounds
 }
 
-export function isSizeable(element: SModelElement): element is SModelElement & BoundsAware {
-    return element.hasFeature(resizeFeature)
+export function isBoundsAware(element: SModelElement): element is SModelElement & BoundsAware {
+    return 'bounds' in element && 'autosize' in element
 }
 
-export function isBoundsAware(element: SModelElement): element is SModelElement & BoundsAware {
-    return 'bounds' in element
+export function isSizeable(element: SModelElement): element is SModelElement & BoundsAware {
+    return element.hasFeature(resizeFeature) && isBoundsAware(element)
 }
+
