@@ -5,12 +5,12 @@ import java.util.Map;
 import com.google.common.collect.Maps;
 
 import io.typefox.sprotty.api.Bounds;
-import io.typefox.sprotty.api.ElementResize;
-import io.typefox.sprotty.api.ResizeAction;
+import io.typefox.sprotty.api.ElementAndBounds;
 import io.typefox.sprotty.api.SGraph;
 import io.typefox.sprotty.api.SModelElement;
 import io.typefox.sprotty.api.SModelRoot;
 import io.typefox.sprotty.api.SNode;
+import io.typefox.sprotty.api.SetBoundsAction;
 
 public final class LayoutUtil {
 	
@@ -34,9 +34,9 @@ public final class LayoutUtil {
 		}
 	}
 	
-	public static void applyResizeAction(SGraph graph, ResizeAction action) {
+	public static void applyResizeAction(SGraph graph, SetBoundsAction action) {
 		Map<String, SNode> nodeMap = createId2NodeMap(graph);
-		for (ElementResize resize : action.getResizes()) {
+		for (ElementAndBounds resize : action.getResizes()) {
 			SNode node = nodeMap.get(resize.getElementId());
 			if (node != null) {
 				Bounds newBounds = resize.getNewBounds();

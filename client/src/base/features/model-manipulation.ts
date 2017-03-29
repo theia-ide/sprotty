@@ -52,12 +52,3 @@ export class UpdateModelAction implements Action {
     constructor(public readonly modelId: string) {
     }
 }
-
-export class RequestOnUpdateHandler implements ActionHandler {
-    constructor(private readonly options?: Map<string>) {
-    }
-
-    handle(action: UpdateModelAction): Command | Action | undefined {
-        return new RequestModelAction(this.options)
-    }
-}

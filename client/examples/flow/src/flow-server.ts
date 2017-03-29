@@ -1,10 +1,9 @@
 import {
-    TYPES, IActionDispatcher, ActionHandlerRegistry, RequestOnUpdateHandler, ViewRegistry,
-    RequestModelAction, UpdateModelAction
+    TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction, UpdateModelAction
 } from "../../../src/base"
-import {SGraphView, StraightEdgeView} from "../../../src/graph"
+import { SGraphView, StraightEdgeView } from "../../../src/graph"
 import { SelectCommand, SetBoundsCommand } from "../../../src/features"
-import {ExecutionNodeView, BarrierNodeView} from "./views"
+import { ExecutionNodeView, BarrierNodeView } from "./views"
 import createContainer from "./di.config"
 import { WebSocketDiagramServer } from "../../../src/remote"
 
@@ -17,7 +16,7 @@ export default function runFlowServer() {
     actionHandlerRegistry.registerServerMessage(SelectCommand.KIND)
     actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
     actionHandlerRegistry.registerServerMessage(SetBoundsCommand.KIND)
-    actionHandlerRegistry.register(UpdateModelAction.KIND, new RequestOnUpdateHandler())
+    actionHandlerRegistry.registerTranslator(UpdateModelAction.KIND, update => new RequestModelAction({type: 'flow'}))
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)

@@ -1,12 +1,13 @@
 package io.typefox.sprotty.example.multicore.web.diagram
 
 import com.google.inject.Inject
+import com.google.inject.Singleton
 import io.typefox.sprotty.api.AbstractDiagramServer
 import io.typefox.sprotty.api.RequestModelAction
-import io.typefox.sprotty.api.ResizeAction
 import io.typefox.sprotty.api.SEdge
 import io.typefox.sprotty.api.SGraph
 import io.typefox.sprotty.api.SelectAction
+import io.typefox.sprotty.api.SetBoundsAction
 import io.typefox.sprotty.api.SetModelAction
 import io.typefox.sprotty.api.UpdateModelAction
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Barrier
@@ -28,6 +29,7 @@ import org.eclipse.xtext.util.CancelIndicator
 
 import static io.typefox.sprotty.layout.ElkLayoutEngine.*
 
+@Singleton
 class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 	
 	static val LOG = Logger.getLogger(MulticoreAllocationDiagramServer)
@@ -188,7 +190,7 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		layoutEngine.layout(graph, configurator)
 	}
 	
-	override handle(ResizeAction action) {
+	override handle(SetBoundsAction action) {
 		initializeLayoutEngine()
 		val graph = modelProvider.flowView
 		if (graph !== null) {

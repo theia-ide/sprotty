@@ -2,13 +2,13 @@ package io.typefox.sprotty.server.examples
 
 import io.typefox.sprotty.api.AbstractDiagramServer
 import io.typefox.sprotty.api.RequestModelAction
-import io.typefox.sprotty.api.ResizeAction
 import io.typefox.sprotty.api.SEdge
 import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.api.SNode
 import io.typefox.sprotty.api.SelectAction
 import io.typefox.sprotty.api.SetModelAction
 import org.eclipse.jetty.util.log.Slf4jLog
+import io.typefox.sprotty.api.SetBoundsAction
 
 class SimpleDiagramServer extends AbstractDiagramServer {
 
@@ -44,7 +44,7 @@ class SimpleDiagramServer extends AbstractDiagramServer {
 		])
 	}
 	
-	override handle(ResizeAction action) {
+	override handle(SetBoundsAction action) {
 		throw new UnsupportedOperationException("TODO: auto-generated method stub")
 	}
 	

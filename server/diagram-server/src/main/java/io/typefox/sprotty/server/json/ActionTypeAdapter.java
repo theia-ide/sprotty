@@ -12,7 +12,7 @@ import com.google.gson.reflect.TypeToken;
 
 import io.typefox.sprotty.api.Action;
 import io.typefox.sprotty.api.RequestModelAction;
-import io.typefox.sprotty.api.ResizeAction;
+import io.typefox.sprotty.api.SetBoundsAction;
 import io.typefox.sprotty.api.SelectAction;
 import io.typefox.sprotty.api.SetModelAction;
 import io.typefox.sprotty.api.UpdateModelAction;
@@ -34,7 +34,7 @@ public class ActionTypeAdapter extends PropertyBasedTypeAdapter<Action> {
 		protected void addDefaultActionKinds() {
 			addActionKind(RequestModelAction.KIND, RequestModelAction.class);
 			addActionKind(SetModelAction.KIND, SetModelAction.class);
-			addActionKind(ResizeAction.KIND, ResizeAction.class);
+			addActionKind(SetBoundsAction.KIND, SetBoundsAction.class);
 			addActionKind(SelectAction.KIND, SelectAction.class);
 			addActionKind(UpdateModelAction.KIND, UpdateModelAction.class);
 		}

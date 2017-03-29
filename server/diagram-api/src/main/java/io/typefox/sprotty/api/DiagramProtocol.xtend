@@ -18,14 +18,14 @@ class RequestModelAction implements Action {
 }
 
 @Accessors@EqualsHashCode@ToString
-class ResizeAction implements Action {
-    public static val KIND ='resize'
+class SetBoundsAction implements Action {
+    public static val KIND ='bounds'
 	String kind = KIND
-	List<ElementResize> resizes
+	List<ElementAndBounds> resizes
 }
 
 @Accessors@EqualsHashCode@ToString
-class ElementResize {
+class ElementAndBounds {
     String elementId
     Bounds newBounds
 }

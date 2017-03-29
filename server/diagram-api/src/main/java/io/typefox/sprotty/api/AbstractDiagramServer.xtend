@@ -12,8 +12,8 @@ abstract class AbstractDiagramServer implements Consumer<Action> {
 		switch action.kind {
 			case RequestModelAction.KIND:
 				handle(action as RequestModelAction)
-			case ResizeAction.KIND:
-				handle(action as ResizeAction)
+			case SetBoundsAction.KIND:
+				handle(action as SetBoundsAction)
 			case SelectAction.KIND:
 				handle(action as SelectAction)
 		}
@@ -21,7 +21,7 @@ abstract class AbstractDiagramServer implements Consumer<Action> {
 	
 	def void handle(RequestModelAction action)
 	
-	def void handle(ResizeAction action)
+	def void handle(SetBoundsAction action)
 	
 	def void handle(SelectAction action)
 	

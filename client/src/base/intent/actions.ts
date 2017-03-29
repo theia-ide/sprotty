@@ -26,6 +26,15 @@ export function isActionHandler(object?: any): object is ActionHandler {
     return object !== undefined && object.hasOwnProperty('handle') && typeof(object['handle']) == 'function'
 }
 
+export class TranslatingActionHandler implements ActionHandler {
+    constructor(private translator: (Action) => Action) {
+    }
+
+    handle(action: Action): Command | Action | undefined {
+        return this.translator(action)
+    }
+}
+
 /**
  * The action handler registry maps actions to their handlers using the Action.kind property.
  */
@@ -55,5 +64,9 @@ export class ActionHandlerRegistry extends MultiInstanceRegistry<ActionHandler> 
             this.register(kind, new ServerActionHandler(this.diagramServer))
         else
             this.logger.error('No implementation of IDiagramServer has been configured.')
+    }
+
+    registerTranslator(kind: string, translator: (Action) => Action): void {
+        this.register(kind, new TranslatingActionHandler(translator))
     }
 }
