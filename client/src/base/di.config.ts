@@ -1,5 +1,5 @@
 import { ContainerModule, interfaces } from "inversify"
-import { NullLogger } from "../utils/logging"
+import { NullLogger, LogLevel } from "../utils/logging"
 import { IDiagramServer } from "../remote/diagram-server"
 import { ActionDispatcher, IActionDispatcher } from "./intent/action-dispatcher"
 import { CommandStack, ICommandStack } from "./intent/command-stack"
@@ -18,6 +18,7 @@ import {AnimationFrameSyncer} from "./animations/animation-frame-syncer"
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
     bind(TYPES.ILogger).to(NullLogger).inSingletonScope()
+    bind(TYPES.LogLevel).toConstantValue(LogLevel.warn)
 
     // Animation Frame Sync ------------------------------------------
     bind(TYPES.IAnimationFrameSyncer).to(AnimationFrameSyncer).inSingletonScope()

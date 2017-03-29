@@ -9,6 +9,7 @@ export let TYPES = {
     IDiagramServer: Symbol('IDiagramServer'),
     KeyListener: Symbol('KeyListener'),
     ILogger: Symbol('ILogger'),
+    LogLevel: Symbol('LogLevel'),
     IModelFactory: Symbol('IModelFactory'),
     MouseListener: Symbol('MouseListener'),
     IViewer: Symbol('IViewer'),
