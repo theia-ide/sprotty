@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import com.google.inject.Singleton
 import io.typefox.sprotty.api.AbstractDiagramServer
 import io.typefox.sprotty.api.RequestModelAction
-import io.typefox.sprotty.api.SEdge
 import io.typefox.sprotty.api.SGraph
 import io.typefox.sprotty.api.SelectAction
 import io.typefox.sprotty.api.SetBoundsAction
@@ -13,7 +12,6 @@ import io.typefox.sprotty.api.UpdateModelAction
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Barrier
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Program
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Task
-import io.typefox.sprotty.layout.ElkLayoutEngine
 import io.typefox.sprotty.layout.ILayoutEngine
 import io.typefox.sprotty.layout.LayoutUtil
 import io.typefox.sprotty.layout.SprottyLayoutConfigurator
@@ -24,6 +22,7 @@ import org.eclipse.elk.alg.layered.options.NodePlacementStrategy
 import org.eclipse.elk.core.math.KVector
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.options.PortConstraints
 import org.eclipse.elk.core.options.SizeConstraint
 import org.eclipse.xtext.util.CancelIndicator
 
@@ -114,7 +113,7 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		]
 		if (program !== null) {
 			val nodes = newHashMap
-			var index = 0
+			val index = newIntArrayOfSize(1)
 			// Transform tasks
 			for (declaration : program.declarations.filter(Task)) {
 				val tnode = new TaskNode
@@ -145,22 +144,25 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 			}
 			// Transform flows
 			for (declaration : program.declarations.filter(Barrier)) {
-				for (joined : declaration.joined) {
-					val edge = new SEdge
+				declaration.joined.forEach[ joined, k |
+					val edge = new FlowEdge
 					edge.type = 'edge'
 					edge.id = 'flow' + (index++)
 					edge.sourceId = nodes.get(joined)?.id
 					edge.targetId = nodes.get(declaration)?.id
+					edge.targetIndex = k
 					flow.children += edge
-				}
-				for (triggered : declaration.triggered) {
-					val edge = new SEdge
+				]
+				val edgeCount = declaration.joined.size + declaration.triggered.size
+				declaration.triggered.forEach[ triggered, k |
+					val edge = new FlowEdge
 					edge.type = 'edge'
 					edge.id = 'flow' + (index++)
 					edge.sourceId = nodes.get(declaration)?.id
+					edge.sourceIndex = edgeCount - k
 					edge.targetId = nodes.get(triggered)?.id
 					flow.children += edge
-				}
+				]
 			}
 		}
 		modelProvider.flowView = flow
@@ -171,9 +173,13 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		return flow
 	}
 	
+	private def ++(int[] index) {
+		index.set(0, index.get(0) + 1)
+	}
+	
 	protected def initializeLayoutEngine() {
 		if (layoutEngine === null) {
-			layoutEngine = new ElkLayoutEngine => [
+			layoutEngine = new MulticoreAllocationLayoutEngine => [
 				initialize(new LayeredOptions)
 			]
 		}
@@ -189,6 +195,7 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		configurator.configureByType('barrier')
 			.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.free())
 			.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(50, 10))
+			.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER)
 			.setProperty(LayeredOptions.NODE_PLACEMENT_NETWORK_SIMPLEX_NODE_FLEXIBILITY, NodeFlexibility.NODE_SIZE)
 		layoutEngine.layout(graph, configurator)
 	}

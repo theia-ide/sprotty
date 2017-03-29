@@ -42,7 +42,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	
 	private IGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
 	
-	private ElkGraphFactory factory = ElkGraphFactory.eINSTANCE;
+	protected final ElkGraphFactory factory = ElkGraphFactory.eINSTANCE;
 	
 	@Override
 	public void layout(SGraph sgraph) {
@@ -103,20 +103,22 @@ public class ElkLayoutEngine implements ILayoutEngine {
 				id2NodeMap.put(id, entry.getValue());
 		}
 		for (Map.Entry<SEdge, ElkEdge> entry : context.edgeMap.entrySet()) {
-			SEdge sedge = entry.getKey();
-			ElkEdge elkEdge = entry.getValue();
-			ElkNode source = id2NodeMap.get(sedge.getSourceId());
-			if (source != null)
-				elkEdge.getSources().add(source);
-			ElkNode target = id2NodeMap.get(sedge.getTargetId());
-			if (target != null)
-				elkEdge.getTargets().add(target);
-			ElkNode container = ElkGraphUtil.findBestEdgeContainment(elkEdge);
-			if (container != null)
-				elkEdge.setContainingNode(container);
-			else
-				elkEdge.setContainingNode(context.elkGraph);
+			resolveReferences(entry.getValue(), entry.getKey(), id2NodeMap, context);
 		}
+	}
+	
+	protected void resolveReferences(ElkEdge elkEdge, SEdge sedge, Map<String, ElkNode> id2NodeMap, LayoutContext context) {
+		ElkNode source = id2NodeMap.get(sedge.getSourceId());
+		if (source != null)
+			elkEdge.getSources().add(source);
+		ElkNode target = id2NodeMap.get(sedge.getTargetId());
+		if (target != null)
+			elkEdge.getTargets().add(target);
+		ElkNode container = ElkGraphUtil.findBestEdgeContainment(elkEdge);
+		if (container != null)
+			elkEdge.setContainingNode(container);
+		else
+			elkEdge.setContainingNode(context.elkGraph);
 	}
 	
 	protected ElkNode createNode(SNode snode) {

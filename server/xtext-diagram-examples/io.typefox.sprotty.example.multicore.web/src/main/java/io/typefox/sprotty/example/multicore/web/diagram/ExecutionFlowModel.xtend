@@ -1,5 +1,6 @@
 package io.typefox.sprotty.example.multicore.web.diagram
 
+import io.typefox.sprotty.api.SEdge
 import io.typefox.sprotty.api.SGraph
 import io.typefox.sprotty.api.SNode
 import org.eclipse.xtend.lib.annotations.Accessors
@@ -17,4 +18,10 @@ class TaskNode extends SNode {
 
 @Accessors@EqualsHashCode@ToString
 class BarrierNode extends SNode {
+}
+
+@Accessors@EqualsHashCode@ToString
+class FlowEdge extends SEdge {
+	transient Integer sourceIndex
+	transient Integer targetIndex
 }
