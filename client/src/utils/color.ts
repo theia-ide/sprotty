@@ -12,7 +12,7 @@ export function toSVG(c: RGBColor): string {
 
 export class ColorMap {
 
-    constructor(private stops: RGBColor[]) {
+    constructor(protected stops: RGBColor[]) {
     }
 
     getColor(t: number): RGBColor {

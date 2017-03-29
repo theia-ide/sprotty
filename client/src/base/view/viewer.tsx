@@ -32,7 +32,7 @@ export class Viewer implements VNodeDecorator, IViewer {
     @inject(TYPES.IViewerOptions) protected options: IViewerOptions
 
     protected readonly patcher: Patcher
-    private lastVDOM: any
+    protected lastVDOM: VNode
 
     constructor(@multiInject(TYPES.VNodeDecorator)@optional() protected decorators: VNodeDecorator[]) {
         this.patcher = this.createPatcher()

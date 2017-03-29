@@ -75,7 +75,7 @@ export class CommandStack implements ICommandStack {
         )
     }
 
-    private mergeOrPush(command: Command, context: CommandExecutionContext) {
+    protected mergeOrPush(command: Command, context: CommandExecutionContext) {
         if (this.undoStack.length > 0) {
             const lastCommand = this.undoStack[this.undoStack.length - 1]
             if (!lastCommand.merge(command, context)) {

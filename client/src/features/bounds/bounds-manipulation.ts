@@ -25,9 +25,9 @@ type ResolvedElementAndBounds = {
 export class SetBoundsCommand extends AbstractCommand {
     static readonly KIND = 'bounds'
 
-    private resizes: ResolvedElementAndBounds[] = []
+    protected resizes: ResolvedElementAndBounds[] = []
 
-    constructor(private action: SetBoundsAction) {
+    constructor(protected action: SetBoundsAction) {
         super()
     }
 

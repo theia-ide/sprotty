@@ -11,18 +11,20 @@ import { Viewport, isViewport } from "./model"
 export class ViewportAction implements Action {
     kind = ViewportCommand.KIND
 
-    constructor(public elementId: string, public readonly newViewport: Viewport, public animate: boolean) {
+    constructor(public readonly elementId: string,
+                public readonly newViewport: Viewport,
+                public readonly animate: boolean) {
     }
 }
 
 export class ViewportCommand extends AbstractCommand {
     static readonly KIND = 'viewport'
 
-    element: SModelElement & Viewport
-    oldViewport: Viewport
-    newViewport: Viewport
+    protected element: SModelElement & Viewport
+    protected oldViewport: Viewport
+    protected newViewport: Viewport
 
-    constructor(public action: ViewportAction) {
+    constructor(protected action: ViewportAction) {
         super()
         this.newViewport = action.newViewport
     }
@@ -66,11 +68,11 @@ export class ViewportCommand extends AbstractCommand {
 
 export class ViewportAnimation extends Animation {
 
-    private zoomFactor: number
+    protected zoomFactor: number
 
-    constructor(private element: SModelElement & Viewport,
-                private oldViewport: Viewport,
-                private newViewport: Viewport,
+    constructor(protected element: SModelElement & Viewport,
+                protected oldViewport: Viewport,
+                protected newViewport: Viewport,
                 protected context: CommandExecutionContext) {
         super(context)
         this.zoomFactor = Math.log(newViewport.zoom / oldViewport.zoom)

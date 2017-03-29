@@ -61,7 +61,7 @@ export class SModelFactory implements IModelFactory {
         return root
     }
 
-    private initializeIndex(parent: SParentElement, index: SModelIndex): void {
+    protected initializeIndex(parent: SParentElement, index: SModelIndex): void {
         parent.children.forEach(child => {
             if (index.contains(child)) {
                 throw new Error("Duplicate ID in model: " + child.id)

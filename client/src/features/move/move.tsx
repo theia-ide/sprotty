@@ -39,7 +39,7 @@ export class MoveCommand extends AbstractCommand {
 
     resolvedMoves: Map<ResolvedElementMove> = {}
 
-    constructor(public action: MoveAction) {
+    constructor(protected action: MoveAction) {
         super()
     }
 
@@ -61,7 +61,7 @@ export class MoveCommand extends AbstractCommand {
             return model
     }
 
-    private resolve(move: ElementMove, index: SModelIndex): ResolvedElementMove | undefined {
+    protected resolve(move: ElementMove, index: SModelIndex): ResolvedElementMove | undefined {
         const element = index.getById(move.elementId) as (SModelElement & Locateable)
         if (element) {
             const fromPosition = move.fromPosition || {...element.position}
@@ -105,7 +105,9 @@ export class MoveCommand extends AbstractCommand {
 
 export class MoveAnimation extends Animation {
 
-    constructor(private elementMoves: Map<ResolvedElementMove>, private reverse: boolean, context: CommandExecutionContext) {
+    constructor(protected elementMoves: Map<ResolvedElementMove>,
+                protected reverse: boolean,
+                context: CommandExecutionContext) {
         super(context)
     }
 
