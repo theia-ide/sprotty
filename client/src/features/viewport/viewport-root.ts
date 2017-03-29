@@ -1,15 +1,16 @@
 
 import { SModelRoot } from "../../base/model/smodel"
 import { Bounds, EMPTY_BOUNDS, Point } from "../../utils/geometry"
-import { BoundsAware, boundsFeature } from "../bounds/model"
+import {BoundsAware, boundsFeature, BoundsInPageAware} from "../bounds/model"
 import { Viewport, viewportFeature } from "./model"
 
-export class ViewportRootElement extends SModelRoot implements BoundsAware, Viewport {
+export class ViewportRootElement extends SModelRoot implements BoundsAware, BoundsInPageAware, Viewport {
     autosize: boolean = true
     x: number = 0
     y: number = 0
     width: number = 0
     height: number = 0
+    boundsInPage: Bounds = EMPTY_BOUNDS
 
     scroll: Point = { x:0, y:0 }
     zoom: number = 1

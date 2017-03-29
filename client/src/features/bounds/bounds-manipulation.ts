@@ -2,7 +2,7 @@ import { Bounds, TransformMatrix } from "../../utils/geometry"
 import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
 import { AbstractCommand, CommandExecutionContext } from "../../base/intent/commands"
-import { BoundsAware, isSizeable } from "./model"
+import {BoundsAware, isSizeable, isBoundsInPageAware} from "./model"
 
 export class SetBoundsAction implements Action {
     readonly kind = SetBoundsCommand.KIND
@@ -14,12 +14,15 @@ export class SetBoundsAction implements Action {
 export type ElementAndBounds = {
     elementId: string
     newBounds: Bounds
+    newBoundsInPage?: Bounds
 }
 
 type ResolvedElementAndBounds = {
     element: SModelElement & BoundsAware
     oldBounds: Bounds
+    oldBoundsInPage?: Bounds
     newBounds: Bounds
+    newBoundsInPage?: Bounds
 }
 
 export class SetBoundsCommand extends AbstractCommand {
@@ -36,10 +39,12 @@ export class SetBoundsCommand extends AbstractCommand {
             resize => {
                 const element = root.index.getById(resize.elementId)
                 if (element && isSizeable(element)) {
+                    const oldBoundsInPage = (isBoundsInPageAware(element)) ? element.boundsInPage : undefined
                     this.resizes.push({
                         element: element,
                         oldBounds: element.bounds,
                         newBounds: resize.newBounds,
+                        newBoundsInPage: resize.newBoundsInPage
                     })
                 }
             }
@@ -51,6 +56,8 @@ export class SetBoundsCommand extends AbstractCommand {
         this.resizes.forEach(
             resize => {
                 resize.element.bounds = resize.oldBounds
+                if(isBoundsInPageAware(resize.element) && resize.oldBoundsInPage)
+                    resize.element.boundsInPage = resize.oldBoundsInPage
                 resize.element.autosize = true
             }
         )
@@ -61,6 +68,8 @@ export class SetBoundsCommand extends AbstractCommand {
         this.resizes.forEach(
             resize => {
                 resize.element.bounds = resize.newBounds
+                if(isBoundsInPageAware(resize.element) && resize.newBoundsInPage)
+                    resize.element.boundsInPage = resize.newBoundsInPage
                 resize.element.autosize = false
             }
         )

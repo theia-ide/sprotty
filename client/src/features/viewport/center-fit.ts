@@ -4,7 +4,7 @@ import { SModelRoot, SModelElement } from "../../base/model/smodel"
 import { Bounds, combine, EMPTY_BOUNDS, center } from "../../utils/geometry"
 import { KeyListener } from "../../base/view/key-tool"
 import { isCtrlOrCmd } from "../../utils/browser"
-import { isSizeable, BoundsAware } from "../bounds/model"
+import {isSizeable, BoundsAware, BoundsInPageAware} from "../bounds/model"
 import { isSelectable } from "../select/model"
 import { isBoundsAware } from "../bounds/model"
 import { ViewportAnimation } from "./viewport"
@@ -64,7 +64,7 @@ export abstract class AbstractViewportCommand extends AbstractCommand {
         }
     }
 
-    protected abstract getNewViewport(bounds: Bounds, model: SModelRoot & BoundsAware): Viewport
+    protected abstract getNewViewport(bounds: Bounds, model: SModelRoot & BoundsInPageAware): Viewport
 
     protected abstract getElementIds(): string[]
 
@@ -99,12 +99,12 @@ export class CenterCommand extends AbstractViewportCommand {
         return this.action.elementIds
     }
 
-    getNewViewport(bounds: Bounds, model: SModelRoot & BoundsAware) {
+    getNewViewport(bounds: Bounds, model: SModelRoot & BoundsInPageAware) {
         const c = center(bounds)
         return {
             scroll: {
-                x: c.x - 0.5 * model.bounds.width,
-                y: c.y - 0.5 * model.bounds.height
+                x: c.x - 0.5 * model.boundsInPage.width,
+                y: c.y - 0.5 * model.boundsInPage.height
             },
             zoom: 1
         }
@@ -122,15 +122,15 @@ export class FitToScreenCommand extends AbstractViewportCommand {
         return this.action.elementIds
     }
 
-    getNewViewport(bounds: Bounds, model: SModelRoot & BoundsAware) {
+    getNewViewport(bounds: Bounds, model: SModelRoot & BoundsInPageAware) {
         const c = center(bounds)
         const zoom = Math.min(
-            model.bounds.width / bounds.width,
-            model.bounds.height / bounds.height)
+            model.boundsInPage.width / bounds.width,
+            model.boundsInPage.height / bounds.height)
         return {
             scroll: {
-                x: c.x - 0.5 * model.bounds.width / zoom,
-                y: c.y - 0.5 * model.bounds.height / zoom
+                x: c.x - 0.5 * model.boundsInPage.width / zoom,
+                y: c.y - 0.5 * model.boundsInPage.height / zoom
             },
             zoom: zoom
         }

@@ -5,6 +5,7 @@ import { SelectCommand, SetBoundsCommand, CenterAction } from "../../../src/feat
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { ProcessorView, CoreView, ChannelView, CrossbarView } from "./views"
 import createContainer from "./di.config"
+import {FitToScreenAction} from "../../../src/features/viewport/center-fit"
 
 export default function runMulticoreServer() {
     const container = createContainer()
@@ -15,7 +16,7 @@ export default function runMulticoreServer() {
     actionHandlerRegistry.registerServerMessage(SelectCommand.KIND)
     actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
     actionHandlerRegistry.registerTranslator(UpdateModelAction.KIND, update => new RequestModelAction('processor'))
-    actionHandlerRegistry.registerTranslator(SetBoundsCommand.KIND, update => new CenterAction([]))
+    actionHandlerRegistry.registerTranslator(SetBoundsCommand.KIND, update => new FitToScreenAction([]))
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)

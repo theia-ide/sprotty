@@ -7,7 +7,7 @@ import { TYPES } from "../../base/types"
 import { IActionDispatcher } from "../../base/intent/action-dispatcher"
 import { almostEquals, Bounds, TransformMatrix } from "../../utils/geometry"
 import { ElementAndBounds, SetBoundsAction } from "./bounds-manipulation"
-import { BoundsAware, isSizeable } from "./model"
+import {BoundsAware, isSizeable, BoundsInPageAware, isBoundsInPageAware} from "./model"
 
 class VNodeAndSizeable {
     vnode: VNode
@@ -46,12 +46,19 @@ export class BoundsGrabber implements VNodeDecorator {
                 const vnode = sizeable.vnode
                 const element = sizeable.element
                 if (vnode.elm) {
-                    let newBounds = this.getClientBounds(vnode.elm, element)
-                    if (element.autosize
-                        || this.differ(newBounds, element.bounds)) {
+                    let newBounds = this.getBounds(vnode.elm, element)
+                    let shouldUpdate: boolean = element.autosize
+                        || this.differ(newBounds, element.bounds)
+                    let newBoundsInPage: Bounds |undefined = undefined
+                    if(isBoundsInPageAware(element)) {
+                        newBoundsInPage = this.getBoundsInPage(vnode.elm)
+                        shouldUpdate = shouldUpdate || this.differ(newBoundsInPage, element.boundsInPage)
+                    }
+                    if (shouldUpdate) {
                         resizes.push({
                             elementId: element.id,
                             newBounds: newBounds,
+                            newBoundsInPage: newBoundsInPage
                         })
                     }
                 }
@@ -64,23 +71,23 @@ export class BoundsGrabber implements VNodeDecorator {
 
     }
 
-    protected getClientBounds(elm: any, element: BoundsAware): Bounds {
-        if (elm instanceof SVGSVGElement) {
-            const bounds = elm.getBoundingClientRect()
-            return {
-                x: bounds.left,
-                y: bounds.top,
-                width: bounds.width,
-                height: bounds.height
-            }
-        } else {
-            const bounds = elm.getBBox()
-            return {
-                x: bounds.x + element.bounds.x,
-                y: bounds.y + element.bounds.y,
-                width: bounds.width,
-                height: bounds.height
-            }
+    protected getBoundsInPage(elm: any) {
+        const bounds = elm.getBoundingClientRect()
+        return {
+            x: bounds.left,
+            y: bounds.top,
+            width: bounds.width,
+            height: bounds.height
+        }
+    }
+
+    protected getBounds(elm: any, element: BoundsAware): Bounds {
+        const bounds = elm.getBBox()
+        return {
+            x: bounds.x + element.bounds.x,
+            y: bounds.y + element.bounds.y,
+            width: bounds.width,
+            height: bounds.height
         }
     }
 

@@ -42,8 +42,6 @@ export class ViewportCommand extends AbstractCommand {
             else {
                 this.element.scroll = this.newViewport.scroll
                 this.element.zoom = this.newViewport.zoom
-                if(isSizeable(this.element))
-                    this.element.autosize = true
             }
         }
         return model
@@ -84,8 +82,6 @@ export class ViewportAnimation extends Animation {
             y: (1 - t) * this.oldViewport.scroll.y + t * this.newViewport.scroll.y
         }
         this.element.zoom = this.oldViewport.zoom * Math.exp(t * this.zoomFactor)
-        if(isSizeable(this.element))
-            this.element.autosize = true
         return this.context.root
     }
 }
