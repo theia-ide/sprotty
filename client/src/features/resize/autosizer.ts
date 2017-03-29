@@ -38,7 +38,7 @@ export class Autosizer implements VNodeDecorator {
                 const vnode = sizeable.vnode
                 const element = sizeable.element
                 if (vnode.elm) {
-                    let newBounds = this.getClientBounds(vnode.elm)
+                    let newBounds = this.getClientBounds(vnode.elm, element)
                     if (element.autosize
                         || this.differ(newBounds, element.bounds)) {
                         resizes.push({
@@ -56,8 +56,8 @@ export class Autosizer implements VNodeDecorator {
 
     }
 
-    protected getClientBounds(elm: any): Bounds {
-        if (elm instanceof SVGGElement || elm instanceof SVGSVGElement) {
+    protected getClientBounds(elm: any, element: BoundsAware): Bounds {
+        if (elm instanceof SVGSVGElement) {
             const bounds = elm.getBoundingClientRect()
             return {
                 x: bounds.left,
@@ -68,8 +68,8 @@ export class Autosizer implements VNodeDecorator {
         } else {
             const bounds = elm.getBBox()
             return {
-                x: bounds.x,
-                y: bounds.y,
+                x: bounds.x + element.bounds.x,
+                y: bounds.y + element.bounds.y,
                 width: bounds.width,
                 height: bounds.height
             }
