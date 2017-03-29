@@ -19,9 +19,10 @@ export class ChipView implements View {
     }
 }
 
+const CORE_WIDTH = 45
+const CORE_HEIGHT = 20
+
 export class CoreView extends ThunkView {
-    static readonly width = 45
-    static readonly dist = 20
 
     selector(model: Core) {
         return 'g'
@@ -33,8 +34,8 @@ export class CoreView extends ThunkView {
 
     doRender(model: Core, context: RenderingContext): VNode {
         const position = {
-            x: model.column * (CoreView.width + CoreView.dist),
-            y: model.row * (CoreView.width + CoreView.dist),
+            x: model.column * (CORE_WIDTH + CORE_HEIGHT),
+            y: model.row * (CORE_WIDTH + CORE_HEIGHT),
         }
         const nodeName = this.padLeft(model.row) + this.padLeft(model.column)
         const transform = 'translate(' + position.x + ',' + position.y + ')'
@@ -42,12 +43,12 @@ export class CoreView extends ThunkView {
                   id={model.id}
                   key={model.id}
                   transform={transform}>
-                <rect width={CoreView.width}
-                      height={CoreView.width}
+                <rect width={CORE_WIDTH}
+                      height={CORE_WIDTH}
                       rx={4}
                       ry={4}
                       fill={LoadColor.getSVG(model.load)}/>
-                <text class-text={true} x={CoreView.width / 2} y={CoreView.width / 2}>{nodeName}</text>
+                <text class-text={true} x={CORE_WIDTH / 2} y={CORE_WIDTH / 2}>{nodeName}</text>
             </g>
     }
 
@@ -69,29 +70,29 @@ export class CrossbarView implements View {
         let height: number
         switch (model.direction) {
             case Direction.up:
-                width = rows * (CoreView.width + CoreView.dist) - CoreView.dist
-                height = CoreView.dist
+                width = rows * (CORE_WIDTH + CORE_HEIGHT) - CORE_HEIGHT
+                height = CORE_HEIGHT
                 x = 0
-                y = -2 * CoreView.dist
+                y = -2 * CORE_HEIGHT
                 break;
             case Direction.down:
-                width = rows * (CoreView.width + CoreView.dist) - CoreView.dist
-                height = CoreView.dist
+                width = rows * (CORE_WIDTH + CORE_HEIGHT) - CORE_HEIGHT
+                height = CORE_HEIGHT
                 x = 0
-                y = rows * (CoreView.width + CoreView.dist)
+                y = rows * (CORE_WIDTH + CORE_HEIGHT)
                 break;
             case Direction.left:
-                x = -2 * CoreView.dist
+                x = -2 * CORE_HEIGHT
                 y = 0
-                width = CoreView.dist
-                height = columns * (CoreView.width + CoreView.dist) - CoreView.dist
+                width = CORE_HEIGHT
+                height = columns * (CORE_WIDTH + CORE_HEIGHT) - CORE_HEIGHT
                 break;
             case Direction.right:
             default:
-                x = rows * (CoreView.width + CoreView.dist)
+                x = rows * (CORE_WIDTH + CORE_HEIGHT)
                 y = 0
-                width = CoreView.dist
-                height = columns * (CoreView.width + CoreView.dist) - CoreView.dist
+                width = CORE_HEIGHT
+                height = columns * (CORE_WIDTH + CORE_HEIGHT) - CORE_HEIGHT
                 break;
         }
         return <rect class-crossbar={true}
@@ -117,9 +118,9 @@ class LoadColor {
     }
 }
 
-export class ChannelView extends ThunkView {
+const CHANNEL_WIDTH = 2
 
-    static readonly width = 2
+export class ChannelView extends ThunkView {
 
     watchedArgs(model: Channel): any[] {
         return [model.load, this.isVisible(model)]
@@ -130,7 +131,7 @@ export class ChannelView extends ThunkView {
     }
 
     isVisible(model: Channel): boolean {
-        return (model.root as Chip).zoom * ChannelView.width > 3
+        return (model.root as Chip).zoom * CHANNEL_WIDTH > 3
     }
 
     doRender(model: Channel, context: RenderingContext): VNode {
@@ -140,48 +141,48 @@ export class ChannelView extends ThunkView {
         switch (model.direction) {
             case Direction.up:
                 points = [
-                    0.75 * CoreView.width - ChannelView.width,
+                    0.75 * CORE_WIDTH - CHANNEL_WIDTH,
                     0,
-                    0.75 * CoreView.width + ChannelView.width,
+                    0.75 * CORE_WIDTH + CHANNEL_WIDTH,
                     0,
-                    0.75 * CoreView.width,
-                    -CoreView.dist
+                    0.75 * CORE_WIDTH,
+                    -CORE_HEIGHT
                 ]
                 break;
             case Direction.down:
                 points = [
-                    0.25 * CoreView.width - ChannelView.width,
-                    -CoreView.dist,
-                    0.25 * CoreView.width + ChannelView.width,
-                    -CoreView.dist,
-                    0.25 * CoreView.width,
+                    0.25 * CORE_WIDTH - CHANNEL_WIDTH,
+                    -CORE_HEIGHT,
+                    0.25 * CORE_WIDTH + CHANNEL_WIDTH,
+                    -CORE_HEIGHT,
+                    0.25 * CORE_WIDTH,
                     0
                 ]
                 break;
             case Direction.left:
                 points = [
                     0,
-                    0.25 * CoreView.width - ChannelView.width,
+                    0.25 * CORE_WIDTH - CHANNEL_WIDTH,
                     0,
-                    0.25 * CoreView.width + ChannelView.width,
-                    -CoreView.dist,
-                    0.25 * CoreView.width
+                    0.25 * CORE_WIDTH + CHANNEL_WIDTH,
+                    -CORE_HEIGHT,
+                    0.25 * CORE_WIDTH
                 ]
                 break;
             case Direction.right:
             default:
                 points = [
-                    -CoreView.dist,
-                    0.75 * CoreView.width - ChannelView.width,
-                    -CoreView.dist,
-                    0.75 * CoreView.width + ChannelView.width,
+                    -CORE_HEIGHT,
+                    0.75 * CORE_WIDTH - CHANNEL_WIDTH,
+                    -CORE_HEIGHT,
+                    0.75 * CORE_WIDTH + CHANNEL_WIDTH,
                     0,
-                    0.75 * CoreView.width
+                    0.75 * CORE_WIDTH
                 ]
         }
         const position = {
-            x: model.column * (CoreView.width + CoreView.dist),
-            y: model.row * (CoreView.width + CoreView.dist),
+            x: model.column * (CORE_WIDTH + CORE_HEIGHT),
+            y: model.row * (CORE_WIDTH + CORE_HEIGHT),
         }
 
         const transform = 'translate(' + position.x + ',' + position.y + ')'
