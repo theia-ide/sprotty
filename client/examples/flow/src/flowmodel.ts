@@ -1,11 +1,11 @@
 import { SNodeSchema, SNode } from "../../../src/graph"
 
-export interface ExecutionNodeSchema extends SNodeSchema {
-    taskName?: string
+export interface TaskNodeSchema extends SNodeSchema {
+    kernel?: string
 }
 
-export class ExecutionNode extends SNode implements ExecutionNodeSchema {
-    taskName: string = ''
+export class TaskNode extends SNode implements TaskNodeSchema {
+    kernel: string = ''
 }
 
 export interface BarrierNodeSchema extends SNodeSchema {

@@ -2,20 +2,20 @@ import {VNode} from "snabbdom/vnode"
 import {RenderingContext} from "../../../src/base"
 import {CircularNodeView, RectangularNodeView} from "../../../src/lib"
 import * as snabbdom from "snabbdom-jsx"
-import {ExecutionNode, BarrierNode} from "./flowmodel"
+import {TaskNode, BarrierNode} from "./flowmodel"
 
 const JSX = {createElement: snabbdom.svg}
 
 export class ExecutionNodeView extends CircularNodeView {
-    render(node: ExecutionNode, context: RenderingContext): VNode {
+    render(node: TaskNode, context: RenderingContext): VNode {
         const radius = this.getRadius(node)
         return <g key={node.id} id={node.id} >
                 <circle class-node={true} class-execution={true} class-selected={node.selected} r={radius} cx={radius} cy={radius}></circle>
-                <text x={radius} y={radius + 5} class-text={true}>{node.taskName}</text>
+                <text x={radius} y={radius + 5} class-text={true}>{node.kernel}</text>
             </g>
     }
 
-    protected getRadius(node: ExecutionNode) {
+    protected getRadius(node: TaskNode) {
         return 20
     }
 }

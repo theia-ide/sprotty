@@ -3,8 +3,8 @@ import {
 } from "../../../src/base"
 import {Direction} from "../../../src/utils"
 import {CenterAction, SelectCommand } from "../../../src/features"
-import {Core, ChipSchema, Crossbar, Channel, CoreSchema, ChannelSchema, CrossbarSchema} from "./chipmodel"
-import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
+import {Core, ProcessorSchema, Crossbar, Channel, CoreSchema, ChannelSchema, CrossbarSchema} from "./chipmodel"
+import {ProcessorView, CoreView, ChannelView, CrossbarView} from "./views"
 import {ChipModelFactory} from "./chipmodel-factory"
 import createContainer from "./di.config"
 
@@ -76,33 +76,33 @@ export default function runMulticore() {
     children = children.concat(cores)
 
     const modelFactory = container.get<ChipModelFactory>(TYPES.IModelFactory)
-    const chipSchema: ChipSchema = {
-        id: 'chip',
-        type: 'chip',
+    const processorSchema: ProcessorSchema = {
+        id: 'processor',
+        type: 'processor',
         rows: dim,
         columns: dim,
         children: children
     }
-    const chip = modelFactory.createRoot(chipSchema)
+    const processor = modelFactory.createRoot(processorSchema)
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
-    viewRegistry.register('chip', ChipView)
+    viewRegistry.register('processor', ProcessorView)
     viewRegistry.register('core', CoreView)
     viewRegistry.register('crossbar', CrossbarView)
     viewRegistry.register('channel', ChannelView)
 
     // Run
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
-    dispatcher.dispatch(new SetModelAction(chip))
+    dispatcher.dispatch(new SetModelAction(processor))
     dispatcher.dispatchNextFrame(new CenterAction([]))
 
     function changeModel() {
-        for (let i = 0; i < chip.children.length; ++i) {
-            const child = chip.children[i] as (Core | Channel | Crossbar)
+        for (let i = 0; i < processor.children.length; ++i) {
+            const child = processor.children[i] as (Core | Channel | Crossbar)
             child.load = Math.max(0, Math.min(1, child.load + Math.random() * 0.2 - 0.1))
         }
-        const action = new SetModelAction(chip)
+        const action = new SetModelAction(processor)
         dispatcher.dispatch(action)
     }
 

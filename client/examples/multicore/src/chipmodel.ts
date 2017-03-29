@@ -5,15 +5,15 @@ import {
 } from "../../../src/features"
 import {ViewportRootElement} from "../../../src/features/viewport/viewport-root"
 
-export interface ChipSchema extends SModelElementSchema {
+export interface ProcessorSchema extends SModelElementSchema {
     rows: number
     columns: number
     children: SModelElementSchema[]
 }
 
-export class Chip extends ViewportRootElement implements ChipSchema {
-    readonly rows: number
-    readonly columns: number
+export class Processor extends ViewportRootElement implements ProcessorSchema {
+    readonly rows: number = 0
+    readonly columns: number = 0
 
     hasFeature(feature: symbol): boolean {
         return feature === viewportFeature || feature === boundsFeature
@@ -28,9 +28,9 @@ export interface CoreSchema extends SModelElementSchema {
 }
 
 export class Core extends SChildElement implements CoreSchema, Selectable {
-    readonly column: number
-    readonly row: number
-    load: number
+    readonly column: number = 0
+    readonly row: number = 0
+    load: number = 0
     selected: boolean = false
 
     hasFeature(feature: symbol): boolean {
@@ -40,14 +40,13 @@ export class Core extends SChildElement implements CoreSchema, Selectable {
 
 export interface CrossbarSchema extends SModelElementSchema {
     selected?: boolean
-    direction: Direction
+    direction: Direction | string
     load: number
 }
 
-
 export class Crossbar extends SChildElement implements CrossbarSchema, Selectable, BoundsAware {
     readonly direction: Direction
-    load: number
+    load: number = 0
     selected: boolean = false
     autosize: boolean = true
     bounds: Bounds = EMPTY_BOUNDS
@@ -60,16 +59,16 @@ export class Crossbar extends SChildElement implements CrossbarSchema, Selectabl
 export interface ChannelSchema extends SModelElementSchema {
     row: number
     column: number
-    direction: Direction
+    direction: Direction | string
     selected?: boolean
     load: number
 }
 
 export class Channel extends SChildElement implements ChannelSchema, Selectable {
-    readonly column: number
-    readonly row: number
+    readonly column: number = 0
+    readonly row: number = 0
     readonly direction: Direction
-    load: number
+    load: number = 0
     selected: boolean = false
 
     hasFeature(feature: symbol): boolean {

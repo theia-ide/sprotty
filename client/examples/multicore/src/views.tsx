@@ -1,6 +1,6 @@
 import {View, RenderingContext} from "../../../src/base/view/views"
 import {VNode} from "snabbdom/vnode"
-import {Chip, Core, Channel, Crossbar} from "./chipmodel"
+import {Processor, Core, Channel, Crossbar} from "./chipmodel"
 import {Direction} from "../../../src/utils/geometry"
 import {ColorMap, toSVG} from "../../../src/utils/color"
 import * as snabbdom from "snabbdom-jsx"
@@ -8,8 +8,8 @@ import {ThunkView} from "../../../src/base/view/thunk-view"
 
 const JSX = {createElement: snabbdom.svg}
 
-export class ChipView implements View {
-    render(model: Chip, context: RenderingContext): VNode {
+export class ProcessorView implements View {
+    render(model: Processor, context: RenderingContext): VNode {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
         return <svg key={model.id} id={model.id}>
                 <g transform={transform}>
@@ -62,8 +62,8 @@ export class CoreView extends ThunkView {
 
 export class CrossbarView implements View {
     render(model: Crossbar, context: RenderingContext): VNode {
-        const rows = (model.parent as Chip).rows
-        const columns = (model.parent as Chip).rows
+        const rows = (model.parent as Processor).rows
+        const columns = (model.parent as Processor).rows
         let x: number
         let y: number
         let width: number
@@ -131,7 +131,7 @@ export class ChannelView extends ThunkView {
     }
 
     isVisible(model: Channel): boolean {
-        return (model.root as Chip).zoom * CHANNEL_WIDTH > 3
+        return (model.root as Processor).zoom * CHANNEL_WIDTH > 3
     }
 
     doRender(model: Channel, context: RenderingContext): VNode {

@@ -6,13 +6,14 @@ webAppDirName = 'src/main/webapp'
 
 dependencies {
 	compile project(':diagram-server')
+	compile project(':diagram-layout-engine')
 	compile project(':xtext-diagram-examples:io.typefox.sprotty.example.multicore.ide')
-	compile "org.eclipse.xtext:org.eclipse.xtext.xbase.web:$versions.xtext"
+    compile "org.eclipse.elk:org.eclipse.elk.alg.layered:$versions.elk"
 	compile "org.eclipse.xtext:org.eclipse.xtext.web.servlet:$versions.xtext"
 	compile "org.eclipse.xtend:org.eclipse.xtend.lib:$versions.xtext"
-	compile "org.webjars:requirejs:2.3.2"
-	compile "org.webjars:jquery:2.2.4"
-	compile "org.webjars:ace:1.2.3"
+	compile "org.webjars:requirejs:$versions.requirejs"
+	compile "org.webjars:jquery:$versions.jquery"
+	compile "org.webjars:ace:$versions.ace"
 	providedCompile "org.eclipse.jetty:jetty-annotations:$versions.jetty"
     providedCompile "org.eclipse.jetty.websocket:javax-websocket-server-impl:$versions.jetty"
 	providedCompile "org.slf4j:slf4j-simple:$versions.slf4j"

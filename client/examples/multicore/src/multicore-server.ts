@@ -1,9 +1,9 @@
 import {
     TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction
 } from "../../../src/base"
-import {SelectCommand} from "../../../src/features"
+import { SelectCommand } from "../../../src/features"
 import { WebSocketDiagramServer } from "../../../src/remote"
-import {ChipView, CoreView, ChannelView, CrossbarView} from "./views"
+import { ProcessorView, CoreView, ChannelView, CrossbarView } from "./views"
 import createContainer from "./di.config"
 
 export default function runMulticoreServer() {
@@ -17,7 +17,7 @@ export default function runMulticoreServer() {
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
-    viewRegistry.register('chip', ChipView)
+    viewRegistry.register('processor', ProcessorView)
     viewRegistry.register('core', CoreView)
     viewRegistry.register('crossbar', CrossbarView)
     viewRegistry.register('channel', ChannelView)
@@ -26,7 +26,7 @@ export default function runMulticoreServer() {
     const diagramServer = container.get<WebSocketDiagramServer>(TYPES.IDiagramServer)
     diagramServer.connect('ws://localhost:8080/diagram').then(() => {
         // Run
-        const action = new RequestModelAction()
+        const action = new RequestModelAction({type: 'processor'})
         dispatcher.dispatch(action)
     })
 }

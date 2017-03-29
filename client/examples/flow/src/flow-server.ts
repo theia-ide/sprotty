@@ -21,8 +21,8 @@ export default function runFlowServer() {
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
-    viewRegistry.register('graph', SGraphView)
-    viewRegistry.register('execution', ExecutionNodeView)
+    viewRegistry.register('flow', SGraphView)
+    viewRegistry.register('task', ExecutionNodeView)
     viewRegistry.register('barrier', BarrierNodeView)
     viewRegistry.register('edge', StraightEdgeView)
 
@@ -30,7 +30,7 @@ export default function runFlowServer() {
     const diagramServer = container.get<WebSocketDiagramServer>(TYPES.IDiagramServer)
     diagramServer.connect('ws://localhost:8080/diagram').then(connection => {
         // Run
-        const action = new RequestModelAction()
+        const action = new RequestModelAction({type: 'flow'})
         dispatcher.dispatch(action)
     })
 }

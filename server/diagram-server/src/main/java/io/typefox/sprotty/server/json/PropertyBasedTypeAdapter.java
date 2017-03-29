@@ -189,7 +189,7 @@ public abstract class PropertyBasedTypeAdapter<T> extends TypeAdapter<T> {
 		else if (value == instance)
 			throw new RuntimeException("Object has a reference to itself.");
 		else
-			gson.toJson(value, field.getGenericType(), out);
+			gson.toJson(value, value.getClass(), out);
 	}
 
 }

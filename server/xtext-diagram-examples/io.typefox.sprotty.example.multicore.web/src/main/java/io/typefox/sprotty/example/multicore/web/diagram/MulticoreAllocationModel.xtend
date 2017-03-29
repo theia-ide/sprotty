@@ -2,33 +2,42 @@ package io.typefox.sprotty.example.multicore.web.diagram
 
 import io.typefox.sprotty.api.SModelElement
 import io.typefox.sprotty.api.SModelRoot
-import org.eclipse.lsp4j.generator.JsonRpcData
+import java.util.List
+import org.eclipse.xtend.lib.annotations.Accessors
+import org.eclipse.xtend.lib.annotations.EqualsHashCode
+import org.eclipse.xtend.lib.annotations.ToString
 
-@JsonRpcData
-class Chip extends SModelRoot {
+@Accessors@EqualsHashCode@ToString
+class Processor extends SModelRoot {
 	int rows
 	int columns
 }
 
-@JsonRpcData
+@Accessors@EqualsHashCode@ToString
 class Core extends SModelElement {
 	int row
 	int column
-	double load
+	List<AllocatedTask> tasks
 }
 
-@JsonRpcData
+@Accessors@EqualsHashCode@ToString
+class AllocatedTask {
+	String name
+	String kernel
+	int stackSize
+	int usedStack
+}
+
+@Accessors@EqualsHashCode@ToString
 class Crossbar extends SModelElement {
-	Direction direction
-	double load
+	CoreDirection direction
 }
 
-@JsonRpcData
+@Accessors@EqualsHashCode@ToString
 class Channel extends SModelElement {
 	int row
 	int column
-	Direction direction
-	double load
+	CoreDirection direction
 }
 
-enum Direction { left, right, up, down }
+enum CoreDirection { left, right, up, down }

@@ -1,8 +1,8 @@
 import {
-    SModelElementSchema, SParentElement, SChildElement, SModelRootSchema, SModelRoot, SModelFactory, getBasicType
+    SModelElementSchema, SParentElement, SChildElement, SModelRootSchema, SModelRoot, SModelFactory, getBasicType, SModelElement
 } from "../../../src/base"
 import {
-    ChipSchema, Chip, CoreSchema, ChannelSchema, Core, Channel, Crossbar, CrossbarSchema
+    ProcessorSchema, Processor, CoreSchema, ChannelSchema, Core, Channel, Crossbar, CrossbarSchema
 } from "./chipmodel"
 import {Direction} from "../../../src/utils"
 
@@ -32,24 +32,34 @@ export class ChipModelFactory extends SModelFactory {
     }
 
     createRoot(schema: SModelRootSchema): SModelRoot {
-        if (schema instanceof Chip)
+        if (schema instanceof Processor)
             return schema
-        else if (this.isChipSchema(schema))
-            return this.initializeRoot(new Chip(), schema)
+        else if (this.isProcessorSchema(schema))
+            return this.initializeRoot(new Processor(), schema)
         else
             return super.createRoot(schema)
     }
 
-    private validate(coreOrChannel: CoreSchema | ChannelSchema, chip?: SParentElement) {
-        if (chip) {
-            if (!(chip instanceof Chip))
-                throw new Error('Parent model element must be a Chip')
+    protected initializeElement(elem: SModelElement, schema: SModelElementSchema): SModelElement {
+        super.initializeElement(elem, schema)
+        const direction = schema['direction']
+        if (typeof direction == 'string')
+            elem['direction'] = Direction[direction]
+        return elem
+    }
+
+    private validate(coreOrChannel: CoreSchema | ChannelSchema, processor?: SParentElement) {
+        if (processor) {
+            if (!(processor instanceof Processor))
+                throw new Error('Parent model element must be a Processor')
             let rowDelta = 0
             let columnDelta = 0
             if (this.isChannelSchema(coreOrChannel)) {
                 switch (coreOrChannel.direction) {
                     case Direction.down:
+                    case 'down':
                     case Direction.up:
+                    case 'up':
                         rowDelta = 1
                         break
                     default:
@@ -57,14 +67,14 @@ export class ChipModelFactory extends SModelFactory {
                         break;
                 }
             }
-            if (coreOrChannel.row < 0 || coreOrChannel.row >= chip.rows + rowDelta
-                || coreOrChannel.column < 0 && coreOrChannel.column >= chip.columns + columnDelta)
+            if (coreOrChannel.row < 0 || coreOrChannel.row >= processor.rows + rowDelta
+                || coreOrChannel.column < 0 && coreOrChannel.column >= processor.columns + columnDelta)
                 throw Error('Element coordinates are out of bounds ' + coreOrChannel)
         }
     }
 
-    isChipSchema(schema: SModelElementSchema): schema is ChipSchema {
-        return getBasicType(schema) == 'chip'
+    isProcessorSchema(schema: SModelElementSchema): schema is ProcessorSchema {
+        return getBasicType(schema) == 'processor'
     }
 
     isCoreSchema(schema: SModelElementSchema): schema is CoreSchema {

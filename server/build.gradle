@@ -13,7 +13,10 @@ ext.versions = [
     elk: '0.3.0-SNAPSHOT',
     slf4j: '1.7.24',
     log4j: '1.2.16',
-    jetty: '9.4.2.v20170220'
+    jetty: '9.4.2.v20170220',
+    requirejs: '2.3.2',
+    jquery: '2.2.4',
+    ace: '1.2.3'
 ]
 
 configure(subprojects.findAll {it.file('src').exists()}) {
