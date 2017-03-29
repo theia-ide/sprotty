@@ -1,5 +1,5 @@
 import {
-    TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction, UpdateModelAction
+    TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction, UpdateModelAction, Action
 } from "../../../src/base"
 import { SGraphView, StraightEdgeView } from "../../../src/graph"
 import { SelectCommand, SetBoundsCommand } from "../../../src/features"
@@ -16,7 +16,7 @@ export default function runFlowServer() {
     actionHandlerRegistry.registerServerMessage(SelectCommand.KIND)
     actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
     actionHandlerRegistry.registerServerMessage(SetBoundsCommand.KIND)
-    actionHandlerRegistry.registerTranslator(UpdateModelAction.KIND, update => new RequestModelAction({type: 'flow'}))
+    actionHandlerRegistry.registerTranslator(UpdateModelAction.KIND, update => new RequestModelAction('flow'))
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
@@ -27,9 +27,10 @@ export default function runFlowServer() {
 
     // Connect to the diagram server
     const diagramServer = container.get<WebSocketDiagramServer>(TYPES.IDiagramServer)
+    diagramServer.setFilter((action: Action) => !action.hasOwnProperty('modelType') || action['modelType'] == 'flow')
     diagramServer.connect('ws://localhost:8080/diagram').then(connection => {
         // Run
-        const action = new RequestModelAction({type: 'flow'})
+        const action = new RequestModelAction('flow')
         dispatcher.dispatch(action)
     })
 }

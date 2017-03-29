@@ -12,6 +12,7 @@ export class WebSocketDiagramServer implements IDiagramServer {
     @inject(TYPES.ILogger) protected logger: ILogger
 
     protected webSocket?: WebSocket
+    protected filter?: (Action) => boolean
     protected readonly actionListeners: ((Action: any) => void)[] = []
 
     connect(url: string, options?: any): Promise<WebSocket> {
@@ -67,15 +68,21 @@ export class WebSocketDiagramServer implements IDiagramServer {
         }
     }
 
-    onAction(listener: (Action: any) => void): void {
+    onAction(listener: (Action) => void): void {
         this.actionListeners.push(listener)
+    }
+
+    setFilter(filter: (Action) => boolean): void {
+        this.filter = filter
     }
 
     protected messageReceived(data: any): void {
         const object = typeof(data) == 'string' ? JSON.parse(data) : data
         if (isAction(object)) {
-            for (let listener of this.actionListeners) {
-                listener(object)
+            if (this.filter === undefined || this.filter(object)) {
+                for (let listener of this.actionListeners) {
+                    listener(object)
+                }
             }
         } else {
             this.logger.error('WebSocketDiagramServer: received data is not an action', object)

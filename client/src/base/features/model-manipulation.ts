@@ -5,9 +5,13 @@ import { AbstractCommand, CommandExecutionContext, Command } from "../intent/com
 import { Map } from "../../utils/utils"
 
 export class SetModelAction implements Action {
-    kind = SetModelCommand.KIND
+    readonly kind = SetModelCommand.KIND
+    modelType: string
+    modelId: string
 
-    constructor(public readonly newRoot: SModelRootSchema) {
+    constructor(public newRoot: SModelRootSchema) {
+        this.modelType = newRoot.type
+        this.modelId = newRoot.id
     }
 }
 
@@ -39,16 +43,17 @@ export class SetModelCommand extends AbstractCommand {
 
 export class RequestModelAction implements Action {
     static readonly KIND = 'requestModel'
-    kind = RequestModelAction.KIND
+    readonly kind = RequestModelAction.KIND
 
-    constructor(public readonly options?: Map<string>) {
+    constructor(public modelType?: string, public modelId?: string,
+            public readonly options?: Map<string>) {
     }
 }
 
 export class UpdateModelAction implements Action {
     static readonly KIND = 'updateModel'
-    kind = UpdateModelAction.KIND
+    readonly kind = UpdateModelAction.KIND
 
-    constructor(public readonly modelId: string) {
+    constructor(public modelType: string, public modelId: string) {
     }
 }

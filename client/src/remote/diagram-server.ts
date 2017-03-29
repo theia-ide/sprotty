@@ -4,7 +4,9 @@ import { Command } from "../base/intent/commands"
 export interface IDiagramServer {
     sendAction(action: Action): void
 
-    onAction(listener: (Action) => void)
+    onAction(listener: (Action) => void): void
+
+    setFilter(filter: (Action) => boolean): void
 }
 
 export class ServerActionHandler implements ActionHandler {

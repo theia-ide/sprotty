@@ -1,5 +1,5 @@
 import {
-    TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction
+    TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction, UpdateModelAction, Action
 } from "../../../src/base"
 import { SelectCommand } from "../../../src/features"
 import { WebSocketDiagramServer } from "../../../src/remote"
@@ -14,6 +14,7 @@ export default function runMulticoreServer() {
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
     actionHandlerRegistry.registerServerMessage(SelectCommand.KIND)
     actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
+    actionHandlerRegistry.registerTranslator(UpdateModelAction.KIND, update => new RequestModelAction('processor'))
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
@@ -24,9 +25,10 @@ export default function runMulticoreServer() {
 
     // Connect to the diagram server
     const diagramServer = container.get<WebSocketDiagramServer>(TYPES.IDiagramServer)
+    diagramServer.setFilter((action: Action) => !action.hasOwnProperty('modelType') || action['modelType'] == 'processor')
     diagramServer.connect('ws://localhost:8080/diagram').then(() => {
         // Run
-        const action = new RequestModelAction({type: 'processor'})
+        const action = new RequestModelAction('processor')
         dispatcher.dispatch(action)
     })
 }

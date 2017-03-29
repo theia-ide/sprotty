@@ -39,37 +39,39 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 	@Inject ModelProvider modelProvider
 	
 	def Processor generateProcessorView(Program program, CancelIndicator cancelIndicator) {
-		val dim = 8
-		val cores = <Core>newArrayList
-		val channels = <Channel>newArrayList
-		for (var i = 0; i < dim; i++) {
-		    for (var j = 0; j < dim; j++) {
-		        cores += createCore(i, j)
-		        channels += createChannel(i, j, CoreDirection.up)
-		        channels += createChannel(i, j, CoreDirection.down)
-		        channels += createChannel(i, j, CoreDirection.left)
-		        channels += createChannel(i, j, CoreDirection.right)
-		    }
-		    channels += createChannel(dim, i, CoreDirection.up)
-		    channels += createChannel(dim, i, CoreDirection.down)
-		    channels += createChannel(i, dim, CoreDirection.left)
-		    channels += createChannel(i, dim, CoreDirection.right)
-		}
-		
-		val crossbars = <Crossbar>newArrayList
-		crossbars += createCrossbar(CoreDirection.up)
-		crossbars += createCrossbar(CoreDirection.down)
-		crossbars += createCrossbar(CoreDirection.left)
-		crossbars += createCrossbar(CoreDirection.right)
 		val processor = new Processor => [
-		    id = 'processor'
 		    type = 'processor'
-		    rows = dim
-		    columns = dim
-		    children = (channels + crossbars + cores).toList
+		    id = 'processor'
+		    rows = 0
+		    columns = 0
+		    children = newArrayList
 		]
+		if (program !== null) {
+			val dim = Math.ceil(Math.sqrt(program.numberOfCores)) as int
+			for (var i = 0; i < dim; i++) {
+			    for (var j = 0; j < dim; j++) {
+			        processor.children += createCore(i, j)
+			        processor.children += createChannel(i, j, CoreDirection.up)
+			        processor.children += createChannel(i, j, CoreDirection.down)
+			        processor.children += createChannel(i, j, CoreDirection.left)
+			        processor.children += createChannel(i, j, CoreDirection.right)
+			    }
+			    processor.children += createChannel(dim, i, CoreDirection.up)
+			    processor.children += createChannel(dim, i, CoreDirection.down)
+			    processor.children += createChannel(i, dim, CoreDirection.left)
+			    processor.children += createChannel(i, dim, CoreDirection.right)
+			}
+			
+			processor.children += createCrossbar(CoreDirection.up)
+			processor.children += createCrossbar(CoreDirection.down)
+			processor.children += createCrossbar(CoreDirection.left)
+			processor.children += createCrossbar(CoreDirection.right)
+			processor.rows = dim
+			processor.columns = dim
+		}
 		modelProvider.processorView = processor
 		remoteEndpoint?.accept(new UpdateModelAction => [
+			modelType = processor.type
 			modelId = processor.id
 		])
 		return processor
@@ -163,6 +165,7 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		}
 		modelProvider.flowView = flow
 		remoteEndpoint?.accept(new UpdateModelAction => [
+			modelType = flow.type
 			modelId = flow.id
 		])
 		return flow
@@ -198,6 +201,8 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 			layout(graph)
 			remoteEndpoint?.accept(new SetModelAction => [
 				newRoot = graph
+				modelType = graph.type
+				modelId = graph.id
 			])
 		} else
 			throw new IllegalStateException("requestModel must be called before layout")
@@ -205,12 +210,20 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 	
 	override handle(RequestModelAction action) {
 		remoteEndpoint?.accept(new SetModelAction => [
-			switch action.options.get('type') {
+			switch action.modelType {
 				case 'processor':
-					newRoot = modelProvider.processorView ?: new Processor
+					newRoot = modelProvider.processorView ?: (new Processor => [
+		    			type = 'processor'
+						id = 'processor'
+					])
 				case 'flow':
-					newRoot = modelProvider.flowView ?: new Flow
+					newRoot = modelProvider.flowView ?: (new Flow => [
+						type = 'flow'
+						id = 'flow'
+					])
 			}
+			modelType = newRoot.type
+			modelId = newRoot.id
 		])
 	}
 	

@@ -14,6 +14,8 @@ interface Action {
 class RequestModelAction implements Action {
 	public static val KIND = 'requestModel'
 	String kind = KIND
+	String modelType
+	String modelId
 	Map<String, String> options
 }
 
@@ -35,6 +37,8 @@ class SetModelAction implements Action {
 	public static val KIND = 'setModel'
 	String kind = KIND
 	SModelRoot newRoot
+	String modelType
+	String modelId
 }
 
 @Accessors@EqualsHashCode@ToString
@@ -49,6 +53,7 @@ class SelectAction implements Action {
 class UpdateModelAction implements Action {
 	public static val KIND = 'updateModel'
 	String kind = KIND
+	String modelType
 	String modelId
 }
 
