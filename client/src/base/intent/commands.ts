@@ -12,11 +12,11 @@ import { ActionHandler, Action } from "./actions"
  * Each command should define a static string property KIND that matches the associated action.
  */
 export interface Command {
-    execute(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
+    execute(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise
 
-    undo(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
+    undo(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise
 
-    redo(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
+    redo(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise
 
     merge(command: Command, context: CommandExecutionContext): boolean
 
@@ -24,11 +24,11 @@ export interface Command {
 }
 
 export abstract class AbstractCommand implements Command {
-    abstract execute(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
+    abstract execute(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise
 
-    abstract undo(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
+    abstract undo(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise
 
-    abstract redo(element: SModelRoot, context: CommandExecutionContext): GModelRootOrPromise
+    abstract redo(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise
 
     merge(command: Command, context: CommandExecutionContext): boolean {
         return false
@@ -39,7 +39,7 @@ export abstract class AbstractCommand implements Command {
     }
 }
 
-type GModelRootOrPromise = SModelRoot | Promise<SModelRoot>
+export type SModelRootOrPromise = SModelRoot | Promise<SModelRoot>
 
 export interface CommandExecutionContext {
     root: SModelRoot
