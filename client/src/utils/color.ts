@@ -4,12 +4,10 @@ export interface RGBColor {
     blue: number
 }
 
-export namespace RGBColor {
-    export function toSVG(c: RGBColor): string {
-        return 'rgb(' + Math.round(c.red * 255)
-            + ',' + Math.round(c.green * 255)
-            + ',' + Math.round(c.blue * 255) + ')'
-    }
+export function toSVG(c: RGBColor): string {
+    return 'rgb(' + Math.round(c.red * 255)
+        + ',' + Math.round(c.green * 255)
+        + ',' + Math.round(c.blue * 255) + ')'
 }
 
 export class ColorMap {

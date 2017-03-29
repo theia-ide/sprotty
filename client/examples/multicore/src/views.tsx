@@ -2,7 +2,7 @@ import {View, RenderingContext} from "../../../src/base/view/views"
 import {VNode} from "snabbdom/vnode"
 import {Chip, Core, Channel, Crossbar} from "./chipmodel"
 import {Direction} from "../../../src/utils/geometry"
-import {ColorMap, RGBColor} from "../../../src/utils/color"
+import {ColorMap, toSVG} from "../../../src/utils/color"
 import * as snabbdom from "snabbdom-jsx"
 import {ThunkView} from "../../../src/base/view/thunk-view"
 
@@ -113,7 +113,7 @@ class LoadColor {
     ])
 
     static getSVG(load: number): string {
-        return RGBColor.toSVG(LoadColor.colorMap.getColor(load))
+        return toSVG(LoadColor.colorMap.getColor(load))
     }
 }
 
