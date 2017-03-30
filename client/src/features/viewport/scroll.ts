@@ -1,5 +1,3 @@
-
-import { BehaviorSchema } from "../../base/model/behavior"
 import { Point } from "../../utils/geometry"
 import { SModelElement, getParent } from "../../base/model/smodel"
 import { MouseListener } from "../../base/view/mouse-tool"
@@ -7,7 +5,7 @@ import { Action } from "../../base/intent/actions"
 import { ViewportAction } from "./viewport"
 import { Viewport, isViewport } from "./model"
 
-export interface Scrollable extends BehaviorSchema {
+export interface Scrollable extends SModelExtension {
     scroll: Point
 }
 

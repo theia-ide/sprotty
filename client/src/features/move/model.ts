@@ -1,10 +1,9 @@
-import { BehaviorSchema } from "../../base/model/behavior"
 import { Point } from "../../utils/geometry"
 import { SModelElement } from "../../base/model/smodel"
 
 export const moveFeature = Symbol('moveFeature')
 
-export interface Locateable extends BehaviorSchema {
+export interface Locateable extends SModelExtension {
     position: Point
 }
 

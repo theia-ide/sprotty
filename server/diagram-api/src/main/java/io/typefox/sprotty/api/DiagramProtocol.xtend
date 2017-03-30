@@ -38,7 +38,7 @@ class RequestModelAction implements Action {
 
 @Accessors@EqualsHashCode@ToString
 class SetBoundsAction implements Action {
-    public static val KIND ='bounds'
+    public static val KIND ='setBounds'
 	String kind = KIND
 	List<ElementAndBounds> resizes
 	
@@ -121,14 +121,11 @@ class SModelRoot extends SModelElement {
 
 @Accessors@EqualsHashCode@ToString
 class SGraph extends SModelRoot {
-	Double width
-	Double height
-	Boolean autosize
-	
 	new() {}
 	new(Consumer<SGraph> initializer) {
 		initializer.accept(this)
 	}
+	Bounds bounds
 }
 
 @Accessors@EqualsHashCode@ToString
@@ -137,7 +134,6 @@ class SNode extends SModelElement {
 	Double y
 	Double width
 	Double height
-	Boolean autosize
 	
 	new() {}
 	new(Consumer<SNode> initializer) {

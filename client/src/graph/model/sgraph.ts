@@ -8,7 +8,6 @@ import { boundsFeature, BoundsAware } from "../../features/bounds/model"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
-    autosize?: boolean
     width?: number
     height?: number
     scroll: Point
@@ -16,16 +15,6 @@ export interface SGraphSchema extends SModelRootSchema {
 }
 
 export class SGraph extends ViewportRootElement implements SGraphSchema {
-    autosize: boolean;
-    width: number;
-    height: number;
-    scroll: Point;
-    zoom: number;
-    type: string;
-    id: string;
-
-    children: SGraphElement[]
-    currentTransformMatrix = IDENTITY_MATRIX
 }
 
 export interface SNodeSchema extends SParentElementSchema {
@@ -33,17 +22,14 @@ export interface SNodeSchema extends SParentElementSchema {
     y?: number
     width?: number
     height?: number
-    autosize?: boolean
     children?: SGraphElementSchema[]
 }
 
 export class SNode extends SChildElement implements SNodeSchema, Selectable, BoundsAware {
     x: number = 0
     y: number = 0
-    width: number = 0
-    height: number = 0
-    autosize: boolean = true
-    clientBounds: Bounds = EMPTY_BOUNDS
+    width: number = -1
+    height: number = -1
     children: SGraphElement[]
     selected: boolean = false
 

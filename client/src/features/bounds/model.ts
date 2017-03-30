@@ -1,21 +1,18 @@
-import { BehaviorSchema } from "../../base/model/behavior"
-import { Locateable } from "../move/model"
-import { Bounds, TransformMatrix } from "../../utils/geometry"
+import { Bounds } from "../../utils/geometry"
 import { SModelElement } from "../../base/model/smodel"
 
 export const boundsFeature = Symbol('boundsFeature')
 
-export interface BoundsAware extends BehaviorSchema {
-    autosize: boolean
+export interface BoundsAware extends SModelExtension {
     bounds: Bounds
 }
 
-export interface BoundsInPageAware extends BoundsAware {
+export interface BoundsInPageAware extends SModelExtension {
     boundsInPage: Bounds
 }
 
 export function isBoundsAware(element: SModelElement): element is SModelElement & BoundsAware {
-    return 'bounds' in element && 'autosize' in element
+    return 'bounds' in element
 }
 
 export function isBoundsInPageAware(element: SModelElement): element is SModelElement & BoundsInPageAware {

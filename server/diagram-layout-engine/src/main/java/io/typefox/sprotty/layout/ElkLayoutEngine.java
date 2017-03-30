@@ -22,6 +22,7 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.Maps;
 
+import io.typefox.sprotty.api.Bounds;
 import io.typefox.sprotty.api.Point;
 import io.typefox.sprotty.api.SEdge;
 import io.typefox.sprotty.api.SGraph;
@@ -178,9 +179,12 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	}
 	
 	protected void transferGraphLayout(SGraph sgraph, ElkNode elkGraph) {
-//		sgraph.setWidth(elkGraph.getWidth());
-//		sgraph.setHeight(elkGraph.getHeight());
-		sgraph.setAutosize(false);
+		Bounds bounds = new Bounds();
+		bounds.setX(elkGraph.getX());
+		bounds.setY(elkGraph.getY());
+		bounds.setWidth(elkGraph.getWidth());
+		bounds.setHeight(elkGraph.getHeight());
+		sgraph.setBounds(bounds);
 	}
 	
 	protected void transferNodeLayout(SNode snode, ElkNode elkNode) {
@@ -188,7 +192,6 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		snode.setY(elkNode.getY());
 		snode.setWidth(elkNode.getWidth());
 		snode.setHeight(elkNode.getHeight());
-		snode.setAutosize(false);
 	}
 	
 	protected void transferEdgeLayout(SEdge sedge, ElkEdge elkEdge) {

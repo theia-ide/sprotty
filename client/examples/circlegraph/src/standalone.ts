@@ -49,7 +49,7 @@ export default function runStandalone() {
         graph.add(modelFactory.createElement(newEdge), 0)
     }
 
-    for (let i = 0; i < 200; ++i) {
+    for (let i = 0; i < 0; ++i) {
         addNode()
     }
     dispatcher.dispatch(new SetModelAction(graph))

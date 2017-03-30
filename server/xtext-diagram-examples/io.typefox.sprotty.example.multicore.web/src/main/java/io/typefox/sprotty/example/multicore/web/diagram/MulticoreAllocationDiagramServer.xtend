@@ -137,7 +137,6 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 				tnode.type = 'task'
 				tnode.id = declaration.name + '_' + (index++)
 				tnode.kernel = declaration.kernel?.name
-				tnode.autosize = true
 				nodes.put(declaration, tnode)
 				flow.children += tnode
 			}
@@ -146,7 +145,6 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 				val bnode = new BarrierNode
 				bnode.type = 'barrier'
 				bnode.id = 'barrier' + (index++)
-				bnode.autosize = true
 				nodes.put(declaration, bnode)
 				flow.children += bnode
 				for (triggered : declaration.triggered) {
@@ -154,7 +152,6 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 					tnode.type = 'task'
 					tnode.id = triggered.name + '_' + (index++)
 					tnode.kernel = triggered.kernel?.name
-					tnode.autosize = true
 					nodes.put(triggered, tnode)
 					flow.children += tnode
 				}

@@ -1,5 +1,6 @@
 package io.typefox.sprotty.server.examples
 
+import io.typefox.sprotty.api.ActionMessage
 import io.typefox.sprotty.server.websocket.DiagramServerEndpoint
 import java.net.InetSocketAddress
 import javax.websocket.EndpointConfig
@@ -9,7 +10,6 @@ import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.servlet.ServletContextHandler
 import org.eclipse.jetty.util.log.Slf4jLog
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer
-import io.typefox.sprotty.api.Action
 
 class SimpleServerLauncher {
 	
@@ -22,14 +22,14 @@ class SimpleServerLauncher {
     		super.onOpen(session, config)
     	}
     	
-		override accept(Action action) {
-			LOG.info('''SERVER: «action»''')
-			super.accept(action)
+		override accept(ActionMessage actionMessage) {
+			LOG.info('''SERVER: «actionMessage.action»''')
+			super.accept(actionMessage)
 		}
 		
-		override protected fireActionReceived(Action action) {
-			LOG.info('''CLIENT: «action»''')
-			super.fireActionReceived(action)
+		override protected fireMessageReceived(ActionMessage message) {
+			LOG.info('''CLIENT: «message.action»''')
+			super.fireMessageReceived(message)
 		}
 	}
 	

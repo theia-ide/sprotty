@@ -1,10 +1,10 @@
 import { Action } from "../../base/intent/actions"
 import { AbstractCommand, CommandExecutionContext } from "../../base/intent/commands"
 import { SModelRoot, SModelElement } from "../../base/model/smodel"
-import { Bounds, combine, EMPTY_BOUNDS, center } from "../../utils/geometry"
+import { Bounds, combine, EMPTY_BOUNDS, center, isEmpty } from "../../utils/geometry"
 import { KeyListener } from "../../base/view/key-tool"
 import { isCtrlOrCmd } from "../../utils/browser"
-import {isSizeable, BoundsAware, BoundsInPageAware} from "../bounds/model"
+import {isSizeable, BoundsInPageAware} from "../bounds/model"
 import { isSelectable } from "../select/model"
 import { isBoundsAware } from "../bounds/model"
 import { ViewportAnimation } from "./viewport"
@@ -60,7 +60,8 @@ export abstract class AbstractViewportCommand extends AbstractCommand {
                 )
             }
             const bounds = allBounds.reduce((b0, b1) => combine(b0, b1), EMPTY_BOUNDS)
-            this.newViewport = this.getNewViewport(bounds, model)
+            if(!isEmpty(bounds))
+                this.newViewport = this.getNewViewport(bounds, model)
         }
     }
 

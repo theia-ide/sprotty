@@ -14,6 +14,7 @@ import { VNodeDecorator } from "./vnode-decorators"
 import { ViewRegistry, RenderingContext } from "./views"
 import { setClass } from "./vnode-utils"
 import { IViewerOptions } from "./options"
+import { ILogger } from "../../utils/logging"
 
 const JSX = {createElement: snabbdom.html}  // must be html here, as we're creating a div
 
@@ -28,6 +29,7 @@ export interface IViewer {
 @injectable()
 export class Viewer implements VNodeDecorator, IViewer {
 
+    @inject(TYPES.ILogger) public logger: ILogger
     @inject(TYPES.ViewRegistry) public viewRegistry: ViewRegistry
     @inject(TYPES.IViewerOptions) protected options: IViewerOptions
 
@@ -81,6 +83,7 @@ export class Viewer implements VNodeDecorator, IViewer {
     }
 
     update(model: SModelRoot): void {
+        this.logger.log(this, 'rendering', JSON.stringify((model as any).boundsInPage))
         const context = this.createRenderingContext(model)
         const newVDOM = <div id={this.options.baseDiv}>
                 {this.renderElement(model, context) as VNode}

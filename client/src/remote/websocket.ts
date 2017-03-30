@@ -41,6 +41,7 @@ export class WebSocketDiagramServer implements IDiagramServer {
                 clientId: this.clientId,
                 action: action
             }
+            this.logger.log(this, 'sending', action)
             this.webSocket.send(JSON.stringify(message))
         } else {
             throw new Error('WebSocket is not connected')
@@ -55,6 +56,7 @@ export class WebSocketDiagramServer implements IDiagramServer {
         const object = typeof(data) == 'string' ? JSON.parse(data) : data
         if (isActionMessage(object) && object.action) {
             if (!object.clientId || object.clientId == this.clientId) {
+                this.logger.log(this, 'receiving', object.action.kind)
                 for (let listener of this.actionListeners) {
                     listener(object.action)
                 }

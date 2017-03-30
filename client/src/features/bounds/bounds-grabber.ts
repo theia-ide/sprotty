@@ -1,16 +1,21 @@
-import { injectable, inject } from "inversify"
+import { inject, injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { SModelElement } from "../../base/model/smodel"
 import { VNodeDecorator } from "../../base/view/vnode-decorators"
 import { TYPES } from "../../base/types"
 import { IActionDispatcher } from "../../base/intent/action-dispatcher"
-import { almostEquals, Bounds, TransformMatrix } from "../../utils/geometry"
-import { ElementAndBounds, SetBoundsAction } from "./bounds-manipulation"
-import {BoundsAware, isSizeable, BoundsInPageAware, isBoundsInPageAware} from "./model"
+import { Bounds, isEmpty } from "../../utils/geometry"
+import { ElementAndBounds, SetBoundsAction, SetBoundsInPageAction } from "./bounds-manipulation"
+import { BoundsAware, BoundsInPageAware, isBoundsInPageAware, isSizeable } from "./model"
 
-class VNodeAndSizeable {
+class VNodeAndBoundsAware {
     vnode: VNode
     element: BoundsAware & SModelElement
+}
+
+class VNodeAndBoundsInPageAware {
+    vnode: VNode
+    element: BoundsInPageAware & SModelElement
 }
 
 /**
@@ -26,11 +31,18 @@ export class BoundsGrabber implements VNodeDecorator {
 
     @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
 
-    sizeables: VNodeAndSizeable[] = []
+    updateBounds: VNodeAndBoundsAware[] = []
+    updateBoundsInPage: VNodeAndBoundsInPageAware[] = []
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        if (isSizeable(element) && element.autosize === true) {
-            this.sizeables.push({
+        if (isSizeable(element) && isEmpty(element.bounds)) {
+            this.updateBounds.push({
+                vnode: vnode,
+                element: element
+            })
+        }
+        if(isBoundsInPageAware(element) && isEmpty(element.boundsInPage)) {
+            this.updateBoundsInPage.push({
                 vnode: vnode,
                 element: element
             })
@@ -40,33 +52,40 @@ export class BoundsGrabber implements VNodeDecorator {
 
     postUpdate() {
         const resizes: ElementAndBounds[] = []
-        this.sizeables.forEach(
-            sizeable => {
-                const vnode = sizeable.vnode
-                const element = sizeable.element
+        const resizesInPage: ElementAndBounds[] = []
+        this.updateBounds.forEach(
+            update => {
+                const vnode = update.vnode
+                const element = update.element
                 if (vnode.elm) {
                     let newBounds = this.getBounds(vnode.elm, element)
-                    let shouldUpdate: boolean = element.autosize
-                        || this.differ(newBounds, element.bounds)
-                    let newBoundsInPage: Bounds |undefined = undefined
-                    if(isBoundsInPageAware(element)) {
-                        newBoundsInPage = this.getBoundsInPage(vnode.elm)
-                        shouldUpdate = shouldUpdate || this.differ(newBoundsInPage, element.boundsInPage)
-                    }
-                    if (shouldUpdate) {
-                        resizes.push({
-                            elementId: element.id,
-                            newBounds: newBounds,
-                            newBoundsInPage: newBoundsInPage
-                        })
-                    }
+                    resizes.push({
+                        elementId: element.id,
+                        newBounds: newBounds,
+                    })
                 }
-
             }
         )
-        this.sizeables = []
-        if (resizes.length > 0)
-            this.actionDispatcher.dispatchNextFrame(new SetBoundsAction(resizes))
+        this.updateBoundsInPage.forEach(
+            update => {
+                const vnode = update.vnode
+                const element = update.element
+                if (vnode.elm) {
+                    let newBoundsInPage = this.getBoundsInPage(vnode.elm)
+                    resizesInPage.push({
+                        elementId: element.id,
+                        newBounds: newBoundsInPage
+                    })
+                }
+            }
+        )
+        this.updateBounds = []
+        this.updateBoundsInPage = []
+        if (resizesInPage.length > 0)
+            this.actionDispatcher.dispatch(new SetBoundsInPageAction(resizesInPage))
+        if (resizes.length > 0) {
+            this.actionDispatcher.dispatch(new SetBoundsAction(resizes))
+        }
 
     }
 
@@ -88,12 +107,5 @@ export class BoundsGrabber implements VNodeDecorator {
             width: bounds.width,
             height: bounds.height
         }
-    }
-
-    protected differ(b0: Bounds, b1: Bounds): boolean {
-        return !almostEquals(b0.width, b1.width)
-            || !almostEquals(b0.height, b1.height)
-            || !almostEquals(b0.x, b1.x)
-            || !almostEquals(b0.y, b1.y)
     }
 }

@@ -48,7 +48,6 @@ export class Crossbar extends SChildElement implements CrossbarSchema, Selectabl
     direction: Direction
     load: number = 0
     selected: boolean = false
-    autosize: boolean = true
     bounds: Bounds = EMPTY_BOUNDS
 
     hasFeature(feature: symbol): boolean {

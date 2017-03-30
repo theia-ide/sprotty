@@ -1,12 +1,10 @@
-
-import { BehaviorSchema } from "../../base/model/behavior"
 import { SModelElement, getParent } from "../../base/model/smodel"
 import { MouseListener } from "../../base/view/mouse-tool"
 import { Action } from "../../base/intent/actions"
 import { ViewportAction } from "./viewport"
 import { Viewport, isViewport } from "./model"
 
-export interface Zoomable extends BehaviorSchema {
+export interface Zoomable extends SModelExtension {
     zoom: number
 }
 

@@ -31,14 +31,14 @@ export class BarrierNodeView extends RectangularNodeView {
     }
 
     getWidth(node: BarrierNode): number {
-        if (node.width)
+        if (node.width > 0)
             return node.width
         else
             return 50
     }
 
     getHeight(node: BarrierNode): number {
-        if (node.height)
+        if (node.height > 0)
             return node.height
         else
             return 10

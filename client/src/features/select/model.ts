@@ -1,9 +1,8 @@
-import { BehaviorSchema } from "../../base/model/behavior"
 import { SModelElement } from "../../base/model/smodel"
 
 export const selectFeature = Symbol('selectFeature')
 
-export interface Selectable extends BehaviorSchema {
+export interface Selectable extends SModelExtension {
     selected: boolean
 }
 
