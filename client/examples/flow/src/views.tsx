@@ -46,10 +46,12 @@ export class BarrierNodeView extends RectangularNodeView {
 }
 
 export class FlowEdgeView extends StraightEdgeView {
-    protected renderEnd(edge: SEdge, segments: Point[], context: RenderingContext): VNode | undefined {
+    protected renderAdditionals(edge: SEdge, segments: Point[], context: RenderingContext): VNode[] {
         const p1 = segments[segments.length - 2]
         const p2 = segments[segments.length - 1]
-        return <path key={edge.id} id={edge.id} class-edge={true} class-arrow={true} d="M 0,0 L 10,-4 L 10,4 Z"
-            transform={`rotate(${toDegrees(angle(p2, p1))} ${p2.x} ${p2.y}) translate(${p2.x} ${p2.y})`}/>
+        return [
+            <path key={edge.id} id={edge.id} class-edge={true} class-arrow={true} d="M 0,0 L 10,-4 L 10,4 Z"
+                transform={`rotate(${toDegrees(angle(p2, p1))} ${p2.x} ${p2.y}) translate(${p2.x} ${p2.y})`}/>
+        ]
     }
 }

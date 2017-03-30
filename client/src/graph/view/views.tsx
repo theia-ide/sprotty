@@ -120,23 +120,9 @@ export class StraightEdgeView implements View {
     }
 
     protected renderAdditionals(edge: SEdge, segments: Point[], context: RenderingContext): VNode[] {
-        const result: VNode[] = []
-        const start = this.renderStart(edge, segments, context)
-        if (start !== undefined)
-            result.push(start)
-        const end = this.renderEnd(edge, segments, context)
-        if (end !== undefined)
-            result.push(end)
-        return result
+        return []
     }
 
-    protected renderStart(edge: SEdge, segments: Point[], context: RenderingContext): VNode | undefined {
-        return undefined
-    }
-
-    protected renderEnd(edge: SEdge, segments: Point[], context: RenderingContext): VNode | undefined {
-        return undefined
-    }
 
     protected renderDanglingEdge(message: string, edge: SEdge, context: RenderingContext) {
         return <text key={edge.id} id={edge.id} class-dangling-edge={true} title={message}>?</text>
