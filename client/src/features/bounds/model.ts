@@ -1,5 +1,6 @@
 import { Bounds } from "../../utils/geometry"
 import { SModelElement } from "../../base/model/smodel"
+import { SModelExtension } from "../../base/model/smodel-extension"
 
 export const boundsFeature = Symbol('boundsFeature')
 

@@ -1,4 +1,5 @@
 import { SModelElement } from "../../base/model/smodel"
+import { SModelExtension } from "../../base/model/smodel-extension"
 
 export const selectFeature = Symbol('selectFeature')
 

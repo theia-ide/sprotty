@@ -43,12 +43,7 @@ abstract class AbstractSetBoundsCommand extends AbstractCommand {
                 if (element && this.boundsProperty in element) {
                     this.resizes.push({
                         element: element,
-<<<<<<< HEAD
                         oldBounds: element[this.boundsProperty],
-=======
-                        oldBounds: element.bounds,
-                        oldBoundsInPage: oldBoundsInPage,
->>>>>>> [resize] Fix little bug breaking undo() for BoundsInPageAware elements
                         newBounds: resize.newBounds,
                     })
                 }

@@ -3,6 +3,7 @@ import { MouseListener } from "../../base/view/mouse-tool"
 import { Action } from "../../base/intent/actions"
 import { ViewportAction } from "./viewport"
 import { Viewport, isViewport } from "./model"
+import { SModelExtension } from "../../base/model/smodel-extension"
 
 export interface Zoomable extends SModelExtension {
     zoom: number
