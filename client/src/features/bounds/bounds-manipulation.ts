@@ -43,6 +43,7 @@ export class SetBoundsCommand extends AbstractCommand {
                     this.resizes.push({
                         element: element,
                         oldBounds: element.bounds,
+                        oldBoundsInPage: oldBoundsInPage,
                         newBounds: resize.newBounds,
                         newBoundsInPage: resize.newBoundsInPage
                     })
