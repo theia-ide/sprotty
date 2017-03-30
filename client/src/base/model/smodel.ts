@@ -146,7 +146,7 @@ export function getBasicType(schema: SModelElementSchema): string {
         return schema.type
 }
 
-export function getParent<T>(element: SModelElement | T, predicate: (SModelElement) => boolean): (SModelElement & T) | undefined {
+export function getParent<T>(element: SModelElement | T, predicate: (e: SModelElement) => boolean): (SModelElement & T) | undefined {
     if (predicate.call(undefined, element))
         return element as (SModelElement & T)
     else if (element instanceof SChildElement) {

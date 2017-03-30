@@ -3,20 +3,20 @@ import {injectable} from "inversify"
 @injectable()
 export class AnimationFrameSyncer {
 
-    tasks: ((number?)=>void) [] = []
-    endTasks: ((number?)=>void) [] = []
+    tasks: ((x?: number)=>void) [] = []
+    endTasks: ((x?: number)=>void) [] = []
     triggered: boolean = false
 
     isAvailable(): boolean {
         return typeof requestAnimationFrame === "function"
     }
 
-    onNextFrame(task: (number?)=>void) {
+    onNextFrame(task: (x?: number)=>void) {
         this.tasks.push(task)
         this.trigger()
     }
 
-    onEndOfNextFrame(task: (number?)=>void) {
+    onEndOfNextFrame(task: (x?: number)=>void) {
         this.endTasks.push(task)
         this.trigger()
     }
@@ -27,7 +27,7 @@ export class AnimationFrameSyncer {
             if(this.isAvailable())
                 requestAnimationFrame((time: number) => this.run(time))
             else
-                setTimeout((time)=>this.run(time))
+                setTimeout((time: number)=>this.run(time))
         }
     }
 

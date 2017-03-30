@@ -3,7 +3,7 @@ import { MultiInstanceRegistry } from "../../utils/registry"
 import { ILogger } from "../../utils/logging"
 import { IDiagramServer, ServerActionHandler } from "../../remote/diagram-server"
 import { TYPES } from "../types"
-import { Command, CommandActionHandler } from "./commands"
+import { Command, CommandActionHandler, CommandFactory } from "./commands"
 
 /**
  * An action describes a change to the model declaratively.
@@ -22,7 +22,7 @@ export interface ActionHandler {
 }
 
 export class TranslatingActionHandler implements ActionHandler {
-    constructor(private translator: (Action) => Action) {
+    constructor(private translator: (a: Action) => Action) {
     }
 
     handle(action: Action): Command | Action | undefined {
@@ -37,7 +37,7 @@ export class TranslatingActionHandler implements ActionHandler {
 export class ActionHandlerRegistry extends MultiInstanceRegistry<ActionHandler> {
 
     constructor(
-        @multiInject(TYPES.ICommand) @optional() commandCtrs: (new (Action) => Command)[],
+        @multiInject(TYPES.ICommand) @optional() commandCtrs: (CommandFactory)[],
         @inject(TYPES.ILogger) protected logger: ILogger,
         @inject(TYPES.IDiagramServer) @optional() protected diagramServer?: IDiagramServer
     ) {
@@ -47,11 +47,8 @@ export class ActionHandlerRegistry extends MultiInstanceRegistry<ActionHandler> 
         )
     }
 
-    registerCommand(commandType: new (Action) => Command): void {
-        if (commandType.hasOwnProperty('KIND'))
-            this.register(commandType['KIND'], new CommandActionHandler(commandType))
-        else
-            this.logger.error(this, 'Command ' + commandType.name + '  does not have a KIND property.')
+    registerCommand(commandType: CommandFactory): void {
+        this.register(commandType.KIND, new CommandActionHandler(commandType))
     }
 
     registerServerMessage(kind: string): void {
@@ -61,7 +58,7 @@ export class ActionHandlerRegistry extends MultiInstanceRegistry<ActionHandler> 
             this.logger.error(this, 'No implementation of IDiagramServer has been configured.')
     }
 
-    registerTranslator(kind: string, translator: (Action) => Action): void {
+    registerTranslator(kind: string, translator: (a: Action) => Action): void {
         this.register(kind, new TranslatingActionHandler(translator))
     }
 }

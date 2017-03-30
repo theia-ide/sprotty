@@ -3,15 +3,19 @@ import { Map } from "./utils"
 
 @injectable()
 export class ProviderRegistry<T, U> {
-    protected elements: Map<new(U) => T> = {}
+    protected elements: Map<new(u: U) => T> = {}
 
-    register(key: string, cstr: new (U) => T) {
+    register(key: string, cstr: new (u: U) => T) {
+        if (key === undefined)
+            throw new Error('Key is undefined')
         if (this.hasKey(key))
             throw new Error('Key is already registered: ' + key)
         this.elements[key] = cstr
     }
 
     deregister(key: string) {
+        if (key === undefined)
+            throw new Error('Key is undefined')
         delete this.elements[key]
     }
 
@@ -36,12 +40,16 @@ export class InstanceRegistry<T> {
     protected elements: Map<T> = {}
 
     register(key: string, instance: T) {
+        if (key === undefined)
+            throw new Error('Key is undefined')
         if (this.hasKey(key))
             throw new Error('Key is already registered: ' + key)
         this.elements[key] = instance
     }
 
     deregister(key: string) {
+        if (key === undefined)
+            throw new Error('Key is undefined')
         delete this.elements[key]
     }
 
@@ -66,6 +74,8 @@ export class MultiInstanceRegistry<T> {
     protected elements: Map<T[]> = {}
 
     register(key: string, instance: T) {
+        if (key === undefined)
+            throw new Error('Key is undefined')
         if (this.elements.hasOwnProperty(key))
             this.elements[key].push(instance)
         else
@@ -73,6 +83,8 @@ export class MultiInstanceRegistry<T> {
     }
 
     deregisterAll(key: string) {
+        if (key === undefined)
+            throw new Error('Key is undefined')
         delete this.elements[key]
     }
 

@@ -6,7 +6,7 @@ import { Point } from "../utils/geometry";
 const JSX = {createElement: snabbdom.svg}
 
 export abstract class CircularNodeView extends SNodeView {
-    protected abstract getRadius(node: SNode)
+    protected abstract getRadius(node: SNode): number
 
     getWidth(node: SNode): number {
         if (node.width)

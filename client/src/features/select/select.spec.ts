@@ -44,6 +44,18 @@ describe('select', () => {
         syncer: new AnimationFrameSyncer()
     }
 
+    function getNode(nodeId: string, model: SModelRoot) {
+        return <SNode>model.index.getById(nodeId)
+    }
+
+    function isNodeSelected(nodeId: string, model: SModelRoot) {
+        return getNode(nodeId, model).selected
+    }
+
+    function getNodeIndex(nodeId: string, model: SModelRoot) {
+        return model.children.indexOf(getNode(nodeId, model))
+    }
+
     it('execute() works as expected', () => {
         // execute command
         newModel = cmd.execute(initialModel)
@@ -105,16 +117,3 @@ describe('select', () => {
         expect(0).to.equal(getNodeIndex('node0', newModel))
     }); */
 })
-
-
-function getNode(nodeId, model) {
-    return <SNode>model.index.getById(nodeId)
-}
-
-function isNodeSelected(nodeId, model) {
-    return getNode(nodeId, model).selected
-}
-
-function getNodeIndex(nodeId, model) {
-    return model.children.indexOf(getNode(nodeId, model))
-}

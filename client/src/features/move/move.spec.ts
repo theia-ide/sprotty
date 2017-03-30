@@ -81,11 +81,15 @@ describe('move', () => {
 
     // global so we can carry-over the model, as it's updated, 
     // from test case to test case (i,e, select, undo, redo, merge)
-    var newModel: SModelRoot | Promise<SModelRoot>
+    var newModel: SModelRoot
+
+    function getNode(nodeId: string, model: SModelRoot) {
+        return model.index.getById(nodeId) as SNode
+    }
 
     it('execute() works as expected', () => {
         // execute command
-        newModel = cmd.execute(model, context)
+        newModel = cmd.execute(model, context) as SModelRoot
 
         // node0 => PointNE
         expect(pointNE.x).equals(getNode('node0', newModel).x)
@@ -142,7 +146,3 @@ describe('move', () => {
     })
 
 })
-
-function getNode(nodeId, model) {
-    return model.index.getById(nodeId) as SNode
-}

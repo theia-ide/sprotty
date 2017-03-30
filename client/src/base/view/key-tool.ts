@@ -24,7 +24,7 @@ export class KeyTool implements VNodeDecorator {
             this.keyListeners.splice(index, 1)
     }
 
-    protected handleEvent(methodName: string, model: SModelRoot, event: KeyboardEvent) {
+    protected handleEvent<K extends keyof KeyListener>(methodName: K, model: SModelRoot, event: KeyboardEvent) {
         const actions = this.keyListeners
             .map(listener => listener[methodName].apply(listener, [model, event]))
             .reduce((a, b) => a.concat(b))
@@ -61,4 +61,3 @@ export class KeyListener {
         return []
     }
 }
-

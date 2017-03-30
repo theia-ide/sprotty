@@ -41,7 +41,7 @@ export class MouseTool implements VNodeDecorator {
         return undefined
     }
 
-    protected handleEvent(methodName: string, model: SModelRoot, event: MouseEvent) {
+    protected handleEvent<K extends keyof MouseListener>(methodName: K, model: SModelRoot, event: MouseEvent) {
         if (document) {
             const domElement = document.getElementById(model.id)
             if (domElement)
@@ -81,7 +81,7 @@ export class MouseTool implements VNodeDecorator {
             on(vnode, 'mouseup', this.mouseUp.bind(this), element)
             on(vnode, 'mousemove', this.mouseMove.bind(this), element)
             on(vnode, 'wheel', this.wheel.bind(this), element)
-            on(vnode, 'contextmenu', (element, event) => {
+            on(vnode, 'contextmenu', (target: SModelElement, event: any) => {
                 event.preventDefault()
             }, element)
         }

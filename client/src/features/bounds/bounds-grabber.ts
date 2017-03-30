@@ -90,7 +90,7 @@ export class BoundsGrabber implements VNodeDecorator {
         }
     }
 
-    protected differ(b0, b1: Bounds): boolean {
+    protected differ(b0: Bounds, b1: Bounds): boolean {
         return !almostEquals(b0.width, b1.width)
             || !almostEquals(b0.height, b1.height)
             || !almostEquals(b0.x, b1.x)

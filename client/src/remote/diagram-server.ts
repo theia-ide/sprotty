@@ -4,7 +4,7 @@ import { Command } from "../base/intent/commands"
 export interface IDiagramServer {
     sendAction(action: Action): void
 
-    onAction(listener: (Action) => void): void
+    onAction(listener: (a: Action) => void): void
 }
 
 export interface ActionMessage {

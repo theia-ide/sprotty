@@ -12,8 +12,8 @@ export interface ProcessorSchema extends SModelElementSchema {
 }
 
 export class Processor extends ViewportRootElement implements ProcessorSchema {
-    readonly rows: number = 0
-    readonly columns: number = 0
+    rows: number = 0
+    columns: number = 0
 
     hasFeature(feature: symbol): boolean {
         return feature === viewportFeature || feature === boundsFeature
@@ -28,8 +28,8 @@ export interface CoreSchema extends SModelElementSchema {
 }
 
 export class Core extends SChildElement implements CoreSchema, Selectable {
-    readonly column: number = 0
-    readonly row: number = 0
+    column: number = 0
+    row: number = 0
     load: number = 0
     selected: boolean = false
 
@@ -45,7 +45,7 @@ export interface CrossbarSchema extends SModelElementSchema {
 }
 
 export class Crossbar extends SChildElement implements CrossbarSchema, Selectable, BoundsAware {
-    readonly direction: Direction
+    direction: Direction
     load: number = 0
     selected: boolean = false
     autosize: boolean = true
@@ -65,9 +65,9 @@ export interface ChannelSchema extends SModelElementSchema {
 }
 
 export class Channel extends SChildElement implements ChannelSchema, Selectable {
-    readonly column: number = 0
-    readonly row: number = 0
-    readonly direction: Direction
+    column: number = 0
+    row: number = 0
+    direction: Direction
     load: number = 0
     selected: boolean = false
 

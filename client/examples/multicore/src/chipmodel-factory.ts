@@ -42,9 +42,10 @@ export class ChipModelFactory extends SModelFactory {
 
     protected initializeElement(elem: SModelElement, schema: SModelElementSchema): SModelElement {
         super.initializeElement(elem, schema)
-        const direction = schema['direction']
-        if (typeof direction == 'string')
-            elem['direction'] = Direction[direction]
+        if (this.isChannelSchema(schema))
+            (elem as Channel).direction = (<any>Direction)[schema.direction]
+        else if (this.isCrossbarSchema(schema))
+            (elem as Crossbar).direction = (<any>Direction)[schema.direction]
         return elem
     }
 

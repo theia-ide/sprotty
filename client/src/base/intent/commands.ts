@@ -23,6 +23,11 @@ export interface Command {
     isPushable(): boolean
 }
 
+export interface CommandFactory {
+    KIND: string
+    new (a: Action): Command
+}
+
 export abstract class AbstractCommand implements Command {
     abstract execute(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise
 
@@ -51,7 +56,7 @@ export interface CommandExecutionContext {
 }
 
 export class CommandActionHandler implements ActionHandler {
-    constructor(private commandType: new (Action) => Command) {
+    constructor(private commandType: new (a: Action) => Command) {
     }
 
     handle(action: Action): Command | Action | undefined {
