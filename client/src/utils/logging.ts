@@ -45,12 +45,12 @@ export class ConsoleLogger implements ILogger {
             console.log.apply(thisArg, this.consoleArguments(thisArg, message, params))
     }
 
-    protected consoleArguments(thisArg: any, message: string, ...params: any[]): any[] {
+    protected consoleArguments(thisArg: any, message: string, params: any[]): any[] {
         let caller: any
         if (typeof thisArg == 'object')
             caller = thisArg.constructor.name
         else
             caller = thisArg
-        return [this.viewOptions.baseDiv + ' ' + caller + ': ' + message, params]
+        return [this.viewOptions.baseDiv + ' ' + caller + ': ' + message].concat(params)
     }
 }
