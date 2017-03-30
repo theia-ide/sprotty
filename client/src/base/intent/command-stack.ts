@@ -45,7 +45,7 @@ export class CommandStack implements ICommandStack {
                     model => {
                         return new Promise(
                             (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
-                                this.logger.log('CommandStack: execute', command)
+                                this.logger.log(this, 'execute', command)
                                 const context: CommandExecutionContext = {
                                     modelChanged: this,
                                     modelFactory: this.modelFactory,

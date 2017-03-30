@@ -64,7 +64,7 @@ export class ActionDispatcher implements IActionDispatcher {
     }
 
     protected handleAction(action: Action): void {
-        this.logger.log('ActionDispatcher: handle', action)
+        this.logger.log(this, 'handle', action)
         const handlers = this.actionHandlerRegistry.get(action.kind)
         if (handlers.length > 0) {
             for (let handler of handlers) {
@@ -75,7 +75,7 @@ export class ActionDispatcher implements IActionDispatcher {
                     this.commandStack.execute(result)
             }
         } else {
-            this.logger.warn('ActionDispatcher: missing handler for action', action)
+            this.logger.warn(this, 'missing handler for action', action)
         }
     }
 }

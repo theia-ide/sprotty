@@ -25,12 +25,12 @@ export class WebSocketDiagramServer implements IDiagramServer {
                 this.messageReceived(event.data)
             })
             socket.addEventListener('error', event => {
-                this.logger.error('WebSocketDiagramServer: ', event)
+                this.logger.error(this, 'error event received', event)
                 reject(event)
             })
             socket.addEventListener('close', event => {
                 if (event.code !== 1000) {
-                    this.logger.error('WebSocketDiagramServer: error during websocket reconnect', event)
+                    this.logger.error(this, 'error during websocket reconnect', event)
                 }
             })
         })
@@ -85,7 +85,7 @@ export class WebSocketDiagramServer implements IDiagramServer {
                 }
             }
         } else {
-            this.logger.error('WebSocketDiagramServer: received data is not an action', object)
+            this.logger.error(this, 'received data is not an action', object)
         }
     }
 }

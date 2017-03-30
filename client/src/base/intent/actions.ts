@@ -52,14 +52,14 @@ export class ActionHandlerRegistry extends MultiInstanceRegistry<ActionHandler> 
         if (commandType.hasOwnProperty('KIND'))
             this.register(commandType['KIND'], new CommandActionHandler(commandType))
         else
-            this.logger.error('Command ' + commandType.name + '  does not have a KIND property.')
+            this.logger.error(this, 'Command ' + commandType.name + '  does not have a KIND property.')
     }
 
     registerServerMessage(kind: string): void {
         if (this.diagramServer !== undefined)
             this.register(kind, new ServerActionHandler(this.diagramServer))
         else
-            this.logger.error('No implementation of IDiagramServer has been configured.')
+            this.logger.error(this, 'No implementation of IDiagramServer has been configured.')
     }
 
     registerTranslator(kind: string, translator: (Action) => Action): void {
