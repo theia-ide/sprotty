@@ -43,10 +43,14 @@ export class ChipModelFactory extends SModelFactory {
     protected initializeElement(elem: SModelElement, schema: SModelElementSchema): SModelElement {
         super.initializeElement(elem, schema)
         if (this.isChannelSchema(schema))
-            (elem as Channel).direction = (<any>Direction)[schema.direction]
+            (elem as Channel).direction = this.getDirection(schema.direction)
         else if (this.isCrossbarSchema(schema))
-            (elem as Crossbar).direction = (<any>Direction)[schema.direction]
+            (elem as Crossbar).direction = this.getDirection(schema.direction)
         return elem
+    }
+
+    private getDirection(directionSchema: string | Direction) {
+        return (typeof directionSchema === 'string') ? (<any>Direction)[directionSchema] : directionSchema
     }
 
     private validate(coreOrChannel: CoreSchema | ChannelSchema, processor?: SParentElement) {
