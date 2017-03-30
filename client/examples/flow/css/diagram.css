@@ -3,7 +3,7 @@
     stroke-width: 1;
 }
 
-.execution {
+.task {
     fill: #c0e0fc;
 }
 
@@ -15,6 +15,10 @@
     fill: none;
     stroke: #222;
     stroke-width: 1;
+}
+
+.edge.arrow {
+    fill: #888;
 }
 
 .text {

@@ -1,8 +1,11 @@
-import {VNode} from "snabbdom/vnode"
-import {RenderingContext} from "../../../src/base"
-import {CircularNodeView, RectangularNodeView} from "../../../src/lib"
+import { VNode } from "snabbdom/vnode"
+import { RenderingContext } from "../../../src/base"
+import { SEdge } from "../../../src/graph/model/sgraph"
+import { StraightEdgeView } from "../../../src/graph/view/views"
+import { CircularNodeView, RectangularNodeView } from "../../../src/lib"
+import { Point, angle, toDegrees } from "../../../src/utils/geometry"
 import * as snabbdom from "snabbdom-jsx"
-import {TaskNode, BarrierNode} from "./flowmodel"
+import { TaskNode, BarrierNode } from "./flowmodel"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -10,7 +13,7 @@ export class ExecutionNodeView extends CircularNodeView {
     render(node: TaskNode, context: RenderingContext): VNode {
         const radius = this.getRadius(node)
         return <g key={node.id} id={node.id} >
-                <circle class-node={true} class-execution={true} class-selected={node.selected} r={radius} cx={radius} cy={radius}></circle>
+                <circle class-node={true} class-task={true} class-selected={node.selected} r={radius} cx={radius} cy={radius}></circle>
                 <text x={radius} y={radius + 5} class-text={true}>{node.kernel}</text>
             </g>
     }
@@ -39,5 +42,14 @@ export class BarrierNodeView extends RectangularNodeView {
             return node.height
         else
             return 10
+    }
+}
+
+export class FlowEdgeView extends StraightEdgeView {
+    protected renderEnd(edge: SEdge, segments: Point[], context: RenderingContext): VNode | undefined {
+        const p1 = segments[segments.length - 2]
+        const p2 = segments[segments.length - 1]
+        return <path key={edge.id} id={edge.id} class-edge={true} class-arrow={true} d="M 0,0 L 10,-4 L 10,4 Z"
+            transform={`rotate(${toDegrees(angle(p2, p1))} ${p2.x} ${p2.y}) translate(${p2.x} ${p2.y})`}/>
     }
 }

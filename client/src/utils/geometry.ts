@@ -70,7 +70,19 @@ export function manhattanDistance(a: Point, b: Point): number {
     return Math.abs(b.x - a.x) + Math.abs(b.y - a.y)
 }
 
+// range (-PI, PI]
+export function angle(a: Point, b: Point): number {
+  return Math.atan2(b.y - a.y, b.x - a.x);
+}
+
+export function toDegrees(a: number): number {
+    return a * 180 / Math.PI
+}
+
+export function toRadians(a: number): number {
+    return a * Math.PI / 180
+}
+
 export function almostEquals(a: number, b: number): boolean {
     return Math.abs(a - b) < 1e-3
 }
-

@@ -36,7 +36,9 @@ export abstract class SNodeView implements View {
 }
 
 export class StraightEdgeView implements View {
-    render(edge: SEdge, context: RenderingContext) {
+    minimalPointDistance: number = 2
+
+    render(edge: SEdge, context: RenderingContext): VNode {
         const source = edge.source
         if (!source)
             return this.renderDanglingEdge("cannot resolve source", edge, context)
@@ -52,55 +54,91 @@ export class StraightEdgeView implements View {
         const targetView = context.viewer.viewRegistry.get(target.type, target)
         if (!(targetView instanceof SNodeView))
             return this.renderDanglingEdge("expected target view type: SNodeView", edge, context)
+        
+        const segments = this.computeSegments(edge, source, sourceView, target, targetView)
+        
+        return <g key={edge.id} id={edge.id}>
+            {this.renderLine(edge, segments, context)}
+            {this.renderAdditionals(edge, segments, context)}
+        </g>
+    }
 
-        let path: string
-        if (edge.routingPoints && edge.routingPoints.length >= 1) {
+    protected computeSegments(edge: SEdge, source: SNode, sourceView: SNodeView, target: SNode, targetView: SNodeView): Point[] {
+        let sourceAnchor: Point
+        if (edge.routingPoints !== undefined && edge.routingPoints.length >= 1) {
             // Use the first routing point as start anchor reference
             let p0 = edge.routingPoints[0]
-            const sourceAnchor = sourceView.getAnchor(source, p0)
-            if (manhattanDistance(sourceAnchor, p0) > 2)
-                path = `M ${sourceAnchor.x},${sourceAnchor.y} L ${p0.x},${p0.y}`
-            else
-                path = `M ${sourceAnchor.x},${sourceAnchor.y}`
-
-            // Add the remaining routing points except the last one
-            for (let i = 1; i < edge.routingPoints.length - 1; i++) {
-                let pi = edge.routingPoints[i]
-                path += ` L ${pi.x},${pi.y}`
-            }
+            sourceAnchor = sourceView.getAnchor(source, p0)
         } else {
             // Use the target center as start anchor reference
             const reference = {
                 x: target.x + (targetView.getWidth(target) / 2 || 0),
                 y: target.y + (targetView.getHeight(target) / 2 || 0)
             }
-            const sourceAnchor = sourceView.getAnchor(source, reference)
-            path = `M ${sourceAnchor.x},${sourceAnchor.y}`
+            sourceAnchor = sourceView.getAnchor(source, reference)
+        }
+        const result: Point[] = [sourceAnchor]
+        let previousPoint = sourceAnchor
+
+        for (let i = 0; i < edge.routingPoints.length - 1; i++) {
+            const p = edge.routingPoints[i]
+            if (manhattanDistance(previousPoint, p) >= this.minimalPointDistance) {
+                result.push(p)
+                previousPoint = p
+            }
         }
 
+        let targetAnchor: Point
         if (edge.routingPoints && edge.routingPoints.length >= 2) {
             // Use the last routing point as end anchor reference
             let pn = edge.routingPoints[edge.routingPoints.length - 1]
-            const targetAnchor = targetView.getAnchor(target, pn)
-            if (manhattanDistance(targetAnchor, pn) > 2)
-                path += ` L ${pn.x},${pn.y} L ${targetAnchor.x},${targetAnchor.y}`
-            else
-                path += ` L ${targetAnchor.x},${targetAnchor.y}`
+            targetAnchor = targetView.getAnchor(target, pn)
+            if (manhattanDistance(previousPoint, pn) >= this.minimalPointDistance
+                    && manhattanDistance(pn, targetAnchor) >= this.minimalPointDistance) {
+                result.push(pn)
+            }
         } else {
             // Use the source center as end anchor reference
             const reference = {
                 x: source.x + (sourceView.getWidth(source) / 2 || 0),
                 y: source.y + (sourceView.getHeight(source) / 2 || 0)
             }
-            const targetAnchor = targetView.getAnchor(target, reference)
-            path += ` L ${targetAnchor.x},${targetAnchor.y}`
+            targetAnchor = targetView.getAnchor(target, reference)
         }
+        result.push(targetAnchor)
+        return result
+    }
 
-        return <path key={edge.id} id={edge.id} class-edge={true} d={path}/>
+    protected renderLine(edge: SEdge, segments: Point[], context: RenderingContext): VNode {
+        const firstPoint = segments[0]
+        let path = `M ${firstPoint.x},${firstPoint.y}`
+        for (let i = 1; i < segments.length; i++) {
+            const p = segments[i]
+            path += ` L ${p.x},${p.y}`
+        }
+        return <path class-edge={true} d={path}/>
+    }
+
+    protected renderAdditionals(edge: SEdge, segments: Point[], context: RenderingContext): VNode[] {
+        const result: VNode[] = []
+        const start = this.renderStart(edge, segments, context)
+        if (start !== undefined)
+            result.push(start)
+        const end = this.renderEnd(edge, segments, context)
+        if (end !== undefined)
+            result.push(end)
+        return result
+    }
+
+    protected renderStart(edge: SEdge, segments: Point[], context: RenderingContext): VNode | undefined {
+        return undefined
+    }
+
+    protected renderEnd(edge: SEdge, segments: Point[], context: RenderingContext): VNode | undefined {
+        return undefined
     }
 
     protected renderDanglingEdge(message: string, edge: SEdge, context: RenderingContext) {
         return <text key={edge.id} id={edge.id} class-dangling-edge={true} title={message}>?</text>
     }
 }
-

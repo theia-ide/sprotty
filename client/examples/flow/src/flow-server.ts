@@ -1,9 +1,9 @@
 import {
     TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction, UpdateModelAction, Action
 } from "../../../src/base"
-import { SGraphView, StraightEdgeView } from "../../../src/graph"
+import { SGraphView } from "../../../src/graph"
 import { SelectCommand, SetBoundsCommand } from "../../../src/features"
-import { ExecutionNodeView, BarrierNodeView } from "./views"
+import { ExecutionNodeView, BarrierNodeView, FlowEdgeView } from "./views"
 import createContainer from "./di.config"
 import { WebSocketDiagramServer } from "../../../src/remote"
 
@@ -23,7 +23,7 @@ export default function runFlowServer() {
     viewRegistry.register('flow', SGraphView)
     viewRegistry.register('task', ExecutionNodeView)
     viewRegistry.register('barrier', BarrierNodeView)
-    viewRegistry.register('edge', StraightEdgeView)
+    viewRegistry.register('edge', FlowEdgeView)
 
     // Connect to the diagram server
     const diagramServer = container.get<WebSocketDiagramServer>(TYPES.IDiagramServer)
