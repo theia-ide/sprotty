@@ -1,4 +1,3 @@
-import "reflect-metadata"
 import { injectable, inject, optional } from "inversify"
 import { ILogger } from "../../utils/logging"
 import { TYPES } from "../types"

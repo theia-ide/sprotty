@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import runStandalone from "./circlegraph/src/standalone"
 import runSimpleServer from "./circlegraph/src/simple-server"
 import runFlowServer from "./flow/src/flow-server"

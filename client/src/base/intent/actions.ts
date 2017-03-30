@@ -1,4 +1,3 @@
-import "reflect-metadata"
 import { injectable, inject, multiInject, optional } from "inversify"
 import { MultiInstanceRegistry } from "../../utils/registry"
 import { ILogger } from "../../utils/logging"

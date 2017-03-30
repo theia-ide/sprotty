@@ -1,4 +1,3 @@
-import "reflect-metadata"
 import { injectable, inject, multiInject, optional } from "inversify"
 import * as snabbdom from "snabbdom-jsx"
 import { init } from "snabbdom"

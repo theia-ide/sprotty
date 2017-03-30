@@ -1,3 +1,4 @@
+import "mocha"
 import { expect } from "chai"
 import { SParentElementSchema } from "./smodel"
 import { SModelFactory } from "./smodel-factory"

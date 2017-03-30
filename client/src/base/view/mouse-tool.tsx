@@ -1,4 +1,3 @@
-import "reflect-metadata"
 import * as snabbdom from "snabbdom-jsx"
 import { injectable, inject, multiInject, optional } from "inversify"
 import { VNode } from "snabbdom/vnode"

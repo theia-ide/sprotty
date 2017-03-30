@@ -1,4 +1,3 @@
-import "reflect-metadata"
 import { injectable, inject, multiInject, optional } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { IActionDispatcher } from "../intent/action-dispatcher"

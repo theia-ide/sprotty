@@ -20,9 +20,8 @@
     "@types/mocha": "^2.2.40",
     "@types/node": "^7.0.10",
     "chai": "^3.5.0",
-    "inversify": "^3.1.0",
     "mocha": "^3.2.0",
-    "reflect-metadata ": "^0.1.10",
+    "reflect-metadata": "^0.1.10",
     "snabbdom-jsx": "^0.3.1",
     "snabbdom-to-html": "^3.1.1",
     "ts-loader": "^2.0.0",
@@ -33,6 +32,7 @@
     "circular-dependency-plugin": "^2.0.0"
   },
   "dependencies": {
+    "inversify": "^3.1.0",
     "inversify-logger-middleware": "^3.0.0",
     "reconnecting-websocket": "^3.0.3",
     "snabbdom": "^0.6.4"

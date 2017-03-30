@@ -1,4 +1,3 @@
-import "reflect-metadata"
 import { injectable, inject } from "inversify"
 import { TYPES } from "../base/types"
 import { IViewerOptions } from "../base/view/viewer"

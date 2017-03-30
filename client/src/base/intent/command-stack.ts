@@ -1,4 +1,3 @@
-import "reflect-metadata"
 import { injectable, inject } from "inversify"
 import { Command, CommandExecutionContext } from "./commands"
 import { IModelFactory } from "../model/smodel-factory"

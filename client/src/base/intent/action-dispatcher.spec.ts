@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import "mocha"
 import { ContainerModule, Container } from "inversify"
 import { expect } from 'chai'

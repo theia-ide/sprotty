@@ -1,4 +1,3 @@
-import "reflect-metadata"
 import WebSocket = require("reconnecting-websocket")
 import { injectable, inject } from "inversify"
 import { TYPES } from "../base/types"

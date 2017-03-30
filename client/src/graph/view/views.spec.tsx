@@ -1,3 +1,4 @@
+import "reflect-metadata"
 import "mocha"
 import { expect } from "chai"
 import * as snabbdom from "snabbdom-jsx"
