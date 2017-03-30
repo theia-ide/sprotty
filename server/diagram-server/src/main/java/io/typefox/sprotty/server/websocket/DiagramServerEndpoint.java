@@ -11,16 +11,16 @@ import javax.websocket.Session;
 
 import com.google.gson.Gson;
 
-import io.typefox.sprotty.api.Action;
+import io.typefox.sprotty.api.ActionMessage;
 import io.typefox.sprotty.server.json.ActionTypeAdapter;
 
-public class DiagramServerEndpoint extends Endpoint implements Consumer<Action> {
+public class DiagramServerEndpoint extends Endpoint implements Consumer<ActionMessage> {
 	
 	private Session session;
 	
 	private Gson gson;
 	
-	private final List<Consumer<Action>> actionListeners = new ArrayList<>();
+	private final List<Consumer<ActionMessage>> actionListeners = new ArrayList<>();
 	
 	private final List<Consumer<Exception>> errorListeners = new ArrayList<>();
 	
@@ -38,13 +38,13 @@ public class DiagramServerEndpoint extends Endpoint implements Consumer<Action> 
 		session.addMessageHandler(new ActionMessageHandler());
 	}
 	
-	public void addActionListener(Consumer<Action> listener) {
+	public void addActionListener(Consumer<ActionMessage> listener) {
 		synchronized (actionListeners) {
 			this.actionListeners.add(listener);
 		}
 	}
 	
-	public void removeActionListener(Consumer<Action> listener) {
+	public void removeActionListener(Consumer<ActionMessage> listener) {
 		synchronized (actionListeners) {
 			this.actionListeners.remove(listener);
 		}
@@ -63,13 +63,13 @@ public class DiagramServerEndpoint extends Endpoint implements Consumer<Action> 
 	}
 	
 	@SuppressWarnings("unchecked")
-	protected void fireActionReceived(Action action) {
-		Consumer<Action>[] listenerArray;
+	protected void fireMessageReceived(ActionMessage message) {
+		Consumer<ActionMessage>[] listenerArray;
 		synchronized (actionListeners) {
 			listenerArray = actionListeners.toArray(new Consumer[actionListeners.size()]);
 		}
-		for (Consumer<Action> listener : listenerArray) {
-			listener.accept(action);
+		for (Consumer<ActionMessage> listener : listenerArray) {
+			listener.accept(message);
 		}
 	}
 	
@@ -91,9 +91,9 @@ public class DiagramServerEndpoint extends Endpoint implements Consumer<Action> 
 	}
 	
 	@Override
-	public void accept(Action action) {
+	public void accept(ActionMessage message) {
 		initializeGson();
-		String json = gson.toJson(action, Action.class);
+		String json = gson.toJson(message, ActionMessage.class);
 		session.getAsyncRemote().sendText(json);
 	}
 	
@@ -102,8 +102,10 @@ public class DiagramServerEndpoint extends Endpoint implements Consumer<Action> 
 		public void onMessage(String message) {
 			try {
 				initializeGson();
-				Action action = gson.fromJson(message, Action.class);
-				fireActionReceived(action);
+				ActionMessage actionMessage = gson.fromJson(message, ActionMessage.class);
+				if (actionMessage.getAction() == null)
+					fireError(new IllegalArgumentException("Property 'action' must be set."));
+				fireMessageReceived(actionMessage);
 			} catch (Exception exception) {
 				fireError(exception);
 			}

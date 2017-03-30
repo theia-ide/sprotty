@@ -29,12 +29,12 @@
     "typescript": "^2.2.1",
     "typings": "^2.1.0",
     "webpack": "^2.2.1",
-    "circular-dependency-plugin": "^2.0.0"
+    "circular-dependency-plugin": "^2.0.0",
+    "reconnecting-websocket": "^3.0.3"
   },
   "dependencies": {
     "inversify": "^3.1.0",
     "inversify-logger-middleware": "^3.0.0",
-    "reconnecting-websocket": "^3.0.3",
     "snabbdom": "^0.6.4"
   }
 }

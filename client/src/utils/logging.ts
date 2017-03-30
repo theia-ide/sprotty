@@ -1,6 +1,6 @@
 import { injectable, inject } from "inversify"
 import { TYPES } from "../base/types"
-import { IViewerOptions } from "../base/view/viewer"
+import { IViewerOptions } from "../base/view/options"
 
 export interface ILogger {
     error(thisArg: any, message: string, ...params: any[]): void

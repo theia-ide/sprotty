@@ -5,8 +5,15 @@ export interface IDiagramServer {
     sendAction(action: Action): void
 
     onAction(listener: (Action) => void): void
+}
 
-    setFilter(filter: (Action) => boolean): void
+export interface ActionMessage {
+    clientId: string
+    action: Action
+}
+
+export function isActionMessage(object: any): object is ActionMessage {
+    return object !== undefined && object.hasOwnProperty('clientId') && object.hasOwnProperty('action')
 }
 
 export class ServerActionHandler implements ActionHandler {

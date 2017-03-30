@@ -1,5 +1,5 @@
 import {ContainerModule, Container} from "inversify"
-import {SModelFactory, TYPES, defaultModule} from "../../../src/base"
+import {SModelFactory, TYPES, IViewerOptions, defaultModule} from "../../../src/base"
 import {ChipModelFactory} from "./chipmodel-factory"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
@@ -9,6 +9,9 @@ const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
     rebind(TYPES.IModelFactory).to(ChipModelFactory).inSingletonScope()
+    rebind<IViewerOptions>(TYPES.IViewerOptions).toConstantValue({
+        baseDiv: 'sprotty-cores'
+    })
     bind(TYPES.IDiagramServer).to(WebSocketDiagramServer).inSingletonScope()
 })
 

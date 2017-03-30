@@ -1,6 +1,6 @@
 package io.typefox.sprotty.example.multicore.web
 
-import io.typefox.sprotty.api.Action
+import io.typefox.sprotty.api.ActionMessage
 import io.typefox.sprotty.example.multicore.web.diagram.MulticoreAllocationDiagramServer
 import io.typefox.sprotty.server.websocket.DiagramServerEndpoint
 import java.net.InetSocketAddress
@@ -18,6 +18,7 @@ import org.eclipse.jetty.webapp.WebInfConfiguration
 import org.eclipse.jetty.webapp.WebXmlConfiguration
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer
 import org.eclipse.xtext.util.DisposableRegistry
+import javax.websocket.CloseReason
 
 /**
  * This program starts an HTTP server for testing the web integration of your DSL.
@@ -34,14 +35,19 @@ class MulticoreServerLauncher {
     		super.onOpen(session, config)
     	}
     	
-		override accept(Action action) {
-			LOG.info('''SERVER: «action»''')
-			super.accept(action)
+		override onClose(Session session, CloseReason closeReason) {
+			LOG.info('''Closed connection [«session.id»]''')
+			super.onClose(session, closeReason)
+		}
+    	
+		override accept(ActionMessage message) {
+			LOG.info('''SERVER: «message»''')
+			super.accept(message)
 		}
 		
-		override protected fireActionReceived(Action action) {
-			LOG.info('''CLIENT: «action»''')
-			super.fireActionReceived(action)
+		override protected fireMessageReceived(ActionMessage message) {
+			LOG.info('''CLIENT: «message»''')
+			super.fireMessageReceived(message)
 		}
 	}
 	

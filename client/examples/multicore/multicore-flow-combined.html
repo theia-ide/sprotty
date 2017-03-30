@@ -3,20 +3,24 @@
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
-    <title>Sprotty Multicore Example</title>
+    <title>Sprotty Multicore and Flow Example</title>
     <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
     <link href="./css/page.css" rel="stylesheet" type="text/css">
+    <link href="../flow/css/diagram.css" rel="stylesheet" type="text/css">
     <link href="./css/diagram.css" rel="stylesheet" type="text/css">
 </head>
 <body>
 <div class="container">
-    <h1>Sprotty Multicore Example</h1>
-    <div class="row" id="sprotty-app" data-app="multicore-server">
-        <div class="col-md-6">
+    <h1>Sprotty Multicore and Flow Example</h1>
+    <div class="row" id="sprotty-app" data-app="multicore-flow">
+        <div class="col-md-4">
             <iframe src="http://localhost:8080/index.html"></iframe>
         </div>
-        <div class="col-md-6">
-            <div id="sprotty-cores" class="sprotty"/>
+        <div class="col-md-4">
+            <div id="sprotty-flow" class="sprotty"></div>
+        </div>
+        <div class="col-md-4">
+            <div id="sprotty-cores" class="sprotty"></div>
         </div>
     </div>
 </div>

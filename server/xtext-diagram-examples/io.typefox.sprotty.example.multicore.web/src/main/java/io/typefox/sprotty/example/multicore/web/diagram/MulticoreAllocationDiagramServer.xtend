@@ -1,10 +1,14 @@
 package io.typefox.sprotty.example.multicore.web.diagram
 
+import com.google.common.collect.HashMultimap
+import com.google.common.collect.Multimap
 import com.google.inject.Inject
 import com.google.inject.Singleton
 import io.typefox.sprotty.api.AbstractDiagramServer
+import io.typefox.sprotty.api.ActionMessage
 import io.typefox.sprotty.api.RequestModelAction
 import io.typefox.sprotty.api.SGraph
+import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.api.SelectAction
 import io.typefox.sprotty.api.SetBoundsAction
 import io.typefox.sprotty.api.SetModelAction
@@ -36,6 +40,22 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 	ILayoutEngine layoutEngine
 	
 	@Inject ModelProvider modelProvider
+	
+	val Multimap<String, String> type2Clients = HashMultimap.create()
+	
+	protected def notifyClients(SModelRoot root) {
+		if (remoteEndpoint !== null) {
+			for (client : type2Clients.get(root.type)) {
+				remoteEndpoint.accept(new ActionMessage [
+					clientId = client
+					action = new UpdateModelAction => [
+						modelType = root.type
+						modelId = root.id
+					]
+				])
+			}
+		}
+	}
 	
 	def Processor generateProcessorView(Program program, CancelIndicator cancelIndicator) {
 		val processor = new Processor => [
@@ -69,10 +89,7 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 			processor.columns = dim
 		}
 		modelProvider.processorView = processor
-		remoteEndpoint?.accept(new UpdateModelAction => [
-			modelType = processor.type
-			modelId = processor.id
-		])
+		notifyClients(processor)
 		return processor
 	}
 		
@@ -166,10 +183,7 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 			}
 		}
 		modelProvider.flowView = flow
-		remoteEndpoint?.accept(new UpdateModelAction => [
-			modelType = flow.type
-			modelId = flow.id
-		])
+		notifyClients(flow)
 		return flow
 	}
 	
@@ -200,41 +214,48 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		layoutEngine.layout(graph, configurator)
 	}
 	
-	override handle(SetBoundsAction action) {
+	override handle(SetBoundsAction action, ActionMessage message) {
 		initializeLayoutEngine()
 		val graph = modelProvider.flowView
 		if (graph !== null) {
 			LayoutUtil.applyResizeAction(graph, action)
 			layout(graph)
-			remoteEndpoint?.accept(new SetModelAction => [
-				newRoot = graph
-				modelType = graph.type
-				modelId = graph.id
+			remoteEndpoint?.accept(new ActionMessage [
+				clientId = message.clientId
+				action = new SetModelAction [
+					newRoot = graph
+					modelType = graph.type
+					modelId = graph.id
+				]
 			])
 		} else
 			throw new IllegalStateException("requestModel must be called before layout")
 	}
 	
-	override handle(RequestModelAction action) {
-		remoteEndpoint?.accept(new SetModelAction => [
-			switch action.modelType {
-				case 'processor':
-					newRoot = modelProvider.processorView ?: (new Processor => [
-		    			type = 'processor'
-						id = 'processor'
-					])
-				case 'flow':
-					newRoot = modelProvider.flowView ?: (new Flow => [
-						type = 'flow'
-						id = 'flow'
-					])
-			}
-			modelType = newRoot.type
-			modelId = newRoot.id
+	override handle(RequestModelAction action, ActionMessage message) {
+		remoteEndpoint?.accept(new ActionMessage [
+			clientId = message.clientId
+			action = new SetModelAction [
+				switch action.modelType {
+					case 'processor':
+						newRoot = modelProvider.processorView ?: (new Processor => [
+			    			type = 'processor'
+							id = 'processor'
+						])
+					case 'flow':
+						newRoot = modelProvider.flowView ?: (new Flow => [
+							type = 'flow'
+							id = 'flow'
+						])
+				}
+				modelType = newRoot.type
+				modelId = newRoot.id
+			]
 		])
+		type2Clients.put(action.modelType, message.clientId)
 	}
 	
-	override handle(SelectAction action) {
+	override handle(SelectAction action, ActionMessage message) {
 		LOG.info('element selected = ' + action)
 	}
 	

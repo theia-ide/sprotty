@@ -4,10 +4,11 @@ import runSimpleServer from "./circlegraph/src/simple-server"
 import runFlowServer from "./flow/src/flow-server"
 import runMulticore from "./multicore/src/multicore"
 import runMulticoreServer from "./multicore/src/multicore-server"
+import runMulticoreFlowCombined from "./multicore/src/multicore-flow"
 
-let appMode = document.getElementById('sprotty')!.getAttribute('data-app')
+let appMode = document.getElementById('sprotty-app')!.getAttribute('data-app')
 
-if (appMode == 'standalone')
+if (appMode == 'circlegraph')
     runStandalone()
 else if (appMode == 'simple-server')
     runSimpleServer()
@@ -17,3 +18,7 @@ else if (appMode == 'multicore')
     runMulticore()
 else if (appMode == 'multicore-server')
     runMulticoreServer()
+else if (appMode == 'multicore-flow')
+    runMulticoreFlowCombined()
+else
+    throw new Error('Dunno what to do :-(')

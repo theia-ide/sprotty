@@ -12,7 +12,8 @@ import { SModelRoot, SModelElement, SParentElement } from "../model/smodel"
 import { TYPES } from "../types"
 import { VNodeDecorator } from "./vnode-decorators"
 import { ViewRegistry, RenderingContext } from "./views"
-import {setClass} from "./vnode-utils"
+import { setClass } from "./vnode-utils"
+import { IViewerOptions } from "./options"
 
 const JSX = {createElement: snabbdom.html}  // must be html here, as we're creating a div
 
@@ -97,9 +98,5 @@ export class Viewer implements VNodeDecorator, IViewer {
 }
 
 export type Patcher = (oldRoot: VNode | Element, newRoot: VNode) => VNode
-
-export interface IViewerOptions {
-    baseDiv: string
-}
 
 export type IViewerProvider = () => Promise<Viewer>

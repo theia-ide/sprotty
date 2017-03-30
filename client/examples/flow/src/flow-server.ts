@@ -1,3 +1,4 @@
+import WebSocket = require("reconnecting-websocket")
 import {
     TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction, UpdateModelAction, Action
 } from "../../../src/base"
@@ -7,7 +8,21 @@ import { ExecutionNodeView, BarrierNodeView, FlowEdgeView } from "./views"
 import createContainer from "./di.config"
 import { WebSocketDiagramServer } from "../../../src/remote"
 
-export default function runFlowServer() {
+export function createWebSocket(url: string, options?: any): WebSocket {
+    if (!options) {
+        options = {
+            maxReconnectionDelay: 10000,
+            minReconnectionDelay: 1000,
+            reconnectionDelayGrowFactor: 1.3,
+            connectionTimeout: 4000,
+            maxRetries: Infinity,
+            debug: false
+        }
+    }
+    return new WebSocket(url, undefined, options)
+}
+
+export function setupFlow(websocket: WebSocket) {
     const container = createContainer()
 
     // Register commands
@@ -27,10 +42,15 @@ export default function runFlowServer() {
 
     // Connect to the diagram server
     const diagramServer = container.get<WebSocketDiagramServer>(TYPES.IDiagramServer)
-    diagramServer.setFilter((action: Action) => !action.hasOwnProperty('modelType') || action['modelType'] == 'flow')
-    diagramServer.connect('ws://localhost:8080/diagram').then(connection => {
+    diagramServer.listen(websocket)
+    websocket.addEventListener('open', event => {
         // Run
         const action = new RequestModelAction('flow')
         dispatcher.dispatch(action)
     })
+}
+
+export default function runFlowServer() {
+    const websocket = createWebSocket('ws://localhost:8080/diagram')
+    setupFlow(websocket)
 }
