@@ -17,10 +17,13 @@
   "author": "TypeFox",
   "license": "ISC",
   "devDependencies": {
+    "@types/chai": "^3.4.35",
     "@types/mocha": "^2.2.40",
     "@types/node": "^7.0.10",
     "chai": "^3.5.0",
+    "circular-dependency-plugin": "^2.0.0",
     "mocha": "^3.2.0",
+    "reconnecting-websocket": "^3.0.3",
     "reflect-metadata": "^0.1.10",
     "snabbdom-jsx": "^0.3.1",
     "snabbdom-to-html": "^3.1.1",
@@ -28,9 +31,7 @@
     "ts-node": "^2.1.0",
     "typescript": "^2.2.1",
     "typings": "^2.1.0",
-    "webpack": "^2.2.1",
-    "circular-dependency-plugin": "^2.0.0",
-    "reconnecting-websocket": "^3.0.3"
+    "webpack": "^2.2.1"
   },
   "dependencies": {
     "inversify": "^3.1.0",
