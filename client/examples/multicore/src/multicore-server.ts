@@ -1,11 +1,11 @@
 import {
-TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction, UpdateModelAction, Action
+    ActionHandlerRegistry, IActionDispatcher, RequestModelAction, TYPES, UpdateModelAction, ViewRegistry
 } from "../../../src/base"
-import { SelectCommand, SetBoundsCommand, CenterAction } from "../../../src/features"
+import { SelectCommand, SetBoundsCommand } from "../../../src/features"
 import { WebSocketDiagramServer } from "../../../src/remote"
-import { ProcessorView, CoreView, ChannelView, CrossbarView } from "./views"
+import { ChannelView, CoreView, CrossbarView, ProcessorView } from "./views"
 import createContainer from "./di.config"
-import {FitToScreenAction} from "../../../src/features/viewport/center-fit"
+import { FitToScreenAction } from "../../../src/features/viewport/center-fit"
 
 const WebSocket = require("reconnecting-websocket")
 

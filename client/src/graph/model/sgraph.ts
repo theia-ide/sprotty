@@ -1,10 +1,9 @@
-
-import { SModelRootSchema, SParentElementSchema, SChildElement, SModelElementSchema } from "../../base/model/smodel"
-import { Point, IDENTITY_MATRIX, Bounds, EMPTY_BOUNDS } from "../../utils/geometry"
+import { SChildElement, SModelElementSchema, SModelRootSchema, SParentElementSchema } from "../../base/model/smodel"
+import { Bounds, Point } from "../../utils/geometry"
 import { ViewportRootElement } from "../../features/viewport/viewport-root"
-import { selectFeature, Selectable } from "../../features/select/model"
+import { Selectable, selectFeature } from "../../features/select/model"
 import { moveFeature } from "../../features/move/model"
-import { boundsFeature, BoundsAware } from "../../features/bounds/model"
+import { BoundsAware, boundsFeature } from "../../features/bounds/model"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]

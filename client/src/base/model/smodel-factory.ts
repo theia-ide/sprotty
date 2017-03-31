@@ -1,7 +1,7 @@
 import { injectable } from "inversify"
 import {
-    SModelElementSchema, SModelElement, SModelRootSchema, SModelRoot, SParentElementSchema, SParentElement,
-    SChildElement, SModelIndex
+    SChildElement, SModelElement, SModelElementSchema, SModelIndex, SModelRoot, SModelRootSchema, SParentElement,
+    SParentElementSchema
 } from "./smodel"
 
 export interface IModelFactory {

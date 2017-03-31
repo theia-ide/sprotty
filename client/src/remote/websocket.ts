@@ -1,9 +1,5 @@
-import { injectable, inject } from "inversify"
-import { TYPES } from "../base/types"
-import { ILogger } from "../utils/logging"
-import { Action } from "../base/intent/actions"
-import { IViewerOptions } from "../base/view/options"
-import { ActionMessage, isActionMessage, AbstractDiagramServer } from "./diagram-server"
+import { injectable } from "inversify"
+import { AbstractDiagramServer } from "./diagram-server"
 
 @injectable()
 export class WebSocketDiagramServer extends AbstractDiagramServer {

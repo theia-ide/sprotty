@@ -1,7 +1,6 @@
-
 import { SModelRoot } from "../../base/model/smodel"
 import { Bounds, EMPTY_BOUNDS, Point } from "../../utils/geometry"
-import {BoundsAware, boundsFeature, BoundsInPageAware} from "../bounds/model"
+import { BoundsAware, boundsFeature, BoundsInPageAware } from "../bounds/model"
 import { Viewport, viewportFeature } from "./model"
 
 export class ViewportRootElement extends SModelRoot implements BoundsAware, BoundsInPageAware, Viewport {

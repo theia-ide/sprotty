@@ -1,10 +1,8 @@
 import {
-    SModelElementSchema, SParentElement, SChildElement, getBasicType, SModelRootSchema, SModelRoot
+    getBasicType, SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement
 } from "../../../src/base"
-import { SGraphFactory, SGraphSchema, SGraph } from "../../../src/graph"
-import {
-    TaskNode, BarrierNode, TaskNodeSchema, BarrierNodeSchema
-} from "./flowmodel"
+import { SGraph, SGraphFactory, SGraphSchema } from "../../../src/graph"
+import { BarrierNode, BarrierNodeSchema, TaskNode, TaskNodeSchema } from "./flowmodel"
 
 export class FlowModelFactory extends SGraphFactory {
 

@@ -1,8 +1,8 @@
-import {IViewer} from "./viewer"
-import {SModelRoot} from "../model/smodel"
-import {injectable, inject, named} from "inversify"
-import {TYPES} from "../types"
-import {AnimationFrameSyncer} from "../animations/animation-frame-syncer"
+import { IViewer } from "./viewer"
+import { SModelRoot } from "../model/smodel"
+import { inject, injectable, named } from "inversify"
+import { TYPES } from "../types"
+import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
 
 @injectable()
 export class ViewerCache implements IViewer {

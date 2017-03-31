@@ -1,7 +1,7 @@
 import { h } from "snabbdom"
 import { VNode, VNodeData } from "snabbdom/vnode"
 import { SModelElement } from "../model/smodel"
-import { View, RenderingContext } from "./views"
+import { RenderingContext, View } from "./views"
 
 /**
  * An view that avoids calculation and patching of VNodes unless some model properties have changed.

@@ -1,13 +1,12 @@
 import "mocha"
 import { expect } from "chai"
-import { SetBoundsCommand, SetBoundsAction } from "../index";
+import { SetBoundsAction, SetBoundsCommand } from "../index"
 import { CommandExecutionContext } from "../../base/intent/commands"
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { ConsoleLogger } from "../../utils/logging"
 import { AnimationFrameSyncer } from "../../base/animations/animation-frame-syncer"
-import { SGraph, SNode } from "../../graph/model/sgraph"
-import { SGraphFactory } from "../../graph/index";
-import { SNodeSchema } from "../../graph/model/sgraph"
+import { SGraph, SNode, SNodeSchema } from "../../graph/model/sgraph"
+import { SGraphFactory } from "../../graph/index"
 import { SetBoundsInPageAction, SetBoundsInPageCommand } from "./bounds-manipulation"
 
 const boundsInitial = { x: 0, y: 0, width: 0, height: 0 }

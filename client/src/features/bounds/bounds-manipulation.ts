@@ -1,4 +1,4 @@
-import { Bounds} from "../../utils/geometry"
+import { Bounds } from "../../utils/geometry"
 import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
 import { AbstractCommand, CommandExecutionContext } from "../../base/intent/commands"

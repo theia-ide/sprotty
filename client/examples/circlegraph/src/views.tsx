@@ -1,7 +1,7 @@
-import {RenderingContext} from "../../../src/base"
-import {SNode} from "../../../src/graph"
-import {CircularNodeView} from "../../../src/lib"
-import {VNode} from "snabbdom/vnode"
+import { RenderingContext } from "../../../src/base"
+import { SNode } from "../../../src/graph"
+import { CircularNodeView } from "../../../src/lib"
+import { VNode } from "snabbdom/vnode"
 import * as snabbdom from "snabbdom-jsx"
 
 const JSX = {createElement: snabbdom.svg}

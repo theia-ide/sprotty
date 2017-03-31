@@ -1,10 +1,10 @@
-import {View, RenderingContext} from "../../../src/base/view/views"
-import {VNode} from "snabbdom/vnode"
-import {Processor, Core, Channel, Crossbar} from "./chipmodel"
-import {Direction} from "../../../src/utils/geometry"
-import {ColorMap, toSVG} from "../../../src/utils/color"
+import { RenderingContext, View } from "../../../src/base/view/views"
+import { VNode } from "snabbdom/vnode"
+import { Channel, Core, Crossbar, Processor } from "./chipmodel"
+import { Direction } from "../../../src/utils/geometry"
+import { ColorMap, toSVG } from "../../../src/utils/color"
 import * as snabbdom from "snabbdom-jsx"
-import {ThunkView} from "../../../src/base/view/thunk-view"
+import { ThunkView } from "../../../src/base/view/thunk-view"
 
 const JSX = {createElement: snabbdom.svg}
 

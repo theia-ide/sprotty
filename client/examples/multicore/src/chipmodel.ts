@@ -1,9 +1,7 @@
-import {SModelRoot, SModelElementSchema, SChildElement} from "../../../src/base"
-import {Direction, Point, ORIGIN_POINT, EMPTY_BOUNDS, Bounds} from "../../../src/utils"
-import {
-    Selectable, selectFeature, BoundsAware, boundsFeature, Viewport, viewportFeature
-} from "../../../src/features"
-import {ViewportRootElement} from "../../../src/features/viewport/viewport-root"
+import { SChildElement, SModelElementSchema } from "../../../src/base"
+import { Bounds, Direction, EMPTY_BOUNDS } from "../../../src/utils"
+import { BoundsAware, boundsFeature, Selectable, selectFeature, viewportFeature } from "../../../src/features"
+import { ViewportRootElement } from "../../../src/features/viewport/viewport-root"
 
 export interface ProcessorSchema extends SModelElementSchema {
     rows: number

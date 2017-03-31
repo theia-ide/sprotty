@@ -6,9 +6,9 @@ import { SModelRoot } from "../../base/model/smodel"
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { Point } from "../../utils/geometry"
 import { SNode } from "../../graph/model/sgraph"
-import { MoveCommand, MoveAction, ElementMove } from "./move"
-import {ConsoleLogger} from "../../utils/logging"
-import {AnimationFrameSyncer} from "../../base/animations/animation-frame-syncer"
+import { ElementMove, MoveAction, MoveCommand } from "./move"
+import { ConsoleLogger } from "../../utils/logging"
+import { AnimationFrameSyncer } from "../../base/animations/animation-frame-syncer"
 
 describe('move', () => {
 

@@ -1,6 +1,6 @@
 import { ContainerModule } from "inversify"
 import { TYPES } from "../../base/types"
-import { CenterCommand, FitToScreenCommand, CenterKeyboardListener } from "./center-fit"
+import { CenterCommand, CenterKeyboardListener, FitToScreenCommand } from "./center-fit"
 import { ViewportCommand } from "./viewport"
 import { ScrollMouseListener } from "./scroll"
 import { ZoomMouseListener } from "./zoom"

@@ -1,7 +1,7 @@
 import { injectable } from "inversify"
-import { Action, ActionHandler } from "../intent/actions"
-import { SModelRootSchema, SModelRoot } from "../model/smodel"
-import { AbstractCommand, CommandExecutionContext, Command } from "../intent/commands"
+import { Action } from "../intent/actions"
+import { SModelRoot, SModelRootSchema } from "../model/smodel"
+import { AbstractCommand, CommandExecutionContext } from "../intent/commands"
 import { Map } from "../../utils/utils"
 
 export class SetModelAction implements Action {

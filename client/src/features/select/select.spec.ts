@@ -6,8 +6,8 @@ import { SGraphFactory } from "../../graph/model/sgraph-factory"
 import { CommandExecutionContext } from "../../base/intent/commands"
 import { SNode } from "../../graph/model/sgraph"
 import { SelectAction, SelectCommand } from "./select"
-import {ConsoleLogger} from "../../utils/logging"
-import {AnimationFrameSyncer} from "../../base/animations/animation-frame-syncer"
+import { ConsoleLogger } from "../../utils/logging"
+import { AnimationFrameSyncer } from "../../base/animations/animation-frame-syncer"
 
 describe('select', () => {
     // setup the GModel

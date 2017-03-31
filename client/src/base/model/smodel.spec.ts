@@ -1,5 +1,5 @@
 import { expect } from "chai"
-import { SModelRoot, SChildElement, SModelIndex } from "./smodel"
+import { SChildElement, SModelIndex, SModelRoot } from "./smodel"
 
 describe('SModelRoot', () => {
     function setup() {

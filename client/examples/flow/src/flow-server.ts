@@ -1,9 +1,9 @@
 import {
-    TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction, UpdateModelAction, Action
+    ActionHandlerRegistry, IActionDispatcher, RequestModelAction, TYPES, UpdateModelAction, ViewRegistry
 } from "../../../src/base"
 import { SGraphView } from "../../../src/graph"
 import { SelectCommand, SetBoundsCommand } from "../../../src/features"
-import { ExecutionNodeView, BarrierNodeView, FlowEdgeView } from "./views"
+import { BarrierNodeView, ExecutionNodeView, FlowEdgeView } from "./views"
 import createContainer from "./di.config"
 import { WebSocketDiagramServer } from "../../../src/remote"
 

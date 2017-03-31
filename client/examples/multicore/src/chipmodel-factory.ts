@@ -1,10 +1,11 @@
 import {
-    SModelElementSchema, SParentElement, SChildElement, SModelRootSchema, SModelRoot, SModelFactory, getBasicType, SModelElement
+    getBasicType, SChildElement, SModelElement, SModelElementSchema, SModelFactory, SModelRoot, SModelRootSchema,
+    SParentElement
 } from "../../../src/base"
 import {
-    ProcessorSchema, Processor, CoreSchema, ChannelSchema, Core, Channel, Crossbar, CrossbarSchema
+    Channel, ChannelSchema, Core, CoreSchema, Crossbar, CrossbarSchema, Processor, ProcessorSchema
 } from "./chipmodel"
-import {Direction} from "../../../src/utils"
+import { Direction } from "../../../src/utils"
 
 
 export class ChipModelFactory extends SModelFactory {

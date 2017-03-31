@@ -1,4 +1,4 @@
-import { SNodeSchema, SNode } from "../../../src/graph"
+import { SNode, SNodeSchema } from "../../../src/graph"
 
 export interface TaskNodeSchema extends SNodeSchema {
     kernel?: string

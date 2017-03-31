@@ -1,4 +1,4 @@
-import { injectable, inject } from "inversify"
+import { inject, injectable } from "inversify"
 import { Action, ActionHandler } from "../base/intent/actions"
 import { Command } from "../base/intent/commands"
 import { TYPES } from "../base/types"

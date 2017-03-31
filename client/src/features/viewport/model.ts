@@ -1,7 +1,7 @@
 import { SModelElement } from "../../base/model/smodel"
 import { Scrollable } from "./scroll"
 import { Zoomable } from "./zoom"
-import {BoundsInPageAware} from "../bounds/model"
+import { BoundsInPageAware } from "../bounds/model"
 
 export const viewportFeature = Symbol('viewportFeature')
 

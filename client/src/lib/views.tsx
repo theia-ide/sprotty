@@ -1,7 +1,7 @@
 import * as snabbdom from "snabbdom-jsx"
-import { SNodeView } from "../graph/view/views";
-import { SNode } from "../graph/model/sgraph";
-import { Point } from "../utils/geometry";
+import { SNodeView } from "../graph/view/views"
+import { SNode } from "../graph/model/sgraph"
+import { Point } from "../utils/geometry"
 
 const JSX = {createElement: snabbdom.svg}
 

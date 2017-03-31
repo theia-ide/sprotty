@@ -1,11 +1,7 @@
-import {
-    TYPES, IActionDispatcher, SetModelAction, ViewRegistry,
-} from "../../../src/base"
-import {
-    SGraphView, StraightEdgeView, SNode, SGraphFactory, SNodeSchema, SEdgeSchema
-} from "../../../src/graph"
-import {ElementMove, MoveAction} from "../../../src/features"
-import {CircleNodeView} from "./views"
+import { IActionDispatcher, SetModelAction, TYPES, ViewRegistry } from "../../../src/base"
+import { SEdgeSchema, SGraphFactory, SGraphView, SNode, SNodeSchema, StraightEdgeView } from "../../../src/graph"
+import { ElementMove, MoveAction } from "../../../src/features"
+import { CircleNodeView } from "./views"
 import createContainer from "./di.config"
 
 export default function runStandalone() {

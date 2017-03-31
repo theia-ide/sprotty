@@ -1,4 +1,4 @@
-import { injectable, inject, multiInject, optional } from "inversify"
+import { inject, injectable, multiInject, optional } from "inversify"
 import { MultiInstanceRegistry } from "../../utils/registry"
 import { ILogger } from "../../utils/logging"
 import { IDiagramServer, ServerActionHandler } from "../../remote/diagram-server"

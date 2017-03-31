@@ -1,8 +1,8 @@
 import * as snabbdom from "snabbdom-jsx"
 import { VNode } from "snabbdom/vnode"
-import { View, RenderingContext } from "../../base/view/views"
-import { SGraph, SNode, SEdge } from "../model/sgraph"
-import { Point, manhattanDistance } from "../../utils/geometry"
+import { RenderingContext, View } from "../../base/view/views"
+import { SEdge, SGraph, SNode } from "../model/sgraph"
+import { manhattanDistance, Point } from "../../utils/geometry"
 
 const JSX = {createElement: snabbdom.svg}
 

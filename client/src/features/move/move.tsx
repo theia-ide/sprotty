@@ -2,14 +2,14 @@ import * as snabbdom from "snabbdom-jsx"
 import { VNode } from "snabbdom/vnode"
 import { Point } from "../../utils/geometry"
 import { Map } from "../../utils/utils"
-import { SModelElement, SModelRoot, SModelIndex, getParent } from "../../base/model/smodel"
+import { getParent, SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
-import { AbstractCommand, CommandExecutionContext, Command } from "../../base/intent/commands"
+import { AbstractCommand, Command, CommandExecutionContext } from "../../base/intent/commands"
 import { Animation } from "../../base/animations/animation"
 import { MouseListener } from "../../base/view/mouse-tool"
-import { Viewport, isViewport } from "../viewport/model"
+import { isViewport, Viewport } from "../viewport/model"
 import { isSelectable } from "../select/model"
-import { Locateable, isMoveable } from "./model"
+import { isMoveable, Locateable } from "./model"
 
 const JSX = {createElement: snabbdom.svg}
 

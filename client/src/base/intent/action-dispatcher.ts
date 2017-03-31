@@ -1,11 +1,11 @@
-import { injectable, inject, optional } from "inversify"
+import { inject, injectable, optional } from "inversify"
 import { ILogger } from "../../utils/logging"
 import { TYPES } from "../types"
-import { UndoAction, RedoAction } from "../../features/undo-redo/undo-redo"
+import { RedoAction, UndoAction } from "../../features/undo-redo/undo-redo"
 import { IDiagramServer } from "../../remote/diagram-server"
 import { Action, ActionHandlerRegistry, isAction } from "./actions"
 import { ICommandStack } from "./command-stack"
-import {AnimationFrameSyncer} from "../animations/animation-frame-syncer"
+import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
 
 export interface IActionDispatcher {
     dispatch(action: Action): void

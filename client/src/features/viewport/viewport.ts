@@ -1,12 +1,8 @@
 import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
-import { AbstractCommand, CommandExecutionContext, Command } from "../../base/intent/commands"
+import { AbstractCommand, Command, CommandExecutionContext } from "../../base/intent/commands"
 import { Animation } from "../../base/animations/animation"
-import { isSizeable } from "../bounds/model"
-import { CenterCommand, FitToScreenCommand, CenterKeyboardListener } from "./center-fit"
-import { ScrollMouseListener, Scrollable } from "./scroll"
-import { ZoomMouseListener, Zoomable } from "./zoom"
-import { Viewport, isViewport } from "./model"
+import { isViewport, Viewport } from "./model"
 
 export class ViewportAction implements Action {
     kind = ViewportCommand.KIND

@@ -1,11 +1,9 @@
-import {
-    TYPES, IActionDispatcher, SetModelAction, ActionHandlerRegistry, ViewRegistry
-} from "../../../src/base"
-import {Direction} from "../../../src/utils"
-import {CenterAction, SelectCommand } from "../../../src/features"
-import {Core, ProcessorSchema, Crossbar, Channel, CoreSchema, ChannelSchema, CrossbarSchema} from "./chipmodel"
-import {ProcessorView, CoreView, ChannelView, CrossbarView} from "./views"
-import {ChipModelFactory} from "./chipmodel-factory"
+import { IActionDispatcher, SetModelAction, TYPES, ViewRegistry } from "../../../src/base"
+import { Direction } from "../../../src/utils"
+import { CenterAction } from "../../../src/features"
+import { Channel, ChannelSchema, Core, CoreSchema, Crossbar, CrossbarSchema, ProcessorSchema } from "./chipmodel"
+import { ChannelView, CoreView, CrossbarView, ProcessorView } from "./views"
+import { ChipModelFactory } from "./chipmodel-factory"
 import createContainer from "./di.config"
 
 export default function runMulticore() {

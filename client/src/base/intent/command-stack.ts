@@ -1,12 +1,11 @@
-import { injectable, inject } from "inversify"
+import { inject, injectable } from "inversify"
 import { Command, CommandExecutionContext } from "./commands"
-import { IModelFactory } from "../model/smodel-factory"
-import { IViewerProvider, IViewer } from "../view/viewer"
+import { EMPTY_ROOT, IModelFactory } from "../model/smodel-factory"
+import { IViewer, IViewerProvider } from "../view/viewer"
 import { ILogger } from "../../utils/logging"
 import { TYPES } from "../types"
 import { SModelRoot } from "../model/smodel"
-import { EMPTY_ROOT } from "../model/smodel-factory"
-import {AnimationFrameSyncer} from "../animations/animation-frame-syncer"
+import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
 
 export interface ICommandStack {
     execute(command: Command): void

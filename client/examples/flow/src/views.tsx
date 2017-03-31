@@ -3,9 +3,9 @@ import { RenderingContext } from "../../../src/base"
 import { SEdge } from "../../../src/graph/model/sgraph"
 import { StraightEdgeView } from "../../../src/graph/view/views"
 import { CircularNodeView, RectangularNodeView } from "../../../src/lib"
-import { Point, angle, toDegrees } from "../../../src/utils/geometry"
+import { angle, Point, toDegrees } from "../../../src/utils/geometry"
 import * as snabbdom from "snabbdom-jsx"
-import { TaskNode, BarrierNode } from "./flowmodel"
+import { BarrierNode, TaskNode } from "./flowmodel"
 
 const JSX = {createElement: snabbdom.svg}
 

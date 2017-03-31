@@ -12,12 +12,12 @@ export * from "./viewport/zoom"
 export * from "./viewport/model"
 
 import moveModule from "./move/di.config"
-export { moveModule }
 import boundsModule from "./bounds/di.config"
-export { boundsModule }
 import selectModule from "./select/di.config"
-export { selectModule }
 import undoRedoModule from "./undo-redo/di.config"
-export { undoRedoModule }
 import viewportModule from "./viewport/di.config"
+export { moveModule }
+export { boundsModule }
+export { selectModule }
+export { undoRedoModule }
 export { viewportModule }

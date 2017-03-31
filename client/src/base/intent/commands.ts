@@ -1,9 +1,9 @@
 import { SModelRoot } from "../model/smodel"
 import { IModelFactory } from "../model/smodel-factory"
 import { IViewer } from "../view/viewer"
-import {ILogger} from "../../utils/logging"
-import {AnimationFrameSyncer} from "../animations/animation-frame-syncer"
-import { ActionHandler, Action } from "./actions"
+import { ILogger } from "../../utils/logging"
+import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
+import { Action, ActionHandler } from "./actions"
 
 /**
  * A command holds the behaviour of an action.

@@ -1,5 +1,5 @@
-import { ContainerModule, Container } from "inversify"
-import { SModelFactory, TYPES, IViewerOptions, defaultModule } from "../../../src/base"
+import { Container, ContainerModule } from "inversify"
+import { defaultModule, IViewerOptions, TYPES } from "../../../src/base"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { boundsModule, moveModule } from "../../../src/features"

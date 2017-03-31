@@ -1,14 +1,8 @@
-import {
-    TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction,
-    MouseTool, KeyTool
-} from "../../../src/base"
-import {
-    SelectMouseListener, MoveMouseListener, ScrollMouseListener, ZoomMouseListener, ViewportAction,
-    ViewportCommand, UndoRedoKeyListener, SelectCommand
-} from "../../../src/features"
-import {SGraphView, StraightEdgeView} from "../../../src/graph"
+import { ActionHandlerRegistry, IActionDispatcher, RequestModelAction, TYPES, ViewRegistry } from "../../../src/base"
+import { SelectCommand } from "../../../src/features"
+import { SGraphView, StraightEdgeView } from "../../../src/graph"
 import { WebSocketDiagramServer } from "../../../src/remote"
-import {CircleNodeView} from "./views"
+import { CircleNodeView } from "./views"
 import createContainer from "./di.config"
 
 const WebSocket = require("reconnecting-websocket")

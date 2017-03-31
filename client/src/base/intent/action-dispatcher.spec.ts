@@ -1,10 +1,10 @@
 import "reflect-metadata"
 import "mocha"
-import { ContainerModule, Container } from "inversify"
-import { expect } from 'chai'
+import { Container, ContainerModule } from "inversify"
+import { expect } from "chai"
 import { TYPES } from "../types"
 import { EMPTY_ROOT } from "../model/smodel-factory"
-import { UndoAction, RedoAction } from "../../features/undo-redo/undo-redo"
+import { RedoAction, UndoAction } from "../../features/undo-redo/undo-redo"
 import { SetModelAction } from "../features/model-manipulation"
 import { MoveAction, MoveCommand } from "../../features/move/move"
 import { ICommandStack } from "./command-stack"
