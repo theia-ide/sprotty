@@ -21,9 +21,14 @@ export class ChipModelFactory extends SModelFactory {
                     return this.initializeChild(new Core(), schema, parent)
                 } else if (this.isChannelSchema(schema)) {
                     this.validate(schema, parent)
-                    return this.initializeChild(new Channel(), schema, parent)
-                } else if (this.isCrossbarSchema(schema))
-                    return this.initializeChild(new Crossbar(), schema, parent)
+                    const child = this.initializeChild(new Channel(), schema, parent);
+                    (child as Channel).direction = typeof schema.direction == 'string' ? Direction[schema.direction] : schema.direction
+                    return child
+                } else if (this.isCrossbarSchema(schema)) {
+                    const child = this.initializeChild(new Crossbar(), schema, parent);
+                    (child as Crossbar).direction = typeof schema.direction == 'string' ? Direction[schema.direction] : schema.direction
+                    return child
+                }
             } catch (e) {
                 console.error(e.message)
             }
@@ -38,19 +43,6 @@ export class ChipModelFactory extends SModelFactory {
             return this.initializeRoot(new Processor(), schema)
         else
             return super.createRoot(schema)
-    }
-
-    protected initializeElement(elem: SModelElement, schema: SModelElementSchema): SModelElement {
-        super.initializeElement(elem, schema)
-        if (this.isChannelSchema(schema))
-            (elem as Channel).direction = this.getDirection(schema.direction)
-        else if (this.isCrossbarSchema(schema))
-            (elem as Crossbar).direction = this.getDirection(schema.direction)
-        return elem
-    }
-
-    private getDirection(directionSchema: string | Direction) {
-        return (typeof directionSchema === 'string') ? (<any>Direction)[directionSchema] : directionSchema
     }
 
     private validate(coreOrChannel: CoreSchema | ChannelSchema, processor?: SParentElement) {
