@@ -1,12 +1,13 @@
-import WebSocket = require("reconnecting-websocket")
 import {
-    TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction, UpdateModelAction, Action
+TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction, UpdateModelAction, Action
 } from "../../../src/base"
 import { SelectCommand, SetBoundsCommand, CenterAction } from "../../../src/features"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { ProcessorView, CoreView, ChannelView, CrossbarView } from "./views"
 import createContainer from "./di.config"
 import {FitToScreenAction} from "../../../src/features/viewport/center-fit"
+
+const WebSocket = require("reconnecting-websocket")
 
 export function createWebSocket(url: string, options?: any): WebSocket {
     if (!options) {

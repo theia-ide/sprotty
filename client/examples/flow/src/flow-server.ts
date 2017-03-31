@@ -1,4 +1,3 @@
-import WebSocket = require("reconnecting-websocket")
 import {
     TYPES, IActionDispatcher, ActionHandlerRegistry, ViewRegistry, RequestModelAction, UpdateModelAction, Action
 } from "../../../src/base"
@@ -7,6 +6,8 @@ import { SelectCommand, SetBoundsCommand } from "../../../src/features"
 import { ExecutionNodeView, BarrierNodeView, FlowEdgeView } from "./views"
 import createContainer from "./di.config"
 import { WebSocketDiagramServer } from "../../../src/remote"
+
+const WebSocket = require("reconnecting-websocket")
 
 export function createWebSocket(url: string, options?: any): WebSocket {
     if (!options) {

@@ -31,8 +31,8 @@ export class SModelFactory implements IModelFactory {
 
     protected initializeElement(elem: SModelElement, schema: SModelElementSchema): SModelElement {
         for (let key in schema) {
-            if (key != 'children' && key != 'index' && schema[key] !== undefined) {
-                elem[key] = schema[key]
+            if (key != 'children' && key != 'index' && key in schema) {
+                (elem as any)[key] = (schema as any)[key]
             }
         }
         return elem

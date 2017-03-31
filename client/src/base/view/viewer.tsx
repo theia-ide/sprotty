@@ -15,6 +15,7 @@ import { ViewRegistry, RenderingContext } from "./views"
 import { setClass } from "./vnode-utils"
 import { IViewerOptions } from "./options"
 import { ILogger } from "../../utils/logging"
+import { isThunk } from "./thunk-view"
 
 const JSX = {createElement: snabbdom.html}  // must be html here, as we're creating a div
 
@@ -61,7 +62,7 @@ export class Viewer implements VNodeDecorator, IViewer {
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        if(vnode['thunk'])
+        if(isThunk(vnode))
             return vnode
         this.decorators = this.decorators
         return this.decorators.reduce(

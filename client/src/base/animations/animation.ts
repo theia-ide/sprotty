@@ -14,7 +14,7 @@ export abstract class Animation {
     start() {
         return new Promise<SModelRoot>(
             (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
-                const lambda = time => {
+                const lambda = (time: number) => {
                     frames++;
                     let dtime: number
                     if (start === undefined) {

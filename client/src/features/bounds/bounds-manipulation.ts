@@ -43,7 +43,7 @@ abstract class AbstractSetBoundsCommand extends AbstractCommand {
                 if (element && this.boundsProperty in element) {
                     this.resizes.push({
                         element: element,
-                        oldBounds: element[this.boundsProperty],
+                        oldBounds: (element as any)[this.boundsProperty],
                         newBounds: resize.newBounds,
                     })
                 }
@@ -54,14 +54,14 @@ abstract class AbstractSetBoundsCommand extends AbstractCommand {
 
     undo(root: SModelRoot, context: CommandExecutionContext) {
         this.resizes.forEach(
-            resize => resize.element[this.boundsProperty] = resize.oldBounds
+            resize => (resize.element as any)[this.boundsProperty] = resize.oldBounds
         )
         return root
     }
 
     redo(root: SModelRoot, context: CommandExecutionContext) {
         this.resizes.forEach(
-            resize => resize.element[this.boundsProperty] = resize.newBounds
+            resize => (resize.element as any)[this.boundsProperty] = resize.newBounds
         )
         return root
     }

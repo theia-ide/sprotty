@@ -76,3 +76,12 @@ export abstract class ThunkView implements View {
         this.copyToThunk(oldVnode, thunk);
     }
 }
+
+
+export interface ThunkVNode extends VNode {
+    thunk: boolean
+}
+
+export function isThunk(vnode: VNode): vnode is ThunkVNode {
+    return 'thunk' in vnode
+}

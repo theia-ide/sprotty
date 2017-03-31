@@ -6,9 +6,12 @@
     "outDir": "build",
     "lib": ["es6", "dom"],
     "types": ["node", "reflect-metadata"],
-    "typeRoots": ["node_modules/@types"],
     "noImplicitThis": true,
     "noImplicitReturns": true,
+    "noImplicitAny": true,
+    "typeRoots": ["node_modules/@types",
+      "typings"
+    ],
     "strictNullChecks": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
