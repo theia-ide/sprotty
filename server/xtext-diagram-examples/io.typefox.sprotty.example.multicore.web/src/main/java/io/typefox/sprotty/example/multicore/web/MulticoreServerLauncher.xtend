@@ -4,13 +4,15 @@ import io.typefox.sprotty.api.ActionMessage
 import io.typefox.sprotty.example.multicore.web.diagram.MulticoreAllocationDiagramServer
 import io.typefox.sprotty.server.websocket.DiagramServerEndpoint
 import java.net.InetSocketAddress
+import javax.websocket.CloseReason
 import javax.websocket.EndpointConfig
 import javax.websocket.Session
 import javax.websocket.server.ServerEndpointConfig
 import org.apache.log4j.Logger
 import org.eclipse.jetty.annotations.AnnotationConfiguration
 import org.eclipse.jetty.server.Server
-import org.eclipse.jetty.servlet.ServletContextHandler
+import org.eclipse.jetty.server.handler.HandlerList
+import org.eclipse.jetty.server.handler.ResourceHandler
 import org.eclipse.jetty.util.log.Slf4jLog
 import org.eclipse.jetty.webapp.MetaInfConfiguration
 import org.eclipse.jetty.webapp.WebAppContext
@@ -18,7 +20,6 @@ import org.eclipse.jetty.webapp.WebInfConfiguration
 import org.eclipse.jetty.webapp.WebXmlConfiguration
 import org.eclipse.jetty.websocket.jsr356.server.deploy.WebSocketServerContainerInitializer
 import org.eclipse.xtext.util.DisposableRegistry
-import javax.websocket.CloseReason
 
 /**
  * This program starts an HTTP server for testing the web integration of your DSL.
@@ -57,7 +58,7 @@ class MulticoreServerLauncher {
 		val diagramServer = injector.getInstance(MulticoreAllocationDiagramServer)
 		
 		val server = new Server(new InetSocketAddress('localhost', 8080))
-		server.handler = new WebAppContext => [
+		val webAppContext = new WebAppContext => [
 			resourceBase = 'src/main/webapp'
 			welcomeFiles = #['index.html']
 			contextPath = '/'
@@ -70,8 +71,15 @@ class MulticoreServerLauncher {
 			setAttribute(WebInfConfiguration.CONTAINER_JAR_PATTERN, '.*/io\\.typefox\\.sprotty\\.example\\.multicore\\.web/.*,.*\\.jar')
 			setInitParameter('org.mortbay.jetty.servlet.Default.useFileMappedBuffer', 'false')
 		]
+		server.handler = new HandlerList => [
+			addHandler(new ResourceHandler => [
+				resourceBase = '../../../client'
+				welcomeFiles = #['examples/index.html']
+			])
+			addHandler(webAppContext)
+		]
 		
-		val container = WebSocketServerContainerInitializer.configureContext(server.handler as ServletContextHandler)
+		val container = WebSocketServerContainerInitializer.configureContext(webAppContext)
 		val endpointConfigBuilder = ServerEndpointConfig.Builder.create(TestServerEndpoint, '/diagram')
 		endpointConfigBuilder.configurator(new ServerEndpointConfig.Configurator {
 			override <T> getEndpointInstance(Class<T> endpointClass) throws InstantiationException {

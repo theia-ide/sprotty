@@ -4,7 +4,8 @@
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sprotty Multicore Example</title>
-    <link rel="stylesheet" href="https://maxcdn.bootstrapcdn.com/bootstrap/3.3.7/css/bootstrap.min.css">
+    <link rel="stylesheet" href="/node_modules/bootstrap/dist/css/bootstrap.min.css">
+	<link rel="stylesheet" type="text/css" href="/xtext/2.11.0/xtext-ace.css"/>
     <link href="./css/page.css" rel="stylesheet" type="text/css">
     <link href="./css/diagram.css" rel="stylesheet" type="text/css">
 </head>
@@ -13,13 +14,14 @@
     <h1>Sprotty Multicore Example</h1>
     <div class="row" id="sprotty-app" data-app="multicore-server">
         <div class="col-md-6">
-            <iframe src="http://localhost:8080/index.html"></iframe>
+            <div id="xtext-editor"></div>
         </div>
         <div class="col-md-6">
             <div id="sprotty-cores" class="sprotty"/>
         </div>
     </div>
 </div>
-<script src="../../bundle.js"></script>
+<script src="/webjars/requirejs/2.3.2/require.min.js" data-main="/examples/multicore/src/xtext-editor-setup.js" ></script>
+<script src="/bundle.js"></script>
 </body>
 </html>

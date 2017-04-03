@@ -1,0 +1,26 @@
+program ExampleFlow for 4 cores
+
+kernel k0 {
+    duration = 1
+}
+kernel k1 {
+    duration = 2
+}
+kernel k2 {
+    duration = 3
+}
+
+task t0: execute k0 on core 0
+task t1: execute k1 on core 1
+
+join t0, t1
+then
+    task t2: execute k0 on core 0,
+    task t3: execute k1 on core 1,
+    task t4: execute k2 on core 2
+
+join t4
+then task t5: execute k2 on core 3
+
+join t2, t3, t5
+then task e6: execute k2 on core 3

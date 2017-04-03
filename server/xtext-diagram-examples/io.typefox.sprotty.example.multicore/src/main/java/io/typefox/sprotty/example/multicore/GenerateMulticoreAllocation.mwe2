@@ -39,6 +39,7 @@ Workflow {
 			webSupport = {
 				framework = "Ace"
 				generateJettyLauncher = false
+				generateHtmlExample = false
 			}
 		}
 	}
