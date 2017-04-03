@@ -18,11 +18,13 @@ describe('action dispatcher', () => {
     let undoCount = 0
     let redoCount = 0
 
+    const promise = Promise.resolve(EMPTY_ROOT)
+
     const mockCommandStack: ICommandStack = {
-        execute() { ++execCount },
-        executeAll() { ++execCount },
-        undo() { ++undoCount },
-        redo() { ++redoCount }
+        execute() { ++execCount; return promise },
+        executeAll() { ++execCount; return promise },
+        undo() { ++undoCount; return promise },
+        redo() { ++redoCount; return promise }
     }
 
     const module = new ContainerModule((bind, unbind, isBound, rebind) => {

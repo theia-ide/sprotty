@@ -66,8 +66,8 @@ abstract class AbstractSetBoundsCommand extends AbstractCommand {
         return root
     }
 
-    isPushable(): boolean {
-        return false
+    isSystemCommand(): boolean {
+        return true
     }
 }
 

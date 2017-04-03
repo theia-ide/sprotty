@@ -1,5 +1,5 @@
 import { inject, injectable } from "inversify"
-import { Command, CommandExecutionContext } from "./commands"
+import { Command, CommandExecutionContext, SModelRootOrPromise } from "./commands"
 import { EMPTY_ROOT, IModelFactory } from "../model/smodel-factory"
 import { IViewer, IViewerProvider } from "../view/viewer"
 import { ILogger } from "../../utils/logging"
@@ -8,10 +8,10 @@ import { SModelRoot } from "../model/smodel"
 import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
 
 export interface ICommandStack {
-    execute(command: Command): void
-    executeAll(commands: Command[]): void
-    undo(): void
-    redo(): void
+    execute(command: Command): Promise<SModelRoot>
+    executeAll(commands: Command[]): Promise<SModelRoot>
+    undo(): Promise<SModelRoot>
+    redo(): Promise<SModelRoot>
 }
 
 /**
@@ -31,136 +31,131 @@ export class CommandStack implements ICommandStack {
     protected viewer: IViewer
     protected undoStack: Command[] = []
     protected redoStack: Command[] = []
+    protected offStack: Command[] = []
 
-    execute(command: Command): void {
-        this.executeAll([command])
-    }
-
-    executeAll(commands: Command[]): void {
+    executeAll(commands: Command[]): Promise<SModelRoot> {
         commands.forEach(
-            (command) => {
-                this.currentPromise = this.currentPromise.then(
-                    model => {
-                        return new Promise(
-                            (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
-                                this.logger.log(this, 'execute', command)
-                                const context: CommandExecutionContext = {
-                                    modelChanged: this,
-                                    modelFactory: this.modelFactory,
-                                    duration: this.defaultDuration,
-                                    root: model,
-                                    logger: this.logger,
-                                    syncer: this.syncer
-                                }
-                                const modelOrPromise = command.execute(model, context)
-                                if (modelOrPromise instanceof Promise)
-                                    modelOrPromise.then(
-                                        newModel => {
-                                            this.mergeOrPush(command, context)
-                                            resolve(newModel)
-                                        }
-                                    )
-                                else {
-                                    this.mergeOrPush(command, context)
-                                    resolve(modelOrPromise)
-                                }
-                            })
-                    })
+            command => {
+                this.logger.log(this, 'Executing', command)
+                this.handleCommand(command, command.execute, this.mergeOrPush)
             }
         )
-        this.currentPromise.then(
-            model => this.update(model)
-        )
+        return this.thenUpdate()
+    }
+
+    execute(command: Command): Promise<SModelRoot> {
+        this.logger.log(this, 'Executing', command)
+        this.handleCommand(command, command.execute, this.mergeOrPush)
+        return this.thenUpdate()
+    }
+
+    undo() : Promise<SModelRoot>  {
+        this.undoOffStackSystemCommands()
+        this.undoPreceedingSystemCommands()
+        const command = this.undoStack.pop()
+        if(command !== undefined) {
+            this.logger.log(this, 'Undoing', command)
+            this.handleCommand(command, command.undo, (command: Command, context: CommandExecutionContext) => {
+                this.redoStack.push(command)
+            })
+        }
+        return this.thenUpdate()
+    }
+
+    redo() : Promise<SModelRoot> {
+        this.undoOffStackSystemCommands()
+        const command = this.redoStack.pop()
+        if(command !== undefined) {
+            this.logger.log(this, 'Redoing', command)
+            this.handleCommand(command, command.redo, (command: Command, context: CommandExecutionContext) => {
+                this.undoStack.push(command)
+            })
+        }
+        this.redoFollowingSystemCommands()
+        return this.thenUpdate()
+    }
+
+    protected handleCommand(command: Command,
+                            operation: (model:SModelRoot, context: CommandExecutionContext)=>SModelRootOrPromise,
+                            beforeResolve: (command: Command, context: CommandExecutionContext)=>void) {
+        this.currentPromise = this.currentPromise.then(
+            model => {
+                return new Promise(
+                    (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
+                        const context = this.createContext(model)
+                        const modelOrPromise = operation.call(command, model, context)
+                        if (modelOrPromise instanceof Promise)
+                            modelOrPromise.then(
+                                newModel => {
+                                    beforeResolve.call(this, command, context)
+                                    resolve(newModel)
+                                }
+                            )
+                        else {
+                            beforeResolve.call(this, command, context)
+                            resolve(modelOrPromise)
+                        }
+                    })
+            })
     }
 
     protected mergeOrPush(command: Command, context: CommandExecutionContext) {
-        if (this.undoStack.length > 0) {
-            const lastCommand = this.undoStack[this.undoStack.length - 1]
-            if (!lastCommand.merge(command, context)) {
-                this.undoStack.push(command)
-            }
+        if(command.isSystemCommand() && this.redoStack.length > 0) {
+            this.offStack.push(command)
         } else {
-            if (command.isPushable())
-                this.undoStack.push(command)
-        }
-        if (command.isPushable())
+            this.offStack.forEach(command => this.undoStack.push(command))
+            this.offStack = []
             this.redoStack = []
+            if (this.undoStack.length > 0) {
+                const lastCommand = this.undoStack[this.undoStack.length - 1]
+                if (lastCommand.merge(command, context))
+                    return
+            }
+            this.undoStack.push(command)
+        }
     }
 
-    undo() {
-        this.currentPromise = this.currentPromise.then(
-            model => {
-                return new Promise(
-                    (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
-                        const command = this.undoStack.pop()
-                        if (command === undefined) {
-                            resolve(model)
-                        } else {
-                            const context: CommandExecutionContext = {
-                                modelChanged: this,
-                                modelFactory: this.modelFactory,
-                                duration: this.defaultDuration,
-                                root: model,
-                                logger: this.logger,
-                                syncer: this.syncer
-                            }
-                            const modelOrPromise = command.undo(model, context)
-                            if (modelOrPromise instanceof Promise)
-                                modelOrPromise.then(
-                                    newModel => {
-                                        this.redoStack.push(command)
-                                        resolve(newModel)
-                                    }
-                                )
-                            else {
-                                this.redoStack.push(command)
-                                resolve(modelOrPromise)
-                            }
-                        }
-                    })
-            }
-        )
-        this.currentPromise.then(
-            model => this.update(model)
-        )
+    protected undoOffStackSystemCommands() {
+        let command = this.offStack.pop()
+        while(command !== undefined) {
+            this.logger.log(this, 'Undoing off-stack', command)
+            this.handleCommand(command, command.undo, () => {})
+            command = this.offStack.pop()
+        }
     }
 
-    redo() {
+    protected undoPreceedingSystemCommands() {
+        let command = this.undoStack[this.undoStack.length - 1]
+        while(command !== undefined && command.isSystemCommand()) {
+            this.undoStack.pop()
+            this.logger.log(this, 'Undoing', command)
+            this.handleCommand(command, command.undo, (command: Command, context: CommandExecutionContext) => {
+                this.redoStack.push(command)
+            })
+            command = this.undoStack[this.undoStack.length - 1]
+        }
+    }
+
+    protected redoFollowingSystemCommands() {
+        let command = this.redoStack[this.redoStack.length -1]
+        while (command !== undefined && command.isSystemCommand()) {
+            this.redoStack.pop()
+            this.logger.log(this, 'Redoing ', command)
+            this.handleCommand(command, command.redo, (command: Command, context: CommandExecutionContext) => {
+                this.undoStack.push(command)
+            })
+            command = this.redoStack[this.redoStack.length -1]
+        }
+    }
+
+    protected thenUpdate() {
         this.currentPromise = this.currentPromise.then(
             model => {
-                return new Promise(
-                    (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
-                        const command = this.redoStack.pop()
-                        if (command === undefined) {
-                            resolve(model)
-                        } else {
-                            const context: CommandExecutionContext = {
-                                modelChanged: this,
-                                modelFactory: this.modelFactory,
-                                duration: this.defaultDuration,
-                                root: model,
-                                logger: this.logger,
-                                syncer: this.syncer
-                            }
-                            const modelOrPromise = command.redo(model, context)
-                            if (modelOrPromise instanceof Promise)
-                                modelOrPromise.then(
-                                    newModel => {
-                                        this.undoStack.push(command)
-                                        resolve(newModel)
-                                    }
-                                )
-                            else {
-                                this.undoStack.push(command)
-                                resolve(modelOrPromise)
-                            }
-                        }
-                    })
+                this.update(model)
+                return model
             }
         )
-        this.currentPromise.then(
-            model => this.update(model)
-        )
+        return this.currentPromise
     }
 
     update(model: SModelRoot): void {
@@ -172,6 +167,18 @@ export class CommandStack implements ICommandStack {
             this.viewer = viewer
             this.update(model)
         })
+    }
+
+    protected createContext(model: SModelRoot) : CommandExecutionContext {
+        const context: CommandExecutionContext = {
+            modelChanged: this,
+            modelFactory: this.modelFactory,
+            duration: this.defaultDuration,
+            root: model,
+            logger: this.logger,
+            syncer: this.syncer
+        }
+        return context
     }
 }
 

@@ -20,7 +20,7 @@ export interface Command {
 
     merge(command: Command, context: CommandExecutionContext): boolean
 
-    isPushable(): boolean
+    isSystemCommand(): boolean
 }
 
 export interface CommandFactory {
@@ -39,8 +39,8 @@ export abstract class AbstractCommand implements Command {
         return false
     }
 
-    isPushable(): boolean {
-        return true
+    isSystemCommand(): boolean {
+        return false
     }
 }
 
