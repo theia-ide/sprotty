@@ -58,7 +58,7 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 	
 	override handle(RequestModelAction action, ActionMessage message) {
 		val resourceId = action.options?.get('resourceId')
-		LOG.info('Model requested for resource ' + resourceId + ' (' + this.hashCode + ')')
+		LOG.info('Model requested for resource ' + resourceId)
 		this.resourceId = resourceId
 		val model = modelProvider.getModel(resourceId, action.modelType) ?: (
 			switch action.modelType {

@@ -7,20 +7,52 @@ kernel k1 {
     duration = 2
 }
 kernel k2 {
-    duration = 3
+    duration = 1
 }
 
-task t0: execute k0 on core 0
-task t1: execute k1 on core 1
+task t0: execute k0
+task t1: execute k1
 
 join t0, t1
-then
-    task t2: execute k0 on core 0,
-    task t3: execute k1 on core 1,
-    task t4: execute k2 on core 2
+then {
+    task t2: execute k0
+    task t3: execute k1
+    task t4: execute k2
+}
 
 join t4
-then task t5: execute k2 on core 3
+then task t5: execute k2
 
 join t2, t3, t5
-then task e6: execute k2 on core 3
+then task t6: execute k2
+
+step 1 {
+    core 1 runs t0
+    core 2 runs t1
+}
+
+step 2 {
+    core 1 finished t0
+    core 2 runs t1
+}
+
+step 3 {
+    core 1 finished t0
+    core 2 runs t2
+    core 3 runs t3
+    core 4 runs t4
+}
+
+step 4 {
+    core 1 runs t5
+    core 2 finished t2
+    core 3 runs t3
+    core 4 finished t4
+}
+
+step 5 {
+    core 1 finished t5
+    core 2 finished t2
+    core 3 finished t3
+    core 4 runs t6
+}

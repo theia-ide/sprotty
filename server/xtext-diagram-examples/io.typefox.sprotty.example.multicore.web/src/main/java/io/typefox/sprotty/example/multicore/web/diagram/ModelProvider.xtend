@@ -14,7 +14,7 @@ import org.eclipse.xtext.web.server.IServiceResult
 class ModelProvider implements IServiceResult {
 	
 	/** (resource id, model type) -> model */
-	val Map<Pair<String, String>, SModelRoot> cachedModels = newHashMap 
+	val Map<Pair<String, String>, SModelRoot> cachedModels = newHashMap
 	
 	def SModelRoot getModel(String resourceId, String modelType) {
 		synchronized (cachedModels) {
@@ -33,8 +33,9 @@ class ModelProvider implements IServiceResult {
 			val iterator = cachedModels.entrySet.iterator
 			while (iterator.hasNext) {
 				val entry = iterator.next()
-				if (entry.key == resourceId)
+				if (entry.key.key == resourceId) {
 					iterator.remove()
+				}
 			}
 		}
 	}
