@@ -15,7 +15,7 @@ describe('base views', () => {
         const emptyView = new EmptyView()
         const vnode = emptyView.render(EMPTY_ROOT, context)
         const html = toHTML(vnode)
-        expect(html).to.be.equal('<g id="EMPTY"></g>')
+        expect(html).to.be.equal('<svg id="EMPTY" class="empty"></svg>')
     })
 
     const missingView = new MissingView

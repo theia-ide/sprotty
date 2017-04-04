@@ -43,7 +43,7 @@ export class ViewRegistry extends ProviderRegistry<View, SModelElement> {
 
 export class EmptyView implements View {
     render(model: SModelRoot, context: RenderingContext): VNode {
-        return <g key={model.id} id={model.id}></g>
+        return <svg key={model.id} id={model.id} class-empty={true} />
     }
 }
 
