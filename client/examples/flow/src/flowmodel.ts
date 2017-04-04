@@ -12,4 +12,6 @@ export interface BarrierNodeSchema extends SNodeSchema {
 }
 
 export class BarrierNode extends SNode implements BarrierNodeSchema {
+    width: number = 50
+    height: number = 10
 }

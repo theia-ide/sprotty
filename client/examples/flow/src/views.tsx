@@ -26,22 +26,8 @@ export class ExecutionNodeView extends CircularNodeView {
 export class BarrierNodeView extends RectangularNodeView {
     render(node: BarrierNode, context: RenderingContext): VNode {
         return <g key={node.id} id={node.id} >
-                <rect class-node={true} class-barrier={true} class-selected={node.selected} x="0" y="0" width={this.getWidth(node)} height={this.getHeight(node)}></rect>
+                <rect class-node={true} class-barrier={true} class-selected={node.selected} x="0" y="0" width={node.width} height={node.height}></rect>
             </g>
-    }
-
-    getWidth(node: BarrierNode): number {
-        if (node.width > 0)
-            return node.width
-        else
-            return 50
-    }
-
-    getHeight(node: BarrierNode): number {
-        if (node.height > 0)
-            return node.height
-        else
-            return 10
     }
 }
 

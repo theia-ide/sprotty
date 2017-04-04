@@ -2,12 +2,12 @@ import * as snabbdom from "snabbdom-jsx"
 import { VNode } from "snabbdom/vnode"
 import { RenderingContext, View } from "../../base/view/views"
 import { SEdge, SGraph, SNode } from "../model/sgraph"
-import { manhattanDistance, Point } from "../../utils/geometry"
+import { center, manhattanDistance, Point } from "../../utils/geometry"
 
 const JSX = {createElement: snabbdom.svg}
 
 /**
- * View component that turns a SGraph element and its children into a tree of virtual DOM.
+ * View component that turns an SGraph element and its children into a tree of virtual DOM elements.
  */
 export class SGraphView implements View {
 
@@ -25,14 +25,6 @@ export abstract class SNodeView implements View {
     abstract render(model: SNode, context: RenderingContext): VNode
 
     abstract getAnchor(node: SNode, refPoint: Point): Point
-
-    getWidth(node: SNode): number {
-        return node.width;
-    }
-
-    getHeight(node: SNode): number {
-        return node.height;
-    }
 }
 
 export class StraightEdgeView implements View {
@@ -71,10 +63,7 @@ export class StraightEdgeView implements View {
             sourceAnchor = sourceView.getAnchor(source, p0)
         } else {
             // Use the target center as start anchor reference
-            const reference = {
-                x: target.x + (targetView.getWidth(target) / 2 || 0),
-                y: target.y + (targetView.getHeight(target) / 2 || 0)
-            }
+            const reference = center(target.bounds)
             sourceAnchor = sourceView.getAnchor(source, reference)
         }
         const result: Point[] = [sourceAnchor]
@@ -99,10 +88,7 @@ export class StraightEdgeView implements View {
             }
         } else {
             // Use the source center as end anchor reference
-            const reference = {
-                x: source.x + (sourceView.getWidth(source) / 2 || 0),
-                y: source.y + (sourceView.getHeight(source) / 2 || 0)
-            }
+            const reference = center(source.bounds)
             targetAnchor = targetView.getAnchor(target, reference)
         }
         result.push(targetAnchor)

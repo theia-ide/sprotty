@@ -8,20 +8,6 @@ const JSX = {createElement: snabbdom.svg}
 export abstract class CircularNodeView extends SNodeView {
     protected abstract getRadius(node: SNode): number
 
-    getWidth(node: SNode): number {
-        if (node.width)
-            return node.width
-        else
-            return this.getRadius(node) * 2;
-    }
-
-    getHeight(node: SNode): number {
-        if (node.height)
-            return node.height
-        else
-            return this.getRadius(node) * 2;
-    }
-
     getAnchor(node: SNode, refPoint: Point) {
         const radius = this.getRadius(node)
         const cx = node.x + radius
@@ -43,13 +29,13 @@ export abstract class RectangularNodeView extends SNodeView {
         let x = refPoint.x
         if (x < node.x)
             x = node.x
-        else if (x > node.x + this.getWidth(node))
-            x = node.x + this.getWidth(node)
+        else if (x > node.x + node.width)
+            x = node.x + node.width
         let y = refPoint.y
         if (y < node.y)
             y = node.y
-        else if (y > node.y + this.getHeight(node))
-            y = node.y + this.getHeight(node)
+        else if (y > node.y + node.height)
+            y = node.y + node.height
         return {x, y}
     }
 }

@@ -1,5 +1,5 @@
 import { SChildElement, SModelElementSchema, SModelRootSchema, SParentElementSchema } from "../../base/model/smodel"
-import { Bounds, Point } from "../../utils/geometry"
+import { Bounds, EMPTY_BOUNDS, Point } from "../../utils/geometry"
 import { ViewportRootElement } from "../../features/viewport/viewport-root"
 import { Selectable, selectFeature } from "../../features/select/model"
 import { moveFeature } from "../../features/move/model"
@@ -7,8 +7,6 @@ import { BoundsAware, boundsFeature } from "../../features/bounds/model"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
-    width?: number
-    height?: number
     scroll: Point
     zoom: number
 }
@@ -79,3 +77,14 @@ export class SEdge extends SChildElement implements SEdgeSchema {
 
 export type SGraphElementSchema = SNodeSchema | SEdgeSchema
 export type SGraphElement = SNode | SEdge
+
+export interface SLabelSchema extends SModelElementSchema {
+    bounds?: Bounds
+    text: string
+}
+
+export class SLabel extends SChildElement implements SLabelSchema {
+    bounds: Bounds = EMPTY_BOUNDS
+    text: string
+}
+
