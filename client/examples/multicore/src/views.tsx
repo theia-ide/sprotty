@@ -19,8 +19,8 @@ export class ProcessorView implements View {
     }
 }
 
-const CORE_WIDTH = 45
-const CORE_HEIGHT = 20
+const CORE_WIDTH = 50
+const CORE_DISTANCE = 15
 
 export class CoreView extends ThunkView {
 
@@ -34,8 +34,8 @@ export class CoreView extends ThunkView {
 
     doRender(model: Core, context: RenderingContext): VNode {
         const position = {
-            x: model.column * (CORE_WIDTH + CORE_HEIGHT),
-            y: model.row * (CORE_WIDTH + CORE_HEIGHT),
+            x: model.column * (CORE_WIDTH + CORE_DISTANCE),
+            y: model.row * (CORE_WIDTH + CORE_DISTANCE),
         }
         const nodeName = this.padLeft(model.row) + this.padLeft(model.column)
         const transform = 'translate(' + position.x + ',' + position.y + ')'
@@ -70,29 +70,29 @@ export class CrossbarView implements View {
         let height: number
         switch (model.direction) {
             case Direction.up:
-                width = rows * (CORE_WIDTH + CORE_HEIGHT) - CORE_HEIGHT
-                height = CORE_HEIGHT
+                width = rows * (CORE_WIDTH + CORE_DISTANCE) - CORE_DISTANCE
+                height = CORE_DISTANCE
                 x = 0
-                y = -2 * CORE_HEIGHT
+                y = -2 * CORE_DISTANCE
                 break;
             case Direction.down:
-                width = rows * (CORE_WIDTH + CORE_HEIGHT) - CORE_HEIGHT
-                height = CORE_HEIGHT
+                width = rows * (CORE_WIDTH + CORE_DISTANCE) - CORE_DISTANCE
+                height = CORE_DISTANCE
                 x = 0
-                y = rows * (CORE_WIDTH + CORE_HEIGHT)
+                y = rows * (CORE_WIDTH + CORE_DISTANCE)
                 break;
             case Direction.left:
-                x = -2 * CORE_HEIGHT
+                x = -2 * CORE_DISTANCE
                 y = 0
-                width = CORE_HEIGHT
-                height = columns * (CORE_WIDTH + CORE_HEIGHT) - CORE_HEIGHT
+                width = CORE_DISTANCE
+                height = columns * (CORE_WIDTH + CORE_DISTANCE) - CORE_DISTANCE
                 break;
             case Direction.right:
             default:
-                x = rows * (CORE_WIDTH + CORE_HEIGHT)
+                x = rows * (CORE_WIDTH + CORE_DISTANCE)
                 y = 0
-                width = CORE_HEIGHT
-                height = columns * (CORE_WIDTH + CORE_HEIGHT) - CORE_HEIGHT
+                width = CORE_DISTANCE
+                height = columns * (CORE_WIDTH + CORE_DISTANCE) - CORE_DISTANCE
                 break;
         }
         return <rect class-crossbar={true}
@@ -146,15 +146,15 @@ export class ChannelView extends ThunkView {
                     0.75 * CORE_WIDTH + CHANNEL_WIDTH,
                     0,
                     0.75 * CORE_WIDTH,
-                    -CORE_HEIGHT
+                    -CORE_DISTANCE
                 ]
                 break;
             case Direction.down:
                 points = [
                     0.25 * CORE_WIDTH - CHANNEL_WIDTH,
-                    -CORE_HEIGHT,
+                    -CORE_DISTANCE,
                     0.25 * CORE_WIDTH + CHANNEL_WIDTH,
-                    -CORE_HEIGHT,
+                    -CORE_DISTANCE,
                     0.25 * CORE_WIDTH,
                     0
                 ]
@@ -165,24 +165,24 @@ export class ChannelView extends ThunkView {
                     0.25 * CORE_WIDTH - CHANNEL_WIDTH,
                     0,
                     0.25 * CORE_WIDTH + CHANNEL_WIDTH,
-                    -CORE_HEIGHT,
+                    -CORE_DISTANCE,
                     0.25 * CORE_WIDTH
                 ]
                 break;
             case Direction.right:
             default:
                 points = [
-                    -CORE_HEIGHT,
+                    -CORE_DISTANCE,
                     0.75 * CORE_WIDTH - CHANNEL_WIDTH,
-                    -CORE_HEIGHT,
+                    -CORE_DISTANCE,
                     0.75 * CORE_WIDTH + CHANNEL_WIDTH,
                     0,
                     0.75 * CORE_WIDTH
                 ]
         }
         const position = {
-            x: model.column * (CORE_WIDTH + CORE_HEIGHT),
-            y: model.row * (CORE_WIDTH + CORE_HEIGHT),
+            x: model.column * (CORE_WIDTH + CORE_DISTANCE),
+            y: model.row * (CORE_WIDTH + CORE_DISTANCE),
         }
 
         const transform = 'translate(' + position.x + ',' + position.y + ')'
