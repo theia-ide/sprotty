@@ -14,6 +14,7 @@ dependencies {
 	compile "org.webjars:requirejs:$versions.requirejs"
 	compile "org.webjars:jquery:$versions.jquery"
 	compile "org.webjars:ace:$versions.ace"
+	compile "org.webjars:bootstrap:$versions.bootstrap"
 	providedCompile "org.eclipse.jetty:jetty-annotations:$versions.jetty"
     providedCompile "org.eclipse.jetty.websocket:javax-websocket-server-impl:$versions.jetty"
 	providedCompile "org.slf4j:slf4j-simple:$versions.slf4j"

@@ -1,9 +1,13 @@
 package io.typefox.sprotty.example.multicore.web
 
+import com.google.inject.Inject
+import com.google.inject.Provider
 import io.typefox.sprotty.api.ActionMessage
+import io.typefox.sprotty.example.multicore.web.diagram.DiagramService
 import io.typefox.sprotty.example.multicore.web.diagram.MulticoreAllocationDiagramServer
 import io.typefox.sprotty.server.websocket.DiagramServerEndpoint
 import java.net.InetSocketAddress
+import java.util.function.Consumer
 import javax.websocket.CloseReason
 import javax.websocket.EndpointConfig
 import javax.websocket.Session
@@ -30,6 +34,8 @@ class MulticoreServerLauncher {
 	static val LOG = Logger.getLogger(MulticoreServerLauncher)
 	
 	static class TestServerEndpoint extends DiagramServerEndpoint {
+		Consumer<Session> closeListener
+		
     	override onOpen(Session session, EndpointConfig config) {
     		LOG.info('''Opened connection [«session.id»]''')
     		session.maxIdleTimeout = 0
@@ -38,24 +44,41 @@ class MulticoreServerLauncher {
     	
 		override onClose(Session session, CloseReason closeReason) {
 			LOG.info('''Closed connection [«session.id»]''')
+			if (this.closeListener !== null)
+				this.closeListener.accept(session)
 			super.onClose(session, closeReason)
 		}
     	
 		override accept(ActionMessage message) {
-			LOG.info('''SERVER: «message»''')
+			LOG.trace('''SERVER: «message»''')
 			super.accept(message)
 		}
 		
 		override protected fireMessageReceived(ActionMessage message) {
-			LOG.info('''CLIENT: «message»''')
+			LOG.trace('''CLIENT: «message»''')
 			super.fireMessageReceived(message)
+		}
+	}
+	
+	static class TestEndpointConfigurator extends ServerEndpointConfig.Configurator {
+		@Inject DiagramService diagramService
+		@Inject Provider<MulticoreAllocationDiagramServer> diagramServerProvider
+		
+		override <T> getEndpointInstance(Class<T> endpointClass) throws InstantiationException {
+			super.getEndpointInstance(endpointClass) => [ instance |
+				val endpoint = instance as TestServerEndpoint
+				val diagramServer = diagramServerProvider.get
+				diagramServer.remoteEndpoint = endpoint
+				endpoint.addActionListener(diagramServer)
+				endpoint.addErrorListener[e | LOG.warn(e)]
+				diagramService.addServer(diagramServer)
+				endpoint.closeListener = [diagramService.removeServer(diagramServer)]
+			]
 		}
 	}
 	
 	def static void main(String[] args) {
 		val injector = new MulticoreAllocationWebSetup().createInjectorAndDoEMFRegistration()
-		val disposableRegistry = injector.getInstance(DisposableRegistry)
-		val diagramServer = injector.getInstance(MulticoreAllocationDiagramServer)
 		
 		val server = new Server(new InetSocketAddress('localhost', 8080))
 		val webAppContext = new WebAppContext => [
@@ -70,6 +93,7 @@ class MulticoreServerLauncher {
 			]
 			setAttribute(WebInfConfiguration.CONTAINER_JAR_PATTERN, '.*/io\\.typefox\\.sprotty\\.example\\.multicore\\.web/.*,.*\\.jar')
 			setInitParameter('org.mortbay.jetty.servlet.Default.useFileMappedBuffer', 'false')
+			addEventListener(injector.getInstance(DiagramService))
 		]
 		server.handler = new HandlerList => [
 			addHandler(new ResourceHandler => [
@@ -81,16 +105,7 @@ class MulticoreServerLauncher {
 		
 		val container = WebSocketServerContainerInitializer.configureContext(webAppContext)
 		val endpointConfigBuilder = ServerEndpointConfig.Builder.create(TestServerEndpoint, '/diagram')
-		endpointConfigBuilder.configurator(new ServerEndpointConfig.Configurator {
-			override <T> getEndpointInstance(Class<T> endpointClass) throws InstantiationException {
-				super.getEndpointInstance(endpointClass) => [ instance |
-					val endpoint = instance as DiagramServerEndpoint
-					diagramServer.remoteEndpoint = endpoint
-					endpoint.addActionListener(diagramServer)
-					endpoint.addErrorListener[e | LOG.warn(e)]
-				]
-			}
-		})
+		endpointConfigBuilder.configurator(injector.getInstance(TestEndpointConfigurator))
 		container.addEndpoint(endpointConfigBuilder.build())
 		
 		val log = new Slf4jLog(MulticoreServerLauncher.name)
@@ -111,7 +126,7 @@ class MulticoreServerLauncher {
 			log.warn(exception.message)
 			System.exit(1)
 		} finally {
-			disposableRegistry.dispose()
+			injector.getInstance(DisposableRegistry).dispose()
 		}
 	}
 }

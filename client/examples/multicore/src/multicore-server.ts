@@ -9,18 +9,14 @@ import { FitToScreenAction } from "../../../src/features/viewport/center-fit"
 
 const WebSocket = require("reconnecting-websocket")
 
-export function createWebSocket(url: string, options?: any): WebSocket {
-    if (!options) {
-        options = {
-            maxReconnectionDelay: 10000,
-            minReconnectionDelay: 1000,
-            reconnectionDelayGrowFactor: 1.3,
-            connectionTimeout: 4000,
-            maxRetries: Infinity,
-            debug: false
-        }
-    }
-    return new WebSocket(url, undefined, options)
+function getXtextServices(): any {
+    return (window as any).xtextServices
+}
+
+function requestModel(): RequestModelAction {
+    return new RequestModelAction('processor', undefined, {
+        resourceId: getXtextServices().options.resourceId
+    })
 }
 
 export function setupMulticore(websocket: WebSocket) {
@@ -31,7 +27,7 @@ export function setupMulticore(websocket: WebSocket) {
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
     actionHandlerRegistry.registerServerMessage(SelectCommand.KIND)
     actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
-    actionHandlerRegistry.registerTranslator(UpdateModelAction.KIND, update => new RequestModelAction('processor'))
+    actionHandlerRegistry.registerTranslator(UpdateModelAction.KIND, update => requestModel())
     actionHandlerRegistry.registerTranslator(SetBoundsCommand.KIND, update => new FitToScreenAction([]))
 
     // Register views
@@ -46,12 +42,17 @@ export function setupMulticore(websocket: WebSocket) {
     diagramServer.listen(websocket)
     websocket.addEventListener('open', event => {
         // Run
-        const action = new RequestModelAction('processor')
-        dispatcher.dispatch(action)
+        function run() {
+            if (getXtextServices() !== undefined)
+                dispatcher.dispatch(requestModel())
+            else
+                setTimeout(run, 50)
+        }
+        run()
     })
 }
 
 export default function runMulticoreServer() {
-    const websocket = createWebSocket('ws://localhost:8080/diagram')
+    const websocket = new WebSocket('ws://localhost:8080/diagram')
     setupMulticore(websocket)
 }

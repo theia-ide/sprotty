@@ -64,12 +64,13 @@ public class DiagramServerEndpoint extends Endpoint implements Consumer<ActionMe
 	
 	@SuppressWarnings("unchecked")
 	protected void fireMessageReceived(ActionMessage message) {
+		WebsocketActionMessage wrapperMessage = new WebsocketActionMessage(message, session);
 		Consumer<ActionMessage>[] listenerArray;
 		synchronized (actionListeners) {
 			listenerArray = actionListeners.toArray(new Consumer[actionListeners.size()]);
 		}
 		for (Consumer<ActionMessage> listener : listenerArray) {
-			listener.accept(message);
+			listener.accept(wrapperMessage);
 		}
 	}
 	

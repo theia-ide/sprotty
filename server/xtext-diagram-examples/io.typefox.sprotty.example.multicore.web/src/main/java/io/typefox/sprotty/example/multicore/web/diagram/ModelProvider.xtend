@@ -1,8 +1,8 @@
 package io.typefox.sprotty.example.multicore.web.diagram
 
 import com.google.inject.Singleton
-import org.eclipse.xtend.lib.annotations.Accessors
-import org.eclipse.xtend.lib.annotations.EqualsHashCode
+import io.typefox.sprotty.api.SModelRoot
+import java.util.Map
 import org.eclipse.xtend.lib.annotations.ToString
 import org.eclipse.xtext.web.server.IServiceResult
 
@@ -10,13 +10,33 @@ import org.eclipse.xtext.web.server.IServiceResult
  * Here the access to the models is hard-coded with a singleton provider.
  */
 @Singleton
-@Accessors
-@EqualsHashCode
 @ToString
 class ModelProvider implements IServiceResult {
 	
-	Flow flowView
+	/** (resource id, model type) -> model */
+	val Map<Pair<String, String>, SModelRoot> cachedModels = newHashMap 
 	
-	Processor processorView
+	def SModelRoot getModel(String resourceId, String modelType) {
+		synchronized (cachedModels) {
+			cachedModels.get(Pair.of(resourceId, modelType))
+		}
+	}
+	
+	def void putModel(String resourceId, SModelRoot model) {
+		synchronized (cachedModels) {
+			cachedModels.put(Pair.of(resourceId, model.type), model)
+		}
+	}
+	
+	def clear(String resourceId) {
+		synchronized (cachedModels) {
+			val iterator = cachedModels.entrySet.iterator
+			while (iterator.hasNext) {
+				val entry = iterator.next()
+				if (entry.key == resourceId)
+					iterator.remove()
+			}
+		}
+	}
 	
 }

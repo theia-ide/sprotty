@@ -18,6 +18,7 @@ require(['webjars/ace/1.2.3/src/ace'], function() {
             baseUrl: baseUrl,
             syntaxDefinition: 'xtext-resources/generated/mode-multicore'
         });
+        window.xtextServices = editor.xtextServices;
         jQuery.ajax('/examples/example01.multicore').done(function(exampleCode) {
             editor.xtextServices.editorContext.setText(exampleCode);
         });

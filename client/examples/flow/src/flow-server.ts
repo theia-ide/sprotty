@@ -9,18 +9,14 @@ import { WebSocketDiagramServer } from "../../../src/remote"
 
 const WebSocket = require("reconnecting-websocket")
 
-export function createWebSocket(url: string, options?: any): WebSocket {
-    if (!options) {
-        options = {
-            maxReconnectionDelay: 10000,
-            minReconnectionDelay: 1000,
-            reconnectionDelayGrowFactor: 1.3,
-            connectionTimeout: 4000,
-            maxRetries: Infinity,
-            debug: false
-        }
-    }
-    return new WebSocket(url, undefined, options)
+function getXtextServices(): any {
+    return (window as any).xtextServices
+}
+
+function requestModel(): RequestModelAction {
+    return new RequestModelAction('flow', undefined, {
+        resourceId: getXtextServices().options.resourceId
+    })
 }
 
 export function setupFlow(websocket: WebSocket) {
@@ -32,7 +28,7 @@ export function setupFlow(websocket: WebSocket) {
     actionHandlerRegistry.registerServerMessage(SelectCommand.KIND)
     actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
     actionHandlerRegistry.registerServerMessage(SetBoundsCommand.KIND)
-    actionHandlerRegistry.registerTranslator(UpdateModelAction.KIND, update => new RequestModelAction('flow'))
+    actionHandlerRegistry.registerTranslator(UpdateModelAction.KIND, update => requestModel())
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
@@ -46,12 +42,17 @@ export function setupFlow(websocket: WebSocket) {
     diagramServer.listen(websocket)
     websocket.addEventListener('open', event => {
         // Run
-        const action = new RequestModelAction('flow')
-        dispatcher.dispatch(action)
+        function run() {
+            if (getXtextServices() !== undefined)
+                dispatcher.dispatch(requestModel())
+            else
+                setTimeout(run, 50)
+        }
+        run()
     })
 }
 
 export default function runFlowServer() {
-    const websocket = createWebSocket('ws://localhost:8080/diagram')
+    const websocket = new WebSocket('ws://localhost:8080/diagram')
     setupFlow(websocket)
 }
