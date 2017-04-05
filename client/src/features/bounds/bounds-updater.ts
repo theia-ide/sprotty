@@ -22,7 +22,8 @@ class VNodeAndBoundsInPageAware {
 }
 
 /**
- * Grabs the bounds from the SVG element and fires a SetBoundsAction.
+ * Grabs the bounds from SVG DOM elements, applies layouts and fires
+ * SetBoundsActions.
  *
  * The actual bounds of an element can usually not be determined from the SModel
  * as they depend on the view implementation and CSS stylings. So the best way is
@@ -30,7 +31,7 @@ class VNodeAndBoundsInPageAware {
  * layout passes per frame, we defer the calculation in the next animation frame.
  */
 @injectable()
-export class BoundsGrabber implements VNodeDecorator {
+export class BoundsUpdater implements VNodeDecorator {
 
     @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
     @inject(LAYOUT_TYPES.Layouter) protected layouter : Layouter
@@ -55,30 +56,8 @@ export class BoundsGrabber implements VNodeDecorator {
     }
 
     postUpdate() {
-        const resizesInPage: ElementAndBounds[] = []
-        const element2bounds: Map<Bounds> = {}
-        this.updateBounds.forEach(
-            update => {
-                const vnode = update.vnode
-                const element = update.element
-                if (vnode.elm) {
-                    element2bounds[element.id] =  this.getBounds(vnode.elm, element)
-                }
-            }
-        )
-        this.updateBoundsInPage.forEach(
-            update => {
-                const vnode = update.vnode
-                const element = update.element
-                if (vnode.elm) {
-                    let newBoundsInPage = this.getBoundsInPage(vnode.elm)
-                    resizesInPage.push({
-                        elementId: element.id,
-                        newBounds: newBoundsInPage
-                    })
-                }
-            }
-        )
+        const element2bounds = this.getBoundsFromDOM()
+        const resizesInPage = this.getResizesInPageFromDOM()
         this.layouter.layout(this.updateBounds, element2bounds)
         this.updateBounds = []
         this.updateBoundsInPage = []
@@ -93,6 +72,38 @@ export class BoundsGrabber implements VNodeDecorator {
         }
         if(resizes.length > 0)
             this.actionDispatcher.dispatch(new SetBoundsAction(resizes))
+    }
+
+    protected getResizesInPageFromDOM(): ElementAndBounds[] {
+        const resizesInPage: ElementAndBounds[] = []
+        this.updateBoundsInPage.forEach(
+            update => {
+                const vnode = update.vnode
+                const element = update.element
+                if (vnode.elm) {
+                    let newBoundsInPage = this.getBoundsInPage(vnode.elm)
+                    resizesInPage.push({
+                        elementId: element.id,
+                        newBounds: newBoundsInPage
+                    })
+                }
+            }
+        )
+        return resizesInPage
+    }
+
+    protected getBoundsFromDOM(): Map<Bounds> {
+        const element2bounds: Map<Bounds> = {}
+        this.updateBounds.forEach(
+            update => {
+                const vnode = update.vnode
+                const element = update.element
+                if (vnode.elm) {
+                    element2bounds[element.id] = this.getBounds(vnode.elm, element)
+                }
+            }
+        )
+        return element2bounds
     }
 
     protected getBoundsInPage(elm: any) {

@@ -19,10 +19,53 @@ interface VBoxProperties {
 export class VBoxLayouter implements Layout {
     static KIND = 'vbox'
 
-    layout(container: SParentElement & BoundsAware & Layouting, domElement:
-               Node
-               | undefined, element2bounds: Map<Bounds>): void {
+    layout(container: SParentElement & BoundsAware & Layouting,
+           domElement: Node | undefined,
+           element2bounds: Map<Bounds>): void {
         const properties = this.getLayoutProperties(domElement)
+        const maxWidth = this.getMaxWidth(container, element2bounds)
+        if (maxWidth > 0) {
+            let y = this.layoutChildren(container, element2bounds, properties, maxWidth)
+            element2bounds[container.id] = {
+                x: container.bounds.x,
+                y: container.bounds.y,
+                width: maxWidth + properties.paddingLeft + properties.paddingRight,
+                height: y - properties.lineHeight + properties.paddingBottom
+            }
+        }
+    }
+
+    protected layoutChildren(container: SParentElement & BoundsAware & Layouting,
+                             element2bounds: Map<Bounds>,
+                             properties: VBoxProperties,
+                             maxWidth: number) {
+        let y = properties.paddingTop
+        container.children.forEach(
+            child => {
+                const bounds = element2bounds[child.id] || (child as any).bounds
+                if (bounds && !isEmpty(bounds)) {
+                    let dx = 0
+                    if (properties.textAlign == 'left')
+                        dx = 0
+                    else if (properties.textAlign == 'center')
+                        dx = 0.5 * (maxWidth - bounds.width)
+                    else if (properties.textAlign == 'right')
+                        dx = maxWidth - bounds.width
+                    element2bounds[child.id] = {
+                        x: properties.paddingLeft + (child as any).bounds.x - bounds.x + dx,
+                        y: y + (child as any).bounds.y - bounds.y,
+                        width: bounds.width,
+                        height: bounds.height
+                    }
+                    y += bounds.height + properties.lineHeight
+                }
+            }
+        )
+        return y
+    }
+
+    protected getMaxWidth(container: SParentElement & BoundsAware & Layouting,
+                          element2bounds: Map<Bounds>) {
         let maxWidth = -1
         container.children.forEach(
             child => {
@@ -31,37 +74,7 @@ export class VBoxLayouter implements Layout {
                     maxWidth = Math.max(maxWidth, bounds.width)
             }
         )
-        if (maxWidth > 0) {
-            let y = properties.paddingTop
-            container.children.forEach(
-                child => {
-                    const bounds = element2bounds[child.id] || (child as any).bounds
-                    if (bounds && !isEmpty(bounds)) {
-                        let dx = 0
-                        if (properties.textAlign == 'left')
-                            dx = 0
-                        else if (properties.textAlign == 'center')
-                            dx = 0.5 * (maxWidth - bounds.width)
-                        else if (properties.textAlign == 'right')
-                            dx = maxWidth - bounds.width
-                        element2bounds[child.id] = {
-                            x: properties.paddingLeft + (child as any).bounds.x - bounds.x + dx,
-                            y: y + (child as any).bounds.y - bounds.y,
-                            width: bounds.width,
-                            height: bounds.height
-                        }
-                        y += bounds.height + properties.lineHeight
-                    }
-                }
-            )
-            const boundsFromDiagram = element2bounds[container.id]
-            element2bounds[container.id] = {
-                x: container.bounds.x,
-                y: container.bounds.y,
-                width: maxWidth + properties.paddingLeft + properties.paddingRight,
-                height: y - properties.lineHeight + properties.paddingBottom
-            }
-        }
+        return maxWidth
     }
 
     protected getLayoutProperties(domElement: any): VBoxProperties {
@@ -76,7 +89,9 @@ export class VBoxLayouter implements Layout {
         }
     }
 
-    protected getFloatValue(style: CSSStyleDeclaration | undefined, property: string, defaultValue: number): number {
+    protected getFloatValue(style: CSSStyleDeclaration | undefined,
+                            property: string,
+                            defaultValue: number): number {
         if (style) {
             const stringVal = style.getPropertyValue(property)
             if (stringVal) {
@@ -89,7 +104,9 @@ export class VBoxLayouter implements Layout {
         return defaultValue
     }
 
-    protected getStringValue(style: CSSStyleDeclaration | undefined, property: string, defaultValue: string): string {
+    protected getStringValue(style: CSSStyleDeclaration | undefined,
+                             property: string,
+                             defaultValue: string): string {
         if (style) {
             const stringVal = style.getPropertyValue(property)
             if (stringVal)

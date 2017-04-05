@@ -5,7 +5,7 @@ import { Bounds } from "../../utils/geometry"
 import { Map } from "../../utils/utils"
 import { inject, injectable } from "inversify"
 import { LAYOUT_TYPES } from "./types"
-import { VNodeAndBoundsAware } from "./bounds-grabber"
+import { VNodeAndBoundsAware } from "./bounds-updater"
 import { VBoxLayouter } from "./vbox-layout"
 
 export class LayoutRegistry extends InstanceRegistry<Layout> {
