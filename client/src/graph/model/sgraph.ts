@@ -2,8 +2,8 @@ import { SChildElement, SModelElementSchema, SModelRootSchema, SParentElementSch
 import { Bounds, EMPTY_BOUNDS, Point } from "../../utils/geometry"
 import { ViewportRootElement } from "../../features/viewport/viewport-root"
 import { Selectable, selectFeature } from "../../features/select/model"
-import { moveFeature } from "../../features/move/model"
-import { BoundsAware, boundsFeature } from "../../features/bounds/model"
+import { Locateable, moveFeature } from "../../features/move/model"
+import { BoundsAware, boundsFeature, layoutFeature, Layouting } from "../../features/bounds/model"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
@@ -20,14 +20,16 @@ export interface SNodeSchema extends SParentElementSchema {
     width?: number
     height?: number
     children?: SGraphElementSchema[]
+    layout?: string
 }
 
-export class SNode extends SChildElement implements SNodeSchema, Selectable, BoundsAware {
+export class SNode extends SChildElement implements SNodeSchema, Selectable, BoundsAware, Locateable {
     x: number = 0
     y: number = 0
     width: number = -1
     height: number = -1
-    children: SGraphElement[]
+    children: SCompartmentElement[]
+    layout?: string
     selected: boolean = false
 
     get bounds(): Bounds {
@@ -51,7 +53,7 @@ export class SNode extends SChildElement implements SNodeSchema, Selectable, Bou
     }
 
     hasFeature(feature: symbol): boolean {
-        return feature === selectFeature || feature === moveFeature || feature === boundsFeature
+        return feature === selectFeature || feature === moveFeature || feature === boundsFeature || feature ===layoutFeature
     }
 }
 
@@ -77,14 +79,36 @@ export class SEdge extends SChildElement implements SEdgeSchema {
 
 export type SGraphElementSchema = SNodeSchema | SEdgeSchema
 export type SGraphElement = SNode | SEdge
+export type SCompartmentElementSchema = SCompartmentSchema | SLabelSchema
+export type SCompartmentElement = SCompartment | SLabel
 
 export interface SLabelSchema extends SModelElementSchema {
-    bounds?: Bounds
     text: string
+    selected?: boolean
 }
 
-export class SLabel extends SChildElement implements SLabelSchema {
+export class SLabel extends SChildElement implements SLabelSchema, BoundsAware, Selectable {
     bounds: Bounds = EMPTY_BOUNDS
     text: string
+    selected: boolean = false
+
+    hasFeature(feature: symbol) {
+        return feature === boundsFeature || feature === selectFeature
+    }
 }
 
+export interface SCompartmentSchema extends SModelElementSchema {
+    children: SCompartmentElementSchema[]
+    layout?: string
+    spacing?: number
+}
+
+export class SCompartment extends SChildElement implements SCompartmentSchema, BoundsAware, Layouting {
+    children: SCompartmentElement[]
+    layout: string
+    bounds: Bounds = EMPTY_BOUNDS
+
+    hasFeature(feature: symbol) {
+        return feature === boundsFeature || feature === layoutFeature
+    }
+}

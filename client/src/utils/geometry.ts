@@ -40,22 +40,11 @@ export function isEmpty(b: Bounds) {
     return b.width < 0 || b.height < 0
 }
 
-export interface TransformMatrix {
-    a: number
-    b: number
-    c: number
-    d: number
-    e: number
-    f: number
-}
-
-export const IDENTITY_MATRIX: TransformMatrix = {
-    a: 1,
-    b: 0,
-    c: 0,
-    d: 0,
-    e: 1,
-    f: 0
+export interface Insets {
+    top: number
+    bottom: number
+    left: number
+    right: number
 }
 
 export enum Direction { left, right, up, down }

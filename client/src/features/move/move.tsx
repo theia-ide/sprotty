@@ -10,6 +10,7 @@ import { MouseListener } from "../../base/view/mouse-tool"
 import { isViewport, Viewport } from "../viewport/model"
 import { isSelectable } from "../select/model"
 import { isMoveable, Locateable } from "./model"
+import { setAttr } from "../../base/view/vnode-utils"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -64,7 +65,7 @@ export class MoveCommand extends AbstractCommand {
     protected resolve(move: ElementMove, index: SModelIndex): ResolvedElementMove | undefined {
         const element = index.getById(move.elementId) as (SModelElement & Locateable)
         if (element) {
-            const fromPosition = move.fromPosition || {...element.position}
+            const fromPosition = move.fromPosition || element.position
             return {
                 fromPosition: fromPosition,
                 elementId: move.elementId,
@@ -190,7 +191,7 @@ export class MoveMouseListener extends MouseListener {
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (isMoveable(element)) {
             const translate = 'translate(' + element.position.x + ', ' + element.position.y + ')'
-            vnode = <g transform={translate}>{vnode}</g>
+            setAttr(vnode, 'transform', translate)
         }
         return vnode
     }

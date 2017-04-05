@@ -136,7 +136,7 @@ export class ChannelView extends ThunkView {
 
     doRender(model: Channel, context: RenderingContext): VNode {
         if (!this.isVisible(model))
-            return <g id={model.id} key={model.id}></g>
+            return <g id={model.id} key={model.id} />
         let points: number[]
         switch (model.direction) {
             case Direction.up:

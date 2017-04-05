@@ -3,7 +3,10 @@ import { SModelFactory } from "../../base/model/smodel-factory"
 import {
     getBasicType, SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement
 } from "../../base/model/smodel"
-import { SEdge, SEdgeSchema, SGraph, SGraphSchema, SNode, SNodeSchema } from "./sgraph"
+import {
+    SCompartment,
+    SCompartmentElement, SEdge, SEdgeSchema, SGraph, SGraphSchema, SLabel, SLabelSchema, SNode, SNodeSchema
+} from "./sgraph"
 
 @injectable()
 export class SGraphFactory extends SModelFactory {
@@ -17,6 +20,10 @@ export class SGraphFactory extends SModelFactory {
             return this.initializeChild(new SNode(), schema, parent)
         else if (this.isEdgeSchema(schema))
             return this.initializeChild(new SEdge(), schema, parent)
+        else if (this.isLabelSchema(schema))
+            return this.initializeChild(new SLabel(), schema, parent)
+        else if (this.isCompartmentSchema(schema))
+            return this.initializeChild(new SCompartment(), schema, parent)
         else
             return super.createElement(schema, parent)
     }
@@ -40,6 +47,14 @@ export class SGraphFactory extends SModelFactory {
 
     isEdgeSchema(schema: SModelElementSchema): schema is SEdgeSchema {
         return getBasicType(schema) == 'edge'
+    }
+
+    isLabelSchema(schema: SModelElementSchema): schema is SLabelSchema {
+        return getBasicType(schema) == 'label'
+    }
+
+    isCompartmentSchema(schema: SModelElementSchema): schema is SLabelSchema {
+        return getBasicType(schema) == 'comp'
     }
 
 }

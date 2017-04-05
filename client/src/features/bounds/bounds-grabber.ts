@@ -6,9 +6,12 @@ import { TYPES } from "../../base/types"
 import { IActionDispatcher } from "../../base/intent/action-dispatcher"
 import { Bounds, isEmpty } from "../../utils/geometry"
 import { ElementAndBounds, SetBoundsAction, SetBoundsInPageAction } from "./bounds-manipulation"
-import { BoundsAware, BoundsInPageAware, isBoundsInPageAware, isSizeable } from "./model"
+import { BoundsAware, BoundsInPageAware, isBoundsInPageAware, isLayouting, isSizeable } from "./model"
+import { Map } from "../../utils/utils"
+import { Layouter } from "./layout"
+import { LAYOUT_TYPES } from "./types"
 
-class VNodeAndBoundsAware {
+export class VNodeAndBoundsAware {
     vnode: VNode
     element: BoundsAware & SModelElement
 }
@@ -30,6 +33,7 @@ class VNodeAndBoundsInPageAware {
 export class BoundsGrabber implements VNodeDecorator {
 
     @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
+    @inject(LAYOUT_TYPES.Layouter) protected layouter : Layouter
 
     updateBounds: VNodeAndBoundsAware[] = []
     updateBoundsInPage: VNodeAndBoundsInPageAware[] = []
@@ -51,18 +55,14 @@ export class BoundsGrabber implements VNodeDecorator {
     }
 
     postUpdate() {
-        const resizes: ElementAndBounds[] = []
         const resizesInPage: ElementAndBounds[] = []
+        const element2bounds: Map<Bounds> = {}
         this.updateBounds.forEach(
             update => {
                 const vnode = update.vnode
                 const element = update.element
                 if (vnode.elm) {
-                    let newBounds = this.getBounds(vnode.elm, element)
-                    resizes.push({
-                        elementId: element.id,
-                        newBounds: newBounds,
-                    })
+                    element2bounds[element.id] =  this.getBounds(vnode.elm, element)
                 }
             }
         )
@@ -79,14 +79,20 @@ export class BoundsGrabber implements VNodeDecorator {
                 }
             }
         )
+        this.layouter.layout(this.updateBounds, element2bounds)
         this.updateBounds = []
         this.updateBoundsInPage = []
         if (resizesInPage.length > 0)
             this.actionDispatcher.dispatch(new SetBoundsInPageAction(resizesInPage))
-        if (resizes.length > 0) {
-            this.actionDispatcher.dispatch(new SetBoundsAction(resizes))
+        const resizes: ElementAndBounds[] = []
+        for (let key in element2bounds) {
+            resizes.push({
+                elementId: key,
+                newBounds: element2bounds[key]
+            })
         }
-
+        if(resizes.length > 0)
+            this.actionDispatcher.dispatch(new SetBoundsAction(resizes))
     }
 
     protected getBoundsInPage(elm: any) {

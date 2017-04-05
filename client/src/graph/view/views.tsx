@@ -1,7 +1,7 @@
 import * as snabbdom from "snabbdom-jsx"
 import { VNode } from "snabbdom/vnode"
 import { RenderingContext, View } from "../../base/view/views"
-import { SEdge, SGraph, SNode } from "../model/sgraph"
+import { SCompartment, SEdge, SGraph, SLabel, SNode } from "../model/sgraph"
 import { center, manhattanDistance, Point } from "../../utils/geometry"
 
 const JSX = {createElement: snabbdom.svg}
@@ -112,5 +112,20 @@ export class StraightEdgeView implements View {
 
     protected renderDanglingEdge(message: string, edge: SEdge, context: RenderingContext) {
         return <text key={edge.id} id={edge.id} class-dangling-edge={true} title={message}>?</text>
+    }
+}
+
+export class SLabelView implements View {
+    render(label: SLabel, context: RenderingContext): VNode {
+        return <text key={label.id} id={label.id} x={label.bounds.x} y={label.bounds.y} class-label={true}>{label.text}</text>
+    }
+}
+
+export class SCompartmentView implements View {
+    render(model: SCompartment, context: RenderingContext): VNode {
+        const translate = `translate(${model.bounds.x}, ${model.bounds.y})`
+        return <g key={model.id} id={model.id} transform={translate} class-comp="{true}">
+            {context.viewer.renderChildren(model, context)}
+        </g>
     }
 }

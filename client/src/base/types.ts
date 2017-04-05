@@ -1,4 +1,4 @@
-export let TYPES = {
+export const TYPES = {
     IActionDispatcher: Symbol('IActionDispatcher'),
     IActionDispatcherProvider: Symbol('IActionDispatcherProvider'),
     ActionHandlerRegistry: Symbol('ActionHandlerRegistry'),
