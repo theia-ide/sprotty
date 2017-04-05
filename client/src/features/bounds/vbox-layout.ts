@@ -21,7 +21,7 @@ export class VBoxLayouter implements Layout {
 
     layout(container: SParentElement & BoundsAware & Layouting,
            domElement: Node | undefined,
-           element2bounds: Map<Bounds>): void {
+           element2bounds: Map<Bounds>): Map<Bounds> {
         const properties = this.getLayoutProperties(domElement)
         const maxWidth = this.getMaxWidth(container, element2bounds)
         if (maxWidth > 0) {
@@ -33,6 +33,7 @@ export class VBoxLayouter implements Layout {
                 height: y - properties.lineHeight + properties.paddingBottom
             }
         }
+        return element2bounds
     }
 
     protected layoutChildren(container: SParentElement & BoundsAware & Layouting,

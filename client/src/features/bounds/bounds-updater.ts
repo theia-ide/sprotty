@@ -6,7 +6,7 @@ import { TYPES } from "../../base/types"
 import { IActionDispatcher } from "../../base/intent/action-dispatcher"
 import { Bounds, isEmpty } from "../../utils/geometry"
 import { ElementAndBounds, SetBoundsAction, SetBoundsInPageAction } from "./bounds-manipulation"
-import { BoundsAware, BoundsInPageAware, isBoundsInPageAware, isLayouting, isSizeable } from "./model"
+import { BoundsAware, BoundsInPageAware, isBoundsInPageAware, isSizeable } from "./model"
 import { Map } from "../../utils/utils"
 import { Layouter } from "./layout"
 import { LAYOUT_TYPES } from "./types"
@@ -56,9 +56,9 @@ export class BoundsUpdater implements VNodeDecorator {
     }
 
     postUpdate() {
-        const element2bounds = this.getBoundsFromDOM()
+        let element2bounds = this.getBoundsFromDOM()
         const resizesInPage = this.getResizesInPageFromDOM()
-        this.layouter.layout(this.updateBounds, element2bounds)
+        element2bounds = this.layouter.layout(this.updateBounds, element2bounds)
         this.updateBounds = []
         this.updateBoundsInPage = []
         if (resizesInPage.length > 0)

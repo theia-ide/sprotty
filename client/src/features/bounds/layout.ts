@@ -20,18 +20,19 @@ export class Layouter {
 
     @inject(LAYOUT_TYPES.LayoutRegistry) layoutRegistry: LayoutRegistry
 
-    layout(containers: VNodeAndBoundsAware[], element2bounds: Map<Bounds>): void {
+    layout(containers: VNodeAndBoundsAware[], element2bounds: Map<Bounds>): Map<Bounds> {
         containers.forEach(
             container => {
                 if (isLayouting(container.element)) {
                     const layout = this.layoutRegistry.get(container.element.layout)
                     if(layout)
-                        layout.layout(container.element, container.vnode.elm, element2bounds)
+                        element2bounds = layout.layout(container.element, container.vnode.elm, element2bounds)
                 }
             })
+        return element2bounds
     }
 }
 
 export interface Layout {
-    layout(container: Layouting & SParentElement, domElement: Node | undefined, element2bounds: Map<Bounds>): void
+    layout(container: Layouting & SParentElement, domElement: Node | undefined, element2bounds: Map<Bounds>): Map<Bounds>
 }
