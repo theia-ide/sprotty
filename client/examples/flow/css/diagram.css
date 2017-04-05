@@ -7,6 +7,14 @@
     fill: #c0e0fc;
 }
 
+.running {
+    fill: #f00;
+}
+
+.finished {
+    fill: #0f0;
+}
+
 .barrier {
     fill: #f4daa6;
 }
