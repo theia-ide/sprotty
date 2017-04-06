@@ -29,11 +29,12 @@
     "snabbdom-to-html": "^3.1.1",
     "ts-loader": "^2.0.0",
     "ts-node": "^2.1.0",
-    "typescript": "^2.2.1",
+    "typescript": "^2.2.2",
     "typings": "^2.1.0",
     "webpack": "^2.2.1"
   },
   "dependencies": {
+    "@types/core-js": "^0.9.41",
     "inversify": "^3.1.0",
     "inversify-logger-middleware": "^3.0.0",
     "snabbdom": "^0.6.4"
