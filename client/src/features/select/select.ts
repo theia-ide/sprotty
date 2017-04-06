@@ -114,7 +114,7 @@ export class SelectMouseListener extends MouseListener {
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
         if (event.button == 0) {
-            if (isSelectable(target)) {
+            if (isSelectable(target) || target instanceof SModelRoot) {
                 this.hasDragged = false
                 let deselectIds: string[] = []
                 // multi-selection?
@@ -125,17 +125,20 @@ export class SelectMouseListener extends MouseListener {
                         .filter(element => isSelectable(element) && element.selected)
                         .map(element => element.id)
                 }
-                if (!target.selected) {
-                    this.wasSelected = false
-                    return [new SelectAction([target.id], deselectIds)]
-                } else {
-
-                    if (isCtrlOrCmd(event)) {
+                if (isSelectable(target)) {
+                    if(!target.selected) {
                         this.wasSelected = false
-                        return [new SelectAction([], [target.id])]
+                        return [new SelectAction([target.id], deselectIds)]
                     } else {
-                        this.wasSelected = true
+                        if (isCtrlOrCmd(event) || target instanceof SModelRoot) {
+                            this.wasSelected = false
+                            return [new SelectAction([], [target.id])]
+                        } else {
+                            this.wasSelected = true
+                        }
                     }
+                } else {
+                    return [new SelectAction([], deselectIds)]
                 }
             }
         }
