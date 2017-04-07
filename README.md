@@ -1,4 +1,4 @@
-# sprotte
+# sprotty
 A next-gen web-based graphics framework.
 
 
