@@ -1,6 +1,7 @@
 {
 	"version": "0.2.0",
 	"configurations": [
+        
         {
             "type": "node",
             "request": "launch",
@@ -14,7 +15,8 @@
             ],
             "sourceMaps": true,
             "internalConsoleOptions": "openOnSessionStart",
-            "port": 9229
+            "port": 9229,
+            "cwd": "${workspaceRoot}"
         }
 	]
 }
