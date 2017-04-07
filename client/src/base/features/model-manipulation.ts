@@ -2,7 +2,6 @@ import { injectable } from "inversify"
 import { Action } from "../intent/actions"
 import { SModelRoot, SModelRootSchema } from "../model/smodel"
 import { AbstractCommand, CommandExecutionContext } from "../intent/commands"
-import { Map } from "../../utils/utils"
 
 export class SetModelAction implements Action {
     readonly kind = SetModelCommand.KIND
@@ -46,7 +45,7 @@ export class RequestModelAction implements Action {
     readonly kind = RequestModelAction.KIND
 
     constructor(public modelType?: string, public modelId?: string,
-            public readonly options?: Map<string>) {
+        public readonly options?: any) {
     }
 }
 

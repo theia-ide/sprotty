@@ -1,31 +1,31 @@
 import { injectable } from "inversify"
-import { Map } from "./utils"
 
 @injectable()
 export class ProviderRegistry<T, U> {
-    protected elements: Map<new(u: U) => T> = {}
+    protected elements: Map<string, new(u: U) => T> = new Map
 
     register(key: string, cstr: new (u: U) => T) {
         if (key === undefined)
             throw new Error('Key is undefined')
         if (this.hasKey(key))
             throw new Error('Key is already registered: ' + key)
-        this.elements[key] = cstr
+        this.elements.set(key, cstr)
     }
 
     deregister(key: string) {
         if (key === undefined)
             throw new Error('Key is undefined')
-        delete this.elements[key]
+        this.elements.delete(key)
     }
 
     hasKey(key: string): boolean {
-        return this.elements.hasOwnProperty(key)
+        return this.elements.has(key)
     }
-
+    
     get(key: string, arg: U): T {
-        if (this.hasKey(key))
-            return new this.elements[key](arg)
+        const existingCstr = this.elements.get(key)
+        if (existingCstr)
+            return new existingCstr(arg)
         else
             return this.missing(key, arg)
     }
@@ -37,29 +37,30 @@ export class ProviderRegistry<T, U> {
 
 @injectable()
 export class InstanceRegistry<T> {
-    protected elements: Map<T> = {}
+    protected elements: Map<string, T> = new Map
 
     register(key: string, instance: T) {
         if (key === undefined)
             throw new Error('Key is undefined')
         if (this.hasKey(key))
             throw new Error('Key is already registered: ' + key)
-        this.elements[key] = instance
+        this.elements.set(key, instance)
     }
 
     deregister(key: string) {
         if (key === undefined)
             throw new Error('Key is undefined')
-        delete this.elements[key]
+        this.elements.delete(key)
     }
 
     hasKey(key: string): boolean {
-        return this.elements.hasOwnProperty(key)
+        return this.elements.has(key)
     }
 
     get(key: string): T {
-        if (this.hasKey(key))
-            return this.elements[key]
+        const existingInstance = this.elements.get(key)
+        if (existingInstance)
+            return existingInstance
         else
             return this.missing(key)
     }
@@ -71,26 +72,28 @@ export class InstanceRegistry<T> {
 
 @injectable()
 export class MultiInstanceRegistry<T> {
-    protected elements: Map<T[]> = {}
+    protected elements: Map<string, T[]> = new Map
 
     register(key: string, instance: T) {
         if (key === undefined)
             throw new Error('Key is undefined')
-        if (this.elements.hasOwnProperty(key))
-            this.elements[key].push(instance)
+        const instances = this.elements.get(key)
+        if (instances !== undefined)
+            instances.push(instance)
         else
-            this.elements[key] = [instance]
+            this.elements.set(key, [instance])
     }
 
     deregisterAll(key: string) {
         if (key === undefined)
             throw new Error('Key is undefined')
-        delete this.elements[key]
+        this.elements.delete(key)
     }
 
     get(key: string): T[] {
-        if (this.elements.hasOwnProperty(key))
-            return this.elements[key]
+        const existingInstances = this.elements.get(key) 
+        if (existingInstances !== undefined)
+            return existingInstances
         else
             return []
     }

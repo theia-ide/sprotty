@@ -1,11 +1,10 @@
 import { InstanceRegistry } from "../../utils/registry"
-import { SParentElement } from "../../base/model/smodel"
+import { SParentElement, SModelElement } from "../../base/model/smodel"
 import { isLayouting, Layouting } from "./model"
 import { Bounds } from "../../utils/geometry"
-import { Map } from "../../utils/utils"
 import { inject, injectable } from "inversify"
 import { LAYOUT_TYPES } from "./types"
-import { VNodeAndBoundsAware } from "./bounds-updater"
+import { BoundsData } from "./bounds-updater"
 import { VBoxLayouter } from "./vbox-layout"
 
 export class LayoutRegistry extends InstanceRegistry<Layout> {
@@ -20,19 +19,18 @@ export class Layouter {
 
     @inject(LAYOUT_TYPES.LayoutRegistry) layoutRegistry: LayoutRegistry
 
-    layout(containers: VNodeAndBoundsAware[], element2bounds: Map<Bounds>): Map<Bounds> {
-        containers.forEach(
-            container => {
-                if (isLayouting(container.element)) {
-                    const layout = this.layoutRegistry.get(container.element.layout)
+    layout(element2boundsData: Map<SModelElement​​, BoundsData>) {
+        element2boundsData.forEach(
+            (boundsData, element) => {
+                if (isLayouting(element)) {
+                    const layout = this.layoutRegistry.get(element.layout)
                     if(layout)
-                        element2bounds = layout.layout(container.element, container.vnode.elm, element2bounds)
+                        layout.layout(element, element2boundsData)
                 }
             })
-        return element2bounds
     }
 }
 
 export interface Layout {
-    layout(container: Layouting & SParentElement, domElement: Node | undefined, element2bounds: Map<Bounds>): Map<Bounds>
+    layout(container: Layouting & SParentElement, element2boundsData: Map<SModelElement, BoundsData>): void
 }

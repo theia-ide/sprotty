@@ -1,7 +1,6 @@
 import * as snabbdom from "snabbdom-jsx"
 import { VNode } from "snabbdom/vnode"
 import { Point } from "../../utils/geometry"
-import { Map } from "../../utils/utils"
 import { getParent, SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
 import { AbstractCommand, Command, CommandExecutionContext } from "../../base/intent/commands"
@@ -38,7 +37,7 @@ export type ResolvedElementMove = {
 export class MoveCommand extends AbstractCommand {
     static readonly KIND = 'move'
 
-    resolvedMoves: Map<ResolvedElementMove> = {}
+    resolvedMoves: Map<string, ResolvedElementMove> = new Map
 
     constructor(protected action: MoveAction) {
         super()
@@ -49,7 +48,7 @@ export class MoveCommand extends AbstractCommand {
             move => {
                 const resolvedMove = this.resolve(move, model.index)
                 if (resolvedMove) {
-                    this.resolvedMoves[resolvedMove.elementId] = resolvedMove
+                    this.resolvedMoves.set(resolvedMove.elementId, resolvedMove)
                     if (!this.action.animate) {
                         resolvedMove.element.position = move.toPosition
                     }
@@ -88,13 +87,13 @@ export class MoveCommand extends AbstractCommand {
         if (!this.action.animate && command instanceof MoveCommand) {
             command.action.moves.forEach(
                 otherMove => {
-                    const existingMove = this.resolvedMoves[otherMove.elementId]
+                    const existingMove = this.resolvedMoves.get(otherMove.elementId)
                     if (existingMove) {
                         existingMove.toPosition = otherMove.toPosition
                     } else {
                         const resolvedMove = this.resolve(otherMove, context.root.index)
                         if (resolvedMove)
-                            this.resolvedMoves[resolvedMove.elementId] = resolvedMove
+                            this.resolvedMoves.set(resolvedMove.elementId, resolvedMove)
                     }
                 }
             )
@@ -106,27 +105,28 @@ export class MoveCommand extends AbstractCommand {
 
 export class MoveAnimation extends Animation {
 
-    constructor(protected elementMoves: Map<ResolvedElementMove>,
+    constructor(protected elementMoves: Map<string, ResolvedElementMove>,
                 protected reverse: boolean,
                 context: CommandExecutionContext) {
         super(context)
     }
 
     tween(t: number) {
-        for (let elementId in this.elementMoves) {
-            const elementMove = this.elementMoves[elementId]
-            if (this.reverse) {
-                elementMove.element.position = {
-                    x: (1 - t) * elementMove.toPosition.x + t * elementMove.fromPosition.x,
-                    y: (1 - t) * elementMove.toPosition.y + t * elementMove.fromPosition.y
-                }
-            } else {
-                elementMove.element.position = {
-                    x: (1 - t) * elementMove.fromPosition.x + t * elementMove.toPosition.x,
-                    y: (1 - t) * elementMove.fromPosition.y + t * elementMove.toPosition.y
+        this.elementMoves.forEach(
+            (elementMove) => {
+                if (this.reverse) {
+                    elementMove.element.position = {
+                        x: (1 - t) * elementMove.toPosition.x + t * elementMove.fromPosition.x,
+                        y: (1 - t) * elementMove.toPosition.y + t * elementMove.fromPosition.y
+                    }
+                } else {
+                    elementMove.element.position = {
+                        x: (1 - t) * elementMove.fromPosition.x + t * elementMove.toPosition.x,
+                        y: (1 - t) * elementMove.fromPosition.y + t * elementMove.toPosition.y
+                    }
                 }
             }
-        }
+        )
         return this.context.root
     }
 }

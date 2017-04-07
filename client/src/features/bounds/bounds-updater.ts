@@ -4,21 +4,16 @@ import { SModelElement } from "../../base/model/smodel"
 import { VNodeDecorator } from "../../base/view/vnode-decorators"
 import { TYPES } from "../../base/types"
 import { IActionDispatcher } from "../../base/intent/action-dispatcher"
-import { Bounds, isEmpty } from "../../utils/geometry"
+import { Bounds, isEmpty, EMPTY_BOUNDS } from '../../utils/geometry';
 import { ElementAndBounds, SetBoundsAction, SetBoundsInPageAction } from "./bounds-manipulation"
 import { BoundsAware, BoundsInPageAware, isBoundsInPageAware, isSizeable } from "./model"
-import { Map } from "../../utils/utils"
 import { Layouter } from "./layout"
 import { LAYOUT_TYPES } from "./types"
 
-export class VNodeAndBoundsAware {
-    vnode: VNode
-    element: BoundsAware & SModelElement
-}
-
-class VNodeAndBoundsInPageAware {
-    vnode: VNode
-    element: BoundsInPageAware & SModelElement
+export class BoundsData {
+    vnode?: VNode
+    bounds?: Bounds
+    boundsInPage?: Bounds
 }
 
 /**
@@ -36,74 +31,75 @@ export class BoundsUpdater implements VNodeDecorator {
     @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
     @inject(LAYOUT_TYPES.Layouter) protected layouter : Layouter
 
-    updateBounds: VNodeAndBoundsAware[] = []
-    updateBoundsInPage: VNodeAndBoundsInPageAware[] = []
+    element2boundsData: Map<SModelElement, BoundsData> = new Map
 
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (isSizeable(element) && isEmpty(element.bounds)) {
-            this.updateBounds.push({
+            this.element2boundsData.set(element, {
                 vnode: vnode,
-                element: element
+                bounds: EMPTY_BOUNDS,
             })
         }
         if(isBoundsInPageAware(element) && isEmpty(element.boundsInPage)) {
-            this.updateBoundsInPage.push({
+            this.element2boundsData.set(element, {
                 vnode: vnode,
-                element: element
+                boundsInPage: EMPTY_BOUNDS
             })
         }
         return vnode
     }
 
     postUpdate() {
-        let element2bounds = this.getBoundsFromDOM()
-        const resizesInPage = this.getResizesInPageFromDOM()
-        element2bounds = this.layouter.layout(this.updateBounds, element2bounds)
-        this.updateBounds = []
-        this.updateBoundsInPage = []
-        if (resizesInPage.length > 0)
-            this.actionDispatcher.dispatch(new SetBoundsInPageAction(resizesInPage))
-        const resizes: ElementAndBounds[] = []
-        for (let key in element2bounds) {
-            resizes.push({
-                elementId: key,
-                newBounds: element2bounds[key]
+        this.getBoundsFromDOM()
+        this.getResizesInPageFromDOM()
+        this.layouter.layout(this.element2boundsData)
+        const resizesInPage : ElementAndBounds[] = []
+        const resizes : ElementAndBounds[] = []
+        this.element2boundsData.forEach(
+            (boundsData, element) => {
+                if(boundsData.boundsInPage) 
+                    resizesInPage.push({
+                        elementId: element.id,
+                        newBounds: boundsData.boundsInPage
+                    })
+                if(boundsData.bounds)
+                    resizes.push({
+                        elementId: element.id,
+                        newBounds: boundsData.bounds
+                    })
             })
-        }
+        this.element2boundsData.clear()
+        if(resizesInPage.length > 0)
+            this.actionDispatcher.dispatch(new SetBoundsInPageAction(resizesInPage))
         if(resizes.length > 0)
             this.actionDispatcher.dispatch(new SetBoundsAction(resizes))
     }
 
-    protected getResizesInPageFromDOM(): ElementAndBounds[] {
-        const resizesInPage: ElementAndBounds[] = []
-        this.updateBoundsInPage.forEach(
-            update => {
-                const vnode = update.vnode
-                const element = update.element
-                if (vnode.elm) {
-                    let newBoundsInPage = this.getBoundsInPage(vnode.elm)
-                    resizesInPage.push({
-                        elementId: element.id,
-                        newBounds: newBoundsInPage
-                    })
+    protected getResizesInPageFromDOM() {
+        this.element2boundsData.forEach(
+            (boundsData, element) => {
+                if(boundsData.boundsInPage && isBoundsInPageAware(element)) {
+                    const vnode = boundsData.vnode
+                    if (vnode && vnode.elm) {
+                        let newBoundsInPage = this.getBoundsInPage(vnode.elm)
+                        boundsData.boundsInPage= newBoundsInPage
+                    }
                 }
             }
         )
-        return resizesInPage
     }
 
-    protected getBoundsFromDOM(): Map<Bounds> {
-        const element2bounds: Map<Bounds> = {}
-        this.updateBounds.forEach(
-            update => {
-                const vnode = update.vnode
-                const element = update.element
-                if (vnode.elm) {
-                    element2bounds[element.id] = this.getBounds(vnode.elm, element)
+    protected getBoundsFromDOM() {
+        this.element2boundsData.forEach(
+            (boundsData, element) => {
+                if(boundsData.bounds && isSizeable(element)) {
+                    const vnode = boundsData.vnode
+                    if (vnode && vnode.elm) {
+                        boundsData.bounds = this.getBounds(vnode.elm, element)
+                    }
                 }
             }
         )
-        return element2bounds
     }
 
     protected getBoundsInPage(elm: any) {

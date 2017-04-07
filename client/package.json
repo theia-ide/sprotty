@@ -34,7 +34,6 @@
     "webpack": "^2.2.1"
   },
   "dependencies": {
-    "@types/core-js": "^0.9.41",
     "inversify": "^3.1.0",
     "inversify-logger-middleware": "^3.0.0",
     "snabbdom": "^0.6.4"

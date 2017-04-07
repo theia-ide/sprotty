@@ -1,4 +1,3 @@
-import { Map } from "../../utils/utils"
 
 export interface SModelElementSchema {
     type: string
@@ -105,33 +104,33 @@ export class SModelRoot extends SParentElement implements SModelRootSchema {
  */
 export class SModelIndex {
 
-    private id2element: Map<SModelElement> = {}
+    private id2element: Map<string, SModelElement> = new Map
 
     add(element: SModelElement): void {
-        this.id2element[element.id] = element
+        this.id2element.set(element.id, element)
     }
 
     remove(element: SModelElement): void {
-        delete this.id2element[element.id]
+        this.id2element.delete(element.id)
     }
 
     contains(element: SModelElement): boolean {
-        return this.id2element[element.id] !== undefined
+        return this.id2element.get(element.id) !== undefined
     }
 
     removeById(elementId: string): void {
-        delete this.id2element[elementId]
+        this.id2element.delete(elementId)
     }
 
     getById(id: string): SModelElement | undefined {
-        return this.id2element[id]
+        return this.id2element.get(id)
     }
 
     all(): SModelElement[] {
         const all: SModelElement[] = []
-        for (let key in this.id2element) {
-            all.push(this.id2element[key])
-        }
+        this.id2element.forEach(
+            element => all.push(element)
+        )
         return all
     }
 }

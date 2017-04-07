@@ -37,7 +37,7 @@ export function center(b: Bounds): Point {
 }
 
 export function isEmpty(b: Bounds) {
-    return b.width < 0 || b.height < 0
+    return b.width <= 0 || b.height <= 0
 }
 
 export interface Insets {

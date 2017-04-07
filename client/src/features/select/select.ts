@@ -125,12 +125,12 @@ export class SelectMouseListener extends MouseListener {
                         .filter(element => isSelectable(element) && element.selected)
                         .map(element => element.id)
                 }
-                if (isSelectable(target)) {
+                if (isSelectable(target)) {
                     if(!target.selected) {
                         this.wasSelected = false
                         return [new SelectAction([target.id], deselectIds)]
                     } else {
-                        if (isCtrlOrCmd(event) || target instanceof SModelRoot) {
+                        if (isCtrlOrCmd(event)) {
                             this.wasSelected = false
                             return [new SelectAction([], [target.id])]
                         } else {
