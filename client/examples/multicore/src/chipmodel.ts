@@ -1,12 +1,11 @@
-import { SChildElement, SModelElementSchema } from "../../../src/base"
+import { SChildElement, SModelElementSchema, SModelRootSchema } from "../../../src/base"
 import { Bounds, Direction, EMPTY_BOUNDS } from "../../../src/utils"
 import { BoundsAware, boundsFeature, Selectable, selectFeature, viewportFeature } from "../../../src/features"
 import { ViewportRootElement } from "../../../src/features/viewport/viewport-root"
 
-export interface ProcessorSchema extends SModelElementSchema {
+export interface ProcessorSchema extends SModelRootSchema {
     rows: number
     columns: number
-    children: SModelElementSchema[]
 }
 
 export class Processor extends ViewportRootElement implements ProcessorSchema {

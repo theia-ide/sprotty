@@ -28,7 +28,6 @@ export function setupFlow(websocket: WebSocket) {
     actionHandlerRegistry.registerServerMessage(SelectCommand.KIND)
     actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
     actionHandlerRegistry.registerServerMessage(SetBoundsCommand.KIND)
-    actionHandlerRegistry.registerTranslator(UpdateModelAction.KIND, update => requestModel())
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)

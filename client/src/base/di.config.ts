@@ -10,7 +10,7 @@ import { FocusFixDecorator } from "./view/vnode-decorators"
 import { ActionHandlerRegistry } from "./intent/actions"
 import { ViewRegistry } from "./view/views"
 import { SModelFactory } from "./model/smodel-factory"
-import { SetModelCommand } from "./features/model-manipulation"
+import { SetModelCommand, UpdateModelCommand } from "./features/model-manipulation"
 import { TYPES } from "./types"
 import { ViewerCache } from "./view/viewer-cache"
 import { AnimationFrameSyncer } from "./animations/animation-frame-syncer"
@@ -71,6 +71,7 @@ let defaultContainerModule = new ContainerModule(bind => {
 
     // Default commands
     bind(TYPES.ICommand).toConstructor(SetModelCommand)
+    bind(TYPES.ICommand).toConstructor(UpdateModelCommand)
 })
 
 export default defaultContainerModule

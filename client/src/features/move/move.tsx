@@ -17,17 +17,17 @@ export class MoveAction implements Action {
     kind = MoveCommand.KIND
 
     constructor(public readonly moves: ElementMove[],
-                public readonly animate: boolean) {
+                public readonly animate: boolean = true) {
     }
 }
 
-export type ElementMove = {
+export interface ElementMove {
     fromPosition?: Point
     elementId: string
     toPosition: Point
 }
 
-export type ResolvedElementMove = {
+export interface ResolvedElementMove {
     fromPosition: Point
     elementId: string
     element: SModelElement & Locateable
@@ -56,7 +56,7 @@ export class MoveCommand extends AbstractCommand {
             }
         )
         if (this.action.animate)
-            return new MoveAnimation(model, this.resolvedMoves, false, context).start()
+            return new MoveAnimation(model, this.resolvedMoves, context, false).start()
         else
             return model
     }
@@ -64,7 +64,7 @@ export class MoveCommand extends AbstractCommand {
     protected resolve(move: ElementMove, index: SModelIndex): ResolvedElementMove | undefined {
         const element = index.getById(move.elementId) as (SModelElement & Locateable)
         if (element) {
-            const fromPosition = move.fromPosition || element.position
+            const fromPosition = move.fromPosition || { x: element.position.x, y: element.position.y }
             return {
                 fromPosition: fromPosition,
                 elementId: move.elementId,
@@ -76,11 +76,11 @@ export class MoveCommand extends AbstractCommand {
     }
 
     undo(model: SModelRoot, context: CommandExecutionContext) {
-        return new MoveAnimation(model, this.resolvedMoves, true, context).start()
+        return new MoveAnimation(model, this.resolvedMoves, context, true).start()
     }
 
     redo(model: SModelRoot, context: CommandExecutionContext) {
-        return new MoveAnimation(model, this.resolvedMoves, false, context).start()
+        return new MoveAnimation(model, this.resolvedMoves, context, false).start()
     }
 
     merge(command: Command, context: CommandExecutionContext) {
@@ -107,8 +107,8 @@ export class MoveAnimation extends Animation {
 
     constructor(protected model: SModelRoot,
                 protected elementMoves: Map<string, ResolvedElementMove>,
-                protected reverse: boolean,
-                context: CommandExecutionContext) {
+                context: CommandExecutionContext,
+                protected reverse: boolean = false) {
         super(context)
     }
 

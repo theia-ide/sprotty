@@ -7,11 +7,7 @@ import { BarrierNode, BarrierNodeSchema, TaskNode, TaskNodeSchema } from "./flow
 export class FlowModelFactory extends SGraphFactory {
 
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
-        if (schema instanceof SChildElement) {
-            if (parent !== undefined)
-                schema.parent = parent
-            return schema
-        } else if (this.isTaskNodeSchema(schema))
+        if (this.isTaskNodeSchema(schema))
             return this.initializeChild(new TaskNode(), schema, parent)
         else if (this.isBarrierNodeSchema(schema))
             return this.initializeChild(new BarrierNode(), schema, parent)
@@ -20,9 +16,7 @@ export class FlowModelFactory extends SGraphFactory {
     }
 
     createRoot(schema: SModelRootSchema): SModelRoot {
-        if (schema instanceof SModelRoot)
-            return schema
-        else if (this.isFlowSchema(schema))
+        if (this.isFlowSchema(schema))
             return this.initializeRoot(new SGraph(), schema)
         else
             return super.createRoot(schema)

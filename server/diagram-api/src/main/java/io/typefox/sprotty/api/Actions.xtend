@@ -63,9 +63,9 @@ class ElementAndBounds {
 class SetModelAction implements Action {
 	public static val KIND = 'setModel'
 	String kind = KIND
-	SModelRoot newRoot
 	String modelType
 	String modelId
+	SModelRoot newRoot
 	
 	new() {}
 	new(Consumer<SetModelAction> initializer) {
@@ -92,6 +92,7 @@ class UpdateModelAction implements Action {
 	String kind = KIND
 	String modelType
 	String modelId
+	SModelRoot newRoot
 	
 	new() {}
 	new(Consumer<UpdateModelAction> initializer) {

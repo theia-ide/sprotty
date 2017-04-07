@@ -72,12 +72,12 @@ export class ViewportAnimation extends Animation {
         this.zoomFactor = Math.log(newViewport.zoom / oldViewport.zoom)
     }
 
-    tween(t: number) {
+    tween(t: number, context: CommandExecutionContext): SModelRoot {
         this.element.scroll = {
             x: (1 - t) * this.oldViewport.scroll.x + t * this.newViewport.scroll.x,
             y: (1 - t) * this.oldViewport.scroll.y + t * this.newViewport.scroll.y
         }
         this.element.zoom = this.oldViewport.zoom * Math.exp(t * this.zoomFactor)
-        return this.context.root
+        return context.root
     }
 }

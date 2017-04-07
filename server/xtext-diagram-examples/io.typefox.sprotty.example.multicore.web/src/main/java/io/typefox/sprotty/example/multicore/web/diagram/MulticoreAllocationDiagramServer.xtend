@@ -50,6 +50,7 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 					action = new UpdateModelAction => [
 						modelType = root.type
 						modelId = root.id
+						newRoot = root
 					]
 				])
 			}
@@ -112,10 +113,10 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 				layout(graph)
 				remoteEndpoint?.accept(new ActionMessage [
 					clientId = message.clientId
-					action = new SetModelAction [
-						newRoot = graph
+					action = new UpdateModelAction [
 						modelType = graph.type
 						modelId = graph.id
+						newRoot = graph
 					]
 				])
 			} else {

@@ -11,24 +11,18 @@ import { Direction } from "../../../src/utils"
 export class ChipModelFactory extends SModelFactory {
 
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
-        if (schema instanceof SChildElement) {
-            if (parent !== undefined)
-                schema.parent = parent
-            return schema
-        } else {
-            try {
-                if (this.isCoreSchema(schema)) {
-                    this.validate(schema, parent)
-                    return this.initializeChild(new Core(), schema, parent)
-                } else if (this.isChannelSchema(schema)) {
-                    this.validate(schema, parent)
-                    return this.initializeChild(new Channel(), schema, parent)
-                } else if (this.isCrossbarSchema(schema)) {
-                    return this.initializeChild(new Crossbar(), schema, parent)
-                }
-            } catch (e) {
-                console.error(e.message)
+        try {
+            if (this.isCoreSchema(schema)) {
+                this.validate(schema, parent)
+                return this.initializeChild(new Core(), schema, parent)
+            } else if (this.isChannelSchema(schema)) {
+                this.validate(schema, parent)
+                return this.initializeChild(new Channel(), schema, parent)
+            } else if (this.isCrossbarSchema(schema)) {
+                return this.initializeChild(new Crossbar(), schema, parent)
             }
+        } catch (e) {
+            console.error(e.message)
         }
         return super.createElement(schema, parent)
     }

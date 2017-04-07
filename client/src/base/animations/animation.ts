@@ -53,3 +53,21 @@ export abstract class Animation {
      */
     abstract tween(t: number, context: CommandExecutionContext): SModelRoot
 }
+
+export class CompoundAnimation extends Animation {
+
+    private readonly components: Animation[] = []
+
+    include(animation: Animation): this {
+        this.components.push(animation)
+        return this
+    }
+
+    tween(t: number, context: CommandExecutionContext): SModelRoot {
+        for (const a of this.components) {
+            a.tween(t, context)
+        }
+        return context.root
+    }
+
+}

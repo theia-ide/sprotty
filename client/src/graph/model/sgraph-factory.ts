@@ -12,11 +12,7 @@ import {
 export class SGraphFactory extends SModelFactory {
 
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
-        if (schema instanceof SChildElement) {
-            if (parent !== undefined)
-                schema.parent = parent
-            return schema
-        } else if (this.isNodeSchema(schema))
+        if (this.isNodeSchema(schema))
             return this.initializeChild(new SNode(), schema, parent)
         else if (this.isEdgeSchema(schema))
             return this.initializeChild(new SEdge(), schema, parent)
@@ -29,9 +25,7 @@ export class SGraphFactory extends SModelFactory {
     }
 
     createRoot(schema: SModelRootSchema): SModelRoot {
-        if (schema instanceof SModelRoot)
-            return schema
-        else if (this.isGraphSchema(schema))
+        if (this.isGraphSchema(schema))
             return this.initializeRoot(new SGraph(), schema)
         else
             return super.createRoot(schema)

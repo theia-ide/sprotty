@@ -4,6 +4,7 @@ import { ViewportRootElement } from "../../features/viewport/viewport-root"
 import { Selectable, selectFeature } from "../../features/select/model"
 import { Locateable, moveFeature } from "../../features/move/model"
 import { BoundsAware, boundsFeature, layoutFeature, Layouting } from "../../features/bounds/model"
+import { Fadeable, fadeFeature } from "../../features/fade/model"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
@@ -26,7 +27,7 @@ export interface SNodeSchema extends SParentElementSchema {
     revalidateBounds?: boolean
 }
 
-export class SNode extends SChildElement implements SNodeSchema, Selectable, BoundsAware, Locateable {
+export class SNode extends SChildElement implements SNodeSchema, Selectable, BoundsAware, Locateable, Fadeable {
     x: number = 0
     y: number = 0
     width: number = -1
@@ -35,6 +36,7 @@ export class SNode extends SChildElement implements SNodeSchema, Selectable, Bou
     children: SCompartmentElement[]
     layout?: string
     selected: boolean = false
+    alpha: number = 1
 
     get bounds(): Bounds {
         return {x: this.x, y: this.y, width: this.width, height: this.height}
@@ -57,7 +59,8 @@ export class SNode extends SChildElement implements SNodeSchema, Selectable, Bou
     }
 
     hasFeature(feature: symbol): boolean {
-        return feature === selectFeature || feature === moveFeature || feature === boundsFeature || feature ===layoutFeature
+        return feature === selectFeature || feature === moveFeature || feature === boundsFeature
+            || feature === layoutFeature || feature === fadeFeature
     }
 }
 
@@ -67,10 +70,11 @@ export interface SEdgeSchema extends SModelElementSchema {
     routingPoints?: Point[]
 }
 
-export class SEdge extends SChildElement implements SEdgeSchema {
+export class SEdge extends SChildElement implements SEdgeSchema, Fadeable {
     sourceId: string
     targetId: string
     routingPoints: Point[] = []
+    alpha: number = 1
 
     get source(): SNode | undefined {
         return this.index.getById(this.sourceId) as SNode
@@ -78,6 +82,10 @@ export class SEdge extends SChildElement implements SEdgeSchema {
 
     get target(): SNode | undefined {
         return this.index.getById(this.targetId) as SNode
+    }
+
+    hasFeature(feature: symbol): boolean {
+        return feature === fadeFeature
     }
 }
 

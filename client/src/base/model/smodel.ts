@@ -60,6 +60,7 @@ export class SParentElement extends SModelElement implements SParentElementSchem
             throw "No such child " + child
         }
         this.children.splice(i, 1)
+        delete child.parent
         this.index.remove(child)
     }
 

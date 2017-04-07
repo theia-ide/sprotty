@@ -10,29 +10,25 @@ export interface IModelFactory {
     createRoot(schema: SModelRootSchema): SModelRoot
 }
 
+export const RESERVED_MODEL_PROPERTIES = ['children', 'index', 'root', 'parent']
+
 @injectable()
 export class SModelFactory implements IModelFactory {
 
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
-        if (schema instanceof SChildElement) {
-            if (parent !== undefined)
-                schema.parent = parent
-            return schema
-        } else
-            return this.initializeChild(new SChildElement(), schema, parent)
+        return this.initializeChild(new SChildElement(), schema, parent)
     }
 
     createRoot(schema: SModelRootSchema): SModelRoot {
-        if (schema instanceof SModelRoot)
-            return schema
-        else
-            return this.initializeRoot(new SModelRoot(), schema)
+        return this.initializeRoot(new SModelRoot(), schema)
     }
 
     protected initializeElement(elem: SModelElement, schema: SModelElementSchema): SModelElement {
         for (let key in schema) {
-            if (key != 'children' && key != 'index' && key in schema) {
-                (elem as any)[key] = (schema as any)[key]
+            if (RESERVED_MODEL_PROPERTIES.indexOf(key) < 0 && key in schema) {
+                const value: any = (schema as any)[key]
+                if (typeof value != 'function')
+                    (elem as any)[key] = value
             }
         }
         return elem

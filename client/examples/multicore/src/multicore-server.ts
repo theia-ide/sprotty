@@ -27,7 +27,6 @@ export function setupMulticore(websocket: WebSocket) {
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
     actionHandlerRegistry.registerServerMessage(SelectCommand.KIND)
     actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
-    actionHandlerRegistry.registerTranslator(UpdateModelAction.KIND, update => requestModel())
     actionHandlerRegistry.registerTranslator(SetBoundsCommand.KIND, update => new FitToScreenAction([]))
 
     // Register views
