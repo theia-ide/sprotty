@@ -7,6 +7,8 @@ import { BoundsAware, boundsFeature, layoutFeature, Layouting } from "../../feat
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
+    bounds?: Bounds
+    revalidateBounds?: boolean
     scroll: Point
     zoom: number
 }
@@ -21,6 +23,7 @@ export interface SNodeSchema extends SParentElementSchema {
     height?: number
     children?: SGraphElementSchema[]
     layout?: string
+    revalidateBounds?: boolean
 }
 
 export class SNode extends SChildElement implements SNodeSchema, Selectable, BoundsAware, Locateable {
@@ -28,6 +31,7 @@ export class SNode extends SChildElement implements SNodeSchema, Selectable, Bou
     y: number = 0
     width: number = -1
     height: number = -1
+    revalidateBounds: boolean = true
     children: SCompartmentElement[]
     layout?: string
     selected: boolean = false
@@ -85,9 +89,12 @@ export type SCompartmentElement = SCompartment | SLabel
 export interface SLabelSchema extends SModelElementSchema {
     text: string
     selected?: boolean
+    revalidateBounds?: boolean
+    bounds?: Bounds
 }
 
 export class SLabel extends SChildElement implements SLabelSchema, BoundsAware, Selectable {
+    revalidateBounds: boolean = true
     bounds: Bounds = EMPTY_BOUNDS
     text: string
     selected: boolean = false
@@ -101,11 +108,14 @@ export interface SCompartmentSchema extends SModelElementSchema {
     children: SCompartmentElementSchema[]
     layout?: string
     spacing?: number
+    bounds?: Bounds
+    revalidateBounds?: boolean
 }
 
 export class SCompartment extends SChildElement implements SCompartmentSchema, BoundsAware, Layouting {
     children: SCompartmentElement[]
     layout: string
+    revalidateBounds: boolean = true
     bounds: Bounds = EMPTY_BOUNDS
 
     hasFeature(feature: symbol) {

@@ -5,6 +5,7 @@ import { Viewport, viewportFeature } from "./model"
 
 export class ViewportRootElement extends SModelRoot implements BoundsAware, BoundsInPageAware, Viewport {
     bounds: Bounds = EMPTY_BOUNDS
+    revalidateBounds: boolean = true
     boundsInPage: Bounds = EMPTY_BOUNDS
 
     scroll: Point = { x:0, y:0 }

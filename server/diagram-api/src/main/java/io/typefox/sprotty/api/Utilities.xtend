@@ -43,3 +43,12 @@ class Bounds {
 		this.height = height
 	}
 }
+
+
+interface BoundsAware {
+	def Bounds getBounds()
+	def void setBounds(Bounds bounds)
+	
+	def Boolean getRevalidateBounds()
+	def void setRevalidateBounds(Boolean revalidateBounds)
+}

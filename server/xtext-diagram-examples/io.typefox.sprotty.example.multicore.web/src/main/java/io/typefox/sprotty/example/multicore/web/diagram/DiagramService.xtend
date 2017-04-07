@@ -17,6 +17,8 @@ import org.eclipse.xtext.web.server.model.IXtextWebDocument
 import org.eclipse.xtext.web.server.model.XtextWebDocument
 
 import static extension org.eclipse.xtext.EcoreUtil2.*
+import io.typefox.sprotty.api.SGraph
+import io.typefox.sprotty.layout.LayoutUtil
 
 @Singleton
 class DiagramService extends AbstractCachedService<ModelProvider> implements HttpSessionListener {
@@ -52,6 +54,9 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 		modelProvider.putModel(doc.resourceId, processorView)
 		cancelIndicator.checkCanceled
 		val flowView = diagramGenerator.generateFlowView(program, selection, cancelIndicator)
+		val oldFlowView = modelProvider.getModel(doc.resourceId, flowView.type) 
+		if(oldFlowView instanceof SGraph) 
+			LayoutUtil.copyLayoutData(oldFlowView, flowView)
 		modelProvider.putModel(doc.resourceId, flowView)
 		cancelIndicator.checkCanceled
 		val filteredServers = synchronized (diagramServers) {

@@ -1,3 +1,4 @@
+import { BoundsAware, BoundsInPageAware, isBoundsAware, isBoundsInPageAware } from './model';
 import { Bounds } from "../../utils/geometry"
 import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
@@ -23,16 +24,23 @@ export type ElementAndBounds = {
 }
 
 type ResolvedElementAndBounds = {
-    element: SModelElement
+    element: SModelElement & BoundsAware
     oldBounds: Bounds
     newBounds: Bounds
 }
 
-abstract class AbstractSetBoundsCommand extends AbstractCommand {
+type ResolvedElementAndBoundsInPage = {
+    element: SModelElement & BoundsInPageAware
+    oldBounds: Bounds
+    newBounds: Bounds
+}
+
+export class SetBoundsCommand extends AbstractCommand {
+    static readonly KIND: string  = 'setBounds'
 
     protected resizes: ResolvedElementAndBounds[] = []
-
-    constructor(protected action: SetBoundsAction, protected boundsProperty: string) {
+    
+    constructor(protected action: SetBoundsAction) {
         super()
     }
 
@@ -40,10 +48,10 @@ abstract class AbstractSetBoundsCommand extends AbstractCommand {
         this.action.resizes.forEach(
             resize => {
                 const element = root.index.getById(resize.elementId)
-                if (element && this.boundsProperty in element) {
+                if (element && isBoundsAware(element)) {
                     this.resizes.push({
                         element: element,
-                        oldBounds: (element as any)[this.boundsProperty],
+                        oldBounds: element.bounds,
                         newBounds: resize.newBounds,
                     })
                 }
@@ -54,14 +62,20 @@ abstract class AbstractSetBoundsCommand extends AbstractCommand {
 
     undo(root: SModelRoot, context: CommandExecutionContext) {
         this.resizes.forEach(
-            resize => (resize.element as any)[this.boundsProperty] = resize.oldBounds
+            resize => {
+                resize.element.bounds = resize.oldBounds
+                resize.element.revalidateBounds = true
+            }
         )
         return root
     }
 
     redo(root: SModelRoot, context: CommandExecutionContext) {
         this.resizes.forEach(
-            resize => (resize.element as any)[this.boundsProperty] = resize.newBounds
+            resize => {
+                resize.element.bounds = resize.newBounds
+                resize.element.revalidateBounds = false
+            }
         )
         return root
     }
@@ -71,18 +85,46 @@ abstract class AbstractSetBoundsCommand extends AbstractCommand {
     }
 }
 
-export class SetBoundsCommand extends AbstractSetBoundsCommand {
-    static readonly KIND: string  = 'setBounds'
-
-    constructor(action: SetBoundsAction) {
-        super(action, 'bounds')
-    }
-}
-
-export class SetBoundsInPageCommand extends AbstractSetBoundsCommand {
+export class SetBoundsInPageCommand extends AbstractCommand {
     static readonly KIND: string  = 'setBoundsInPage'
 
-    constructor(action: SetBoundsInPageAction) {
-        super(action, 'boundsInPage')
+    protected resizes: ResolvedElementAndBoundsInPage[] = []
+    
+    constructor(protected action: SetBoundsInPageAction) {
+        super()
+    }
+
+        execute(root: SModelRoot, context: CommandExecutionContext) {
+        this.action.resizes.forEach(
+            resize => {
+                const element = root.index.getById(resize.elementId)
+                if (element && isBoundsInPageAware(element)) {
+                    this.resizes.push({
+                        element: element,
+                        oldBounds: element.boundsInPage,
+                        newBounds: resize.newBounds,
+                    })
+                }
+            }
+        )
+        return this.redo(root, context)
+    }
+
+    undo(root: SModelRoot, context: CommandExecutionContext) {
+        this.resizes.forEach(
+            resize => resize.element.boundsInPage = resize.oldBounds
+        )
+        return root
+    }
+
+    redo(root: SModelRoot, context: CommandExecutionContext) {
+        this.resizes.forEach(
+            resize => resize.element.boundsInPage = resize.newBounds
+        )
+        return root
+    }
+
+    isSystemCommand(): boolean {
+        return true
     }
 }

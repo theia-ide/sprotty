@@ -1,3 +1,4 @@
+import { almostEquals } from '../../utils';
 import { inject, injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { SModelElement } from "../../base/model/smodel"
@@ -34,7 +35,7 @@ export class BoundsUpdater implements VNodeDecorator {
     element2boundsData: Map<SModelElement, BoundsData> = new Map
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        if (isSizeable(element) && isEmpty(element.bounds)) {
+        if (isSizeable(element) && element.revalidateBounds) {
             this.element2boundsData.set(element, {
                 vnode: vnode,
                 bounds: EMPTY_BOUNDS,
@@ -82,7 +83,7 @@ export class BoundsUpdater implements VNodeDecorator {
                     const vnode = boundsData.vnode
                     if (vnode && vnode.elm) {
                         let newBoundsInPage = this.getBoundsInPage(vnode.elm)
-                        boundsData.boundsInPage= newBoundsInPage
+                        boundsData.boundsInPage = newBoundsInPage
                     }
                 }
             }
@@ -95,7 +96,14 @@ export class BoundsUpdater implements VNodeDecorator {
                 if(boundsData.bounds && isSizeable(element)) {
                     const vnode = boundsData.vnode
                     if (vnode && vnode.elm) {
-                        boundsData.bounds = this.getBounds(vnode.elm, element)
+                        const newBounds = this.getBounds(vnode.elm, element)
+                        if(!(almostEquals(newBounds.x, element.bounds.x)
+                            && almostEquals(newBounds.y, element.bounds.y)
+                            && almostEquals(newBounds.width, element.bounds.width)
+                            && almostEquals(newBounds.height, element.bounds.height)))
+                            boundsData.bounds = newBounds  
+                        else 
+                            boundsData.bounds = undefined
                     }
                 }
             }
