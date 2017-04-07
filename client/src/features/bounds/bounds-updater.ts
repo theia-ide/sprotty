@@ -42,10 +42,9 @@ export class BoundsUpdater implements VNodeDecorator {
             })
         }
         if(isBoundsInPageAware(element) && isEmpty(element.boundsInPage)) {
-            this.element2boundsData.set(element, {
-                vnode: vnode,
-                boundsInPage: EMPTY_BOUNDS
-            })
+            const boundsData = this.element2boundsData.get(element) || { vnode: vnode }
+            boundsData.boundsInPage = EMPTY_BOUNDS
+            this.element2boundsData.set(element, boundsData)
         }
         return vnode
     }
