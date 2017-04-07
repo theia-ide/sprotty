@@ -82,8 +82,8 @@ describe('graph views', () => {
         expect(html).to.be.equal(
             '<svg id="graph" class="graph">'
             + '<g transform="scale(1) translate(0,0)">'
-            +   '<g transform="translate(100, 100)"><g id="node0"><circle class="node" r="40" cx="40" cy="40" /></g></g>'
-            +   '<g transform="translate(200, 150)"><g id="node1" class="selected"><circle class="node selected" r="40" cx="40" cy="40" /></g></g>'
+            +   '<g id="node0" transform="translate(100, 100)"><circle class="node" r="40" cx="40" cy="40" /></g>'
+            +   '<g id="node1" class="selected" transform="translate(200, 150)"><circle class="node selected" r="40" cx="40" cy="40" /></g>'
             +   '<g id="edge0"><path class="edge" d="M 179.49969448243914,146.30667390896087 L 206.3723157897707,168.33946319554624" /></g>'
             + '</g>' 
             + '</svg>')
