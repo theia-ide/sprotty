@@ -56,7 +56,7 @@ export class MoveCommand extends AbstractCommand {
             }
         )
         if (this.action.animate)
-            return new MoveAnimation(this.resolvedMoves, false, context).start()
+            return new MoveAnimation(model, this.resolvedMoves, false, context).start()
         else
             return model
     }
@@ -76,11 +76,11 @@ export class MoveCommand extends AbstractCommand {
     }
 
     undo(model: SModelRoot, context: CommandExecutionContext) {
-        return new MoveAnimation(this.resolvedMoves, true, context).start()
+        return new MoveAnimation(model, this.resolvedMoves, true, context).start()
     }
 
     redo(model: SModelRoot, context: CommandExecutionContext) {
-        return new MoveAnimation(this.resolvedMoves, false, context).start()
+        return new MoveAnimation(model, this.resolvedMoves, false, context).start()
     }
 
     merge(command: Command, context: CommandExecutionContext) {
@@ -105,7 +105,8 @@ export class MoveCommand extends AbstractCommand {
 
 export class MoveAnimation extends Animation {
 
-    constructor(protected elementMoves: Map<string, ResolvedElementMove>,
+    constructor(protected model: SModelRoot,
+                protected elementMoves: Map<string, ResolvedElementMove>,
                 protected reverse: boolean,
                 context: CommandExecutionContext) {
         super(context)
@@ -127,7 +128,7 @@ export class MoveAnimation extends Animation {
                 }
             }
         )
-        return this.context.root
+        return this.model
     }
 }
 

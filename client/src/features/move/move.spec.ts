@@ -1,3 +1,4 @@
+import { DH_UNABLE_TO_CHECK_GENERATOR } from 'constants';
 import "mocha"
 import { expect } from "chai"
 import { SGraphFactory } from "../../graph/model/sgraph-factory"
@@ -81,7 +82,7 @@ describe('move', () => {
 
     // global so we can carry-over the model, as it's updated, 
     // from test case to test case (i,e, select, undo, redo, merge)
-    var newModel: SModelRoot
+    let newModel: SModelRoot
 
     function getNode(nodeId: string, model: SModelRoot) {
         return model.index.getById(nodeId) as SNode
@@ -110,39 +111,37 @@ describe('move', () => {
     // Should undo()/redo() check whether the move action wants 
     // animation, and if not just return an updated model? 
 
-    it('undo() works as expected', () => {
-        // test "undo"
-        cmd.undo(<SModelRoot>newModel, context).then(
-            newModel => {
-                // corfirm that each node is back at original
-                // coordinates
+    let undoneModel: SModelRoot
 
-                // node0, node1 and node2 => pointNW
-                expect(pointNW.x).equals(getNode('node0', newModel).x)
-                expect(pointNW.y).equals(getNode('node0', newModel).y)
-                expect(pointNW.x).equals(getNode('node1', newModel).x)
-                expect(pointNW.y).equals(getNode('node1', newModel).y)
-                expect(pointNW.x).equals(getNode('node2', newModel).x)
-                expect(pointNW.y).equals(getNode('node2', newModel).y)
-            })
+    it('undo() works as expected', async () => {
+        // test "undo"
+        undoneModel = await cmd.undo(<SModelRoot>newModel, context)
+        
+        // confirm that each node is back at original
+        // coordinates
+        // node0, node1 and node2 => pointNW
+        expect(pointNW.x).equals(getNode('node0', undoneModel).x)
+        expect(pointNW.y).equals(getNode('node0', undoneModel).y)
+        expect(pointNW.x).equals(getNode('node1', undoneModel).x)
+        expect(pointNW.y).equals(getNode('node1', undoneModel).y)
+        expect(pointNW.x).equals(getNode('node2', undoneModel).x)
+        expect(pointNW.y).equals(getNode('node2', undoneModel).y)
     })
 
-    it('redo() works as expected', () => {
+    it('redo() works as expected', async () => {
         // test "redo": 
-        cmd.redo(<SModelRoot>newModel, context).then(
-            newModel => {
-                // corfirm that each node is back where ordered to move
+        const redoneModel = await cmd.redo(undoneModel, context)
 
-                // node0 => PointNE
-                expect(pointNE.x).equals(getNode('node0', newModel).x)
-                expect(pointNE.y).equals(getNode('node0', newModel).y)
-                // node1 => pointSW
-                expect(pointSW.x).equals(getNode('node1', newModel).x)
-                expect(pointSW.y).equals(getNode('node1', newModel).y)
-                // node2 => PointSE
-                expect(pointSE.x).equals(getNode('node2', newModel).x)
-                expect(pointSE.y).equals(getNode('node2', newModel).y)
-            })
+        // confirm that each node is back where ordered to move
+        // node0 => PointNE
+        expect(pointNE.x).equals(getNode('node0', redoneModel).x)
+        expect(pointNE.y).equals(getNode('node0', redoneModel).y)
+        // node1 => pointSW
+        expect(pointSW.x).equals(getNode('node1', redoneModel).x)
+        expect(pointSW.y).equals(getNode('node1', redoneModel).y)
+        // node2 => PointSE
+        expect(pointSE.x).equals(getNode('node2', redoneModel).x)
+        expect(pointSE.y).equals(getNode('node2', redoneModel).y)
     })
 
 })
