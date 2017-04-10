@@ -10,8 +10,10 @@ export interface ResolvedElementFade {
 
 export class FadeAnimation extends Animation {
 
-    constructor(protected elementFades: ResolvedElementFade[], context: CommandExecutionContext,
-            protected removeAfterFadeOut: boolean = false) {
+    constructor(protected model: SModelRoot,
+                public elementFades: ResolvedElementFade[],
+                context: CommandExecutionContext,
+                protected removeAfterFadeOut: boolean = false) {
         super(context)
     }
 
@@ -27,7 +29,7 @@ export class FadeAnimation extends Animation {
                 element.parent.remove(element)
             }
         }
-        return context.root
+        return this.model
     }
 
 }

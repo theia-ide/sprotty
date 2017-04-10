@@ -8,7 +8,7 @@ export interface Locateable extends SModelExtension {
     position: Point
 }
 
-export function isLocateable(element: SModelElementSchema): element is SModelElementSchema & Locateable {
+export function isLocateable(element: SModelElement): element is SModelElement & Locateable {
     return (element as any)['position'] !== undefined
 }
 

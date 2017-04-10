@@ -10,7 +10,7 @@ export interface IModelFactory {
     createRoot(schema: SModelRootSchema): SModelRoot
 }
 
-export const RESERVED_MODEL_PROPERTIES = ['children', 'index', 'root', 'parent']
+export const RESERVED_MODEL_PROPERTIES = ['children', 'index', '_index', 'root', 'parent']
 
 @injectable()
 export class SModelFactory implements IModelFactory {

@@ -106,7 +106,7 @@ export class MoveCommand extends AbstractCommand {
 export class MoveAnimation extends Animation {
 
     constructor(protected model: SModelRoot,
-                protected elementMoves: Map<string, ResolvedElementMove>,
+                public elementMoves: Map<string, ResolvedElementMove>,
                 context: CommandExecutionContext,
                 protected reverse: boolean = false) {
         super(context)

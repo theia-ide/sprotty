@@ -5,12 +5,12 @@ import {
     SParentElement
 } from "../model/smodel"
 import { RESERVED_MODEL_PROPERTIES } from "../model/smodel-factory"
-import { AbstractCommand, CommandExecutionContext } from "../intent/commands"
+import { AbstractCommand, CommandExecutionContext, SModelRootOrPromise } from "../intent/commands"
 import { CompoundAnimation, Animation } from "../animations/animation"
 import { ModelMatcher, MatchResult } from "./model-matching"
 import { isFadeable } from "../../features/fade/model"
 import { ResolvedElementFade, FadeAnimation } from "../../features/fade/fade"
-import { isMoveable, isLocateable } from "../../features/move/model"
+import { isMoveable } from "../../features/move/model"
 import { ResolvedElementMove, MoveAnimation } from "../../features/move/move"
 
 export class SetModelAction implements Action {
@@ -35,17 +35,17 @@ export class SetModelCommand extends AbstractCommand {
         super()
     }
 
-    execute(element: SModelRoot, context: CommandExecutionContext) {
-        this.oldRoot = element
+    execute(oldRoot: SModelRoot, context: CommandExecutionContext): SModelRoot {
+        this.oldRoot = oldRoot
         this.newRoot = context.modelFactory.createRoot(this.action.newRoot)
         return this.newRoot
     }
 
-    undo(element: SModelRoot) {
+    undo(model: SModelRoot): SModelRoot {
         return this.oldRoot
     }
 
-    redo(element: SModelRoot) {
+    redo(model: SModelRoot): SModelRoot {
         return this.newRoot
     }
 }
@@ -67,6 +67,11 @@ export class UpdateModelAction implements Action {
     animate?: boolean
 }
 
+export interface UpdateAnimationData {
+    fades: ResolvedElementFade[]
+    moves?: ResolvedElementMove[]
+}
+
 @injectable()
 export class UpdateModelCommand extends AbstractCommand {
     static readonly KIND = 'updateModel'
@@ -78,14 +83,18 @@ export class UpdateModelCommand extends AbstractCommand {
         super()
     }
 
-    execute(root: SModelRoot, context: CommandExecutionContext) {
+    execute(root: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise {
         this.oldRoot = root
         if (this.action.newRoot !== undefined) {
+            this.newRoot = context.modelFactory.createRoot(this.action.newRoot)
             if ((this.action.animate === undefined || this.action.animate) && root.id == this.action.newRoot.id) {
-                this.newRoot = context.modelFactory.createRoot(root)
-                return this.computeAnimation(this.newRoot, this.action.newRoot, context).start()
+                const animationOrRoot = this.computeAnimation(this.oldRoot, this.newRoot, context)
+                if (animationOrRoot instanceof Animation)
+                    return animationOrRoot.start()
+                else
+                    return animationOrRoot
             } else {
-                return context.modelFactory.createRoot(this.action.newRoot)
+                return this.newRoot
             }
         } else {
             // TODO invalidate the model
@@ -94,98 +103,92 @@ export class UpdateModelCommand extends AbstractCommand {
         }
     }
 
-    protected computeAnimation(leftRoot: SModelRoot, rightRoot: SModelRootSchema, context: CommandExecutionContext): Animation {
+    protected computeAnimation(leftRoot: SModelRoot, rightRoot: SModelRoot, context: CommandExecutionContext): SModelRoot | Animation {
         const matcher = new ModelMatcher()
         const matchResult = matcher.match(leftRoot, rightRoot)
-        const elementsToInsert: SChildElement[] = []
-        const fades: ResolvedElementFade[] = []
-        const moves: Map<string, ResolvedElementMove> = new Map
+
+        const animationData: UpdateAnimationData = {
+            fades: [] as ResolvedElementFade[]
+        }
         for (const id in matchResult) {
             const match = matchResult[id]
             if (match.left !== undefined && match.right !== undefined) {
-                // The element is still there, but may have been modified
-                const original = match.left as SModelElement
-                if (original instanceof SChildElement && match.leftParentId != match.rightParentId) {
-                    original.parent.remove(original)
-                    elementsToInsert.push(original)
-                }
-                if (isMoveable(original) && isLocateable(match.right)) {
-                    const leftPos = original.position
-                    const rightPos = match.right.position
-                    if (leftPos.x != rightPos.x || leftPos.y != rightPos.y) {
-                        moves.set(original.id, {
-                            element: original,
-                            elementId: original.id,
-                            fromPosition: { x: leftPos.x, y: leftPos.y },
-                            toPosition: rightPos
-                        })
-                    }
-                }
-                this.copyProperties(match.left, match.right)
+                // The element is still there, but may have been moved
+                this.updateElement(match.left as SModelElement, match.right as SModelElement, animationData)
             } else if (match.right !== undefined) {
                 // An element has been added
-                const newElement = context.modelFactory.createElement(match.right)
-                elementsToInsert.push(newElement)
-                if (isFadeable(newElement)) {
-                    newElement.alpha = 0
-                    fades.push({
-                        element: newElement,
+                const right = match.right as SModelElement
+                if (isFadeable(right)) {
+                    right.alpha = 0
+                    animationData.fades.push({
+                        element: right,
                         type: 'in'
                     })
                 }
-            } else if (match.left !== undefined) {
+            } else if (match.left instanceof SChildElement) {
                 // An element has been removed
-                const removedElement = match.left as SModelElement
-                if (isFadeable(removedElement)) {
-                    fades.push({
-                        element: removedElement,
-                        type: 'out'
-                    })
-                } else if (removedElement instanceof SChildElement) {
-                    removedElement.parent.remove(removedElement)
+                const left = match.left
+                if (isFadeable(left) && match.leftParentId !== undefined) {
+                    const parent = rightRoot.index.getById(match.leftParentId)
+                    if (parent instanceof SParentElement) {
+                        parent.add(left)
+                        animationData.fades.push({
+                            element: left,
+                            type: 'out'
+                        })
+                    }
                 }
             }
         }
-        this.insertOrphans(elementsToInsert, matchResult, leftRoot.index)
-        const animation = new CompoundAnimation(context)
-        if (fades.length > 0)
-            animation.include(new FadeAnimation(fades, context, true))
-        if (Object.keys(moves).length > 0)
-            animation.include(new MoveAnimation(leftRoot, moves, context, false))
-        return animation;
+
+        const animations = this.createAnimations(animationData, rightRoot, context)
+        if (animations.length >= 2) {
+            return new CompoundAnimation(rightRoot, context, animations)
+        } else if (animations.length == 1) {
+            return animations[0]
+        } else {
+            return rightRoot
+        }
     }
 
-    protected copyProperties(left: SModelElementSchema, right: SModelElementSchema): void {
-        for (let key in right) {
-            if (RESERVED_MODEL_PROPERTIES.indexOf(key) < 0 && key in right) {
-                const value: any = (right as any)[key]
-                if (typeof value != 'function')
-                    (left as any)[key] = value
+    protected updateElement(left: SModelElement, right: SModelElement, animationData: UpdateAnimationData): void {
+        if (isMoveable(left) && isMoveable(right)) {
+            const leftPos = left.position
+            const rightPos = right.position
+            if (leftPos.x != rightPos.x || leftPos.y != rightPos.y) {
+                if (animationData.moves === undefined)
+                    animationData.moves = []
+                animationData.moves.push({
+                    element: right,
+                    elementId: right.id,
+                    fromPosition: { x: leftPos.x, y: leftPos.y },
+                    toPosition: { x: rightPos.x, y: rightPos.y }
+                })
+                right.position = leftPos
             }
         }
     }
 
-    protected insertOrphans(elementsToInsert: SChildElement[], matchResult: MatchResult, index: SModelIndex): void {
-        while (elementsToInsert.length > 0) {
-            for (let i = 0; i < elementsToInsert.length; i++) {
-                const element = elementsToInsert[i]
-                const match = matchResult[element.id]
-                if (match.rightParentId === undefined)
-                    throw new Error('Illegal state')
-                const parent = index.getById(match.rightParentId)
-                if (parent !== undefined) {
-                    (parent as SParentElement).add(element)
-                    elementsToInsert.splice(i, 1)
-                }
-            }
+    protected createAnimations(data: UpdateAnimationData, root: SModelRoot, context: CommandExecutionContext): Animation[] {
+        const animations: Animation[] = []
+        if (data.fades.length > 0) {
+            animations.push(new FadeAnimation(root, data.fades, context, true))
         }
+        if (data.moves !== undefined && data.moves.length > 0) {
+            const movesMap: Map<string, ResolvedElementMove> = new Map
+            for (const move of data.moves) {
+                movesMap.set(move.elementId, move)
+            }
+            animations.push(new MoveAnimation(root, movesMap, context, false))
+        }
+        return animations
     }
 
-    undo(element: SModelRoot) {
+    undo(element: SModelRoot): SModelRoot {
         return this.oldRoot
     }
 
-    redo(element: SModelRoot) {
+    redo(element: SModelRoot): SModelRoot {
         return this.newRoot
     }
 }

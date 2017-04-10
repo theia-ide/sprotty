@@ -67,7 +67,7 @@ describe('move', () => {
     ]
 
     // create the action
-    const moveAction = new MoveAction(moves, /* no annimate */ false)
+    const moveAction = new MoveAction(moves, /* no animate */ false)
 
     // create the command
     const cmd = new MoveCommand(moveAction)

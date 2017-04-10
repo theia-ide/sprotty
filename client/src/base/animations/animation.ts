@@ -11,7 +11,7 @@ export abstract class Animation {
     constructor(protected context: CommandExecutionContext, protected ease: (x: number) => number = easeInOut) {
     }
 
-    start() {
+    start(): Promise<SModelRoot> {
         return new Promise<SModelRoot>(
             (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
                 const lambda = (time: number) => {
@@ -56,7 +56,12 @@ export abstract class Animation {
 
 export class CompoundAnimation extends Animation {
 
-    private readonly components: Animation[] = []
+    constructor(protected model: SModelRoot,
+                protected context: CommandExecutionContext,
+                public components: Animation[] = [],
+                protected ease: (x: number) => number = easeInOut) {
+        super(context, ease)
+    }
 
     include(animation: Animation): this {
         this.components.push(animation)
@@ -67,7 +72,7 @@ export class CompoundAnimation extends Animation {
         for (const a of this.components) {
             a.tween(t, context)
         }
-        return context.root
+        return this.model
     }
 
 }
