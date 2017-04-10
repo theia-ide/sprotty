@@ -1,6 +1,6 @@
-import { IActionDispatcher, SetModelAction, TYPES, ViewRegistry } from "../../../src/base"
+import { ActionHandlerRegistry, IActionDispatcher, SetModelAction, TYPES, ViewRegistry } from "../../../src/base"
 import { Direction } from "../../../src/utils"
-import { CenterAction } from "../../../src/features"
+import { SetBoundsCommand, FitToScreenAction } from '../../../src/features';
 import { Channel, ChannelSchema, Core, CoreSchema, Crossbar, CrossbarSchema, ProcessorSchema } from "./chipmodel"
 import { ChannelView, CoreView, CrossbarView, ProcessorView } from "./views"
 import { ChipModelFactory } from "./chipmodel-factory"
@@ -90,10 +90,12 @@ export default function runMulticore() {
     viewRegistry.register('crossbar', CrossbarView)
     viewRegistry.register('channel', ChannelView)
 
+    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
+    actionHandlerRegistry.registerTranslator(SetBoundsCommand.KIND, update => new FitToScreenAction([]))
+
     // Run
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
     dispatcher.dispatch(new SetModelAction(processor))
-    dispatcher.dispatchNextFrame(new CenterAction([]))
 
     function changeModel() {
         for (let i = 0; i < processor.children.length; ++i) {

@@ -10,7 +10,6 @@ import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
 export interface IActionDispatcher {
     dispatch(action: Action): void
     dispatchAll(actions: Action[]): void
-    dispatchNextFrame(action: Action): void
 }
 
 /**
@@ -24,23 +23,9 @@ export class ActionDispatcher implements IActionDispatcher {
     @inject(TYPES.ILogger) protected logger: ILogger
     @inject(TYPES.IAnimationFrameSyncer) protected syncer: AnimationFrameSyncer
 
-    nextFrameActions: Action[] = []
-
     constructor(@inject(TYPES.IDiagramServer) @optional() diagramServer: IDiagramServer) {
         if (diagramServer !== undefined) {
             diagramServer.onAction(action => {this.dispatch(action)})
-        }
-    }
-
-    dispatchNextFrame(action: Action) {
-        const trigger = this.nextFrameActions.length === 0
-        this.nextFrameActions.push(action)
-        if(trigger) {
-            this.syncer.onNextFrame(() => {
-                const allActions = this.nextFrameActions
-                this.nextFrameActions = []
-                this.dispatchAll(allActions)
-            })
         }
     }
 
@@ -49,10 +34,6 @@ export class ActionDispatcher implements IActionDispatcher {
     }
 
     dispatch(action: Action): void {
-        if (this.nextFrameActions.length > 0) {
-            this.dispatchNextFrame(action)
-            return
-        }
         if (action.kind == UndoAction.KIND) {
             this.commandStack.undo()
         } else if (action.kind == RedoAction.KIND) {
