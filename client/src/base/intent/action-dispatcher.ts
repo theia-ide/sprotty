@@ -14,6 +14,7 @@ export interface IActionDispatcher {
 
 /**
  * Collects actions, converts them to commands and dispatches them.
+ * Also acts as the proxy to the sprotty server.
  */
 @injectable()
 export class ActionDispatcher implements IActionDispatcher {

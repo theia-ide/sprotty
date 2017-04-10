@@ -8,8 +8,6 @@ import { Action } from "../intent/actions"
 import { VNodeDecorator } from "./vnode-decorators"
 import { on } from "./vnode-utils"
 
-const JSX = {createElement: snabbdom.svg}
-
 @injectable()
 export class MouseTool implements VNodeDecorator {
 
