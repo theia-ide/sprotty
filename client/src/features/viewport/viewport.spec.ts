@@ -37,7 +37,7 @@ describe('ViewportCommand', () => {
 
     it('undo() works as expected', () => {
         cmd.undo(viewport, context)
-        expect(viewport.zoom).equals(viewportData.zoom)
+        expect(almostEquals(viewport.zoom, viewportData.zoom)).to.be.true
         expect(viewport.scroll).deep.equals(viewportData.scroll)
     })
 
