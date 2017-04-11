@@ -48,6 +48,9 @@ describe('CommandStack', () => {
     const mockViewer: IViewer = {
         update() {
             ++viewerUpdates
+        },
+        updateHidden() {
+            throw new Error('Illegal state')
         }
     }
 

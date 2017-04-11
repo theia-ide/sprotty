@@ -52,12 +52,12 @@ class MulticoreServerLauncher {
 		}
     	
 		override accept(ActionMessage message) {
-			LOG.trace('''SERVER: «message»''')
+			LOG.info('''SERVER: «message»''')
 			super.accept(message)
 		}
 		
 		override protected fireMessageReceived(ActionMessage message) {
-			LOG.trace('''CLIENT: «message»''')
+			LOG.info('''CLIENT: «message»''')
 			super.fireMessageReceived(message)
 		}
 	}

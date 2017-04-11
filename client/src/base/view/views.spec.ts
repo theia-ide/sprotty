@@ -3,13 +3,13 @@ import { expect } from "chai"
 import { EMPTY_ROOT } from "../model/smodel-factory"
 import { SNode } from "../../graph/model/sgraph"
 import { EmptyView, MissingView } from "./views"
-import { Viewer } from "./viewer"
+import { Viewer, ModelRenderer } from "./viewer"
 
 const toHTML = require('snabbdom-to-html')
 
 describe('base views', () => {
 
-    const context = {viewer: new Viewer([])}
+    const context = new ModelRenderer(undefined!, [])
 
     it('empty view', () => {
         const emptyView = new EmptyView()

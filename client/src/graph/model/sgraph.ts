@@ -10,8 +10,8 @@ export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
     bounds?: Bounds
     revalidateBounds?: boolean
-    scroll: Point
-    zoom: number
+    scroll?: Point
+    zoom?: number
 }
 
 export class SGraph extends ViewportRootElement implements SGraphSchema {

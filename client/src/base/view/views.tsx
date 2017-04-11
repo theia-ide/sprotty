@@ -1,7 +1,7 @@
 import * as snabbdom from "snabbdom-jsx"
 import { injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
-import { SModelElement, SModelRoot } from "../model/smodel"
+import { SModelElement, SModelRoot, SParentElement } from "../model/smodel"
 import { EMPTY_ROOT } from "../model/smodel-factory"
 import { ProviderRegistry } from "../../utils/registry"
 import { Viewer } from "./viewer"
@@ -19,7 +19,13 @@ export interface View {
  * Bundles additional data that is passed to views for VNode creation.
  */
 export interface RenderingContext {
-    viewer: Viewer
+    viewRegistry: ViewRegistry
+
+    decorate(vnode: VNode, element: SModelElement): VNode
+
+    renderElement(element: SModelElement, context: RenderingContext): VNode
+
+    renderChildren(element: SParentElement, context: RenderingContext): VNode[]
 }
 
 /**

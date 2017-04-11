@@ -7,7 +7,7 @@ class SModelIndex {
 	val Map<String, SModelElement> index
 
 	new(SGraph graph) {
-		index = newHashMap		
+		index = newHashMap
 		addToIndex(graph)
 	}
 	

@@ -1,12 +1,12 @@
-import { ContainerModule } from "inversify"
+import { ContainerModule, interfaces } from "inversify"
 import { LogLevel, NullLogger } from "../utils/logging"
 import { ActionDispatcher, IActionDispatcher } from "./intent/action-dispatcher"
 import { CommandStack, ICommandStack } from "./intent/command-stack"
-import { IViewer, Viewer } from "./view/viewer"
+import { IViewer, Viewer, ModelRenderer } from "./view/viewer"
 import { IViewerOptions } from "./view/options"
 import { MouseTool } from "./view/mouse-tool"
 import { KeyTool } from "./view/key-tool"
-import { FocusFixDecorator } from "./view/vnode-decorators"
+import { FocusFixDecorator, VNodeDecorator } from "./view/vnode-decorators"
 import { ActionHandlerRegistry } from "./intent/actions"
 import { ViewRegistry } from "./view/views"
 import { SModelFactory } from "./model/smodel-factory"
@@ -55,6 +55,12 @@ let defaultContainerModule = new ContainerModule(bind => {
     })
     bind<IViewerOptions>(TYPES.IViewerOptions).toConstantValue({
         baseDiv: 'sprotty'
+    })
+    bind(TYPES.ModelRendererFactory).toFactory<ModelRenderer>((context: interfaces.Context) => {
+        return (decorators: VNodeDecorator[]) => {
+            const viewRegistry = context.container.get<ViewRegistry>(TYPES.ViewRegistry)
+            return new ModelRenderer(viewRegistry, decorators)
+        }
     })
 
     // Tools & Decorators --------------------------------------

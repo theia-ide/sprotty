@@ -1,5 +1,5 @@
 import { IActionDispatcher, SetModelAction, TYPES, ViewRegistry } from "../../../src/base"
-import { SEdgeSchema, SGraphFactory, SGraphView, SNode, SNodeSchema, StraightEdgeView } from "../../../src/graph"
+import { SEdgeSchema, SGraphFactory, SGraphView, SNode, SNodeSchema, StraightEdgeView, SGraphSchema } from "../../../src/graph"
 import { ElementMove, MoveAction } from "../../../src/features"
 import { CircleNodeView } from "./views"
 import createContainer from "./di.config"
@@ -18,7 +18,7 @@ export default function runStandalone() {
     const node0 = {id: 'node0', type: 'node:circle', x: 100, y: 100};
     const node1 = {id: 'node1', type: 'node:circle', x: 200, y: 150, selected: true};
     const edge0 = {id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1'};
-    const graph = modelFactory.createRoot({id: 'graph', type: 'graph', children: [node0, node1, edge0]});
+    const graph: SGraphSchema = {id: 'graph', type: 'graph', children: [node0, node1, edge0]};
 
     // Run
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
@@ -41,8 +41,8 @@ export default function runStandalone() {
             sourceId: 'node0',
             targetId: 'node' + count++
         }
-        graph.add(modelFactory.createElement(newNode), 0)
-        graph.add(modelFactory.createElement(newEdge), 0)
+        graph.children.push(newNode)
+        graph.children.push(newEdge)
     }
 
     for (let i = 0; i < 200; ++i) {

@@ -5,11 +5,12 @@ import com.google.common.collect.Multimap
 import com.google.inject.Inject
 import io.typefox.sprotty.api.AbstractDiagramServer
 import io.typefox.sprotty.api.ActionMessage
+import io.typefox.sprotty.api.ComputedBoundsAction
+import io.typefox.sprotty.api.RequestBoundsAction
 import io.typefox.sprotty.api.RequestModelAction
 import io.typefox.sprotty.api.SGraph
 import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.api.SelectAction
-import io.typefox.sprotty.api.SetBoundsAction
 import io.typefox.sprotty.api.SetModelAction
 import io.typefox.sprotty.api.UpdateModelAction
 import io.typefox.sprotty.layout.ILayoutEngine
@@ -42,15 +43,13 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 	
 	val Multimap<String, String> type2Clients = HashMultimap.create()
 	
-	def notifyClients(SModelRoot root) {
+	def notifyClients(SModelRoot model) {
 		if (remoteEndpoint !== null) {
-			for (client : type2Clients.get(root.type)) {
+			for (client : type2Clients.get(model.type)) {
 				remoteEndpoint.accept(new ActionMessage [
 					clientId = client
-					action = new UpdateModelAction => [
-						modelType = root.type
-						modelId = root.id
-						newRoot = root
+					action = new RequestBoundsAction [
+						root = model
 					]
 				])
 			}
@@ -61,24 +60,24 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		val resourceId = action.options?.get('resourceId')
 		LOG.info('Model requested for resource ' + resourceId)
 		this.resourceId = resourceId
-		val model = modelProvider.getModel(resourceId, action.modelType) ?: (
-			switch action.modelType {
-				case 'flow': new Flow
-				case 'processor': new Processor
-			} => [
-				type = action.modelType
-				id = action.modelId ?: action.modelType
-			]
-		)
-		type2Clients.put(action.modelType, message.clientId)
-		remoteEndpoint?.accept(new ActionMessage [
-			clientId = message.clientId
-			action = new SetModelAction [
-				modelType = model.type
-				modelId = model.id
-				newRoot = model
-			]
-		])
+		this.type2Clients.put(action.modelType, message.clientId)
+		val model = modelProvider.getModel(resourceId, action.modelType)
+		if (model !== null) {
+			remoteEndpoint?.accept(new ActionMessage [
+				clientId = message.clientId
+				if (modelProvider.isLayoutDone(resourceId, action.modelType)) {
+					action = new SetModelAction [
+						modelType = model.type
+						modelId = model.id
+						newRoot = model
+					]
+				} else {
+					action = new RequestBoundsAction [
+						root = model
+					]
+				}
+			])
+		}
 	}
 	
 	protected def initializeLayoutEngine() {
@@ -104,13 +103,14 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		layoutEngine.layout(graph, configurator)
 	}
 	
-	override handle(SetBoundsAction action, ActionMessage message) {
+	override handle(ComputedBoundsAction action, ActionMessage message) {
 		if (message instanceof WebsocketActionMessage) {
 			initializeLayoutEngine()
 			val graph = modelProvider.getModel(resourceId, 'flow')
 			if (graph instanceof SGraph) {
-				LayoutUtil.applyResizeAction(graph, action)
+				LayoutUtil.applyBounds(graph, action)
 				layout(graph)
+				modelProvider.setLayoutDone(resourceId, 'flow')
 				remoteEndpoint?.accept(new ActionMessage [
 					clientId = message.clientId
 					action = new UpdateModelAction [

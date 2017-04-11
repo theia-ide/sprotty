@@ -40,7 +40,7 @@ class RequestModelAction implements Action {
 class SetBoundsAction implements Action {
     public static val KIND ='setBounds'
 	String kind = KIND
-	List<ElementAndBounds> resizes
+	List<ElementAndBounds> bounds
 	
 	new() {}
 	new(Consumer<SetBoundsAction> initializer) {
@@ -96,6 +96,30 @@ class UpdateModelAction implements Action {
 	
 	new() {}
 	new(Consumer<UpdateModelAction> initializer) {
+		initializer.accept(this)
+	}
+}
+
+@Accessors@EqualsHashCode@ToString
+class RequestBoundsAction implements Action {
+	public static val KIND = 'requestBounds'
+	String kind = KIND
+	SModelRoot root
+	
+	new() {}
+	new(Consumer<RequestBoundsAction> initializer) {
+		initializer.accept(this)
+	}
+}
+
+@Accessors@EqualsHashCode@ToString
+class ComputedBoundsAction implements Action {
+	public static val KIND = 'computedBounds'
+	String kind = KIND
+	List<ElementAndBounds> bounds
+	
+	new() {}
+	new(Consumer<ComputedBoundsAction> initializer) {
 		initializer.accept(this)
 	}
 }

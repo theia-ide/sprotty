@@ -12,6 +12,7 @@ import { isFadeable } from "../../features/fade/model"
 import { ResolvedElementFade, FadeAnimation } from "../../features/fade/fade"
 import { isMoveable } from "../../features/move/model"
 import { ResolvedElementMove, MoveAnimation } from "../../features/move/move"
+import { isBoundsAware, isBoundsInPageAware } from "../../features/bounds/model"
 
 export class SetModelAction implements Action {
     readonly kind = SetModelCommand.KIND
@@ -166,6 +167,20 @@ export class UpdateModelCommand extends AbstractCommand {
                 })
                 right.position = leftPos
             }
+        }
+        if (isBoundsAware(left) && isBoundsAware(right)) {
+            if (right.bounds.width < 0 || right.bounds.height < 0) {
+                right.bounds = {
+                    x: right.bounds.x,
+                    y: right.bounds.y,
+                    width: left.bounds.width,
+                    height: left.bounds.height
+                }
+                right.revalidateBounds = left.revalidateBounds
+            }
+        }
+        if (isBoundsInPageAware(left) && isBoundsInPageAware(right)) {
+            right.boundsInPage = left.boundsInPage
         }
     }
 

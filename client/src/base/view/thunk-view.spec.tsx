@@ -1,4 +1,4 @@
-import { RenderingContext, ThunkView } from './';
+import { RenderingContext, ThunkView, ModelRenderer } from './';
 import "mocha"
 import { expect } from "chai"
 import { SModelElement } from "../model/smodel"
@@ -40,7 +40,7 @@ describe('Thunk View', () => {
         }
     }
 
-    const context = {viewer: new Viewer([])}
+    const context = new ModelRenderer(undefined!, [])
 
     const patcher = init([])
 

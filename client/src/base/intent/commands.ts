@@ -21,6 +21,8 @@ export interface Command {
     merge(command: Command, context: CommandExecutionContext): boolean
 
     isSystemCommand(): boolean
+
+    isHiddenCommand(): boolean
 }
 
 export interface CommandFactory {
@@ -40,6 +42,10 @@ export abstract class AbstractCommand implements Command {
     }
 
     isSystemCommand(): boolean {
+        return false
+    }
+
+    isHiddenCommand(): boolean {
         return false
     }
 }

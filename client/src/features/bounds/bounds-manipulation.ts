@@ -7,29 +7,43 @@ import { AbstractCommand, CommandExecutionContext } from "../../base/intent/comm
 export class SetBoundsAction implements Action {
     readonly kind = SetBoundsCommand.KIND
 
-    constructor(public readonly resizes: ElementAndBounds[]) {
+    constructor(public bounds: ElementAndBounds[]) {
     }
 }
 
 export class SetBoundsInPageAction implements Action {
     readonly kind = SetBoundsInPageCommand.KIND
 
-    constructor(public readonly resizes: ElementAndBounds[]) {
+    constructor(public bounds: ElementAndBounds[]) {
     }
 }
 
-export type ElementAndBounds = {
+export class RequestBoundsAction implements Action {
+    readonly kind = RequestBoundsCommand.KIND
+
+    constructor(public root: SModelRoot) {
+    }
+}
+
+export class ComputedBoundsAction implements Action {
+    readonly kind = 'computedBounds'
+
+    constructor(public bounds: ElementAndBounds[]) {
+    }
+}
+
+export interface ElementAndBounds {
     elementId: string
     newBounds: Bounds
 }
 
-type ResolvedElementAndBounds = {
+interface ResolvedElementAndBounds {
     element: SModelElement & BoundsAware
     oldBounds: Bounds
     newBounds: Bounds
 }
 
-type ResolvedElementAndBoundsInPage = {
+interface ResolvedElementAndBoundsInPage {
     element: SModelElement & BoundsInPageAware
     oldBounds: Bounds
     newBounds: Bounds
@@ -38,21 +52,21 @@ type ResolvedElementAndBoundsInPage = {
 export class SetBoundsCommand extends AbstractCommand {
     static readonly KIND: string  = 'setBounds'
 
-    protected resizes: ResolvedElementAndBounds[] = []
+    protected bounds: ResolvedElementAndBounds[] = []
     
     constructor(protected action: SetBoundsAction) {
         super()
     }
 
     execute(root: SModelRoot, context: CommandExecutionContext) {
-        this.action.resizes.forEach(
-            resize => {
-                const element = root.index.getById(resize.elementId)
+        this.action.bounds.forEach(
+            b => {
+                const element = root.index.getById(b.elementId)
                 if (element && isBoundsAware(element)) {
-                    this.resizes.push({
+                    this.bounds.push({
                         element: element,
                         oldBounds: element.bounds,
-                        newBounds: resize.newBounds,
+                        newBounds: b.newBounds,
                     })
                 }
             }
@@ -61,20 +75,20 @@ export class SetBoundsCommand extends AbstractCommand {
     }
 
     undo(root: SModelRoot, context: CommandExecutionContext) {
-        this.resizes.forEach(
-            resize => {
-                resize.element.bounds = resize.oldBounds
-                resize.element.revalidateBounds = true
+        this.bounds.forEach(
+            b => {
+                b.element.bounds = b.oldBounds
+                b.element.revalidateBounds = true
             }
         )
         return root
     }
 
     redo(root: SModelRoot, context: CommandExecutionContext) {
-        this.resizes.forEach(
-            resize => {
-                resize.element.bounds = resize.newBounds
-                resize.element.revalidateBounds = false
+        this.bounds.forEach(
+            b => {
+                b.element.bounds = b.newBounds
+                b.element.revalidateBounds = false
             }
         )
         return root
@@ -88,21 +102,21 @@ export class SetBoundsCommand extends AbstractCommand {
 export class SetBoundsInPageCommand extends AbstractCommand {
     static readonly KIND: string  = 'setBoundsInPage'
 
-    protected resizes: ResolvedElementAndBoundsInPage[] = []
+    protected bounds: ResolvedElementAndBoundsInPage[] = []
     
     constructor(protected action: SetBoundsInPageAction) {
         super()
     }
 
         execute(root: SModelRoot, context: CommandExecutionContext) {
-        this.action.resizes.forEach(
-            resize => {
-                const element = root.index.getById(resize.elementId)
+        this.action.bounds.forEach(
+            b => {
+                const element = root.index.getById(b.elementId)
                 if (element && isBoundsInPageAware(element)) {
-                    this.resizes.push({
+                    this.bounds.push({
                         element: element,
                         oldBounds: element.boundsInPage,
-                        newBounds: resize.newBounds,
+                        newBounds: b.newBounds,
                     })
                 }
             }
@@ -111,20 +125,50 @@ export class SetBoundsInPageCommand extends AbstractCommand {
     }
 
     undo(root: SModelRoot, context: CommandExecutionContext) {
-        this.resizes.forEach(
-            resize => resize.element.boundsInPage = resize.oldBounds
+        this.bounds.forEach(
+            b => b.element.boundsInPage = b.oldBounds
         )
         return root
     }
 
     redo(root: SModelRoot, context: CommandExecutionContext) {
-        this.resizes.forEach(
-            resize => resize.element.boundsInPage = resize.newBounds
+        this.bounds.forEach(
+            b => b.element.boundsInPage = b.newBounds
         )
         return root
     }
 
     isSystemCommand(): boolean {
+        return true
+    }
+}
+
+export class RequestBoundsCommand extends AbstractCommand {
+    static readonly KIND: string  = 'requestBounds'
+    
+    constructor(protected action: RequestBoundsAction) {
+        super()
+    }
+
+    execute(element: SModelRoot, context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
+        return context.modelFactory.createRoot(this.action.root)
+    }
+    
+    undo(element: SModelRoot, context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
+        // Nothing to undo
+        return element
+    }
+
+    redo(element: SModelRoot, context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
+        // Nothing to redo
+        return element
+    }
+
+    isSystemCommand(): boolean {
+        return true
+    }
+
+    isHiddenCommand(): boolean {
         return true
     }
 }

@@ -41,7 +41,7 @@ export class BoundsUpdater implements VNodeDecorator {
                 bounds: EMPTY_BOUNDS,
             })
         }
-        if(isBoundsInPageAware(element) && isEmpty(element.boundsInPage)) {
+        if (isBoundsInPageAware(element) && isEmpty(element.boundsInPage)) {
             const boundsData = this.element2boundsData.get(element) || { vnode: vnode }
             boundsData.boundsInPage = EMPTY_BOUNDS
             this.element2boundsData.set(element, boundsData)

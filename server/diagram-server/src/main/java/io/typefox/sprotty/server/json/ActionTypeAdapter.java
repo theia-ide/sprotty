@@ -11,9 +11,11 @@ import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 
 import io.typefox.sprotty.api.Action;
+import io.typefox.sprotty.api.ComputedBoundsAction;
+import io.typefox.sprotty.api.RequestBoundsAction;
 import io.typefox.sprotty.api.RequestModelAction;
-import io.typefox.sprotty.api.SetBoundsAction;
 import io.typefox.sprotty.api.SelectAction;
+import io.typefox.sprotty.api.SetBoundsAction;
 import io.typefox.sprotty.api.SetModelAction;
 import io.typefox.sprotty.api.UpdateModelAction;
 
@@ -37,6 +39,8 @@ public class ActionTypeAdapter extends PropertyBasedTypeAdapter<Action> {
 			addActionKind(SetBoundsAction.KIND, SetBoundsAction.class);
 			addActionKind(SelectAction.KIND, SelectAction.class);
 			addActionKind(UpdateModelAction.KIND, UpdateModelAction.class);
+			addActionKind(RequestBoundsAction.KIND, RequestBoundsAction.class);
+			addActionKind(ComputedBoundsAction.KIND, ComputedBoundsAction.class);
 		}
 		
 		public void addActionKind(String kind, Class<? extends Action> clazz) {

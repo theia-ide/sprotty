@@ -13,8 +13,8 @@ abstract class AbstractDiagramServer implements Consumer<ActionMessage> {
 		switch action.kind {
 			case RequestModelAction.KIND:
 				handle(action as RequestModelAction, message)
-			case SetBoundsAction.KIND:
-				handle(action as SetBoundsAction, message)
+			case ComputedBoundsAction.KIND:
+				handle(action as ComputedBoundsAction, message)
 			case SelectAction.KIND:
 				handle(action as SelectAction, message)
 		}
@@ -22,7 +22,7 @@ abstract class AbstractDiagramServer implements Consumer<ActionMessage> {
 	
 	def void handle(RequestModelAction action, ActionMessage message)
 	
-	def void handle(SetBoundsAction action, ActionMessage message)
+	def void handle(ComputedBoundsAction action, ActionMessage message)
 	
 	def void handle(SelectAction action, ActionMessage message)
 	

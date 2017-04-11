@@ -40,13 +40,13 @@ export class CommandStack implements ICommandStack {
                 this.handleCommand(command, command.execute, this.mergeOrPush)
             }
         )
-        return this.thenUpdate()
+        return this.currentPromise
     }
 
     execute(command: Command): Promise<SModelRoot> {
         this.logger.log(this, 'Executing', command)
         this.handleCommand(command, command.execute, this.mergeOrPush)
-        return this.thenUpdate()
+        return this.currentPromise
     }
 
     undo() : Promise<SModelRoot>  {
@@ -59,7 +59,7 @@ export class CommandStack implements ICommandStack {
                 this.redoStack.push(command)
             })
         }
-        return this.thenUpdate()
+        return this.currentPromise
     }
 
     redo() : Promise<SModelRoot> {
@@ -72,7 +72,7 @@ export class CommandStack implements ICommandStack {
             })
         }
         this.redoFollowingSystemCommands()
-        return this.thenUpdate()
+        return this.currentPromise
     }
 
     protected handleCommand(command: Command,
@@ -80,7 +80,7 @@ export class CommandStack implements ICommandStack {
                             beforeResolve: (command: Command, context: CommandExecutionContext)=>void) {
         this.currentPromise = this.currentPromise.then(
             model => {
-                return new Promise(
+                const promise = new Promise(
                     (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
                         const context = this.createContext(model)
                         const modelOrPromise = operation.call(command, model, context)
@@ -96,6 +96,13 @@ export class CommandStack implements ICommandStack {
                             resolve(modelOrPromise)
                         }
                     })
+                promise.then(newModel => {
+                    if (command.isHiddenCommand())
+                        this.updateHidden(newModel)
+                    else
+                        this.update(newModel)
+                })
+                return promise
             })
     }
 
@@ -148,16 +155,6 @@ export class CommandStack implements ICommandStack {
         }
     }
 
-    protected thenUpdate() {
-        this.currentPromise = this.currentPromise.then(
-            model => {
-                this.update(model)
-                return model
-            }
-        )
-        return this.currentPromise
-    }
-
     update(model: SModelRoot): void {
         if(this.viewer) {
             this.viewer.update(model)
@@ -166,6 +163,17 @@ export class CommandStack implements ICommandStack {
         this.viewerProvider().then(viewer => {
             this.viewer = viewer
             this.update(model)
+        })
+    }
+
+    updateHidden(model: SModelRoot): void {
+        if(this.viewer) {
+            this.viewer.updateHidden(model)
+            return
+        }
+        this.viewerProvider().then(viewer => {
+            this.viewer = viewer
+            this.updateHidden(model)
         })
     }
 

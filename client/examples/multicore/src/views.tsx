@@ -13,7 +13,7 @@ export class ProcessorView implements View {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
         return <svg key={model.id} id={model.id}>
                 <g transform={transform}>
-                    {context.viewer.renderChildren(model, context)}
+                    {context.renderChildren(model, context)}
                 </g>
             </svg>
     }

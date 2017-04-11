@@ -39,7 +39,7 @@ export abstract class ThunkView implements View {
 
     protected renderAndDecorate(model: SModelElement, context: RenderingContext): VNode {
         const vnode = this.doRender(model, context)
-        context.viewer.decorate(vnode, model)
+        context.decorate(vnode, model)
         return vnode
     }
 

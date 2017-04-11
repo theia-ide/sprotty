@@ -2,12 +2,12 @@ package io.typefox.sprotty.server.examples
 
 import io.typefox.sprotty.api.AbstractDiagramServer
 import io.typefox.sprotty.api.ActionMessage
+import io.typefox.sprotty.api.ComputedBoundsAction
 import io.typefox.sprotty.api.RequestModelAction
 import io.typefox.sprotty.api.SEdge
 import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.api.SNode
 import io.typefox.sprotty.api.SelectAction
-import io.typefox.sprotty.api.SetBoundsAction
 import io.typefox.sprotty.api.SetModelAction
 import org.eclipse.jetty.util.log.Slf4jLog
 
@@ -48,7 +48,7 @@ class SimpleDiagramServer extends AbstractDiagramServer {
 		])
 	}
 	
-	override handle(SetBoundsAction action, ActionMessage message) {
+	override handle(ComputedBoundsAction action, ActionMessage message) {
 		throw new UnsupportedOperationException
 	}
 	

@@ -15,7 +15,7 @@ export class SGraphView implements View {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
         return <svg key={model.id} id={model.id} class-graph={true}>
             <g transform={transform}>
-                {context.viewer.renderChildren(model, context)}
+                {context.renderChildren(model, context)}
             </g>
         </svg>
     }
@@ -39,11 +39,11 @@ export class StraightEdgeView implements View {
         if (!target)
             return this.renderDanglingEdge("cannot resolve target", edge, context)
 
-        const sourceView = context.viewer.viewRegistry.get(source.type, source)
+        const sourceView = context.viewRegistry.get(source.type, source)
         if (!(sourceView instanceof SNodeView))
             return this.renderDanglingEdge("expected source view type: SNodeView", edge, context)
 
-        const targetView = context.viewer.viewRegistry.get(target.type, target)
+        const targetView = context.viewRegistry.get(target.type, target)
         if (!(targetView instanceof SNodeView))
             return this.renderDanglingEdge("expected target view type: SNodeView", edge, context)
         
@@ -125,7 +125,7 @@ export class SCompartmentView implements View {
     render(model: SCompartment, context: RenderingContext): VNode {
         const translate = `translate(${model.bounds.x}, ${model.bounds.y})`
         return <g key={model.id} id={model.id} transform={translate} class-comp="{true}">
-            {context.viewer.renderChildren(model, context)}
+            {context.renderChildren(model, context)}
         </g>
     }
 }

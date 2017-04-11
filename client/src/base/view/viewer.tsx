@@ -12,33 +12,62 @@ import { SModelElement, SModelRoot, SParentElement } from "../model/smodel"
 import { TYPES } from "../types"
 import { VNodeDecorator } from "./vnode-decorators"
 import { RenderingContext, ViewRegistry } from "./views"
-import { setClass } from "./vnode-utils"
+import { setClass, setAttr } from "./vnode-utils"
 import { IViewerOptions } from "./options"
-import { ILogger } from "../../utils/logging"
+import { ILogger, LogLevel } from "../../utils/logging"
 import { isThunk } from "./thunk-view"
+import { EMPTY_ROOT } from "../model/smodel-factory"
 
 const JSX = {createElement: snabbdom.html}  // must be html here, as we're creating a div
 
 export interface IViewer {
     update(model: SModelRoot): void
+    updateHidden(hiddenModel: SModelRoot): void
 }
+
+export class ModelRenderer implements RenderingContext {
+    constructor(public viewRegistry: ViewRegistry, private decorators: VNodeDecorator[]) {
+    }
+
+    decorate(vnode: VNode, element: SModelElement): VNode {
+        if(isThunk(vnode))
+            return vnode
+        return this.decorators.reduce(
+            (vnode: VNode, decorator: VNodeDecorator) => decorator.decorate(vnode, element),
+            vnode)
+    }
+
+    renderElement(element: SModelElement): VNode {
+        const vNode = this.viewRegistry.get(element.type, element).render(element, this)
+        return this.decorate(vNode, element)
+    }
+
+    renderChildren(element: SParentElement): VNode[] {
+        return element.children.map((element) => this.renderElement(element))
+    }
+}
+
+export type ModelRendererFactory = (decorators: VNodeDecorator[]) => ModelRenderer
 
 /**
  * The component that turns the model into an SVG DOM.
  * Uses a VDOM based on snabbdom.js for performance.
  */
 @injectable()
-export class Viewer implements VNodeDecorator, IViewer {
+export class Viewer implements IViewer {
 
-    @inject(TYPES.ILogger) public logger: ILogger
-    @inject(TYPES.ViewRegistry) public viewRegistry: ViewRegistry
-    @inject(TYPES.IViewerOptions) protected options: IViewerOptions
-
+    protected renderer: ModelRenderer
+    protected hiddenRenderer: ModelRenderer
     protected readonly patcher: Patcher
     protected lastVDOM: VNode
 
-    constructor(@multiInject(TYPES.VNodeDecorator)@optional() protected decorators: VNodeDecorator[]) {
+    constructor(@inject(TYPES.ModelRendererFactory) modelRendererFactory: ModelRendererFactory,
+                @multiInject(TYPES.VNodeDecorator)@optional() protected decorators: VNodeDecorator[],
+                @inject(TYPES.IViewerOptions) protected options: IViewerOptions,
+                @inject(TYPES.ILogger) protected logger: ILogger) {
         this.patcher = this.createPatcher()
+        this.renderer = modelRendererFactory(decorators)
+        this.hiddenRenderer = modelRendererFactory([])
     }
 
     protected createModules(): Module[] {
@@ -55,42 +84,18 @@ export class Viewer implements VNodeDecorator, IViewer {
         return init(this.createModules())
     }
 
-    protected createRenderingContext(model: SModelRoot): RenderingContext {
-        return {
-            viewer: this,
-        }
-    }
-
-    decorate(vnode: VNode, element: SModelElement): VNode {
-        if(isThunk(vnode))
-            return vnode
-        this.decorators = this.decorators
-        return this.decorators.reduce(
-            (vnode: VNode, decorator: VNodeDecorator) => decorator.decorate(vnode, element),
-            vnode)
-    }
-
     postUpdate() {
         this.decorators.forEach(decorator => decorator.postUpdate())
     }
 
-    renderElement(element: SModelElement, context: RenderingContext): VNode {
-        const vNode = this.viewRegistry.get(element.type, element).render(element, context)
-        return this.decorate(vNode, element)
-    }
-
-    renderChildren(element: SParentElement, context: RenderingContext): VNode[] {
-        return element.children.map((element) => context.viewer.renderElement(element, context))
-    }
-
     update(model: SModelRoot): void {
-        this.logger.log(this, 'rendering', JSON.stringify((model as any).boundsInPage))
-        const context = this.createRenderingContext(model)
+        if (this.logger.logLevel >= LogLevel.log)
+            this.logger.log(this, 'rendering in bounds', JSON.stringify((model as any).boundsInPage))
         const newVDOM = <div id={this.options.baseDiv}>
-                {this.renderElement(model, context) as VNode}
+                {this.renderer.renderElement(model)}
             </div>
         setClass(newVDOM, this.options.baseDiv, true)
-        if (this.lastVDOM) {
+        if (this.lastVDOM !== undefined) {
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
         } else {
             const placeholder = document.getElementById(this.options.baseDiv)
@@ -99,6 +104,22 @@ export class Viewer implements VNodeDecorator, IViewer {
         this.postUpdate()
     }
 
+    updateHidden(hiddenModel: SModelRoot): void {
+        if (this.lastVDOM === undefined) {
+            this.update(EMPTY_ROOT)
+        }
+        if (this.logger.logLevel >= LogLevel.log)
+            this.logger.log(this, 'rendering in bounds', JSON.stringify((hiddenModel as any).boundsInPage))
+        const hiddenVNode = this.hiddenRenderer.renderElement(hiddenModel)
+        setAttr(hiddenVNode, 'opacity', 0)
+        const newVDOM = <div id={this.options.baseDiv}>
+                {this.lastVDOM.children![0]}
+                {hiddenVNode}
+            </div>
+        setClass(newVDOM, this.options.baseDiv, true)
+        this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
+        this.postUpdate()
+    }
 }
 
 export type Patcher = (oldRoot: VNode | Element, newRoot: VNode) => VNode

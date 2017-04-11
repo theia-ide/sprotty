@@ -17,18 +17,34 @@ export class ViewerCache implements IViewer {
     @inject(TYPES.IAnimationFrameSyncer) syncer: AnimationFrameSyncer
 
     cachedModelRoot: SModelRoot | undefined
+    cachedHiddenModelRoot: SModelRoot | undefined
 
     update(model: SModelRoot): void {
-        const isCacheEmpty = this.cachedModelRoot === undefined
+        const isCacheEmpty = this.cachedModelRoot === undefined && this.cachedHiddenModelRoot === undefined
         this.cachedModelRoot = model
-        if(isCacheEmpty) {
-            this.syncer.onEndOfNextFrame(() => {
-                if(this.cachedModelRoot) {
-                    const nextModelRoot = this.cachedModelRoot
-                    this.delegate.update(nextModelRoot)
-                    this.cachedModelRoot = undefined
-                }
-            })
-        }
+        if (isCacheEmpty)
+            this.scheduleUpdate()
+    }
+
+    updateHidden(hiddenModel: SModelRoot): void {
+        const isCacheEmpty = this.cachedModelRoot === undefined && this.cachedHiddenModelRoot === undefined
+        this.cachedHiddenModelRoot = hiddenModel
+        if (isCacheEmpty)
+            this.scheduleUpdate()
+    }
+
+    protected scheduleUpdate() {
+        this.syncer.onEndOfNextFrame(() => {
+            if (this.cachedHiddenModelRoot) {
+                const nextHiddenModelRoot = this.cachedHiddenModelRoot
+                this.delegate.updateHidden(nextHiddenModelRoot)
+                this.cachedHiddenModelRoot = undefined
+            }
+            if (this.cachedModelRoot) {
+                const nextModelRoot = this.cachedModelRoot
+                this.delegate.update(nextModelRoot)
+                this.cachedModelRoot = undefined
+            }
+        })
     }
 }

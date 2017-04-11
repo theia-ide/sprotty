@@ -11,6 +11,7 @@ export const TYPES = {
     ILogger: Symbol('ILogger'),
     LogLevel: Symbol('LogLevel'),
     IModelFactory: Symbol('IModelFactory'),
+    ModelRendererFactory: Symbol('ModelRendererFactory'),
     MouseListener: Symbol('MouseListener'),
     IViewer: Symbol('IViewer'),
     IViewerOptions: Symbol('IViewerOptions'),

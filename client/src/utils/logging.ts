@@ -3,6 +3,8 @@ import { TYPES } from "../base/types"
 import { IViewerOptions } from "../base/view/options"
 
 export interface ILogger {
+    logLevel: LogLevel
+
     error(thisArg: any, message: string, ...params: any[]): void
     warn(thisArg: any, message: string, ...params: any[]): void
     info(thisArg: any, message: string, ...params: any[]): void
@@ -13,6 +15,8 @@ export enum LogLevel { none = 0, error = 1, warn = 2, info = 3, log = 4 }
 
 @injectable()
 export class NullLogger implements ILogger {
+    logLevel: LogLevel = LogLevel.none
+
     error(thisArg: any, message: string, ...params: any[]): void {}
     warn(thisArg: any, message: string, ...params: any[]): void {}
     info(thisArg: any, message: string, ...params: any[]): void {}
@@ -21,7 +25,7 @@ export class NullLogger implements ILogger {
 
 @injectable()
 export class ConsoleLogger implements ILogger {
-    @inject(TYPES.LogLevel) protected logLevel: LogLevel = LogLevel.log
+    @inject(TYPES.LogLevel) logLevel: LogLevel = LogLevel.log
     @inject(TYPES.IViewerOptions) protected viewOptions: IViewerOptions
 
     error(thisArg: any, message: string, ...params: any[]): void {

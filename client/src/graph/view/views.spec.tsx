@@ -7,7 +7,7 @@ import { VNode } from "snabbdom/vnode"
 import { CircularNodeView } from "../../lib/views"
 import { SEdge, SGraph, SNode } from "../model/sgraph"
 import { RenderingContext, ViewRegistry } from "../../base/view/views"
-import { Viewer } from "../../base/view/viewer"
+import { Viewer, ModelRendererFactory } from "../../base/view/viewer"
 import { TYPES } from "../../base/types"
 import { SGraphFactory } from "../model/sgraph-factory"
 import { SGraphView, StraightEdgeView } from "./views"
@@ -39,7 +39,7 @@ describe('graph views', () => {
     viewRegistry.register('graph', SGraphView)
     viewRegistry.register('node:circle', CircleNodeView)
     viewRegistry.register('edge:straight', StraightEdgeView)
-    const context = {viewer: viewer}
+    const context = container.get<ModelRendererFactory>(TYPES.ModelRendererFactory).apply([])
     const factory = new SGraphFactory()
 
     it('render an empty graph', () => {

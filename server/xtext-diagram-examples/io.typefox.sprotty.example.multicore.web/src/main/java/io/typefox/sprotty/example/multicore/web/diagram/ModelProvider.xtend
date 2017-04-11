@@ -13,18 +13,43 @@ import org.eclipse.xtext.web.server.IServiceResult
 @ToString
 class ModelProvider implements IServiceResult {
 	
-	/** (resource id, model type) -> model */
-	val Map<Pair<String, String>, SModelRoot> cachedModels = newHashMap
+	/** (resource id, model type) -> model entry */
+	val Map<Pair<String, String>, ModelEntry> cachedModels = newHashMap
 	
 	def SModelRoot getModel(String resourceId, String modelType) {
 		synchronized (cachedModels) {
-			cachedModels.get(Pair.of(resourceId, modelType))
+			cachedModels.get(Pair.of(resourceId, modelType))?.root
+		}
+	}
+	
+	def boolean isLayoutDone(String resourceId, String modelType) {
+		synchronized (cachedModels) {
+			val entry = cachedModels.get(Pair.of(resourceId, modelType))
+			if (entry !== null)
+				return entry.layoutDone
+			else
+				return false
 		}
 	}
 	
 	def void putModel(String resourceId, SModelRoot model) {
 		synchronized (cachedModels) {
-			cachedModels.put(Pair.of(resourceId, model.type), model)
+			val key = Pair.of(resourceId, model.type)
+			var entry = cachedModels.get(key)
+			if (entry === null) {
+				entry = new ModelEntry
+				cachedModels.put(key, entry)
+			}
+			entry.root = model
+			entry.layoutDone = false
+		}
+	}
+	
+	def void setLayoutDone(String resourceId, String modelType) {
+		synchronized (cachedModels) {
+			val entry = cachedModels.get(Pair.of(resourceId, modelType))
+			if (entry !== null)
+				entry.layoutDone = true
 		}
 	}
 	
@@ -38,6 +63,11 @@ class ModelProvider implements IServiceResult {
 				}
 			}
 		}
+	}
+	
+	private static class ModelEntry {
+		SModelRoot root
+		boolean layoutDone
 	}
 	
 }
