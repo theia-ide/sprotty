@@ -219,8 +219,8 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	protected static class LayoutContext {
 		public SGraph sgraph;
 		public ElkNode elkGraph;
-		public final Map<SNode, ElkNode> nodeMap = Maps.newHashMap();
-		public final Map<SEdge, ElkEdge> edgeMap = Maps.newHashMap();
+		public final Map<SNode, ElkNode> nodeMap = Maps.newLinkedHashMap();
+		public final Map<SEdge, ElkEdge> edgeMap = Maps.newLinkedHashMap();
 	}
 
 }

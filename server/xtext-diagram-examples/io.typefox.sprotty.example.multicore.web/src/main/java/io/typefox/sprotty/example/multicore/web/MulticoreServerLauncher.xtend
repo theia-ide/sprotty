@@ -13,6 +13,8 @@ import javax.websocket.EndpointConfig
 import javax.websocket.Session
 import javax.websocket.server.ServerEndpointConfig
 import org.apache.log4j.Logger
+import org.eclipse.elk.core.util.persistence.ElkGraphResourceFactory
+import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.jetty.annotations.AnnotationConfiguration
 import org.eclipse.jetty.server.Server
 import org.eclipse.jetty.server.handler.HandlerList
@@ -78,6 +80,7 @@ class MulticoreServerLauncher {
 	}
 	
 	def static void main(String[] args) {
+		Resource.Factory.Registry.INSTANCE.extensionToFactoryMap.put('elkg', new ElkGraphResourceFactory)
 		val injector = new MulticoreAllocationWebSetup().createInjectorAndDoEMFRegistration()
 		
 		val server = new Server(new InetSocketAddress('localhost', 8080))

@@ -2,14 +2,20 @@ package io.typefox.sprotty.example.multicore.web.diagram
 
 import io.typefox.sprotty.api.SEdge
 import io.typefox.sprotty.layout.ElkLayoutEngine
+import java.io.ByteArrayOutputStream
 import java.util.Map
+import org.apache.log4j.Logger
 import org.eclipse.elk.core.options.CoreOptions
 import org.eclipse.elk.core.options.PortSide
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.util.ElkGraphUtil
+import org.eclipse.emf.common.util.URI
+import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 
 class MulticoreAllocationLayoutEngine extends ElkLayoutEngine {
+	
+	static val LOG = Logger.getLogger(MulticoreAllocationLayoutEngine)
 	
 	override protected resolveReferences(ElkEdge elkEdge, SEdge sedge, Map<String, ElkNode> id2NodeMap, LayoutContext context) {
 		val source = id2NodeMap.get(sedge.sourceId)
@@ -43,6 +49,21 @@ class MulticoreAllocationLayoutEngine extends ElkLayoutEngine {
 			elkEdge.containingNode = container
 		else
 			elkEdge.containingNode = context.elkGraph
+	}
+	
+	override protected applyEngine(ElkNode elkGraph) {
+		if (LOG.isTraceEnabled)
+			LOG.trace(elkGraph.toXMI)
+		super.applyEngine(elkGraph)
+	}
+	
+	private def toXMI(ElkNode elkGraph) {
+		val resourceSet = new ResourceSetImpl
+		val resource = resourceSet.createResource(URI.createFileURI('output.elkg'))
+		resource.contents += elkGraph
+		val outputStream = new ByteArrayOutputStream
+		resource.save(outputStream, emptyMap)
+		return outputStream.toString
 	}
 	
 }
