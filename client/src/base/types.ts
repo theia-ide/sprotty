@@ -18,4 +18,5 @@ export const TYPES = {
     IViewerProvider: Symbol('IViewerProvider'),
     ViewRegistry: Symbol('ViewRegistry'),
     VNodeDecorator: Symbol('VNodeDecorator'),
+    HiddenVNodeDecorator: Symbol('HiddenVNodeDecorator'),
 }

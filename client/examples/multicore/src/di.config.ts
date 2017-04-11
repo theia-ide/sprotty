@@ -7,7 +7,7 @@ import { boundsModule, selectModule, viewportModule } from "../../../src/feature
 
 const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
-    // rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
+    rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
     rebind(TYPES.IModelFactory).to(ChipModelFactory).inSingletonScope()
     rebind<IViewerOptions>(TYPES.IViewerOptions).toConstantValue({
         baseDiv: 'sprotty-cores'

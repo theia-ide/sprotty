@@ -45,6 +45,10 @@ export class ModelRenderer implements RenderingContext {
     renderChildren(element: SParentElement): VNode[] {
         return element.children.map((element) => this.renderElement(element))
     }
+
+    postUpdate() {
+        this.decorators.forEach(decorator => decorator.postUpdate())
+    }
 }
 
 export type ModelRendererFactory = (decorators: VNodeDecorator[]) => ModelRenderer
@@ -63,11 +67,12 @@ export class Viewer implements IViewer {
 
     constructor(@inject(TYPES.ModelRendererFactory) modelRendererFactory: ModelRendererFactory,
                 @multiInject(TYPES.VNodeDecorator)@optional() protected decorators: VNodeDecorator[],
+                @multiInject(TYPES.HiddenVNodeDecorator)@optional() protected hiddenDecorators: VNodeDecorator[],
                 @inject(TYPES.IViewerOptions) protected options: IViewerOptions,
                 @inject(TYPES.ILogger) protected logger: ILogger) {
         this.patcher = this.createPatcher()
         this.renderer = modelRendererFactory(decorators)
-        this.hiddenRenderer = modelRendererFactory([])
+        this.hiddenRenderer = modelRendererFactory(hiddenDecorators)
     }
 
     protected createModules(): Module[] {
@@ -84,10 +89,6 @@ export class Viewer implements IViewer {
         return init(this.createModules())
     }
 
-    postUpdate() {
-        this.decorators.forEach(decorator => decorator.postUpdate())
-    }
-
     update(model: SModelRoot): void {
         if (this.logger.logLevel >= LogLevel.log)
             this.logger.log(this, 'rendering in bounds', JSON.stringify((model as any).boundsInPage))
@@ -101,7 +102,7 @@ export class Viewer implements IViewer {
             const placeholder = document.getElementById(this.options.baseDiv)
             this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
-        this.postUpdate()
+        this.renderer.postUpdate()
     }
 
     updateHidden(hiddenModel: SModelRoot): void {
@@ -109,7 +110,7 @@ export class Viewer implements IViewer {
             this.update(EMPTY_ROOT)
         }
         if (this.logger.logLevel >= LogLevel.log)
-            this.logger.log(this, 'rendering in bounds', JSON.stringify((hiddenModel as any).boundsInPage))
+            this.logger.log(this, 'rendering hidden')
         const hiddenVNode = this.hiddenRenderer.renderElement(hiddenModel)
         setAttr(hiddenVNode, 'opacity', 0)
         const newVDOM = <div id={this.options.baseDiv}>
@@ -118,7 +119,7 @@ export class Viewer implements IViewer {
             </div>
         setClass(newVDOM, this.options.baseDiv, true)
         this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
-        this.postUpdate()
+        this.hiddenRenderer.postUpdate()
     }
 }
 

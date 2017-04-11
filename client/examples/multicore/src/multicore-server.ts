@@ -1,3 +1,4 @@
+import { ComputedBoundsAction } from '../../../src/features/bounds/bounds-manipulation';
 import {
     ActionHandlerRegistry, IActionDispatcher, RequestModelAction, TYPES, UpdateModelAction, ViewRegistry
 } from "../../../src/base"
@@ -27,6 +28,7 @@ export function setupMulticore(websocket: WebSocket) {
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
     actionHandlerRegistry.registerServerMessage(SelectCommand.KIND)
     actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
+    actionHandlerRegistry.registerServerMessage(ComputedBoundsAction.KIND)
     actionHandlerRegistry.registerTranslator(SetBoundsCommand.KIND, update => new FitToScreenAction([]))
 
     // Register views

@@ -26,7 +26,9 @@ export class RequestBoundsAction implements Action {
 }
 
 export class ComputedBoundsAction implements Action {
-    readonly kind = 'computedBounds'
+    static readonly KIND = 'computedBounds'
+    
+    readonly kind = ComputedBoundsAction.KIND
 
     constructor(public bounds: ElementAndBounds[]) {
     }

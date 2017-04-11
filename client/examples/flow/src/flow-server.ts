@@ -2,7 +2,7 @@ import {
     ActionHandlerRegistry, IActionDispatcher, RequestModelAction, TYPES, UpdateModelAction, ViewRegistry
 } from "../../../src/base"
 import { SGraphView } from "../../../src/graph"
-import { SelectCommand, SetBoundsCommand } from "../../../src/features"
+import { SelectCommand, SetBoundsCommand, ComputedBoundsAction } from "../../../src/features"
 import { BarrierNodeView, ExecutionNodeView, FlowEdgeView } from "./views"
 import createContainer from "./di.config"
 import { WebSocketDiagramServer } from "../../../src/remote"
@@ -27,7 +27,7 @@ export function setupFlow(websocket: WebSocket) {
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
     actionHandlerRegistry.registerServerMessage(SelectCommand.KIND)
     actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
-    actionHandlerRegistry.registerServerMessage(SetBoundsCommand.KIND)
+    actionHandlerRegistry.registerServerMessage(ComputedBoundsAction.KIND)
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
