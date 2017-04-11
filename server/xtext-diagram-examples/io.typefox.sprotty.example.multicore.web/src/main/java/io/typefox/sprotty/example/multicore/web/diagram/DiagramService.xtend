@@ -52,6 +52,7 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 		val selection = selectionProvider.getSelection(doc.resourceId)
 		val processorView = diagramGenerator.generateProcessorView(program, selection, cancelIndicator)
 		modelProvider.putModel(doc.resourceId, processorView)
+		modelProvider.setLayoutDone(doc.resourceId, processorView.type)
 		cancelIndicator.checkCanceled
 		val flowView = diagramGenerator.generateFlowView(program, selection, cancelIndicator)
 		val oldFlowView = modelProvider.getModel(doc.resourceId, flowView.type) 
