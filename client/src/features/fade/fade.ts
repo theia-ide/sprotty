@@ -41,19 +41,13 @@ export class FadeAnimation extends Animation {
 @injectable()
 export class ElementFader implements VNodeDecorator {
 
-    private readonly fadeables: { vnode: VNode, element: SModelElement & Fadeable }[] = []
-
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (isFadeable(element)) {
-            this.fadeables.push({ vnode, element })
+            setAttr(vnode, 'opacity', element.opacity)
         }
         return vnode
     }
     
     postUpdate(): void {
-        for (const { vnode, element } of this.fadeables) {
-            setAttr(vnode, 'opacity', element.opacity)
-        }
-        this.fadeables.splice(0, this.fadeables.length)
     }
 }

@@ -149,7 +149,7 @@ class MulticoreAllocationDiagramGenerator {
 		val tnode = new TaskNode
 		tnode.type = 'task'
 		tnode.id = declaration.name + '_' + (index++)
-		tnode.kernel = declaration.kernel?.name
+		tnode.name = declaration.name
 		if (step !== null) {
 			if (step.allocations.filter(TaskRunning).exists[task == declaration])
 				tnode.status = 'running'

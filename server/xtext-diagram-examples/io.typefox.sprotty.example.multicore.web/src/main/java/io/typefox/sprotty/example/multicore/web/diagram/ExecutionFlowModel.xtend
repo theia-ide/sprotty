@@ -13,7 +13,7 @@ class Flow extends SGraph {
 
 @Accessors@EqualsHashCode@ToString
 class TaskNode extends SNode {
-	String kernel
+	String name
 	String status
 }
 

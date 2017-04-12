@@ -1,12 +1,12 @@
 import { SNode, SNodeSchema } from "../../../src/graph"
 
 export interface TaskNodeSchema extends SNodeSchema {
-    kernel?: string
+    name?: string
     status?: string
 }
 
 export class TaskNode extends SNode implements TaskNodeSchema {
-    kernel: string = ''
+    name: string = ''
     status?: string
 }
 

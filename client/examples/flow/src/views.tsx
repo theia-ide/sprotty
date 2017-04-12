@@ -17,7 +17,7 @@ export class ExecutionNodeView extends CircularNodeView {
                         class-running={node.status == 'running'}
                         class-finished={node.status == 'finished'}
                         r={radius} cx={radius} cy={radius}></circle>
-                <text x={radius} y={radius + 5} class-text={true}>{node.kernel}</text>
+                <text x={radius} y={radius + 5} class-text={true}>{node.name}</text>
             </g>
     }
 
