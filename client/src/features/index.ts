@@ -13,11 +13,9 @@ export * from "./viewport/model"
 
 import moveModule from "./move/di.config"
 import boundsModule from "./bounds/di.config"
+import fadeModule from "./fade/di.config"
 import selectModule from "./select/di.config"
 import undoRedoModule from "./undo-redo/di.config"
 import viewportModule from "./viewport/di.config"
-export { moveModule }
-export { boundsModule }
-export { selectModule }
-export { undoRedoModule }
-export { viewportModule }
+
+export { moveModule, boundsModule, fadeModule, selectModule, undoRedoModule, viewportModule }

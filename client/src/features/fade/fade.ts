@@ -1,7 +1,11 @@
+import { inject, injectable } from "inversify"
+import { VNode } from "snabbdom/vnode"
 import { Animation } from "../../base/animations/animation"
 import { CommandExecutionContext } from "../../base/intent/commands"
 import { SModelRoot, SModelElement, SChildElement } from "../../base/model/smodel"
-import { Fadeable } from "./model"
+import { VNodeDecorator } from "../../base/view/vnode-decorators"
+import { setAttr } from "../../base/view/vnode-utils"
+import { Fadeable, isFadeable } from "./model"
 
 export interface ResolvedElementFade {
     element: SModelElement & Fadeable
@@ -21,9 +25,9 @@ export class FadeAnimation extends Animation {
         for (const elementFade of this.elementFades) {
             const element = elementFade.element
             if (elementFade.type == 'in') {
-                element.alpha = t
+                element.opacity = t
             } else if (elementFade.type == 'out') {
-                element.alpha = 1 - t
+                element.opacity = 1 - t
             }
             if (t == 1 && this.removeAfterFadeOut && element instanceof SChildElement) {
                 element.parent.remove(element)
@@ -32,4 +36,24 @@ export class FadeAnimation extends Animation {
         return this.model
     }
 
+}
+
+@injectable()
+export class ElementFader implements VNodeDecorator {
+
+    private readonly fadeables: { vnode: VNode, element: SModelElement & Fadeable }[] = []
+
+    decorate(vnode: VNode, element: SModelElement): VNode {
+        if (isFadeable(element)) {
+            this.fadeables.push({ vnode, element })
+        }
+        return vnode
+    }
+    
+    postUpdate(): void {
+        for (const { vnode, element } of this.fadeables) {
+            setAttr(vnode, 'opacity', element.opacity)
+        }
+        this.fadeables.splice(0, this.fadeables.length)
+    }
 }

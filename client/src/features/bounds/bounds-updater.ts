@@ -1,12 +1,12 @@
-import { almostEquals } from '../../utils';
 import { inject, injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
+import { almostEquals } from '../../utils'
 import { SModelElement } from "../../base/model/smodel"
 import { VNodeDecorator } from "../../base/view/vnode-decorators"
 import { TYPES } from "../../base/types"
 import { IActionDispatcher } from "../../base/intent/action-dispatcher"
 import { Bounds, isEmpty, EMPTY_BOUNDS } from '../../utils/geometry';
-import { ComputedBoundsAction, ElementAndBounds, SetBoundsAction, SetBoundsInPageAction } from './bounds-manipulation';
+import { ComputedBoundsAction, ElementAndBounds, SetBoundsAction, SetBoundsInPageAction } from './bounds-manipulation'
 import { BoundsAware, BoundsInPageAware, isBoundsInPageAware, isSizeable } from "./model"
 import { Layouter } from "./layout"
 import { LAYOUT_TYPES } from "./types"
@@ -18,7 +18,7 @@ export class BoundsData {
 
 /**
  * Grabs the bounds from hidden SVG DOM elements, applies layouts and fires
- * SetBoundsActions.
+ * ComputedBoundsActions.
  *
  * The actual bounds of an element can usually not be determined from the SModel
  * as they depend on the view implementation and CSS stylings. So the best way is
@@ -30,7 +30,7 @@ export class HiddenBoundsUpdater implements VNodeDecorator {
     @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
     @inject(LAYOUT_TYPES.Layouter) protected layouter : Layouter
 
-    element2boundsData: Map<SModelElement, BoundsData> = new Map
+    private readonly element2boundsData: Map<SModelElement, BoundsData> = new Map
 
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (isSizeable(element) && element.revalidateBounds) {

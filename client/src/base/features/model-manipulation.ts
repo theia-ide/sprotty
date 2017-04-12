@@ -120,7 +120,7 @@ export class UpdateModelCommand extends AbstractCommand {
                 // An element has been added
                 const right = match.right as SModelElement
                 if (isFadeable(right)) {
-                    right.alpha = 0
+                    right.opacity = 0
                     animationData.fades.push({
                         element: right,
                         type: 'in'

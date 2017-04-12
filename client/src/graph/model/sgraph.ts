@@ -36,7 +36,7 @@ export class SNode extends SChildElement implements SNodeSchema, Selectable, Bou
     children: SCompartmentElement[]
     layout?: string
     selected: boolean = false
-    alpha: number = 1
+    opacity: number = 1
 
     get bounds(): Bounds {
         return {x: this.x, y: this.y, width: this.width, height: this.height}
@@ -74,7 +74,7 @@ export class SEdge extends SChildElement implements SEdgeSchema, Fadeable {
     sourceId: string
     targetId: string
     routingPoints: Point[] = []
-    alpha: number = 1
+    opacity: number = 1
 
     get source(): SNode | undefined {
         return this.index.getById(this.sourceId) as SNode
