@@ -109,20 +109,19 @@ class MulticoreAllocationDiagramGenerator {
 		if (program !== null) {
 			val step = selection.getContainerOfType(Step)
 			val nodes = newHashMap
-			val index = newIntArrayOfSize(1)
 			// Transform tasks
 			for (declaration : program.declarations.filter(Task)) {
-				val tnode = createTask(declaration, step, index)
+				val tnode = createTask(declaration, step)
 				nodes.put(declaration, tnode)
 				flow.children += tnode
 			}
 			// Transform barriers
 			for (declaration : program.declarations.filter(Barrier)) {
-				val bnode = createBarrier(declaration, index)
+				val bnode = createBarrier(declaration)
 				nodes.put(declaration, bnode)
 				flow.children += bnode
 				for (triggered : declaration.triggered) {
-					val tnode = createTask(triggered, step, index)
+					val tnode = createTask(triggered, step)
 					nodes.put(triggered, tnode)
 					flow.children += tnode
 				}
@@ -130,13 +129,13 @@ class MulticoreAllocationDiagramGenerator {
 			// Transform flows
 			for (declaration : program.declarations.filter(Barrier)) {
 				declaration.joined.forEach[ joined, k |
-					val edge = createFlow(nodes.get(joined)?.id, nodes.get(declaration)?.id, index)
+					val edge = createFlow(nodes.get(joined)?.id, nodes.get(declaration)?.id)
 					edge.targetIndex = k
 					flow.children += edge
 				]
 				val edgeCount = declaration.joined.size + declaration.triggered.size
 				declaration.triggered.forEach[ triggered, k |
-					val edge = createFlow(nodes.get(declaration)?.id, nodes.get(triggered)?.id, index)
+					val edge = createFlow(nodes.get(declaration)?.id, nodes.get(triggered)?.id)
 					edge.sourceIndex = edgeCount - k
 					flow.children += edge
 				]
@@ -145,10 +144,10 @@ class MulticoreAllocationDiagramGenerator {
 		return flow
 	}
 	
-	private def createTask(Task declaration, Step step, int[] index) {
+	private def createTask(Task declaration, Step step) {
 		val tnode = new TaskNode
 		tnode.type = 'task'
-		tnode.id = declaration.name + '_' + (index++)
+		tnode.id = 'task_' + declaration.name
 		tnode.name = declaration.name
 		if (step !== null) {
 			if (step.allocations.filter(TaskRunning).exists[task == declaration])
@@ -159,24 +158,20 @@ class MulticoreAllocationDiagramGenerator {
 		return tnode
 	}
 	
-	private def createBarrier(Barrier declaration, int[] index) {
+	private def createBarrier(Barrier declaration) {
 		val bnode = new BarrierNode
 		bnode.type = 'barrier'
-		bnode.id = 'barrier' + (index++)
+		bnode.id = 'barrier_' + declaration.joined.map[name].join('+') + '>>' + declaration.triggered.map[name].join('+')
 		return bnode
 	}
 	
-	private def createFlow(String sourceId, String targetId, int[] index) {
+	private def createFlow(String sourceId, String targetId) {
 		val edge = new FlowEdge
 		edge.type = 'edge'
-		edge.id = 'flow' + (index++)
+		edge.id = 'flow_' + sourceId + '--' + targetId
 		edge.sourceId = sourceId
 		edge.targetId = targetId
 		return edge
-	}
-	
-	private def ++(int[] index) {
-		index.set(0, index.get(0) + 1)
 	}
 	
 }
