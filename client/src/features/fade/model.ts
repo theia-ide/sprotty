@@ -8,5 +8,5 @@ export interface Fadeable extends SModelExtension {
 }
 
 export function isFadeable(element: SModelElement): element is SModelElement & Fadeable {
-    return element.hasFeature(fadeFeature) && (element as any)['alpha'] !== undefined
+    return element.hasFeature(fadeFeature) && (element as any)['opacity'] !== undefined
 }
