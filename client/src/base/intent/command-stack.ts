@@ -4,7 +4,8 @@ import {
     AbstractHiddenCommand,
     Command,
     CommandExecutionContext,
-    CommandResult
+    CommandResult,
+    AbstractSystemCommand
 } from './commands';
 import { EMPTY_ROOT, IModelFactory } from "../model/smodel-factory"
 import { IViewer, IViewerProvider } from "../view/viewer"
@@ -23,6 +24,8 @@ export interface ICommandStack {
 interface CommandStackState {
     root: SModelRoot,
     hiddenRoot: SModelRoot | undefined
+    rootChanged: boolean
+    hiddenRootChanged: boolean
 }
 
 /**
@@ -98,26 +101,26 @@ export class CommandStack implements ICommandStack {
                         const context = this.createContext(state.root)
                         const newResult = operation.call(command, context) as CommandResult
                         if(command instanceof AbstractHiddenCommand) {
-                            resolve({
-                                root: state.root,
-                                hiddenRoot: newResult as SModelRoot
-                            }) 
+                            resolve({...state, ...{ 
+                                hiddenRoot: newResult as SModelRoot,
+                                hiddenRootChanged: true
+                            }})
                         } else if (newResult instanceof Promise) {
                             newResult.then(
                                 (newModel: SModelRoot) => {
                                     beforeResolve.call(this, command, context)
-                                    resolve({
+                                    resolve({...state, ...{
                                         root: newModel,
-                                        hiddenRoot: state.hiddenRoot
-                                    })
+                                        rootChanged: true
+                                    }})
                                 }
                             )
                         } else {
                             beforeResolve.call(this, command, context)
-                            resolve({
+                            resolve({...state, ...{
                                 root: newResult,
-                                hiddenRoot: state.hiddenRoot
-                            })
+                                rootChanged: true
+                            }})
                         }
                     })
                 return promise
@@ -127,11 +130,16 @@ export class CommandStack implements ICommandStack {
     protected thenUpdate() {
         this.currentPromise = this.currentPromise.then(
             state => {
-                if (state.hiddenRoot !== undefined) 
+                if (state.hiddenRootChanged && state.hiddenRoot !== undefined) 
                     this.updateHidden(state.hiddenRoot)
-                if(state.root)
+                if(state.rootChanged)
                     this.update(state.root)
-                return { root: state.root }
+                return { 
+                    root: state.root,
+                    hiddenRoot: undefined,
+                    rootChanged: false,
+                    hiddenRootChanged: false
+                }
             }
         )
         return this.currentPromise.then(
@@ -142,7 +150,7 @@ export class CommandStack implements ICommandStack {
     protected mergeOrPush(command: Command, context: CommandExecutionContext) {
         if(command instanceof AbstractHiddenCommand)
             return;
-        if(command.isSystemCommand() && this.redoStack.length > 0) {
+        if(command instanceof AbstractSystemCommand && this.redoStack.length > 0) {
             this.offStack.push(command)
         } else {
             this.offStack.forEach(command => this.undoStack.push(command))
@@ -168,7 +176,7 @@ export class CommandStack implements ICommandStack {
 
     protected undoPreceedingSystemCommands() {
         let command = this.undoStack[this.undoStack.length - 1]
-        while(command !== undefined && command.isSystemCommand()) {
+        while(command !== undefined && command instanceof AbstractSystemCommand) {
             this.undoStack.pop()
             this.logger.log(this, 'Undoing', command)
             this.handleCommand(command, command.undo, (command: Command, context: CommandExecutionContext) => {
@@ -180,7 +188,7 @@ export class CommandStack implements ICommandStack {
 
     protected redoFollowingSystemCommands() {
         let command = this.redoStack[this.redoStack.length -1]
-        while (command !== undefined && command.isSystemCommand()) {
+        while (command !== undefined && command instanceof AbstractSystemCommand) {
             this.redoStack.pop()
             this.logger.log(this, 'Redoing ', command)
             this.handleCommand(command, command.redo, (command: Command, context: CommandExecutionContext) => {
