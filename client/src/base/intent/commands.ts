@@ -19,8 +19,6 @@ export interface Command {
     redo(context: CommandExecutionContext): CommandResult
 
     merge(command: Command, context: CommandExecutionContext): boolean
-
-    isSystemCommand(): boolean
 }
 
 export type CommandResult = SModelRoot | Promise<SModelRoot>
@@ -41,10 +39,6 @@ export abstract class AbstractCommand implements Command {
     merge(command: Command, context: CommandExecutionContext): boolean {
         return false
     }
-
-    isSystemCommand(): boolean {
-        return false
-    }
 }
 
 export abstract class AbstractHiddenCommand extends AbstractCommand {
@@ -59,6 +53,9 @@ export abstract class AbstractHiddenCommand extends AbstractCommand {
         context.logger.error(this, 'Cannot redo a hidden command')
         return context.root
     }
+}
+
+export abstract class AbstractSystemCommand extends AbstractCommand {
 }
 
 export interface CommandExecutionContext {

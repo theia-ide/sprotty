@@ -2,7 +2,7 @@ import { BoundsAware, BoundsInPageAware, isBoundsAware, isBoundsInPageAware } fr
 import { Bounds } from "../../utils/geometry"
 import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
-import { AbstractCommand, CommandExecutionContext } from "../../base/intent/commands"
+import { CommandExecutionContext, AbstractHiddenCommand, AbstractSystemCommand } from "../../base/intent/commands"
 
 export class SetBoundsAction implements Action {
     readonly kind = SetBoundsCommand.KIND
@@ -51,7 +51,7 @@ interface ResolvedElementAndBoundsInPage {
     newBounds: Bounds
 }
 
-export class SetBoundsCommand extends AbstractCommand {
+export class SetBoundsCommand extends AbstractSystemCommand {
     static readonly KIND: string  = 'setBounds'
 
     protected bounds: ResolvedElementAndBounds[] = []
@@ -95,13 +95,9 @@ export class SetBoundsCommand extends AbstractCommand {
         )
         return context.root
     }
-
-    isSystemCommand(): boolean {
-        return true
-    }
 }
 
-export class SetBoundsInPageCommand extends AbstractCommand {
+export class SetBoundsInPageCommand extends AbstractSystemCommand {
     static readonly KIND: string  = 'setBoundsInPage'
 
     protected bounds: ResolvedElementAndBoundsInPage[] = []
@@ -139,38 +135,16 @@ export class SetBoundsInPageCommand extends AbstractCommand {
         )
         return context.root
     }
-
-    isSystemCommand(): boolean {
-        return true
-    }
 }
 
-export class RequestBoundsCommand extends AbstractCommand {
+export class RequestBoundsCommand extends AbstractHiddenCommand {
     static readonly KIND: string  = 'requestBounds'
     
     constructor(protected action: RequestBoundsAction) {
         super()
     }
 
-    execute(context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
+    execute(context: CommandExecutionContext): SModelRoot {
         return context.modelFactory.createRoot(this.action.root)
-    }
-    
-    undo(context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
-        // Nothing to undo
-        return context.root
-    }
-
-    redo(context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
-        // Nothing to redo
-        return context.root
-    }
-
-    isSystemCommand(): boolean {
-        return true
-    }
-
-    isHiddenCommand(): boolean {
-        return true
     }
 }
