@@ -43,19 +43,6 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 	
 	val Multimap<String, String> type2Clients = HashMultimap.create()
 	
-	def notifyClients(SModelRoot model) {
-		if (remoteEndpoint !== null) {
-			for (client : type2Clients.get(model.type)) {
-				remoteEndpoint.accept(new ActionMessage [
-					clientId = client
-					action = new RequestBoundsAction [
-						root = model
-					]
-				])
-			}
-		}
-	}
-	
 	override handle(RequestModelAction action, ActionMessage message) {
 		val resourceId = action.options?.get('resourceId')
 		LOG.info('Model requested for resource ' + resourceId)
@@ -65,7 +52,7 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		if (model !== null) {
 			remoteEndpoint?.accept(new ActionMessage [
 				clientId = message.clientId
-				if (modelProvider.isLayoutDone(resourceId, action.modelType)) {
+				if (model.type == 'processor' || modelProvider.isLayoutDone(resourceId, action.modelType)) {
 					action = new SetModelAction [
 						modelType = model.type
 						modelId = model.id
@@ -77,6 +64,27 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 					]
 				}
 			])
+		}
+	}
+	
+	def notifyClients(SModelRoot model) {
+		if (remoteEndpoint !== null) {
+			for (client : type2Clients.get(model.type)) {
+				remoteEndpoint.accept(new ActionMessage [
+					clientId = client
+					if (model.type == 'processor') {
+						action = new SetModelAction [
+							modelType = model.type
+							modelId = model.id
+							newRoot = model
+						]
+					} else {
+						action = new RequestBoundsAction [
+							root = model
+						]
+					}
+				])
+			}
 		}
 	}
 	
