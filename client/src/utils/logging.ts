@@ -54,6 +54,7 @@ export class ConsoleLogger implements ILogger {
             caller = thisArg.constructor.name
         else
             caller = thisArg
-        return [this.viewOptions.baseDiv + ' ' + caller + ': ' + message].concat(params)
+        const date = new Date()
+        return [date.toLocaleTimeString() + ' ' + this.viewOptions.baseDiv + ' ' + caller + ': ' + message, ...params]
     }
 }

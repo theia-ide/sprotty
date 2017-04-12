@@ -90,8 +90,7 @@ export class Viewer implements IViewer {
     }
 
     update(model: SModelRoot): void {
-        if (this.logger.logLevel >= LogLevel.log)
-            this.logger.log(this, 'rendering in bounds', JSON.stringify((model as any).boundsInPage))
+        this.logger.log(this, 'rendering in bounds', (model as any).boundsInPage)
         const newVDOM = <div id={this.options.baseDiv}>
                 {this.renderer.renderElement(model)}
             </div>
@@ -109,8 +108,7 @@ export class Viewer implements IViewer {
         if (this.lastVDOM === undefined) {
             this.update(EMPTY_ROOT)
         }
-        if (this.logger.logLevel >= LogLevel.log)
-            this.logger.log(this, 'rendering hidden')
+        this.logger.log(this, 'rendering hidden')
         const hiddenVNode = this.hiddenRenderer.renderElement(hiddenModel)
         setAttr(hiddenVNode, 'opacity', 0)
         const newVDOM = <div id={this.options.baseDiv}>

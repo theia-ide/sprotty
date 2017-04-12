@@ -152,18 +152,18 @@ export class RequestBoundsCommand extends AbstractCommand {
         super()
     }
 
-    execute(element: SModelRoot, context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
+    execute(root: SModelRoot, context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
         return context.modelFactory.createRoot(this.action.root)
     }
     
-    undo(element: SModelRoot, context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
+    undo(root: SModelRoot, context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
         // Nothing to undo
-        return element
+        return root
     }
 
-    redo(element: SModelRoot, context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
+    redo(root: SModelRoot, context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
         // Nothing to redo
-        return element
+        return root
     }
 
     isSystemCommand(): boolean {
