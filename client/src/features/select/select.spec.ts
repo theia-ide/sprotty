@@ -58,7 +58,8 @@ describe('select', () => {
 
     it('execute() works as expected', () => {
         // execute command
-        newModel = cmd.execute(initialModel)
+        context.root = initialModel
+        newModel = cmd.execute(context)
 
         // confirm selection is as expected
         expect(true).to.equal(isNodeSelected('node1', newModel))
@@ -71,7 +72,8 @@ describe('select', () => {
 
     it('undo() works as expected', () => {
         // test "undo"
-        newModel = cmd.undo(newModel);
+        context.root = newModel
+        newModel = cmd.undo(context);
 
         // check result
         const nodes = <SNode[]>newModel.index.all().filter(
@@ -90,7 +92,8 @@ describe('select', () => {
 
     it('redo() works as expected', () => {
         // test "redo"
-        newModel = cmd.redo(newModel);
+        context.root = newModel
+        newModel = cmd.redo(context);
 
         // confirm selection is as expected
         expect(true).to.equal(isNodeSelected('node1', newModel))

@@ -43,7 +43,8 @@ export class MoveCommand extends AbstractCommand {
         super()
     }
 
-    execute(model: SModelRoot, context: CommandExecutionContext) {
+    execute(context: CommandExecutionContext) {
+        const model = context.root
         this.action.moves.forEach(
             move => {
                 const resolvedMove = this.resolve(move, model.index)
@@ -75,12 +76,12 @@ export class MoveCommand extends AbstractCommand {
         return undefined
     }
 
-    undo(model: SModelRoot, context: CommandExecutionContext) {
-        return new MoveAnimation(model, this.resolvedMoves, context, true).start()
+    undo(context: CommandExecutionContext) {
+        return new MoveAnimation(context.root, this.resolvedMoves, context, true).start()
     }
 
-    redo(model: SModelRoot, context: CommandExecutionContext) {
-        return new MoveAnimation(model, this.resolvedMoves, context, false).start()
+    redo(context: CommandExecutionContext) {
+        return new MoveAnimation(context.root, this.resolvedMoves, context, false).start()
     }
 
     merge(command: Command, context: CommandExecutionContext) {

@@ -20,7 +20,7 @@ const viewportAction = new ViewportAction(viewport.id, newViewportData, false)
 const cmd = new ViewportCommand(viewportAction)
 
 const context: CommandExecutionContext = {
-    root: EMPTY_ROOT,
+    root: viewport,
     modelFactory: modelFactory,
     duration: 0,
     modelChanged: undefined!,
@@ -30,19 +30,19 @@ const context: CommandExecutionContext = {
 
 describe('ViewportCommand', () => {
     it('execute() works as expected', () => {
-        cmd.execute(viewport, context)
+        cmd.execute(context)
         expect(almostEquals(viewport.zoom, newViewportData.zoom)).to.be.true
         expect(viewport.scroll).deep.equals(newViewportData.scroll)
     })
 
     it('undo() works as expected', () => {
-        cmd.undo(viewport, context)
+        cmd.undo(context)
         expect(almostEquals(viewport.zoom, viewportData.zoom)).to.be.true
         expect(viewport.scroll).deep.equals(viewportData.scroll)
     })
 
     it('redo() works as expected', () => {
-        cmd.redo(viewport, context)
+        cmd.redo(context)
         expect(almostEquals(viewport.zoom, newViewportData.zoom)).to.be.true
         expect(viewport.scroll).deep.equals(newViewportData.scroll)
     })

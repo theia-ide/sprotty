@@ -69,7 +69,8 @@ describe('SetModelCommand', () => {
 
     it('execute() returns the new model', () => {
         // execute command
-        const newModel = cmd.execute(model1 /* the old model */, context)
+        context.root = model1  /* the old model */
+        const newModel = cmd.execute(context)
         compare(model2, newModel)
         expect(model1).to.equal(cmd.oldRoot)
         expect(newModel).to.equal(cmd.newRoot)
@@ -77,12 +78,12 @@ describe('SetModelCommand', () => {
 
     it('undo() returns the previous model', () => {
         // test "undo": returns old model
-        expect(model1).to.equal(cmd.undo(/* note: param ignored */ modelBogus))
+        expect(model1).to.equal(cmd.undo(context))
     })
 
     it('redo() returns the new model', () => {
         // test "redo": returns new model
-        const newModel = cmd.redo(/* note: param ignored */ modelBogus)
+        const newModel = cmd.redo(context)
         compare(model2, newModel)
     })
 
@@ -127,18 +128,21 @@ describe('UpdateModelCommand', () => {
     })
 
     it('replaces the model if animation is suppressed', () => {
-        const newModel = command1.execute(model1 /* the old model */, context)
+        context.root = model1 /* the old model */
+        const newModel = command1.execute(context)
         compare(model2, newModel as SModelRoot)
         expect(model1).to.equal(command1.oldRoot)
         expect(newModel).to.equal(command1.newRoot)
     })
 
     it('undo() returns the previous model', () => {
-        expect(model1).to.equal(command1.undo(EMPTY_ROOT))
+        context.root = graphFactory.createRoot(model2)
+        expect(model1).to.equal(command1.undo(context))
     })
 
     it('redo() returns the new model', () => {
-        const newModel = command1.redo(EMPTY_ROOT)
+        context.root = model1 /* the old model */
+        const newModel = command1.redo(context)
         compare(model2, newModel)
     })
 

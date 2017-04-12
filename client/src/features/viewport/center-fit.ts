@@ -68,19 +68,21 @@ export abstract class AbstractViewportCommand extends AbstractCommand {
 
     protected abstract getElementIds(): string[]
 
-    execute(model: SModelRoot, context: CommandExecutionContext) {
-        this.initialize(model)
-        return this.redo(model, context)
+    execute(context: CommandExecutionContext) {
+        this.initialize(context.root)
+        return this.redo(context)
     }
 
-    undo(model: SModelRoot, context: CommandExecutionContext) {
+    undo(context: CommandExecutionContext) {
+        const model = context.root
         if (isViewport(model) && this.newViewport)
             return new ViewportAnimation(model, this.newViewport, this.oldViewport, context).start()
         else
             return model
     }
 
-    redo(model: SModelRoot, context: CommandExecutionContext) {
+    redo(context: CommandExecutionContext) {
+        const model = context.root
         if (isViewport(model) && this.newViewport)
             return new ViewportAnimation(model, this.oldViewport, this.newViewport, context).start()
         else

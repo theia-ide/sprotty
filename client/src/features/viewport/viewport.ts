@@ -25,7 +25,8 @@ export class ViewportCommand extends AbstractCommand {
         this.newViewport = action.newViewport
     }
 
-    execute(model: SModelRoot, context: CommandExecutionContext) {
+    execute( context: CommandExecutionContext) {
+        const model = context.root
         const element = model.index.getById(this.action.elementId)
         if (element && isViewport(element)) {
             this.element = element
@@ -43,11 +44,11 @@ export class ViewportCommand extends AbstractCommand {
         return model
     }
 
-    undo(model: SModelRoot, context: CommandExecutionContext) {
+    undo(context: CommandExecutionContext) {
         return new ViewportAnimation(this.element, this.newViewport, this.oldViewport, context).start()
     }
 
-    redo(model: SModelRoot, context: CommandExecutionContext) {
+    redo(context: CommandExecutionContext) {
         return new ViewportAnimation(this.element, this.oldViewport, this.newViewport, context).start()
     }
 

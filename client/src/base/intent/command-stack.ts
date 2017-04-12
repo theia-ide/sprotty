@@ -1,5 +1,11 @@
+import { HiddenBoundsUpdater } from '../../features/bounds/bounds-updater';
 import { inject, injectable } from "inversify"
-import { Command, CommandExecutionContext, SModelRootOrPromise } from "./commands"
+import {
+    AbstractHiddenCommand,
+    Command,
+    CommandExecutionContext,
+    CommandResult
+} from './commands';
 import { EMPTY_ROOT, IModelFactory } from "../model/smodel-factory"
 import { IViewer, IViewerProvider } from "../view/viewer"
 import { ILogger } from "../../utils/logging"
@@ -12,6 +18,11 @@ export interface ICommandStack {
     executeAll(commands: Command[]): Promise<SModelRoot>
     undo(): Promise<SModelRoot>
     redo(): Promise<SModelRoot>
+}
+
+interface CommandStackState {
+    root: SModelRoot,
+    hiddenRoot: SModelRoot | undefined
 }
 
 /**
@@ -27,7 +38,8 @@ export class CommandStack implements ICommandStack {
     @inject(TYPES.ILogger) protected logger: ILogger
     @inject(TYPES.IAnimationFrameSyncer) protected syncer: AnimationFrameSyncer
 
-    protected currentPromise: Promise<SModelRoot> = Promise.resolve(EMPTY_ROOT)
+    protected currentPromise: Promise<CommandStackState> = Promise.resolve({root: EMPTY_ROOT})
+
     protected viewer: IViewer
     protected undoStack: Command[] = []
     protected redoStack: Command[] = []
@@ -40,13 +52,13 @@ export class CommandStack implements ICommandStack {
                 this.handleCommand(command, command.execute, this.mergeOrPush)
             }
         )
-        return this.currentPromise
+        return this.thenUpdate()
     }
 
     execute(command: Command): Promise<SModelRoot> {
         this.logger.log(this, 'Executing', command)
         this.handleCommand(command, command.execute, this.mergeOrPush)
-        return this.currentPromise
+        return this.thenUpdate()
     }
 
     undo() : Promise<SModelRoot>  {
@@ -59,7 +71,7 @@ export class CommandStack implements ICommandStack {
                 this.redoStack.push(command)
             })
         }
-        return this.currentPromise
+        return this.thenUpdate()
     }
 
     redo() : Promise<SModelRoot> {
@@ -72,41 +84,64 @@ export class CommandStack implements ICommandStack {
             })
         }
         this.redoFollowingSystemCommands()
-        return this.currentPromise
+        return this.thenUpdate()
     }
 
     protected handleCommand(command: Command,
-                            operation: (model:SModelRoot, context: CommandExecutionContext)=>SModelRootOrPromise,
+                            operation: (context: CommandExecutionContext)=>CommandResult,
                             beforeResolve: (command: Command, context: CommandExecutionContext)=>void) {
         this.currentPromise = this.currentPromise.then(
-            model => {
+            state => {
+                let newHiddenRoot: SModelRoot | undefined = undefined
                 const promise = new Promise(
-                    (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
-                        const context = this.createContext(model)
-                        const modelOrPromise = operation.call(command, model, context)
-                        if (modelOrPromise instanceof Promise)
-                            modelOrPromise.then(
-                                newModel => {
+                    (resolve: (result: CommandStackState) => void, reject: (result: CommandStackState) => void) => {
+                        const context = this.createContext(state.root)
+                        const newResult = operation.call(command, context) as CommandResult
+                        if(command instanceof AbstractHiddenCommand) {
+                            resolve({
+                                root: state.root,
+                                hiddenRoot: newResult as SModelRoot
+                            }) 
+                        } else if (newResult instanceof Promise) {
+                            newResult.then(
+                                (newModel: SModelRoot) => {
                                     beforeResolve.call(this, command, context)
-                                    resolve(newModel)
+                                    resolve({
+                                        root: newModel,
+                                        hiddenRoot: state.hiddenRoot
+                                    })
                                 }
                             )
-                        else {
+                        } else {
                             beforeResolve.call(this, command, context)
-                            resolve(modelOrPromise)
+                            resolve({
+                                root: newResult,
+                                hiddenRoot: state.hiddenRoot
+                            })
                         }
                     })
-                promise.then(newModel => {
-                    if (command.isHiddenCommand())
-                        this.updateHidden(newModel)
-                    else
-                        this.update(newModel)
-                })
                 return promise
             })
     }
 
+    protected thenUpdate() {
+        this.currentPromise = this.currentPromise.then(
+            state => {
+                if (state.hiddenRoot !== undefined) 
+                    this.updateHidden(state.hiddenRoot)
+                if(state.root)
+                    this.update(state.root)
+                return { root: state.root }
+            }
+        )
+        return this.currentPromise.then(
+            state => state.root
+        )
+    }
+
     protected mergeOrPush(command: Command, context: CommandExecutionContext) {
+        if(command instanceof AbstractHiddenCommand)
+            return;
         if(command.isSystemCommand() && this.redoStack.length > 0) {
             this.offStack.push(command)
         } else {
@@ -179,10 +214,10 @@ export class CommandStack implements ICommandStack {
 
     protected createContext(model: SModelRoot) : CommandExecutionContext {
         const context: CommandExecutionContext = {
+            root: model,
             modelChanged: this,
             modelFactory: this.modelFactory,
             duration: this.defaultDuration,
-            root: model,
             logger: this.logger,
             syncer: this.syncer
         }
@@ -191,3 +226,5 @@ export class CommandStack implements ICommandStack {
 }
 
 export type CommandStackProvider = () => Promise<CommandStack>
+
+

@@ -72,7 +72,7 @@ describe('move', () => {
     // create the command
     const cmd = new MoveCommand(moveAction)
     const context: CommandExecutionContext = {
-        root: EMPTY_ROOT,
+        root: model,
         modelFactory: graphFactory,
         duration: 0,
         modelChanged: undefined!,
@@ -90,7 +90,7 @@ describe('move', () => {
 
     it('execute() works as expected', () => {
         // execute command
-        newModel = cmd.execute(model, context) as SModelRoot
+        newModel = cmd.execute(context) as SModelRoot
 
         // node0 => PointNE
         expect(pointNE.x).equals(getNode('node0', newModel).x)
@@ -115,7 +115,8 @@ describe('move', () => {
 
     it('undo() works as expected', async () => {
         // test "undo"
-        undoneModel = await cmd.undo(<SModelRoot>newModel, context)
+        context.root = newModel
+        undoneModel = await cmd.undo(context)
         
         // confirm that each node is back at original
         // coordinates
@@ -130,7 +131,8 @@ describe('move', () => {
 
     it('redo() works as expected', async () => {
         // test "redo": 
-        const redoneModel = await cmd.redo(undoneModel, context)
+        context.root = undoneModel
+        const redoneModel = await cmd.redo(context)
 
         // confirm that each node is back where ordered to move
         // node0 => PointNE

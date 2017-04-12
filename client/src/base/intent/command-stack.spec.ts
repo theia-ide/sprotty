@@ -1,4 +1,4 @@
-import { AbstractCommand, Command, CommandExecutionContext, SModelRootOrPromise } from "./commands"
+import { AbstractCommand, Command, CommandExecutionContext, CommandResult } from "./commands"
 import { SModelRoot } from "../model/smodel"
 import { Container, ContainerModule } from "inversify"
 import { TYPES } from "../types"
@@ -14,19 +14,19 @@ class TestCommand extends AbstractCommand {
         super()
     }
 
-    execute(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise {
+    execute(context: CommandExecutionContext): CommandResult {
         operations.push('exec ' + this.name)
-        return element
+        return context.root
     }
 
-    undo(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise {
+    undo(context: CommandExecutionContext): CommandResult {
         operations.push('undo ' + this.name)
-        return element
+        return context.root
     }
 
-    redo(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise {
+    redo(context: CommandExecutionContext): CommandResult {
         operations.push('redo ' + this.name)
-        return element
+        return context.root
     }
 
     isSystemCommand() {

@@ -1,7 +1,7 @@
 import { VNode } from "snabbdom/vnode"
 import { SChildElement, SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
-import { AbstractCommand } from "../../base/intent/commands"
+import { AbstractCommand, CommandExecutionContext } from "../../base/intent/commands"
 import { SEdge, SNode } from "../../graph/model/sgraph"
 import { MouseListener } from "../../base/view/mouse-tool"
 import { isCtrlOrCmd } from "../../utils/browser"
@@ -31,8 +31,9 @@ export class SelectCommand extends AbstractCommand {
         super()
     }
 
-    execute(model: SModelRoot): SModelRoot {
+    execute(context: CommandExecutionContext): SModelRoot {
         const selectedNodeIds: string[] = []
+        const model = context.root
         this.action.selectedElementsIDs.forEach(
             id => {
                 const element = model.index.getById(id)
@@ -70,10 +71,10 @@ export class SelectCommand extends AbstractCommand {
                     })
                 }
             })
-        return this.redo(model)
+        return this.redo(context)
     }
 
-    undo(model: SModelRoot): SModelRoot {
+    undo(context: CommandExecutionContext): SModelRoot {
         for (let i = this.selected.length - 1; i >= 0; --i) {
             const selection = this.selected[i]
             const element = selection.element
@@ -85,10 +86,10 @@ export class SelectCommand extends AbstractCommand {
             if (isSelectable(selection.element))
                 selection.element.selected = true
         })
-        return model
+        return context.root
     }
 
-    redo(model: SModelRoot): SModelRoot {
+    redo(context: CommandExecutionContext): SModelRoot {
         for (let i = 0; i < this.selected.length; ++i) {
             const selection = this.selected[i]
             const element = selection.element
@@ -103,7 +104,7 @@ export class SelectCommand extends AbstractCommand {
             if (isSelectable(selection.element))
                 selection.element.selected = false
         })
-        return model
+        return context.root
     }
 }
 

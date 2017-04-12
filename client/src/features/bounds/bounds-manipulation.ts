@@ -60,10 +60,10 @@ export class SetBoundsCommand extends AbstractCommand {
         super()
     }
 
-    execute(root: SModelRoot, context: CommandExecutionContext) {
+    execute(context: CommandExecutionContext) {
         this.action.bounds.forEach(
             b => {
-                const element = root.index.getById(b.elementId)
+                const element = context.root.index.getById(b.elementId)
                 if (element && isBoundsAware(element)) {
                     this.bounds.push({
                         element: element,
@@ -73,27 +73,27 @@ export class SetBoundsCommand extends AbstractCommand {
                 }
             }
         )
-        return this.redo(root, context)
+        return this.redo(context)
     }
 
-    undo(root: SModelRoot, context: CommandExecutionContext) {
+    undo(context: CommandExecutionContext) {
         this.bounds.forEach(
             b => {
                 b.element.bounds = b.oldBounds
                 b.element.revalidateBounds = true
             }
         )
-        return root
+        return context.root
     }
 
-    redo(root: SModelRoot, context: CommandExecutionContext) {
+    redo(context: CommandExecutionContext) {
         this.bounds.forEach(
             b => {
                 b.element.bounds = b.newBounds
                 b.element.revalidateBounds = false
             }
         )
-        return root
+        return context.root
     }
 
     isSystemCommand(): boolean {
@@ -110,10 +110,10 @@ export class SetBoundsInPageCommand extends AbstractCommand {
         super()
     }
 
-        execute(root: SModelRoot, context: CommandExecutionContext) {
+    execute(context: CommandExecutionContext) {
         this.action.bounds.forEach(
             b => {
-                const element = root.index.getById(b.elementId)
+                const element = context.root.index.getById(b.elementId)
                 if (element && isBoundsInPageAware(element)) {
                     this.bounds.push({
                         element: element,
@@ -123,21 +123,21 @@ export class SetBoundsInPageCommand extends AbstractCommand {
                 }
             }
         )
-        return this.redo(root, context)
+        return this.redo(context)
     }
 
-    undo(root: SModelRoot, context: CommandExecutionContext) {
+    undo(context: CommandExecutionContext) {
         this.bounds.forEach(
             b => b.element.boundsInPage = b.oldBounds
         )
-        return root
+        return context.root
     }
 
-    redo(root: SModelRoot, context: CommandExecutionContext) {
+    redo(context: CommandExecutionContext) {
         this.bounds.forEach(
             b => b.element.boundsInPage = b.newBounds
         )
-        return root
+        return context.root
     }
 
     isSystemCommand(): boolean {
@@ -152,18 +152,18 @@ export class RequestBoundsCommand extends AbstractCommand {
         super()
     }
 
-    execute(root: SModelRoot, context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
+    execute(context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
         return context.modelFactory.createRoot(this.action.root)
     }
     
-    undo(root: SModelRoot, context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
+    undo(context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
         // Nothing to undo
-        return root
+        return context.root
     }
 
-    redo(root: SModelRoot, context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
+    redo(context: CommandExecutionContext): SModelRoot | Promise<SModelRoot> {
         // Nothing to redo
-        return root
+        return context.root
     }
 
     isSystemCommand(): boolean {

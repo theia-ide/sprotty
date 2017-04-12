@@ -42,7 +42,7 @@ const setBoundsCommand = new SetBoundsCommand(mySetBoundsAction)
 const setBoundsInPageCommand = new SetBoundsInPageCommand(mySetBoundsInPageAction)
 
 const context: CommandExecutionContext = {
-    root: EMPTY_ROOT,
+    root: model,
     modelFactory: modelFactory,
     duration: 0,
     modelChanged: undefined!,
@@ -54,17 +54,17 @@ describe('SetBoundsCommand', () => {
     it('execute() works as expected', () => {
         // sanity check for initial bounds values
         expect(boundsInitial).deep.equals(nodeBoundsAware.bounds)
-        setBoundsCommand.execute(model, context)
+        setBoundsCommand.execute(context)
         expect(bounds1).deep.equals(nodeBoundsAware.bounds)
     })
 
     it('undo() works as expected', () => {
-        setBoundsCommand.undo(model, context)
+        setBoundsCommand.undo(context)
         expect(boundsInitial).deep.equals(nodeBoundsAware.bounds)
     })
 
     it('redo() works as expected', () => {
-        setBoundsCommand.redo(model, context)
+        setBoundsCommand.redo(context)
         expect(bounds1).deep.equals(nodeBoundsAware.bounds)
     })
 })
@@ -73,18 +73,18 @@ describe('SetBoundsInPageCommand', () => {
     it('execute() works as expected', () => {
         // sanity check for initial bounds values
         expect(boundsInPageInitial).deep.equals(model.boundsInPage)
-        setBoundsInPageCommand.execute(model, context)
+        setBoundsInPageCommand.execute(context)
 
         expect(boundsInPage1).deep.equals(model.boundsInPage)
     })
 
     it('undo() works as expected', () => {
-        setBoundsInPageCommand.undo(model, context)
+        setBoundsInPageCommand.undo(context)
         expect(boundsInPageInitial).deep.equals(model.boundsInPage)
     })
 
     it('redo() works as expected', () => {
-        setBoundsInPageCommand.redo(model, context)
+        setBoundsInPageCommand.redo(context)
         expect(boundsInPage1).deep.equals(model.boundsInPage)
     })
 })

@@ -12,18 +12,18 @@ import { Action, ActionHandler } from "./actions"
  * Each command should define a static string property KIND that matches the associated action.
  */
 export interface Command {
-    execute(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise
+    execute(context: CommandExecutionContext): CommandResult
 
-    undo(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise
+    undo(context: CommandExecutionContext): CommandResult
 
-    redo(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise
+    redo(context: CommandExecutionContext): CommandResult
 
     merge(command: Command, context: CommandExecutionContext): boolean
 
     isSystemCommand(): boolean
-
-    isHiddenCommand(): boolean
 }
+
+export type CommandResult = SModelRoot | Promise<SModelRoot>
 
 export interface CommandFactory {
     KIND: string
@@ -31,11 +31,12 @@ export interface CommandFactory {
 }
 
 export abstract class AbstractCommand implements Command {
-    abstract execute(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise
 
-    abstract undo(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise
+    abstract execute(context: CommandExecutionContext): CommandResult
 
-    abstract redo(element: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise
+    abstract undo(context: CommandExecutionContext): CommandResult
+
+    abstract redo(context: CommandExecutionContext): CommandResult
 
     merge(command: Command, context: CommandExecutionContext): boolean {
         return false
@@ -44,13 +45,21 @@ export abstract class AbstractCommand implements Command {
     isSystemCommand(): boolean {
         return false
     }
-
-    isHiddenCommand(): boolean {
-        return false
-    }
 }
 
-export type SModelRootOrPromise = SModelRoot | Promise<SModelRoot>
+export abstract class AbstractHiddenCommand extends AbstractCommand {
+    abstract execute(context: CommandExecutionContext): SModelRoot
+
+    undo(context: CommandExecutionContext): CommandResult {
+        context.logger.error(this, 'Cannot undo a hidden command')
+        return context.root
+    }
+
+    redo(context: CommandExecutionContext): CommandResult {
+        context.logger.error(this, 'Cannot redo a hidden command')
+        return context.root
+    }
+}
 
 export interface CommandExecutionContext {
     root: SModelRoot

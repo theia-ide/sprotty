@@ -5,7 +5,7 @@ import {
     SParentElement
 } from "../model/smodel"
 import { RESERVED_MODEL_PROPERTIES } from "../model/smodel-factory"
-import { AbstractCommand, CommandExecutionContext, SModelRootOrPromise } from "../intent/commands"
+import { AbstractCommand, CommandExecutionContext, CommandResult } from '../intent/commands';
 import { CompoundAnimation, Animation } from "../animations/animation"
 import { ModelMatcher, MatchResult } from "./model-matching"
 import { isFadeable } from "../../features/fade/model"
@@ -36,17 +36,17 @@ export class SetModelCommand extends AbstractCommand {
         super()
     }
 
-    execute(oldRoot: SModelRoot, context: CommandExecutionContext): SModelRoot {
-        this.oldRoot = oldRoot
+    execute(context: CommandExecutionContext): SModelRoot {
+        this.oldRoot = context.root
         this.newRoot = context.modelFactory.createRoot(this.action.newRoot)
         return this.newRoot
     }
 
-    undo(model: SModelRoot): SModelRoot {
+    undo(context: CommandExecutionContext): SModelRoot {
         return this.oldRoot
     }
 
-    redo(model: SModelRoot): SModelRoot {
+    redo(context: CommandExecutionContext): SModelRoot {
         return this.newRoot
     }
 }
@@ -84,11 +84,11 @@ export class UpdateModelCommand extends AbstractCommand {
         super()
     }
 
-    execute(root: SModelRoot, context: CommandExecutionContext): SModelRootOrPromise {
-        this.oldRoot = root
+    execute(context: CommandExecutionContext): CommandResult {
+        this.oldRoot = context.root
         if (this.action.newRoot !== undefined) {
             this.newRoot = context.modelFactory.createRoot(this.action.newRoot)
-            if ((this.action.animate === undefined || this.action.animate) && root.id == this.action.newRoot.id) {
+            if ((this.action.animate === undefined || this.action.animate) && context.root.id == this.action.newRoot.id) {
                 const animationOrRoot = this.computeAnimation(this.oldRoot, this.newRoot, context)
                 if (animationOrRoot instanceof Animation)
                     return animationOrRoot.start()
@@ -99,8 +99,8 @@ export class UpdateModelCommand extends AbstractCommand {
             }
         } else {
             // TODO invalidate the model
-            this.newRoot = root
-            return root
+            this.newRoot = context.root
+            return this.newRoot
         }
     }
 
@@ -199,11 +199,11 @@ export class UpdateModelCommand extends AbstractCommand {
         return animations
     }
 
-    undo(element: SModelRoot): SModelRoot {
+    undo(context: CommandExecutionContext): SModelRoot {
         return this.oldRoot
     }
 
-    redo(element: SModelRoot): SModelRoot {
+    redo(context: CommandExecutionContext): SModelRoot {
         return this.newRoot
     }
 }
