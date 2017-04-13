@@ -5,7 +5,8 @@ import {
     Command,
     CommandExecutionContext,
     CommandResult,
-    AbstractSystemCommand
+    AbstractSystemCommand,
+    AbstractMergeableCommand
 } from './commands';
 import { EMPTY_ROOT, IModelFactory } from "../model/smodel-factory"
 import { IViewer, IViewerProvider } from "../view/viewer"
@@ -278,7 +279,7 @@ export class CommandStack implements ICommandStack {
             this.redoStack = []
             if (this.undoStack.length > 0) {
                 const lastCommand = this.undoStack[this.undoStack.length - 1]
-                if (lastCommand.merge(command, context))
+                if (lastCommand instanceof AbstractMergeableCommand && lastCommand.merge(command, context))
                     return
             }
             this.undoStack.push(command)

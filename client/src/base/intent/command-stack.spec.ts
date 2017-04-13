@@ -4,7 +4,8 @@ import {
     AbstractSystemCommand,
     Command,
     CommandExecutionContext,
-    CommandResult
+    CommandResult,
+    AbstractMergeableCommand
 } from './commands';
 import { SModelRoot } from "../model/smodel"
 import { Container, ContainerModule } from "inversify"
@@ -17,8 +18,30 @@ import { expect } from "chai"
 let operations: string[] = []
 
 
+class TestCommand extends AbstractCommand {
+    constructor(public name: string) {
+        super()
+    }
+
+    execute(context: CommandExecutionContext): CommandResult {
+        operations.push('exec ' + this.name)
+        return context.root
+    }
+
+    undo(context: CommandExecutionContext): CommandResult {
+        operations.push('undo ' + this.name)
+        return context.root
+    }
+
+    redo(context: CommandExecutionContext): CommandResult {
+        operations.push('redo ' + this.name)
+        return context.root
+    }
+
+}
+
 class TestSystemCommand extends AbstractSystemCommand {
-    constructor(public name: string, public mergeable: boolean) {
+    constructor(public name: string) {
         super()
     }
 
@@ -38,8 +61,8 @@ class TestSystemCommand extends AbstractSystemCommand {
     }    
 }
 
-class TestCommand extends AbstractCommand {
-    constructor(public name: string, public mergeable: boolean) {
+class TestMergeableCommand extends AbstractMergeableCommand {
+    constructor(public name: string) {
         super()
     }
 
@@ -56,10 +79,10 @@ class TestCommand extends AbstractCommand {
     redo(context: CommandExecutionContext): CommandResult {
         operations.push('redo ' + this.name)
         return context.root
-    }
+    }   
 
     merge(other: TestCommand, context: CommandExecutionContext) {
-        if(this.mergeable && other.mergeable) {
+        if(other instanceof TestMergeableCommand) {
             this.name = this.name + '/' + other.name
             return true 
         }
@@ -101,10 +124,10 @@ describe('CommandStack', () => {
 
     const commandStack = container.get<ICommandStack>(TYPES.ICommandStack)
 
-    const foo = new TestCommand('Foo', false)
-    const bar = new TestCommand('Bar', false)
-    const system = new TestSystemCommand('System', false)
-    const mergable = new TestCommand('Mergable', true)
+    const foo = new TestCommand('Foo')
+    const bar = new TestCommand('Bar')
+    const system = new TestSystemCommand('System')
+    const mergable = new TestMergeableCommand('Mergable')
     const hidden = new TestHiddenCommand('Hidden')
 
     it('calls viewer correctly', async () => {

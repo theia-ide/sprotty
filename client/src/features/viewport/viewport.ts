@@ -1,6 +1,6 @@
 import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
-import { AbstractCommand, Command, CommandExecutionContext } from "../../base/intent/commands"
+import { AbstractMergeableCommand, Command, CommandExecutionContext } from "../../base/intent/commands"
 import { Animation } from "../../base/animations/animation"
 import { isViewport, Viewport } from "./model"
 
@@ -13,7 +13,7 @@ export class ViewportAction implements Action {
     }
 }
 
-export class ViewportCommand extends AbstractCommand {
+export class ViewportCommand extends AbstractMergeableCommand {
     static readonly KIND = 'viewport'
 
     protected element: SModelElement & Viewport

@@ -3,7 +3,7 @@ import { VNode } from "snabbdom/vnode"
 import { Point } from "../../utils/geometry"
 import { getParent, SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
-import { AbstractCommand, Command, CommandExecutionContext } from "../../base/intent/commands"
+import { Command, CommandExecutionContext, AbstractMergeableCommand } from "../../base/intent/commands"
 import { Animation } from "../../base/animations/animation"
 import { MouseListener } from "../../base/view/mouse-tool"
 import { isViewport, Viewport } from "../viewport/model"
@@ -34,7 +34,7 @@ export interface ResolvedElementMove {
     toPosition: Point
 }
 
-export class MoveCommand extends AbstractCommand {
+export class MoveCommand extends AbstractMergeableCommand {
     static readonly KIND = 'move'
 
     resolvedMoves: Map<string, ResolvedElementMove> = new Map

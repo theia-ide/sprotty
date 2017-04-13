@@ -26,8 +26,6 @@ export interface Command {
     undo(context: CommandExecutionContext): CommandResult
 
     redo(context: CommandExecutionContext): CommandResult
-
-    merge(command: Command, context: CommandExecutionContext): boolean
 }
 
 /**
@@ -55,11 +53,28 @@ export abstract class AbstractCommand implements Command {
     abstract undo(context: CommandExecutionContext): CommandResult
 
     abstract redo(context: CommandExecutionContext): CommandResult
+}
 
+/**
+ * A mergeable command can accumulate subsequent commands of the same kind.
+ * 
+ * For example, multiple subsequent move commands can be merged to yield a 
+ * single command, such that undo will roll them back altogether. Otherwise
+ * the user would have to push CTRL-Z for each mouse move element that 
+ * resuted in a command.
+ */
+export abstract class AbstractMergeableCommand extends AbstractCommand {
+    /**
+     * Tries to merge the given command with this.
+     * 
+     * @param command 
+     * @param context 
+     */
     merge(command: Command, context: CommandExecutionContext): boolean {
         return false
     }
 }
+
 
 /**
  * A hidden command is used to trigger the rendering of a model on a 
