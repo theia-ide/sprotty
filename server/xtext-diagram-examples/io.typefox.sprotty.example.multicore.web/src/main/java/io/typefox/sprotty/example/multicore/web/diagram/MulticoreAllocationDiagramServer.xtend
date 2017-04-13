@@ -7,17 +7,13 @@ import io.typefox.sprotty.api.AbstractDiagramServer
 import io.typefox.sprotty.api.ActionMessage
 import io.typefox.sprotty.api.ComputedBoundsAction
 import io.typefox.sprotty.api.FitToScreenAction
-import io.typefox.sprotty.api.RequestBoundsAction
 import io.typefox.sprotty.api.RequestModelAction
 import io.typefox.sprotty.api.SGraph
 import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.api.SelectAction
-import io.typefox.sprotty.api.SetModelAction
-import io.typefox.sprotty.api.UpdateModelAction
 import io.typefox.sprotty.layout.ILayoutEngine
 import io.typefox.sprotty.layout.LayoutUtil
 import io.typefox.sprotty.layout.SprottyLayoutConfigurator
-import io.typefox.sprotty.server.websocket.WebsocketActionMessage
 import org.apache.log4j.Logger
 import org.eclipse.elk.alg.layered.options.LayeredOptions
 import org.eclipse.elk.alg.layered.options.NodeFlexibility
@@ -44,50 +40,44 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 	
 	val Multimap<String, String> type2Clients = HashMultimap.create()
 	
-	override handle(RequestModelAction action, ActionMessage message) {
+	override protected getModel(ActionMessage message) {
+		switch action: message.action {
+			RequestModelAction:
+				modelProvider.getModel(resourceId, action.modelType)
+			ComputedBoundsAction:
+				modelProvider.getModel(resourceId, 'flow')
+		}
+	}
+	
+	override protected needsLayout(SModelRoot root) {
+		switch root.type {
+			case 'flow': !modelProvider.isLayoutDone(resourceId, root.type)
+			default: false
+		}
+	}
+	
+	override protected handle(RequestModelAction action, ActionMessage message) {
 		val resourceId = action.options?.get('resourceId')
 		LOG.info('Model requested for resource ' + resourceId)
 		this.resourceId = resourceId
 		this.type2Clients.put(action.modelType, message.clientId)
-		val model = modelProvider.getModel(resourceId, action.modelType)
-		if (model !== null) {
-			sendModel(model, message.clientId)
-		}
+		super.handle(action, message)
 	}
 	
-	def notifyClients(SModelRoot model) {
+	def notifyClients(SModelRoot root) {
 		if (remoteEndpoint !== null) {
-			for (client : type2Clients.get(model.type)) {
-				sendModel(model, client)
+			for (client : type2Clients.get(root.type)) {
+				sendModel(root, client)
 			}
 		}
 	}
 	
-	protected def sendModel(SModelRoot model, String client) {
-		if (model.type == 'processor' || modelProvider.isLayoutDone(resourceId, model.type)) {
-			remoteEndpoint.accept(new ActionMessage [
-				clientId = client
-				action = new SetModelAction [
-					modelType = model.type
-					modelId = model.id
-					newRoot = model
-				]
-			])
-			if (model.type == 'processor') {
-				remoteEndpoint.accept(new ActionMessage [
-					clientId = client
-					action = new FitToScreenAction [
-						elementIds = emptyList
-					]
-				])
-			}
-		} else {
-			remoteEndpoint.accept(new ActionMessage [
-				clientId = client
-				action = new RequestBoundsAction [
-					root = model
-				]
-			])
+	override protected def sendModel(SModelRoot root, String clientId) {
+		super.sendModel(root, clientId)
+		if (root.type == 'processor') {
+			sendAction(new FitToScreenAction [
+				elementIds = emptyList
+			], clientId)
 		}
 	}
 	
@@ -99,47 +89,29 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		}
 	}
 	
-	protected def layout(SGraph graph) {
-		initializeLayoutEngine()
-		val configurator = new SprottyLayoutConfigurator
-		configurator.configureByType('flow')
-			.setProperty(CoreOptions.DIRECTION, Direction.DOWN)
-			.setProperty(CoreOptions.SPACING_NODE_NODE, 40.0)
-			.setProperty(CoreOptions.SPACING_EDGE_NODE, 25.0)
-			.setProperty(LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS, 20.0)
-			.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 30.0)
-			.setProperty(LayeredOptions.NODE_PLACEMENT_STRATEGY, NodePlacementStrategy.NETWORK_SIMPLEX)
-		configurator.configureByType('barrier')
-			.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.free())
-			.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(50, 10))
-			.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER)
-			.setProperty(LayeredOptions.NODE_PLACEMENT_NETWORK_SIMPLEX_NODE_FLEXIBILITY, NodeFlexibility.NODE_SIZE)
-		layoutEngine.layout(graph, configurator)
-	}
-	
-	override handle(ComputedBoundsAction action, ActionMessage message) {
-		if (message instanceof WebsocketActionMessage) {
+	override protected computeLayout(SModelRoot root, ComputedBoundsAction computedBounds) {
+		if (root instanceof SGraph) {
+			LayoutUtil.applyBounds(root, computedBounds)
 			initializeLayoutEngine()
-			val graph = modelProvider.getModel(resourceId, 'flow')
-			if (graph instanceof SGraph) {
-				LayoutUtil.applyBounds(graph, action)
-				layout(graph)
-				modelProvider.setLayoutDone(resourceId, 'flow')
-				remoteEndpoint?.accept(new ActionMessage [
-					clientId = message.clientId
-					action = new UpdateModelAction [
-						modelType = graph.type
-						modelId = graph.id
-						newRoot = graph
-					]
-				])
-			} else {
-				LOG.error("Model not available for resource " + resourceId)
-			}
+			val configurator = new SprottyLayoutConfigurator
+			configurator.configureByType('flow')
+				.setProperty(CoreOptions.DIRECTION, Direction.DOWN)
+				.setProperty(CoreOptions.SPACING_NODE_NODE, 40.0)
+				.setProperty(CoreOptions.SPACING_EDGE_NODE, 25.0)
+				.setProperty(LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS, 20.0)
+				.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 30.0)
+				.setProperty(LayeredOptions.NODE_PLACEMENT_STRATEGY, NodePlacementStrategy.NETWORK_SIMPLEX)
+			configurator.configureByType('barrier')
+				.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.free())
+				.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(50, 10))
+				.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER)
+				.setProperty(LayeredOptions.NODE_PLACEMENT_NETWORK_SIMPLEX_NODE_FLEXIBILITY, NodeFlexibility.NODE_SIZE)
+			layoutEngine.layout(root, configurator)
+			modelProvider.setLayoutDone(resourceId, root.type)
 		}
 	}
 	
-	override handle(SelectAction action, ActionMessage message) {
+	override protected handle(SelectAction action, ActionMessage message) {
 		LOG.info('element selected = ' + action)
 	}
 	

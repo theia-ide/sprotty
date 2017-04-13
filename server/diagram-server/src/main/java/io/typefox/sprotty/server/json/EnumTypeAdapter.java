@@ -14,7 +14,7 @@ import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
 /**
- * A custom type adapter factory for enums that uses integer values.
+ * A custom type adapter for enums that uses integer values.
  */
 public class EnumTypeAdapter<T extends Enum<T>> extends TypeAdapter<T> {
 	
