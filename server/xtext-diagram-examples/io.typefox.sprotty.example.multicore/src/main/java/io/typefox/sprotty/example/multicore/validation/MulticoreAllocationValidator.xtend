@@ -2,6 +2,7 @@ package io.typefox.sprotty.example.multicore.validation
 
 import com.google.common.collect.HashMultimap
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Barrier
+import io.typefox.sprotty.example.multicore.multicoreAllocation.Declaration
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Kernel
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Program
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Step
@@ -9,6 +10,8 @@ import io.typefox.sprotty.example.multicore.multicoreAllocation.Task
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskAllocation
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskFinished
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskRunning
+import java.util.List
+import java.util.Map
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.validation.Check
 
@@ -23,12 +26,19 @@ class MulticoreAllocationValidator extends AbstractMulticoreAllocationValidator 
 	
 	@Check
 	def void checkUniqueNames(Program program) {
-		val usedNames = newHashMap
-		for (declaration : program.declarations) {
+		checkUniqueNames(program.declarations, newHashMap)
+	}
+	
+	private def void checkUniqueNames(List<? extends Declaration> declarations, Map<String, Declaration> usedNames) {
+		for (declaration : declarations) {
 			val name = switch declaration {
 				Kernel: declaration.name
 				Task: declaration.name
 				Step: declaration.index.toString
+				Barrier: {
+					checkUniqueNames(declaration.triggered, usedNames)
+					null
+				}
 			}
 			if (name !== null) {
 				if (usedNames.containsKey(name)) {
