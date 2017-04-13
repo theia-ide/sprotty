@@ -37,7 +37,7 @@ export class Core extends SChildElement implements CoreSchema, Selectable {
 
 export interface CrossbarSchema extends SModelElementSchema {
     selected?: boolean
-    direction: Direction | string
+    direction: Direction
     load: number
 }
 
@@ -56,7 +56,7 @@ export class Crossbar extends SChildElement implements CrossbarSchema, Selectabl
 export interface ChannelSchema extends SModelElementSchema {
     row: number
     column: number
-    direction: Direction | string
+    direction: Direction
     selected?: boolean
     load: number
 }

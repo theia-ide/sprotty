@@ -39,14 +39,10 @@ export class ChipModelFactory extends SModelFactory {
     protected initializeElement(elem: SModelElement, schema: SModelElementSchema): SModelElement {
         super.initializeElement(elem, schema)
         if (this.isChannelSchema(schema))
-            (elem as Channel).direction = this.getDirection(schema.direction)
+            (elem as Channel).direction = schema.direction
         else if (this.isCrossbarSchema(schema))
-            (elem as Crossbar).direction = this.getDirection(schema.direction)
+            (elem as Crossbar).direction = schema.direction
         return elem
-    }
-
-    private getDirection(directionSchema: string | Direction) {
-        return (typeof directionSchema === 'string') ? (<any>Direction)[directionSchema] : directionSchema
     }
 
     private validate(coreOrChannel: CoreSchema | ChannelSchema, processor?: SParentElement) {
@@ -58,9 +54,7 @@ export class ChipModelFactory extends SModelFactory {
             if (this.isChannelSchema(coreOrChannel)) {
                 switch (coreOrChannel.direction) {
                     case Direction.down:
-                    case 'down':
                     case Direction.up:
-                    case 'up':
                         rowDelta = 1
                         break
                     default:

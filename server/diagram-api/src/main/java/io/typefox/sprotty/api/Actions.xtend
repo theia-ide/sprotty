@@ -26,6 +26,7 @@ class ActionMessage {
 class RequestModelAction implements Action {
 	public static val KIND = 'requestModel'
 	String kind = KIND
+	
 	String modelType
 	String modelId
 	Map<String, String> options
@@ -40,6 +41,7 @@ class RequestModelAction implements Action {
 class SetBoundsAction implements Action {
     public static val KIND ='setBounds'
 	String kind = KIND
+	
 	List<ElementAndBounds> bounds
 	
 	new() {}
@@ -63,6 +65,7 @@ class ElementAndBounds {
 class SetModelAction implements Action {
 	public static val KIND = 'setModel'
 	String kind = KIND
+	
 	String modelType
 	String modelId
 	SModelRoot newRoot
@@ -77,6 +80,7 @@ class SetModelAction implements Action {
 class SelectAction implements Action {
 	public static val KIND = 'elementSelected'
 	String kind = KIND
+	
 	List<String> selectedElementsIDs
 	List<String> deselectedElementsIDs
 	
@@ -90,6 +94,7 @@ class SelectAction implements Action {
 class UpdateModelAction implements Action {
 	public static val KIND = 'updateModel'
 	String kind = KIND
+	
 	String modelType
 	String modelId
 	SModelRoot newRoot
@@ -104,6 +109,7 @@ class UpdateModelAction implements Action {
 class RequestBoundsAction implements Action {
 	public static val KIND = 'requestBounds'
 	String kind = KIND
+	
 	SModelRoot root
 	
 	new() {}
@@ -116,6 +122,7 @@ class RequestBoundsAction implements Action {
 class ComputedBoundsAction implements Action {
 	public static val KIND = 'computedBounds'
 	String kind = KIND
+	
 	List<ElementAndBounds> bounds
 	
 	new() {}

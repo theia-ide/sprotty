@@ -23,7 +23,10 @@ import io.typefox.sprotty.api.UpdateModelAction;
 public class ActionTypeAdapter extends PropertyBasedTypeAdapter<Action> {
 	
 	public static Gson createDefaultGson() {
-		return new GsonBuilder().registerTypeAdapterFactory(new Factory()).create();
+		return new GsonBuilder()
+				.registerTypeAdapterFactory(new Factory())
+				.registerTypeAdapterFactory(new EnumTypeAdapter.Factory())
+				.create();
 	}
 	
 	public static class Factory implements TypeAdapterFactory {
