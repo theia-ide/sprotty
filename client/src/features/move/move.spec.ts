@@ -93,14 +93,14 @@ describe('move', () => {
         newModel = cmd.execute(context) as SModelRoot
 
         // node0 => PointNE
-        expect(pointNE.x).equals(getNode('node0', newModel).x)
-        expect(pointNE.y).equals(getNode('node0', newModel).y)
+        expect(pointNE.x).equals(getNode('node0', newModel).bounds.x)
+        expect(pointNE.y).equals(getNode('node0', newModel).bounds.y)
         // node1 => pointSW
-        expect(pointSW.x).equals(getNode('node1', newModel).x)
-        expect(pointSW.y).equals(getNode('node1', newModel).y)
+        expect(pointSW.x).equals(getNode('node1', newModel).bounds.x)
+        expect(pointSW.y).equals(getNode('node1', newModel).bounds.y)
         // node2 => PointSE
-        expect(pointSE.x).equals(getNode('node2', newModel).x)
-        expect(pointSE.y).equals(getNode('node2', newModel).y)
+        expect(pointSE.x).equals(getNode('node2', newModel).bounds.x)
+        expect(pointSE.y).equals(getNode('node2', newModel).bounds.y)
 
     })
 
@@ -121,12 +121,12 @@ describe('move', () => {
         // confirm that each node is back at original
         // coordinates
         // node0, node1 and node2 => pointNW
-        expect(pointNW.x).equals(getNode('node0', undoneModel).x)
-        expect(pointNW.y).equals(getNode('node0', undoneModel).y)
-        expect(pointNW.x).equals(getNode('node1', undoneModel).x)
-        expect(pointNW.y).equals(getNode('node1', undoneModel).y)
-        expect(pointNW.x).equals(getNode('node2', undoneModel).x)
-        expect(pointNW.y).equals(getNode('node2', undoneModel).y)
+        expect(pointNW.x).equals(getNode('node0', undoneModel).bounds.x)
+        expect(pointNW.y).equals(getNode('node0', undoneModel).bounds.y)
+        expect(pointNW.x).equals(getNode('node1', undoneModel).bounds.x)
+        expect(pointNW.y).equals(getNode('node1', undoneModel).bounds.y)
+        expect(pointNW.x).equals(getNode('node2', undoneModel).bounds.x)
+        expect(pointNW.y).equals(getNode('node2', undoneModel).bounds.y)
     })
 
     it('redo() works as expected', async () => {
@@ -136,14 +136,14 @@ describe('move', () => {
 
         // confirm that each node is back where ordered to move
         // node0 => PointNE
-        expect(pointNE.x).equals(getNode('node0', redoneModel).x)
-        expect(pointNE.y).equals(getNode('node0', redoneModel).y)
+        expect(pointNE.x).equals(getNode('node0', redoneModel).bounds.x)
+        expect(pointNE.y).equals(getNode('node0', redoneModel).bounds.y)
         // node1 => pointSW
-        expect(pointSW.x).equals(getNode('node1', redoneModel).x)
-        expect(pointSW.y).equals(getNode('node1', redoneModel).y)
+        expect(pointSW.x).equals(getNode('node1', redoneModel).bounds.x)
+        expect(pointSW.y).equals(getNode('node1', redoneModel).bounds.y)
         // node2 => PointSE
-        expect(pointSE.x).equals(getNode('node2', redoneModel).x)
-        expect(pointSE.y).equals(getNode('node2', redoneModel).y)
+        expect(pointSE.x).equals(getNode('node2', redoneModel).bounds.x)
+        expect(pointSE.y).equals(getNode('node2', redoneModel).bounds.y)
     })
 
 })

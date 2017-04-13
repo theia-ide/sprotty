@@ -1,5 +1,5 @@
 import { TYPES, IActionDispatcher, ViewRegistry, LocalModelSource } from "../../../src/base"
-import { SEdgeSchema, SGraphFactory, SGraphView, SNode, SNodeSchema, StraightEdgeView, SGraphSchema } from "../../../src/graph"
+import { SEdgeSchema, SGraphView, SNode, SNodeSchema, StraightEdgeView, SGraphSchema, SGraphFactory } from "../../../src/graph"
 import { ElementMove, MoveAction } from "../../../src/features"
 import { CircleNodeView } from "./views"
 import createContainer from "./di.config"
@@ -14,9 +14,8 @@ export default function runStandalone() {
     viewRegistry.register('edge:straight', StraightEdgeView)
 
     // Initialize gmodel
-    const modelFactory = container.get<SGraphFactory>(TYPES.IModelFactory)
-    const node0 = { id: 'node0', type: 'node:circle', x: 100, y: 100 }
-    const node1 = { id: 'node1', type: 'node:circle', x: 200, y: 150, selected: true }
+    const node0 = { id: 'node0', type: 'node:circle', bounds: { x: 100, y: 100, width: -1, height: -1 } }
+    const node1 = { id: 'node1', type: 'node:circle', bounds: { x: 200, y: 150, width: -1, height: -1 }, selected: true }
     const edge0 = { id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1' }
     const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0, node1, edge0] }
 
@@ -25,9 +24,12 @@ export default function runStandalone() {
         const newNode: SNodeSchema = {
             id: 'node' + count,
             type: 'node:circle',
-            x: Math.random() * 1024,
-            y: Math.random() * 768,
-            width: 40
+            bounds: {
+                x: Math.random() * 1024,
+                y: Math.random() * 768,
+                width: 40,
+                height: 40
+            }
         }
         const newEdge: SEdgeSchema = {
             id: 'edge' + count,
@@ -48,17 +50,22 @@ export default function runStandalone() {
     modelSource.setModel(graph)
 
     // Button features
+    /*
+    This does not work at the moment. We need a more flexible UpdateModelCommand that
+    can do partial updates.
     document.getElementById('addNode')!.addEventListener('click', () => {
         addNode()
         modelSource.setModel(graph)
         document.getElementById('graph')!.focus()
     })
+    */
 
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
+    const factory = container.get<SGraphFactory>(TYPES.IModelFactory)
     document.getElementById('scrambleNodes')!.addEventListener('click', function (e) {
         const nodeMoves: ElementMove[] = []
         graph.children.forEach(shape => {
-            if (shape instanceof SNode) {
+            if (factory.isNodeSchema(shape)) {
                 nodeMoves.push({
                     elementId: shape.id,
                     toPosition: {

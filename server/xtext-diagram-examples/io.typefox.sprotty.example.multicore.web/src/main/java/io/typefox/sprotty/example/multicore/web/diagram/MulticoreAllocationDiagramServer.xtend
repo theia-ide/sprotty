@@ -6,6 +6,7 @@ import com.google.inject.Inject
 import io.typefox.sprotty.api.AbstractDiagramServer
 import io.typefox.sprotty.api.ActionMessage
 import io.typefox.sprotty.api.ComputedBoundsAction
+import io.typefox.sprotty.api.FitToScreenAction
 import io.typefox.sprotty.api.RequestBoundsAction
 import io.typefox.sprotty.api.RequestModelAction
 import io.typefox.sprotty.api.SGraph
@@ -50,41 +51,43 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		this.type2Clients.put(action.modelType, message.clientId)
 		val model = modelProvider.getModel(resourceId, action.modelType)
 		if (model !== null) {
-			remoteEndpoint?.accept(new ActionMessage [
-				clientId = message.clientId
-				if (model.type == 'processor' || modelProvider.isLayoutDone(resourceId, action.modelType)) {
-					action = new SetModelAction [
-						modelType = model.type
-						modelId = model.id
-						newRoot = model
-					]
-				} else {
-					action = new RequestBoundsAction [
-						root = model
-					]
-				}
-			])
+			sendModel(model, message.clientId)
 		}
 	}
 	
 	def notifyClients(SModelRoot model) {
 		if (remoteEndpoint !== null) {
 			for (client : type2Clients.get(model.type)) {
+				sendModel(model, client)
+			}
+		}
+	}
+	
+	protected def sendModel(SModelRoot model, String client) {
+		if (model.type == 'processor' || modelProvider.isLayoutDone(resourceId, model.type)) {
+			remoteEndpoint.accept(new ActionMessage [
+				clientId = client
+				action = new SetModelAction [
+					modelType = model.type
+					modelId = model.id
+					newRoot = model
+				]
+			])
+			if (model.type == 'processor') {
 				remoteEndpoint.accept(new ActionMessage [
 					clientId = client
-					if (model.type == 'processor') {
-						action = new SetModelAction [
-							modelType = model.type
-							modelId = model.id
-							newRoot = model
-						]
-					} else {
-						action = new RequestBoundsAction [
-							root = model
-						]
-					}
+					action = new FitToScreenAction [
+						elementIds = emptyList
+					]
 				])
 			}
+		} else {
+			remoteEndpoint.accept(new ActionMessage [
+				clientId = client
+				action = new RequestBoundsAction [
+					root = model
+				]
+			])
 		}
 	}
 	

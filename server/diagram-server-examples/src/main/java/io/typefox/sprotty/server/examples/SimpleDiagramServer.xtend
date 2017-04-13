@@ -23,14 +23,18 @@ class SimpleDiagramServer extends AbstractDiagramServer {
 				new SNode => [
 					type = 'node:circle'
 					id = 'node0'
-					x = 100.0
-					y = 100.0
+					bounds => [
+						x = 100.0
+						y = 100.0
+					]
 				],
 				new SNode => [
 					type = 'node:circle'
 					id = 'node1'
-					x = 300.0
-					y = 150.0
+					bounds => [
+						x = 300.0
+						y = 150.0
+					]
 				],
 				new SEdge => [
 					type = 'edge:straight'

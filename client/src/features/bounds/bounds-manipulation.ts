@@ -1,6 +1,6 @@
 import { BoundsAware, BoundsInPageAware, isBoundsAware, isBoundsInPageAware } from './model';
 import { Bounds } from "../../utils/geometry"
-import { SModelElement, SModelRoot } from "../../base/model/smodel"
+import { SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
 import { CommandExecutionContext, AbstractHiddenCommand, AbstractSystemCommand } from "../../base/intent/commands"
 
@@ -21,7 +21,7 @@ export class SetBoundsInPageAction implements Action {
 export class RequestBoundsAction implements Action {
     readonly kind = RequestBoundsCommand.KIND
 
-    constructor(public root: SModelRoot) {
+    constructor(public root: SModelRootSchema) {
     }
 }
 

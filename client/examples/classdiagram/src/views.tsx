@@ -14,7 +14,7 @@ export class ClassNodeView extends RectangularNodeView {
         return <g key={node.id} id={node.id} class-node={true}>
             <rect class-node={true} class-selected={node.selected}
                   x={0} y={0}
-                  width={Math.max(0, node.width)} height={Math.max(0, node.height)} />
+                  width={Math.max(0, node.bounds.width)} height={Math.max(0, node.bounds.height)} />
             {context.renderChildren(node, context)}
         </g>
     }

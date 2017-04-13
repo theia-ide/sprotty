@@ -20,7 +20,12 @@ export default function runClassDiagram() {
     const node0 = {
         id: 'node0',
         type: 'node:class',
-        x: 100, y: 100,
+        bounds: {
+            x: 100,
+            y: 100,
+            width: -1,
+            height: -1
+        },
         layout: 'vbox',
         children: [
             {

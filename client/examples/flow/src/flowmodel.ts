@@ -1,4 +1,5 @@
 import { SNode, SNodeSchema } from "../../../src/graph"
+import { Bounds } from "../../../src/utils/geometry"
 
 export interface TaskNodeSchema extends SNodeSchema {
     name?: string
@@ -14,6 +15,5 @@ export interface BarrierNodeSchema extends SNodeSchema {
 }
 
 export class BarrierNode extends SNode implements BarrierNodeSchema {
-    width: number = 50
-    height: number = 10
+    bounds: Bounds = { x: 0, y: 0, width: 50, height: 10 }
 }

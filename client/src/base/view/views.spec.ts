@@ -24,8 +24,12 @@ describe('base views', () => {
         const vnode = missingView.render(EMPTY_ROOT, context)
         expect(toHTML(vnode)).to.be.equal('<text id="EMPTY" class="missing" x="0" y="0">?EMPTY?</text>')
         const model = new SNode()
-        model.x = 42
-        model.y = 41
+        model.bounds = {
+            x: 42,
+            y: 41,
+            width: 0,
+            height: 0
+        }
         model.id = 'foo'
         model.type = 'type'
         const vnode1 = missingView.render(model, context)

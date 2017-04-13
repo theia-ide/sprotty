@@ -123,3 +123,16 @@ class ComputedBoundsAction implements Action {
 		initializer.accept(this)
 	}
 }
+
+@Accessors@EqualsHashCode@ToString
+class FitToScreenAction implements Action {
+	public static val KIND = 'fit'
+	String kind = KIND
+	
+	List<String> elementIds
+	
+	new() {}
+	new(Consumer<FitToScreenAction> initializer) {
+		initializer.accept(this)
+	}
+}

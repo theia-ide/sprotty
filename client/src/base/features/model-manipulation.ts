@@ -165,8 +165,8 @@ export class UpdateModelCommand extends AbstractCommand {
                 animationData.moves.push({
                     element: right,
                     elementId: right.id,
-                    fromPosition: { x: leftPos.x, y: leftPos.y },
-                    toPosition: { x: rightPos.x, y: rightPos.y }
+                    fromPosition: leftPos,
+                    toPosition: rightPos
                 })
                 right.position = leftPos
             }

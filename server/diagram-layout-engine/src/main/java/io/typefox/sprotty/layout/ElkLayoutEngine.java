@@ -126,14 +126,15 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		ElkNode elkNode = factory.createElkNode();
 		elkNode.setIdentifier(snode.getId());
 		elkNode.setProperty(P_TYPE, snode.getType());
-		if (snode.getX() != null)
-			elkNode.setX(snode.getX());
-		if (snode.getY() != null)
-			elkNode.setY(snode.getY());
-		if (snode.getWidth() != null)
-			elkNode.setWidth(snode.getWidth());
-		if (snode.getHeight() != null)
-			elkNode.setHeight(snode.getHeight());
+		Bounds bounds = snode.getBounds();
+		if (bounds != null) {
+			elkNode.setX(bounds.getX());
+			elkNode.setY(bounds.getY());
+			if (bounds.getWidth() >= 0)
+				elkNode.setWidth(bounds.getWidth());
+			if (bounds.getHeight() >= 0)
+				elkNode.setHeight(bounds.getHeight());
+		}
 		return elkNode;
 	}
 	
@@ -188,10 +189,15 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	}
 	
 	protected void transferNodeLayout(SNode snode, ElkNode elkNode) {
-		snode.setX(elkNode.getX());
-		snode.setY(elkNode.getY());
-		snode.setWidth(elkNode.getWidth());
-		snode.setHeight(elkNode.getHeight());
+		Bounds bounds = snode.getBounds();
+		if (bounds == null) {
+			bounds = new Bounds();
+			snode.setBounds(bounds);
+		}
+		bounds.setX(elkNode.getX());
+		bounds.setY(elkNode.getY());
+		bounds.setWidth(elkNode.getWidth());
+		bounds.setHeight(elkNode.getHeight());
 	}
 	
 	protected void transferEdgeLayout(SEdge sedge, ElkEdge elkEdge) {

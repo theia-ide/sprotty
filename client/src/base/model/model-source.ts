@@ -5,7 +5,7 @@ import { IActionDispatcher } from "../intent/action-dispatcher"
 import { Command } from "../intent/commands"
 import { SetModelAction, SetModelCommand, UpdateModelAction, UpdateModelCommand, RequestModelAction } from "../features/model-manipulation"
 import { FitToScreenAction } from "../../features/viewport/center-fit"
-import { ComputedBoundsAction } from "../../features/bounds/bounds-manipulation"
+import { ComputedBoundsAction, RequestBoundsAction } from "../../features/bounds/bounds-manipulation"
 import { IViewerOptions } from "../view/options"
 import { Bounds } from "../../utils/geometry"
 import { SModelRootSchema, SModelElementSchema, SModelIndex } from "./smodel"
@@ -16,18 +16,18 @@ export abstract class ModelSource implements ActionHandler {
 
     constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
                 @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
-                @inject(TYPES.IViewerOptions) viewerOptions: IViewerOptions) {
-        this.initialize(actionHandlerRegistry, viewerOptions)
+                @inject(TYPES.IViewerOptions) protected viewerOptions: IViewerOptions) {
+        this.initialize(actionHandlerRegistry)
     }
 
-    initialize(registry: ActionHandlerRegistry, viewerOptions: IViewerOptions): void {
+    initialize(registry: ActionHandlerRegistry): void {
         // Register model manipulation commands
         registry.registerCommand(SetModelCommand)
         registry.registerCommand(UpdateModelCommand)
 
         // Register this model source
         registry.register(RequestModelAction.KIND, this)
-        if (viewerOptions.boundsComputation == 'dynamic') {
+        if (this.viewerOptions.boundsComputation == 'dynamic') {
             registry.register(ComputedBoundsAction.KIND, this)
         }
     }
@@ -42,25 +42,25 @@ export class LocalModelSource extends ModelSource {
 
     setModel(root: SModelRootSchema): void {
         this.currentRoot = root
-        this.actionDispatcher.dispatch(new SetModelAction(root))
-        this.postModelUpdate()
+        if (this.viewerOptions.boundsComputation == 'dynamic') {
+            this.actionDispatcher.dispatch(new RequestBoundsAction(root))
+        } else {
+            this.actionDispatcher.dispatch(new SetModelAction(root))
+        }
     }
 
     updateModel(newRoot?: SModelRootSchema, animate: boolean = true): void {
-        if (newRoot !== undefined) {
+        if (newRoot !== undefined)
             this.currentRoot = newRoot
-            this.actionDispatcher.dispatch(new UpdateModelAction(newRoot, animate))
-        } else if (this.currentRoot !== undefined) {
-            // The model has been modified externally
-            this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot, animate))
-        } else {
+        if (this.currentRoot === undefined) {
             this.fireModelNotAvailable()
+        } else {
+            if (this.viewerOptions.boundsComputation == 'dynamic') {
+                this.actionDispatcher.dispatch(new RequestBoundsAction(this.currentRoot))
+            } else {
+                this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot, animate))
+            }
         }
-        this.postModelUpdate()
-    }
-
-    protected postModelUpdate() {
-        this.actionDispatcher.dispatch(new FitToScreenAction([]))
     }
 
     handle(action: Action): void {
@@ -91,7 +91,7 @@ export class LocalModelSource extends ModelSource {
                     this.applyBounds(element, b.newBounds)
                 }
             }
-            this.updateModel()
+            this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
         } else {
             this.fireModelNotAvailable()
         }
@@ -99,14 +99,7 @@ export class LocalModelSource extends ModelSource {
 
     protected applyBounds(element: SModelElementSchema, newBounds: Bounds) {
         const e = element as any
-        if (e.bounds !== undefined || e == this.currentRoot) {
-            e.bounds = newBounds
-        } else {
-            e.x = newBounds.x
-            e.y = newBounds.y
-            e.width = newBounds.width
-            e.height = newBounds.height
-        }
+        e.bounds = newBounds
         e.revalidateBounds = false
     }
 

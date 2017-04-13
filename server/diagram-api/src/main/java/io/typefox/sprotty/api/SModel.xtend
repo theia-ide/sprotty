@@ -39,27 +39,13 @@ class SGraph extends SModelRoot implements BoundsAware {
 
 @Accessors@EqualsHashCode@ToString
 class SNode extends SModelElement implements BoundsAware  {
-	Double x
-	Double y
-	Double width
-	Double height
+	Bounds bounds
 	
 	Boolean revalidateBounds
 	
 	new() {}
 	new(Consumer<SNode> initializer) {
 		initializer.accept(this)
-	}
-	
-	override Bounds getBounds() {
-		new Bounds(x, y, width, height)
-	}
-
-	override setBounds(Bounds bounds) {
-		this.x = bounds.x
-		this.y = bounds.y
-		this.width = bounds.width
-		this.height = bounds.height
 	}
 }
 

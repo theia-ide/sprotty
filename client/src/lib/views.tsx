@@ -10,8 +10,8 @@ export abstract class CircularNodeView extends SNodeView {
 
     getAnchor(node: SNode, refPoint: Point) {
         const radius = this.getRadius(node)
-        const cx = node.x + radius
-        const cy = node.y + radius
+        const cx = node.bounds.x + radius
+        const cy = node.bounds.y + radius
         const dx = cx - refPoint.x
         const dy = cy - refPoint.y
         const distance = Math.sqrt(dx * dx + dy * dy)
@@ -26,16 +26,17 @@ export abstract class CircularNodeView extends SNodeView {
 
 export abstract class RectangularNodeView extends SNodeView {
     getAnchor(node: SNode, refPoint: Point) {
+        const bounds = node.bounds
         let x = refPoint.x
-        if (x < node.x)
-            x = node.x
-        else if (x > node.x + node.width)
-            x = node.x + node.width
+        if (x < bounds.x)
+            x = bounds.x
+        else if (x > bounds.x + bounds.width)
+            x = bounds.x + bounds.width
         let y = refPoint.y
-        if (y < node.y)
-            y = node.y
-        else if (y > node.y + node.height)
-            y = node.y + node.height
-        return {x, y}
+        if (y < bounds.y)
+            y = bounds.y
+        else if (y > bounds.y + bounds.height)
+            y = bounds.y + bounds.height
+        return { x, y }
     }
 }

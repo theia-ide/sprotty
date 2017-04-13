@@ -6,8 +6,8 @@ import org.eclipse.xtend.lib.annotations.ToString
 
 @Accessors@EqualsHashCode@ToString
 class Point {
-    Double x
-    Double y
+    double x
+    double y
 	
 	new() {}
 	new(double x, double y) {
@@ -18,8 +18,8 @@ class Point {
 
 @Accessors@EqualsHashCode@ToString
 class Dimension {
-    Double width
-    Double height
+    double width = -1
+    double height = -1
 	
 	new() {}
 	new(double width, double height) {
@@ -30,10 +30,10 @@ class Dimension {
 
 @Accessors@EqualsHashCode@ToString
 class Bounds {
-    Double x
-    Double y
-    Double width
-    Double height
+    double x
+    double y
+    double width = -1
+    double height = -1
 	
 	new() {}
 	new(double x, double y, double width, double height) {

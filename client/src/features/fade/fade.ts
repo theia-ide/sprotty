@@ -28,9 +28,9 @@ export class FadeAnimation extends Animation {
                 element.opacity = t
             } else if (elementFade.type == 'out') {
                 element.opacity = 1 - t
-            }
-            if (t == 1 && this.removeAfterFadeOut && element instanceof SChildElement) {
-                element.parent.remove(element)
+                if (t == 1 && this.removeAfterFadeOut && element instanceof SChildElement) {
+                    element.parent.remove(element)
+                }
             }
         }
         return this.model

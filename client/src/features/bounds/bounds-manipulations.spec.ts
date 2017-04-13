@@ -16,7 +16,7 @@ const boundsInPage1 = { x: 100, y: 100, width: 100, height: 100 }
 
 const modelFactory = new SGraphFactory()
 const model = modelFactory.createRoot({ id: 'graph', type: 'graph', children: [] }) as SGraph
-const nodeSchema0: SNodeSchema = { id: 'node0', type: 'node:circle', x: 0, y: 0, width: 0, height: 0 }
+const nodeSchema0: SNodeSchema = { id: 'node0', type: 'node:circle', bounds: { x: 0, y: 0, width: 0, height: 0 } }
 
 const nodeBoundsAware: SNode = modelFactory.createElement(nodeSchema0) as SNode
 

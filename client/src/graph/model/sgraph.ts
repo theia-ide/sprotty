@@ -19,43 +19,31 @@ export class SGraph extends ViewportRootElement implements SGraphSchema {
 
 export interface SNodeSchema extends SModelElementSchema {
     children?: SGraphElementSchema[]
-    x?: number
-    y?: number
-    width?: number
-    height?: number
+    bounds?: Bounds
     layout?: string
     revalidateBounds?: boolean
 }
 
 export class SNode extends SChildElement implements SNodeSchema, Selectable, BoundsAware, Locateable, Fadeable {
-    x: number = 0
-    y: number = 0
-    width: number = -1
-    height: number = -1
+    bounds: Bounds = EMPTY_BOUNDS
     revalidateBounds: boolean = true
     children: SCompartmentElement[]
     layout?: string
     selected: boolean = false
     opacity: number = 1
 
-    get bounds(): Bounds {
-        return {x: this.x, y: this.y, width: this.width, height: this.height}
-    }
-
-    set bounds(bounds: Bounds) {
-        this.x = bounds.x
-        this.y = bounds.y
-        this.width = bounds.width
-        this.height = bounds.height
-    }
-
     get position(): Point {
-        return { x: this.x, y: this.y }
+        return { x: this.bounds.x, y: this.bounds.y }
     }
 
     set position(point: Point) {
-        this.x = point.x
-        this.y = point.y
+        const newBounds = {
+            x: point.x,
+            y: point.y,
+            width: this.bounds.width,
+            height: this.bounds.height
+        }
+        this.bounds = newBounds
     }
 
     hasFeature(feature: symbol): boolean {
