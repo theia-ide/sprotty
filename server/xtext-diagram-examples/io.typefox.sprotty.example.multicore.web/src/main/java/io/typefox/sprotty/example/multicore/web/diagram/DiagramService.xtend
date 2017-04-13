@@ -18,6 +18,7 @@ import org.eclipse.xtext.util.CancelIndicator
 import org.eclipse.xtext.web.server.model.AbstractCachedService
 import org.eclipse.xtext.web.server.model.IXtextWebDocument
 import org.eclipse.xtext.web.server.model.XtextWebDocument
+import org.eclipse.xtext.web.server.model.XtextWebDocumentAccess
 import org.eclipse.xtext.web.server.validation.ValidationService
 
 import static extension org.eclipse.xtext.EcoreUtil2.*
@@ -54,9 +55,13 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 	}
 	
 	override compute(IXtextWebDocument doc, CancelIndicator cancelIndicator) {
-		val validationResult = (doc as XtextWebDocument).getCachedServiceResult(validationService, cancelIndicator, false)
-		if (!validationResult.issues.exists[severity == 'error']) {
-			doCompute(doc, cancelIndicator)
+		if (doc instanceof XtextWebDocument) {
+			val validationResult = doc.getCachedServiceResult(validationService, cancelIndicator, false)
+			if (!validationResult.issues.exists[severity == 'error']) {
+				doCompute(doc, cancelIndicator)
+			}
+		} else {
+			LOG.warn('Direct document access is required for generating diagrams.')
 		}
 		return modelProvider
 	}
@@ -83,11 +88,17 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 		}
 	}
 	
-	def void setSelection(IXtextWebDocument doc, EObject selectedElement, CancelIndicator cancelIndicator) {
-		val previousElement = selectionProvider.getSelection(doc.resourceId)
-		selectionProvider.setSelection(doc.resourceId, selectedElement)
+	def void setSelection(XtextWebDocumentAccess document, String resourceId, EObject selectedElement) {
+		val previousElement = selectionProvider.getSelection(resourceId)
+		selectionProvider.setSelection(resourceId, selectedElement)
 		if (previousElement.getContainerOfType(Step) != selectedElement.getContainerOfType(Step)) {
-			compute(doc, cancelIndicator)
+			val validationResult = validationService.getResult(document)
+			if (!validationResult.issues.exists[severity == 'error']) {
+				document.readOnly[ it, cancelIndicator |
+					doCompute(CancelIndicator.NullImpl)
+					return null
+				]
+			}
 		}
 	}
 	

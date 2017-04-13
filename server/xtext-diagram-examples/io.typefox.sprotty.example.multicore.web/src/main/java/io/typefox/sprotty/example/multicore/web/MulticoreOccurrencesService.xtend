@@ -13,11 +13,12 @@ class MulticoreOccurrencesService extends OccurrencesService {
 	@Inject DiagramService diagramService
 	
 	override findOccurrences(XtextWebDocumentAccess document, int offset) {
-		document.readOnly[ doc, cancelIndicator |
-			var containedEObject = doc.resource.resolveContainedElementAt(offset)
-			diagramService.setSelection(doc, containedEObject, cancelIndicator)
-			return null
+		val p = document.readOnly[ doc, cancelIndicator |
+			return doc.resourceId -> doc.resource.resolveContainedElementAt(offset)
 		]
+		val resourceId = p.key
+		val containedEObject = p.value
+		diagramService.setSelection(document, resourceId, containedEObject)
 		return super.findOccurrences(document, offset)
 	}
 	
