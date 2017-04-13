@@ -1,6 +1,5 @@
 /**
  * A Point is composed of the (x,y) coordinates of an object
- * @interface
  */
 export interface Point {
     readonly x: number
@@ -17,7 +16,6 @@ export const ORIGIN_POINT: Point = {
 
 /**  
  * The Dimension of an object is composed of its width and height
- * @interface
  */
 export interface Dimension {
     readonly width: number
@@ -35,7 +33,6 @@ export const EMPTY_DIMENSION: Dimension = {
 /** 
  * The bounds are the position (x, y) and dimension (width, height)
  * of an object
- * @interface
  */
 export interface Bounds extends Point, Dimension {
 }
@@ -89,7 +86,6 @@ export function isEmpty(b: Bounds) {
 
 /**
  * Represents an object's insets, for top, bottom, left and right
- * @interface
  */
 export interface Insets {
     top: number
@@ -100,7 +96,6 @@ export interface Insets {
 
 /**
  * Enumeration of possible directions (left, right, up, down)
- * @enum
  */
 export enum Direction { left, right, up, down }
 
