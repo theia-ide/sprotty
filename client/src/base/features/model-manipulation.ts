@@ -10,7 +10,7 @@ import { CompoundAnimation, Animation } from "../animations/animation"
 import { ModelMatcher, MatchResult } from "./model-matching"
 import { isFadeable } from "../../features/fade/model"
 import { ResolvedElementFade, FadeAnimation } from "../../features/fade/fade"
-import { isMoveable } from "../../features/move/model"
+import { isLocateable } from "../../features/move/model"
 import { ResolvedElementMove, MoveAnimation } from "../../features/move/move"
 import { isBoundsAware, isBoundsInPageAware } from "../../features/bounds/model"
 
@@ -156,7 +156,7 @@ export class UpdateModelCommand extends AbstractCommand {
     }
 
     protected updateElement(left: SModelElement, right: SModelElement, animationData: UpdateAnimationData): void {
-        if (isMoveable(left) && isMoveable(right)) {
+        if (isLocateable(left) && isLocateable(right)) {
             const leftPos = left.position
             const rightPos = right.position
             if (leftPos.x != rightPos.x || leftPos.y != rightPos.y) {

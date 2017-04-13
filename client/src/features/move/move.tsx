@@ -8,7 +8,7 @@ import { Animation } from "../../base/animations/animation"
 import { MouseListener } from "../../base/view/mouse-tool"
 import { isViewport, Viewport } from "../viewport/model"
 import { isSelectable } from "../select/model"
-import { isMoveable, Locateable } from "./model"
+import { isMoveable, Locateable, isLocateable } from "./model"
 import { setAttr } from "../../base/view/vnode-utils"
 
 const JSX = {createElement: snabbdom.svg}
@@ -191,7 +191,7 @@ export class MoveMouseListener extends MouseListener {
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        if (isMoveable(element)) {
+        if (isLocateable(element)) {
             const translate = 'translate(' + element.position.x + ', ' + element.position.y + ')'
             setAttr(vnode, 'transform', translate)
         }
