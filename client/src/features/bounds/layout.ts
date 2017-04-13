@@ -17,7 +17,7 @@ export class LayoutRegistry extends InstanceRegistry<Layout> {
 @injectable()
 export class Layouter {
 
-    @inject(LAYOUT_TYPES.LayoutRegistry) layoutRegistry: LayoutRegistry
+    constructor(@inject(LAYOUT_TYPES.LayoutRegistry) protected layoutRegistry: LayoutRegistry) {}
 
     layout(element2boundsData: Map<SModelElement​​, BoundsData>) {
         element2boundsData.forEach(

@@ -1,5 +1,6 @@
 import { inject, injectable } from "inversify"
-import { Action, ActionHandler } from "../base/intent/actions"
+import { Action, ActionHandler, ActionHandlerRegistry } from "../base/intent/actions"
+import { IActionDispatcher } from "../base/intent/action-dispatcher"
 import { Command } from "../base/intent/commands"
 import { TYPES } from "../base/types"
 import { IViewerOptions } from "../base/view/options"
@@ -18,11 +19,15 @@ export function isActionMessage(object: any): object is ActionMessage {
 @injectable()
 export abstract class AbstractDiagramServer extends ModelSource {
 
-    @inject(TYPES.ILogger) protected logger: ILogger
-    @inject(TYPES.IViewerOptions) protected viewOptions: IViewerOptions
+    constructor(@inject(TYPES.IActionDispatcher) actionDispatcher: IActionDispatcher,
+                @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
+                @inject(TYPES.IViewerOptions) viewerOptions: IViewerOptions,
+                @inject(TYPES.ILogger) protected logger: ILogger) {
+        super(actionDispatcher, actionHandlerRegistry, viewerOptions)
+    }
 
     protected get clientId(): string {
-        return this.viewOptions.baseDiv
+        return this.viewerOptions.baseDiv
     }
 
     handle(action: Action): void {

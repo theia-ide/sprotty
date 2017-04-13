@@ -17,9 +17,9 @@ import { VNode } from "snabbdom/vnode";
 @injectable()
 export class CanvasBoundsInitializer implements VNodeDecorator {
 
-    @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
-
     rootAndVnode: [SModelRoot, VNode] | undefined
+
+    constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher) {}
 
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (element instanceof SModelRoot && isEmpty(element.canvasBounds)) {

@@ -11,9 +11,8 @@ import { on } from "./vnode-utils"
 @injectable()
 export class MouseTool implements VNodeDecorator {
 
-    @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
-
-    @multiInject(TYPES.MouseListener)@optional() protected mouseListeners: MouseListener[] = []
+    constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
+                @multiInject(TYPES.MouseListener)@optional() protected mouseListeners: MouseListener[] = []) {}
 
     register(mouseListener: MouseListener) {
         this.mouseListeners.push(mouseListener)

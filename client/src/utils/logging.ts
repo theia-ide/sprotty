@@ -25,8 +25,9 @@ export class NullLogger implements ILogger {
 
 @injectable()
 export class ConsoleLogger implements ILogger {
-    @inject(TYPES.LogLevel) logLevel: LogLevel = LogLevel.log
-    @inject(TYPES.IViewerOptions) protected viewOptions: IViewerOptions
+
+    constructor(@inject(TYPES.LogLevel) public logLevel: LogLevel = LogLevel.log,
+                @inject(TYPES.IViewerOptions) protected viewOptions: IViewerOptions = { baseDiv: '' } as IViewerOptions) {}
 
     error(thisArg: any, message: string, ...params: any[]): void {
         if (this.logLevel >= LogLevel.error)

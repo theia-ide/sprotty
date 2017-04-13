@@ -27,8 +27,8 @@ export class BoundsData {
 @injectable()
 export class HiddenBoundsUpdater implements VNodeDecorator {
 
-    @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
-    @inject(LAYOUT_TYPES.Layouter) protected layouter : Layouter
+    constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
+                @inject(LAYOUT_TYPES.Layouter) protected layouter : Layouter) {}
 
     private readonly element2boundsData: Map<SModelElement, BoundsData> = new Map
 
@@ -89,4 +89,3 @@ export class HiddenBoundsUpdater implements VNodeDecorator {
         }
     }
 }
-

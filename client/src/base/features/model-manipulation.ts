@@ -69,6 +69,7 @@ export class UpdateModelAction implements Action {
     modelType: string
     modelId: string
 
+    // TODO support a match result as alternative (or additional?) parameter
     constructor(public newRoot: SModelRootSchema, public animate?: boolean) {
         this.modelType = newRoot.type
         this.modelId = newRoot.id

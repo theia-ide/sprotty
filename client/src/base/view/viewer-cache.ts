@@ -13,8 +13,8 @@ import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
 @injectable()
 export class ViewerCache implements IViewer {
 
-    @inject(TYPES.IViewer)@named('delegate') delegate: IViewer
-    @inject(TYPES.IAnimationFrameSyncer) syncer: AnimationFrameSyncer
+    constructor(@inject(TYPES.IViewer)@named('delegate') protected delegate: IViewer,
+                @inject(TYPES.IAnimationFrameSyncer) protected syncer: AnimationFrameSyncer) {}
 
     cachedModelRoot: SModelRoot | undefined
     cachedHiddenModelRoot: SModelRoot | undefined

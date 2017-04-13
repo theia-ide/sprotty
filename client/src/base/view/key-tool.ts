@@ -10,9 +10,8 @@ import { on } from "./vnode-utils"
 @injectable()
 export class KeyTool implements VNodeDecorator {
 
-    @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
-
-    @multiInject(TYPES.KeyListener)@optional() protected keyListeners: KeyListener[] = []
+    constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
+                @multiInject(TYPES.KeyListener)@optional() protected keyListeners: KeyListener[] = []) {}
 
     register(keyListener: KeyListener) {
         this.keyListeners.push(keyListener)

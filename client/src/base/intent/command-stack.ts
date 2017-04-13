@@ -92,10 +92,10 @@ export class CommandStack implements ICommandStack {
 
     defaultDuration = 250
 
-    @inject(TYPES.IModelFactory) protected modelFactory: IModelFactory
-    @inject(TYPES.IViewerProvider) protected viewerProvider: IViewerProvider
-    @inject(TYPES.ILogger) protected logger: ILogger
-    @inject(TYPES.IAnimationFrameSyncer) protected syncer: AnimationFrameSyncer
+    constructor(@inject(TYPES.IModelFactory) protected modelFactory: IModelFactory,
+                @inject(TYPES.IViewerProvider) protected viewerProvider: IViewerProvider,
+                @inject(TYPES.ILogger) protected logger: ILogger,
+                @inject(TYPES.IAnimationFrameSyncer) protected syncer: AnimationFrameSyncer) {}
 
     protected currentPromise: Promise<CommandStackState> = Promise.resolve({root: EMPTY_ROOT})
 
