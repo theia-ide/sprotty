@@ -117,7 +117,7 @@ export class StraightEdgeView implements View {
 
 export class SLabelView implements View {
     render(label: SLabel, context: RenderingContext): VNode {
-        return <text key={label.id} id={label.id} x={label.bounds.x} y={label.bounds.y} class-label={true}>{label.text}</text>
+        return <text key={label.id} id={label.id} class-label={true}>{label.text}</text>
     }
 }
 
