@@ -14,6 +14,10 @@ class Point {
 		this.x = x
 		this.y = y
 	}
+	new(Point other) {
+		this.x = other.x
+		this.y = other.y
+	}
 }
 
 @Accessors@EqualsHashCode@ToString
@@ -25,6 +29,10 @@ class Dimension {
 	new(double width, double height) {
 		this.width = width
 		this.height = height
+	}
+	new(Dimension other) {
+		this.width = other.width
+		this.height = other.height
 	}
 }
 
@@ -44,10 +52,11 @@ class Bounds {
 	}
 }
 
-
 interface BoundsAware {
-	def Bounds getBounds()
-	def void setBounds(Bounds bounds)
+	def Point getPosition()
+	def void setPosition(Point position)
+	def Dimension getSize()
+	def void setSize(Dimension size)
 	
 	def Boolean getRevalidateBounds()
 	def void setRevalidateBounds(Boolean revalidateBounds)

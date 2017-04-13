@@ -24,6 +24,14 @@ export interface Dimension {
     readonly height: number
 }
 
+/**
+ * A dimension with both width and height set to a negative value, which is considered as undefined.
+ */
+export const EMPTY_DIMENSION: Dimension = {
+    width: -1,
+    height: -1
+}
+
 /** 
  * The bounds are the position (x, y) and dimension (width, height)
  * of an object
@@ -32,7 +40,12 @@ export interface Dimension {
 export interface Bounds extends Point, Dimension {
 }
 
-export const EMPTY_BOUNDS: Bounds = {x: 0, y: 0, width: -1, height: -1}
+export const EMPTY_BOUNDS: Bounds = {
+    x: 0,
+    y: 0,
+    width: -1,
+    height: -1
+}
 
 /**
  * Combines the bounds of two objects into one, so that the new 

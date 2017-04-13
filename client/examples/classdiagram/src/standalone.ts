@@ -20,11 +20,9 @@ export default function runClassDiagram() {
     const node0 = {
         id: 'node0',
         type: 'node:class',
-        bounds: {
+        position: {
             x: 100,
-            y: 100,
-            width: -1,
-            height: -1
+            y: 100
         },
         layout: 'vbox',
         children: [
@@ -62,7 +60,7 @@ export default function runClassDiagram() {
                 ],
             }
         ]
-    };
+    }
     const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0] }
 
     // Run

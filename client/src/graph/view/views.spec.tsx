@@ -39,7 +39,7 @@ describe('graph views', () => {
     viewRegistry.register('graph', SGraphView)
     viewRegistry.register('node:circle', CircleNodeView)
     viewRegistry.register('edge:straight', StraightEdgeView)
-    const context = container.get<ModelRendererFactory>(TYPES.ModelRendererFactory).apply([])
+    const context = container.get<ModelRendererFactory>(TYPES.ModelRendererFactory)([])
     const factory = new SGraphFactory()
 
     it('render an empty graph', () => {
@@ -55,8 +55,8 @@ describe('graph views', () => {
         expect(html).to.be.equal('<svg id="mygraph" class="graph"><g transform="scale(1) translate(0,0)"></g></svg>')
     })
 
-    const node0 = {id: 'node0', type: 'node:circle', x: 100, y: 100};
-    const node1 = {id: 'node1', type: 'node:circle', x: 200, y: 150, selected: true};
+    const node0 = {id: 'node0', type: 'node:circle', position: { x: 100, y: 100 } }
+    const node1 = {id: 'node1', type: 'node:circle', position: { x: 200, y: 150 }, selected: true};
     const edge0 = {id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1'};
     const graph = factory.createRoot({id: 'graph', type: 'graph', children: [node0, node1, edge0]}) as SGraph;
 

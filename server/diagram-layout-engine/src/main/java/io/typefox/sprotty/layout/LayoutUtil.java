@@ -5,7 +5,9 @@ import java.util.ArrayList;
 import io.typefox.sprotty.api.Bounds;
 import io.typefox.sprotty.api.BoundsAware;
 import io.typefox.sprotty.api.ComputedBoundsAction;
+import io.typefox.sprotty.api.Dimension;
 import io.typefox.sprotty.api.ElementAndBounds;
+import io.typefox.sprotty.api.Point;
 import io.typefox.sprotty.api.SEdge;
 import io.typefox.sprotty.api.SGraph;
 import io.typefox.sprotty.api.SModelElement;
@@ -20,9 +22,11 @@ public final class LayoutUtil {
 		for (ElementAndBounds b : action.getBounds()) {
 			SModelElement element = index.get(b.getElementId());
 			if (element instanceof BoundsAware) {
+				BoundsAware bae = (BoundsAware) element;
 				Bounds newBounds = b.getNewBounds();
-				((BoundsAware)element).setBounds(newBounds);
-				((BoundsAware)element).setRevalidateBounds(false);
+				bae.setPosition(new Point(newBounds.getX(), newBounds.getY()));
+				bae.setSize(new Dimension(newBounds.getWidth(), newBounds.getHeight()));
+				bae.setRevalidateBounds(false);
 			}
 		}
 	}
@@ -36,8 +40,13 @@ public final class LayoutUtil {
 		if (element instanceof BoundsAware) {
 			SModelElement oldElement = oldIndex.get(element.getId());
 			if (oldElement instanceof BoundsAware) {
-				((BoundsAware)element).setBounds(((BoundsAware) oldElement).getBounds());
-				((BoundsAware)element).setRevalidateBounds(true);
+				BoundsAware newBae = (BoundsAware) element;
+				BoundsAware oldBae = (BoundsAware) oldElement;
+				if (oldBae.getPosition() != null)
+					newBae.setPosition(new Point(oldBae.getPosition()));
+				if (oldBae.getSize() != null)
+					newBae.setSize(new Dimension(oldBae.getSize()));
+				newBae.setRevalidateBounds(true);
 			}
 		} else if (element instanceof SEdge) {
 			SModelElement oldElement = oldIndex.get(element.getId());

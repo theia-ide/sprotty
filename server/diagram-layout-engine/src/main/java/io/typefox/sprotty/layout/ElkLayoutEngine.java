@@ -22,7 +22,7 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 
 import com.google.common.collect.Maps;
 
-import io.typefox.sprotty.api.Bounds;
+import io.typefox.sprotty.api.Dimension;
 import io.typefox.sprotty.api.Point;
 import io.typefox.sprotty.api.SEdge;
 import io.typefox.sprotty.api.SGraph;
@@ -126,14 +126,17 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		ElkNode elkNode = factory.createElkNode();
 		elkNode.setIdentifier(snode.getId());
 		elkNode.setProperty(P_TYPE, snode.getType());
-		Bounds bounds = snode.getBounds();
-		if (bounds != null) {
-			elkNode.setX(bounds.getX());
-			elkNode.setY(bounds.getY());
-			if (bounds.getWidth() >= 0)
-				elkNode.setWidth(bounds.getWidth());
-			if (bounds.getHeight() >= 0)
-				elkNode.setHeight(bounds.getHeight());
+		Point position = snode.getPosition();
+		if (position != null) {
+			elkNode.setX(position.getX());
+			elkNode.setY(position.getY());
+		}
+		Dimension size = snode.getSize();
+		if (size != null) {
+			if (size.getWidth() >= 0)
+				elkNode.setWidth(size.getWidth());
+			if (size.getHeight() >= 0)
+				elkNode.setHeight(size.getHeight());
 		}
 		return elkNode;
 	}
@@ -180,24 +183,13 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	}
 	
 	protected void transferGraphLayout(SGraph sgraph, ElkNode elkGraph) {
-		Bounds bounds = new Bounds();
-		bounds.setX(elkGraph.getX());
-		bounds.setY(elkGraph.getY());
-		bounds.setWidth(elkGraph.getWidth());
-		bounds.setHeight(elkGraph.getHeight());
-		sgraph.setBounds(bounds);
+		sgraph.setPosition(new Point(elkGraph.getX(), elkGraph.getY()));
+		sgraph.setSize(new Dimension(elkGraph.getWidth(), elkGraph.getHeight()));
 	}
 	
 	protected void transferNodeLayout(SNode snode, ElkNode elkNode) {
-		Bounds bounds = snode.getBounds();
-		if (bounds == null) {
-			bounds = new Bounds();
-			snode.setBounds(bounds);
-		}
-		bounds.setX(elkNode.getX());
-		bounds.setY(elkNode.getY());
-		bounds.setWidth(elkNode.getWidth());
-		bounds.setHeight(elkNode.getHeight());
+		snode.setPosition(new Point(elkNode.getX(), elkNode.getY()));
+		snode.setSize(new Dimension(elkNode.getWidth(), elkNode.getHeight()));
 	}
 	
 	protected void transferEdgeLayout(SEdge sedge, ElkEdge elkEdge) {

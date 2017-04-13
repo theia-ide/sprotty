@@ -10,8 +10,8 @@ export abstract class CircularNodeView extends SNodeView {
 
     getAnchor(node: SNode, refPoint: Point) {
         const radius = this.getRadius(node)
-        const cx = node.bounds.x + radius
-        const cy = node.bounds.y + radius
+        const cx = node.position.x + radius
+        const cy = node.position.y + radius
         const dx = cx - refPoint.x
         const dy = cy - refPoint.y
         const distance = Math.sqrt(dx * dx + dy * dy)

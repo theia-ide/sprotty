@@ -14,8 +14,8 @@ export default function runStandalone() {
     viewRegistry.register('edge:straight', StraightEdgeView)
 
     // Initialize gmodel
-    const node0 = { id: 'node0', type: 'node:circle', bounds: { x: 100, y: 100, width: -1, height: -1 } }
-    const node1 = { id: 'node1', type: 'node:circle', bounds: { x: 200, y: 150, width: -1, height: -1 }, selected: true }
+    const node0 = { id: 'node0', type: 'node:circle', position: { x: 100, y: 100 }, size: { width: -1, height: -1 } }
+    const node1 = { id: 'node1', type: 'node:circle', position: { x: 200, y: 150 }, size: { width: -1, height: -1 }, selected: true }
     const edge0 = { id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1' }
     const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0, node1, edge0] }
 
@@ -24,9 +24,11 @@ export default function runStandalone() {
         const newNode: SNodeSchema = {
             id: 'node' + count,
             type: 'node:circle',
-            bounds: {
+            position: {
                 x: Math.random() * 1024,
-                y: Math.random() * 768,
+                y: Math.random() * 768
+            },
+            size: {
                 width: 40,
                 height: 40
             }

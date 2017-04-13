@@ -28,7 +28,8 @@ class SModelRoot extends SModelElement {
 
 @Accessors@EqualsHashCode@ToString
 class SGraph extends SModelRoot implements BoundsAware {
-	Bounds bounds
+	Point position
+	Dimension size
 	Boolean revalidateBounds
 
 	new() {}
@@ -39,8 +40,8 @@ class SGraph extends SModelRoot implements BoundsAware {
 
 @Accessors@EqualsHashCode@ToString
 class SNode extends SModelElement implements BoundsAware  {
-	Bounds bounds
-	
+	Point position
+	Dimension size
 	Boolean revalidateBounds
 	
 	new() {}

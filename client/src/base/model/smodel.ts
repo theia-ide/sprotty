@@ -1,3 +1,6 @@
+import { Bounds, EMPTY_BOUNDS, Point, ORIGIN_POINT, Dimension, EMPTY_DIMENSION } from "../../utils/geometry"
+import { BoundsAware } from "../../features/bounds/model"
+import { Locateable } from "../../features/move/model"
 
 export interface SModelElementSchema {
     type: string
@@ -80,6 +83,32 @@ export class SParentElement extends SModelElement {
 
 export class SChildElement extends SParentElement {
     parent: SParentElement
+}
+
+export abstract class SShapeElement extends SChildElement implements BoundsAware, Locateable {
+    position: Point = ORIGIN_POINT
+    size: Dimension = EMPTY_DIMENSION
+    revalidateBounds: boolean = true
+
+    get bounds(): Bounds {
+        return {
+            x: this.position.x,
+            y: this.position.y,
+            width: this.size.width,
+            height: this.size.height
+        }
+    }
+
+    set bounds(newBounds: Bounds) {
+        this.position = {
+            x: newBounds.x,
+            y: newBounds.y
+        }
+        this.size = {
+            width: newBounds.width,
+            height: newBounds.height
+        }
+    }
 }
 
 /**

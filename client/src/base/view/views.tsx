@@ -4,6 +4,7 @@ import { VNode } from "snabbdom/vnode"
 import { SModelElement, SModelRoot, SParentElement } from "../model/smodel"
 import { EMPTY_ROOT } from "../model/smodel-factory"
 import { ProviderRegistry } from "../../utils/registry"
+import { Point, ORIGIN_POINT } from "../../utils/geometry"
 import { Viewer } from "./viewer"
 
 const JSX = {createElement: snabbdom.svg}
@@ -55,8 +56,7 @@ export class EmptyView implements View {
 
 export class MissingView implements View {
     render(model: SModelElement, context: RenderingContext): VNode {
-        const x = (model as any).x || 0
-        const y = (model as any).y || 0
-        return <text class-missing={true} id={model.id} x={x} y={y}>?{model.id}?</text>
+        const position: Point = (model as any).position || ORIGIN_POINT
+        return <text class-missing={true} id={model.id} x={position.x} y={position.y}>?{model.id}?</text>
     }
 }

@@ -229,8 +229,7 @@ describe('UpdateModelCommand', () => {
                 {
                     type: 'node',
                     id: 'child1',
-                    x: 100,
-                    y: 100
+                    position: { x: 100, y: 100 }
                 } as SNodeSchema
             ]
         })
@@ -245,8 +244,7 @@ describe('UpdateModelCommand', () => {
                     {
                         type: 'node',
                         id: 'child1',
-                        x: 150,
-                        y: 200
+                        position: { x: 150, y: 200 }
                     } as SNodeSchema
                 ]
             }
@@ -268,8 +266,7 @@ describe('UpdateModelCommand', () => {
                 {
                     type: 'node',
                     id: 'child1',
-                    x: 100,
-                    y: 100
+                    position: { x: 100, y: 100 }
                 } as SNodeSchema,
                 {
                     type: 'node',
@@ -288,8 +285,7 @@ describe('UpdateModelCommand', () => {
                     {
                         type: 'node',
                         id: 'child1',
-                        x: 150,
-                        y: 200
+                        position: { x: 150, y: 200 }
                     } as SNodeSchema,
                     {
                         type: 'node',

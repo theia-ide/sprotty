@@ -10,7 +10,7 @@ const toHTML = require('snabbdom-to-html')
 const JSX = {createElement: snabbdom.svg}
 
 
-describe('Thunk View', () => {
+describe('ThunkView', () => {
 
     before(function () {
         this.jsdom = require('jsdom-global')()

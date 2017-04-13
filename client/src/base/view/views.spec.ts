@@ -33,7 +33,6 @@ describe('base views', () => {
         model.id = 'foo'
         model.type = 'type'
         const vnode1 = missingView.render(model, context)
-        expect(toHTML(vnode1)).to.be.equal(
-            '<text id="foo" class="missing" x="42" y="41">?foo?</text>')
+        expect(toHTML(vnode1)).to.be.equal('<text id="foo" class="missing" x="42" y="41">?foo?</text>')
     })
 })
