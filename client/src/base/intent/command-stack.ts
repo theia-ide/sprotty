@@ -14,22 +14,77 @@ import { TYPES } from "../types"
 import { SModelRoot } from "../model/smodel"
 import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
 
+/**
+ * The component that holds the current model and applies the commands 
+ * to change it.
+ * 
+ * The command stack is called by the ActionDispatcher and forwards the 
+ * changed model to the Viewer that renders it.
+ */
 export interface ICommandStack {
+    /**
+     * Executes the given command on the current model and returns a 
+     * Promise for the new result. 
+     * 
+     * Unless it is a special command, it is pushed to the undo stack
+     * such that it can be rolled back later and the redo stack is 
+     * cleared.
+     */
     execute(command: Command): Promise<SModelRoot>
+
+    /**
+     * Executes all of the given commands. As opposed to calling 
+     * execute() multiple times, the Viewer is only updated once after
+     * the last command has been executed.
+     */
     executeAll(commands: Command[]): Promise<SModelRoot>
+
+    /**
+     * Takes the topmost command from the undo stack, undoes its 
+     * changes and pushes it ot the redo stack. Returns a Promise for
+     * the changed model.
+     */
     undo(): Promise<SModelRoot>
+
+    /**
+     * Takes the topmost command from the redo stack, redoes its 
+     * changes and pushes it ot the undo stack. Returns a Promise for
+     * the changed model.
+     */
     redo(): Promise<SModelRoot>
 }
 
-interface CommandStackState {
-    root: SModelRoot,
-    hiddenRoot: SModelRoot | undefined
-    rootChanged: boolean
-    hiddenRootChanged: boolean
-}
+/**
+ * As part of the event cylce, the ICommandStack should be injected 
+ * using a provider to avoid cyclic injection dependencies.
+ */
+export type CommandStackProvider = () => Promise<ICommandStack>
 
 /**
- * The component that holds the model and applies the commands to change it.
+ * The implementation of the ICommandStack. Clients should not use this 
+ * class directly.
+ * 
+ * The command stack holds the current model as the result of the current 
+ * promise. When a new command is executed/undone/redone, its execution is 
+ * chained using <code>Promise#then()</code> to the current Promise. This 
+ * way we can handle long running commands without blocking the current 
+ * thread.
+ * 
+ * The command stack also does the special handling for special commands:
+ * 
+ * System commands should be transparent to the user and as such be 
+ * automatically undone/redone with the next plain command. Additional care 
+ * must be taken that system commands that are executed after undo don't 
+ * break the correspondence between the topmost commands on the undo and 
+ * redo stacks.
+ * 
+ * Hidden commands only tell the viewer to render a hidden model such that
+ * its bounds can be extracted from the DOM and forwarded as separate actions.
+ * Hidden commands should not leave any trace on the undo/redo/off stacks.
+ * 
+ * Mergeable commands should be merged with their predecessor if possible, 
+ * such that e.g. multiple subsequent moves of the smae element can be undone 
+ * in one single step.
  */
 @injectable()
 export class CommandStack implements ICommandStack {
@@ -44,9 +99,23 @@ export class CommandStack implements ICommandStack {
     protected currentPromise: Promise<CommandStackState> = Promise.resolve({root: EMPTY_ROOT})
 
     protected viewer: IViewer
+
     protected undoStack: Command[] = []
     protected redoStack: Command[] = []
-    protected offStack: Command[] = []
+
+    /**
+     * System commands should be transparent to the user in undo/redo 
+     * operations. When a system command is executed when the redo 
+     * stack is not empty, it is pushed to offStack instead. 
+     * 
+     * On redo, all commands form this stack are undone such that the 
+     * redo operation gets the exact same model as when it was executed 
+     * first.
+     * 
+     * On undo, all commands form this stack are undone as well as 
+     * system ommands should be transparent to the user.
+     */
+    protected offStack: AbstractSystemCommand[] = []
 
     executeAll(commands: Command[]): Promise<SModelRoot> {
         commands.forEach(
@@ -90,6 +159,14 @@ export class CommandStack implements ICommandStack {
         return this.thenUpdate()
     }
 
+    /**
+     * Chains the current promise with another Promise that performs the
+     * given operation on the given command.
+     * 
+     * @param beforeResolve a function that is called directly before 
+     * resolving the Promise to return the new model. Usually puts the 
+     * command on the appropriate stack.
+     */
     protected handleCommand(command: Command,
                             operation: (context: CommandExecutionContext)=>CommandResult,
                             beforeResolve: (command: Command, context: CommandExecutionContext)=>void) {
@@ -127,6 +204,10 @@ export class CommandStack implements ICommandStack {
             })
     }
 
+    /**
+     * Notifies the Viewer to render the new model and/or the new hidden model
+     * and returns a Promise for the new model.
+     */
     protected thenUpdate() {
         this.currentPromise = this.currentPromise.then(
             state => {
@@ -147,6 +228,45 @@ export class CommandStack implements ICommandStack {
         )
     }
 
+    /**
+     * Notify the <code>Viewer</code> that the model has changed.
+     */
+    update(model: SModelRoot): void {
+        if(this.viewer) {
+            this.viewer.update(model)
+            return
+        }
+        this.viewerProvider().then(viewer => {
+            this.viewer = viewer
+            this.update(model)
+        })
+    }
+
+    /**
+     * Notify the <code>Viewer</code> that the hidden model has changed.
+     */
+    updateHidden(model: SModelRoot): void {
+        if(this.viewer) {
+            this.viewer.updateHidden(model)
+            return
+        }
+        this.viewerProvider().then(viewer => {
+            this.viewer = viewer
+            this.updateHidden(model)
+        })
+    }
+
+    /**
+     * Handling of commands after their execution.
+     * 
+     * Hidden commands are not pushed to any stack.
+     * 
+     * System commands are pushed to the <code>offStack</code> when the redo 
+     * stack is not empty, allowing to undo the before a redo to keep the chain
+     * of commands consistent.
+     * 
+     * Mergable commands are merged if possible.
+     */
     protected mergeOrPush(command: Command, context: CommandExecutionContext) {
         if(command instanceof AbstractHiddenCommand)
             return;
@@ -165,6 +285,9 @@ export class CommandStack implements ICommandStack {
         }
     }
 
+    /** 
+     * Reverts all system commands on the offStack.
+     */
     protected undoOffStackSystemCommands() {
         let command = this.offStack.pop()
         while(command !== undefined) {
@@ -174,6 +297,11 @@ export class CommandStack implements ICommandStack {
         }
     }
 
+    /** 
+     * System commands should be transparent to the user, so this method 
+     * is called from <code>undo()</code> to revert all system commands 
+     * at the top of the undoStack.
+     */
     protected undoPreceedingSystemCommands() {
         let command = this.undoStack[this.undoStack.length - 1]
         while(command !== undefined && command instanceof AbstractSystemCommand) {
@@ -186,6 +314,11 @@ export class CommandStack implements ICommandStack {
         }
     }
 
+    /** 
+     * System commands should be transparent to the user, so this method 
+     * is called from <code>redo()</code> to re-execute all system commands 
+     * at the top of the redoStack.
+     */
     protected redoFollowingSystemCommands() {
         let command = this.redoStack[this.redoStack.length -1]
         while (command !== undefined && command instanceof AbstractSystemCommand) {
@@ -198,31 +331,12 @@ export class CommandStack implements ICommandStack {
         }
     }
 
-    update(model: SModelRoot): void {
-        if(this.viewer) {
-            this.viewer.update(model)
-            return
-        }
-        this.viewerProvider().then(viewer => {
-            this.viewer = viewer
-            this.update(model)
-        })
-    }
-
-    updateHidden(model: SModelRoot): void {
-        if(this.viewer) {
-            this.viewer.updateHidden(model)
-            return
-        }
-        this.viewerProvider().then(viewer => {
-            this.viewer = viewer
-            this.updateHidden(model)
-        })
-    }
-
-    protected createContext(model: SModelRoot) : CommandExecutionContext {
+    /**
+     * Assembles the context object that is passed to the commands execution method.
+     */
+    protected createContext(currentModel: SModelRoot) : CommandExecutionContext {
         const context: CommandExecutionContext = {
-            root: model,
+            root: currentModel,
             modelChanged: this,
             modelFactory: this.modelFactory,
             duration: this.defaultDuration,
@@ -233,6 +347,14 @@ export class CommandStack implements ICommandStack {
     }
 }
 
-export type CommandStackProvider = () => Promise<CommandStack>
-
+/**
+ * Internal type to pass the results between the <code>Promises</code> in the 
+ * <code>ICommandStack</code>.
+ */
+interface CommandStackState {
+    root: SModelRoot,
+    hiddenRoot: SModelRoot | undefined
+    rootChanged: boolean
+    hiddenRootChanged: boolean
+}
 

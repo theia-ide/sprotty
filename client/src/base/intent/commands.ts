@@ -9,10 +9,16 @@ import { Action, ActionHandler } from "./actions"
  * A command holds the behaviour of an action.
  * It is executed on a command stack and can be undone / redone.
  *
- * Each command should define a static string property KIND that matches 
- * the associated action.
- * Clients should not implement this directly but rather inherit from
- * one of its abstract implementators.
+ * A Command should store all information it needs to undo itself at a
+ * later stage. It typically resolves the model elements it is going 
+ * to manipulate as a first step in the execute method.
+ * 
+ * Each command should define a static string property KIND that 
+ * matches the associated action. This is used as a key in the 
+ * ActionHandlerRegistry.
+ * 
+ * Clients should not implement the Command interface directly but 
+ * rather inherit from one of its abstract implementators.
  */
 export interface Command {
     execute(context: CommandExecutionContext): CommandResult
@@ -24,6 +30,14 @@ export interface Command {
     merge(command: Command, context: CommandExecutionContext): boolean
 }
 
+/**
+ * Commands return the changed model or a Promise for it. The latter
+ * serves animating commands to render some intermediate states before 
+ * finishing. The CommandStack is in charge of chaining these promises,
+ * such that they run sequentially only one at a time. Due to that 
+ * chaining, it is essential that a command does not make any assumption
+ * on the state of the model before execute() is called.
+ */
 export type CommandResult = SModelRoot | Promise<SModelRoot>
 
 export interface CommandFactory {
@@ -88,12 +102,29 @@ export abstract class AbstractHiddenCommand extends AbstractCommand {
 export abstract class AbstractSystemCommand extends AbstractCommand {
 }
 
+/**
+ * The data that is passed into the execution methods of a command to give it 
+ * access to the context. 
+ */
 export interface CommandExecutionContext {
+    /** the current sprotty model */
     root: SModelRoot
+
+    /** 
+     * used ot turn sprotty schema elements (e.g. from the action) 
+     * into model elements*/
     modelFactory: IModelFactory
-    modelChanged: IViewer
-    duration: number
+
+    /** allows to give some feedback to the console */
     logger: ILogger
+
+    /** Used for anmiations to trigger the rendering of a new frame */
+    modelChanged: IViewer
+
+    /** duration of an anmiation */
+    duration: number
+
+    /** provides the ticks for animations */
     syncer: AnimationFrameSyncer
 }
 
