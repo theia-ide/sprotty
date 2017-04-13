@@ -1,3 +1,5 @@
+import { EMPTY_BOUNDS } from '../../utils/geometry';
+import { InitializeCanvasBoundsAction } from '../features/initialize-canvas';
 import "reflect-metadata"
 import "mocha"
 import { Container, ContainerModule } from "inversify"
@@ -37,30 +39,36 @@ describe('action dispatcher', () => {
     const actionDispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
 
     it('undo/redo/execute', () => {
+        // an initial SetModelAciton is fired automatically
+        expect(execCount).to.be.equal(1)
+        expect(undoCount).to.be.equal(0)
+        expect(redoCount).to.be.equal(0)
+
+        // actions are postponed until InitializeCanvasBoundsAction comes in
         actionDispatcher.dispatch(new UndoAction)
-        expect(execCount).to.be.equal(0)
+        expect(execCount).to.be.equal(1)
+        expect(undoCount).to.be.equal(0)
+        expect(redoCount).to.be.equal(0)
+    
+        actionDispatcher.dispatch(new InitializeCanvasBoundsAction(EMPTY_BOUNDS))
+        // postponed actions are fired as well
+        expect(execCount).to.be.equal(2)
         expect(undoCount).to.be.equal(1)
         expect(redoCount).to.be.equal(0)
     
         actionDispatcher.dispatch(new RedoAction)
-        expect(execCount).to.be.equal(0)
+        expect(execCount).to.be.equal(2)
         expect(undoCount).to.be.equal(1)
         expect(redoCount).to.be.equal(1)
     
         actionDispatcher.dispatch({kind: 'unknown'})
-        expect(execCount).to.be.equal(0)
+        expect(execCount).to.be.equal(2)
         expect(undoCount).to.be.equal(1)
         expect(redoCount).to.be.equal(1)
 
-        // SetModelAction is registered by default
-        actionDispatcher.dispatch(new SetModelAction(EMPTY_ROOT))
-        expect(execCount).to.be.equal(1)
-        expect(undoCount).to.be.equal(1)
-        expect(redoCount).to.be.equal(1)
-    
         // MoveAction is not registered by default
         actionDispatcher.dispatch(new MoveAction([], false))
-        expect(execCount).to.be.equal(1)
+        expect(execCount).to.be.equal(2)
         expect(undoCount).to.be.equal(1)
         expect(redoCount).to.be.equal(1)
 
@@ -68,7 +76,7 @@ describe('action dispatcher', () => {
         registry.registerCommand(MoveCommand)
     
         actionDispatcher.dispatch(new MoveAction([], false))
-        expect(execCount).to.be.equal(2)
+        expect(execCount).to.be.equal(3)
         expect(undoCount).to.be.equal(1)
         expect(redoCount).to.be.equal(1)
     })

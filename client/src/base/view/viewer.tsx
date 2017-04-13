@@ -98,8 +98,10 @@ export class Viewer implements IViewer {
         if (this.lastVDOM !== undefined) {
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
         } else {
-            const placeholder = document.getElementById(this.options.baseDiv)
-            this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
+            if(typeof document !== 'undefined') {
+                const placeholder = document.getElementById(this.options.baseDiv)
+                this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
+            }
         }
         this.renderer.postUpdate()
     }

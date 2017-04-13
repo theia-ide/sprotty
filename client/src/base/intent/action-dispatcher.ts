@@ -43,8 +43,7 @@ export class ActionDispatcher implements IActionDispatcher {
             this.handleAction(action)
             this.dispatchAll(this.postponedActions)
             this.postponedActions = []
-        }
-        if(this.postpone) {
+        } else if(this.postpone) {
             this.logger.log(this, 'postponing', action)
             this.postponedActions.push(action)
         } else if (action.kind == UndoAction.KIND) {
