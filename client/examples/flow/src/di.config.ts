@@ -12,13 +12,15 @@ const flowModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
     rebind(TYPES.IModelFactory).to(FlowModelFactory).inSingletonScope()
     rebind<IViewerOptions>(TYPES.IViewerOptions).toConstantValue({
-        baseDiv: 'sprotty-flow'
+        baseDiv: 'sprotty-flow',
+        boundsComputation: 'dynamic'
     })
-    bind(TYPES.IDiagramServer).to(WebSocketDiagramServer).inSingletonScope()
 })
 
-export default () => {
+export default (useWebsocket: boolean) => {
     const container = new Container()
     container.load(defaultModule, selectModule, moveModule, boundsModule, fadeModule, viewportModule, flowModule)
+    if (useWebsocket)
+        container.rebind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     return container
 }

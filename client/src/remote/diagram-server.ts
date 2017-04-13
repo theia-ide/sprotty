@@ -3,13 +3,8 @@ import { Action, ActionHandler } from "../base/intent/actions"
 import { Command } from "../base/intent/commands"
 import { TYPES } from "../base/types"
 import { IViewerOptions } from "../base/view/options"
+import { ModelSource } from "../base/model/model-source"
 import { ILogger } from "../utils/logging"
-
-export interface IDiagramServer {
-    sendAction(action: Action): void
-
-    onAction(listener: (a: Action) => void): void
-}
 
 export interface ActionMessage {
     clientId: string
@@ -20,33 +15,17 @@ export function isActionMessage(object: any): object is ActionMessage {
     return object !== undefined && object.hasOwnProperty('clientId') && object.hasOwnProperty('action')
 }
 
-export class ServerActionHandler implements ActionHandler {
-    constructor(private diagramServer: IDiagramServer) {
-    }
-
-    handle(action: Action): Command | Action | undefined {
-        this.diagramServer.sendAction(action)
-        return undefined
-    }
-}
-
 @injectable()
-export abstract class AbstractDiagramServer implements IDiagramServer {
+export abstract class AbstractDiagramServer extends ModelSource {
 
     @inject(TYPES.ILogger) protected logger: ILogger
     @inject(TYPES.IViewerOptions) protected viewOptions: IViewerOptions
-
-    protected readonly actionListeners: ((a: Action) => void)[] = []
-
-    onAction(listener: (a: Action) => void): void {
-        this.actionListeners.push(listener)
-    }
 
     protected get clientId(): string {
         return this.viewOptions.baseDiv
     }
 
-    sendAction(action: Action): void {
+    handle(action: Action): void {
         const message: ActionMessage = {
             clientId: this.clientId,
             action: action
@@ -62,9 +41,7 @@ export abstract class AbstractDiagramServer implements IDiagramServer {
         if (isActionMessage(object) && object.action) {
             if (!object.clientId || object.clientId == this.clientId) {
                 this.logger.log(this, 'receiving', object)
-                for (let listener of this.actionListeners) {
-                    listener(object.action)
-                }
+                this.actionDispatcher.dispatch(object.action)
             }
         } else {
             this.logger.error(this, 'received data is not an action message', object)

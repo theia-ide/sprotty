@@ -2,7 +2,6 @@ import { inject, injectable, optional } from "inversify"
 import { ILogger } from "../../utils/logging"
 import { TYPES } from "../types"
 import { RedoAction, UndoAction } from "../../features/undo-redo/undo-redo"
-import { IDiagramServer } from "../../remote/diagram-server"
 import { Action, ActionHandlerRegistry, isAction } from "./actions"
 import { ICommandStack } from "./command-stack"
 import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
@@ -23,12 +22,6 @@ export class ActionDispatcher implements IActionDispatcher {
     @inject(TYPES.ICommandStack) protected commandStack: ICommandStack
     @inject(TYPES.ILogger) protected logger: ILogger
     @inject(TYPES.IAnimationFrameSyncer) protected syncer: AnimationFrameSyncer
-
-    constructor(@inject(TYPES.IDiagramServer) @optional() diagramServer: IDiagramServer) {
-        if (diagramServer !== undefined) {
-            diagramServer.onAction(action => {this.dispatch(action)})
-        }
-    }
 
     dispatchAll(actions: Action[]): void {
         actions.forEach(action => this.dispatch(action))

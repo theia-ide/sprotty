@@ -2,6 +2,10 @@
 export interface SModelElementSchema {
     type: string
     id: string
+    children?: SModelElementSchema[]
+}
+
+export interface SModelRootSchema extends SModelElementSchema {
 }
 
 /**
@@ -25,7 +29,7 @@ export class SModelElement implements SModelElementSchema {
         throw new Error("Element has no root")
     }
 
-    get index(): SModelIndex {
+    get index(): SModelIndex<SModelElement> {
         return this.root.index
     }
 
@@ -34,11 +38,7 @@ export class SModelElement implements SModelElementSchema {
     }
 }
 
-export interface SParentElementSchema extends SModelElementSchema {
-    children?: SModelElementSchema[]
-}
-
-export class SParentElement extends SModelElement implements SParentElementSchema {
+export class SParentElement extends SModelElement {
     children: SChildElement[] = []
 
     add(child: SChildElement, i?: number) {
@@ -82,19 +82,15 @@ export class SChildElement extends SParentElement {
     parent: SParentElement
 }
 
-export interface SModelRootSchema extends SParentElementSchema {
-}
-
 /**
  * Base class for the root elements of the diagram model tree.
  */
 export class SModelRoot extends SParentElement implements SModelRootSchema {
-    private _index: SModelIndex
+    private _index: SModelIndex<SModelElement>
 
-    get index(): SModelIndex {
+    get index(): SModelIndex<SModelElement> {
         if (!this._index) {
-            this._index = new SModelIndex
-            this._index.add(this)
+            this._index = new SModelIndex<SModelElement>()
         }
         return this._index
     }
@@ -103,19 +99,19 @@ export class SModelRoot extends SParentElement implements SModelRootSchema {
 /**
  * Used to speed up model element lookup by id.
  */
-export class SModelIndex {
+export class SModelIndex<T extends SModelElementSchema> {
 
-    private id2element: Map<string, SModelElement> = new Map
+    private id2element: Map<string, T> = new Map
 
-    add(element: SModelElement): void {
+    add(element: T): void {
         this.id2element.set(element.id, element)
     }
 
-    remove(element: SModelElement): void {
+    remove(element: T): void {
         this.id2element.delete(element.id)
     }
 
-    contains(element: SModelElement): boolean {
+    contains(element: T): boolean {
         return this.id2element.get(element.id) !== undefined
     }
 
@@ -123,12 +119,12 @@ export class SModelIndex {
         this.id2element.delete(elementId)
     }
 
-    getById(id: string): SModelElement | undefined {
+    getById(id: string): T | undefined {
         return this.id2element.get(id)
     }
 
-    all(): SModelElement[] {
-        const all: SModelElement[] = []
+    all(): T[] {
+        const all: T[] = []
         this.id2element.forEach(
             element => all.push(element)
         )

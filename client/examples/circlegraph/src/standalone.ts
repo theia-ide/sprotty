@@ -1,11 +1,11 @@
-import { IActionDispatcher, SetModelAction, TYPES, ViewRegistry } from "../../../src/base"
+import { TYPES, IActionDispatcher, ViewRegistry, LocalModelSource } from "../../../src/base"
 import { SEdgeSchema, SGraphFactory, SGraphView, SNode, SNodeSchema, StraightEdgeView, SGraphSchema } from "../../../src/graph"
 import { ElementMove, MoveAction } from "../../../src/features"
 import { CircleNodeView } from "./views"
 import createContainer from "./di.config"
 
 export default function runStandalone() {
-    const container = createContainer()
+    const container = createContainer(false)
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
@@ -15,18 +15,12 @@ export default function runStandalone() {
 
     // Initialize gmodel
     const modelFactory = container.get<SGraphFactory>(TYPES.IModelFactory)
-    const node0 = {id: 'node0', type: 'node:circle', x: 100, y: 100};
-    const node1 = {id: 'node1', type: 'node:circle', x: 200, y: 150, selected: true};
-    const edge0 = {id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1'};
-    const graph: SGraphSchema = {id: 'graph', type: 'graph', children: [node0, node1, edge0]};
-
-    // Run
-    const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
-    const action = new SetModelAction(graph);
-    dispatcher.dispatch(action);
+    const node0 = { id: 'node0', type: 'node:circle', x: 100, y: 100 }
+    const node1 = { id: 'node1', type: 'node:circle', x: 200, y: 150, selected: true }
+    const edge0 = { id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1' }
+    const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0, node1, edge0] }
 
     let count = 2
-
     function addNode() {
         const newNode: SNodeSchema = {
             id: 'node' + count,
@@ -48,15 +42,19 @@ export default function runStandalone() {
     for (let i = 0; i < 200; ++i) {
         addNode()
     }
-    dispatcher.dispatch(new SetModelAction(graph))
 
-    // button features
+    // Run
+    const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
+    modelSource.setModel(graph)
+
+    // Button features
     document.getElementById('addNode')!.addEventListener('click', () => {
         addNode()
-        dispatcher.dispatch(new SetModelAction(graph))
+        modelSource.setModel(graph)
         document.getElementById('graph')!.focus()
     })
 
+    const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
     document.getElementById('scrambleNodes')!.addEventListener('click', function (e) {
         const nodeMoves: ElementMove[] = []
         graph.children.forEach(shape => {

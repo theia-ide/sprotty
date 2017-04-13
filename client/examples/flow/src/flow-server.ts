@@ -1,11 +1,10 @@
 import {
-    ActionHandlerRegistry, IActionDispatcher, RequestModelAction, TYPES, UpdateModelAction, ViewRegistry
+    TYPES, RequestModelAction, ViewRegistry
 } from "../../../src/base"
 import { SGraphView } from "../../../src/graph"
-import { SelectCommand, SetBoundsCommand, ComputedBoundsAction } from "../../../src/features"
 import { BarrierNodeView, ExecutionNodeView, FlowEdgeView } from "./views"
-import createContainer from "./di.config"
 import { WebSocketDiagramServer } from "../../../src/remote"
+import createContainer from "./di.config"
 
 const WebSocket = require("reconnecting-websocket")
 
@@ -20,14 +19,7 @@ function requestModel(): RequestModelAction {
 }
 
 export function setupFlow(websocket: WebSocket) {
-    const container = createContainer()
-
-    // Register commands
-    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
-    const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
-    actionHandlerRegistry.registerServerMessage(SelectCommand.KIND)
-    actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
-    actionHandlerRegistry.registerServerMessage(ComputedBoundsAction.KIND)
+    const container = createContainer(true)
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
@@ -37,13 +29,13 @@ export function setupFlow(websocket: WebSocket) {
     viewRegistry.register('edge', FlowEdgeView)
 
     // Connect to the diagram server
-    const diagramServer = container.get<WebSocketDiagramServer>(TYPES.IDiagramServer)
+    const diagramServer = container.get<WebSocketDiagramServer>(TYPES.ModelSource)
     diagramServer.listen(websocket)
     websocket.addEventListener('open', event => {
         // Run
         function run() {
             if (getXtextServices() !== undefined)
-                dispatcher.dispatch(requestModel())
+                diagramServer.handle(requestModel())
             else
                 setTimeout(run, 50)
         }

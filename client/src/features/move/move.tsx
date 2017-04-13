@@ -62,7 +62,7 @@ export class MoveCommand extends AbstractCommand {
             return model
     }
 
-    protected resolve(move: ElementMove, index: SModelIndex): ResolvedElementMove | undefined {
+    protected resolve(move: ElementMove, index: SModelIndex<SModelElement>): ResolvedElementMove | undefined {
         const element = index.getById(move.elementId) as (SModelElement & Locateable)
         if (element) {
             const fromPosition = move.fromPosition || { x: element.position.x, y: element.position.y }

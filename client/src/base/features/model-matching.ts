@@ -1,8 +1,8 @@
-import { SModelRootSchema, SParentElementSchema } from "../model/smodel"
+import { SModelRootSchema, SModelElementSchema } from "../model/smodel"
 
 export interface Match {
-    left?: SParentElementSchema
-    right?: SParentElementSchema
+    left?: SModelElementSchema
+    right?: SModelElementSchema
     leftParentId?: string
     rightParentId?: string
 }
@@ -19,7 +19,7 @@ export class ModelMatcher {
         return result
     }
 
-    protected matchLeft(element: SParentElementSchema, result: MatchResult, parentId?: string): void {
+    protected matchLeft(element: SModelElementSchema, result: MatchResult, parentId?: string): void {
         let match = result[element.id]
         if (match !== undefined) {
             match.left = element
@@ -38,7 +38,7 @@ export class ModelMatcher {
         }
     }
 
-    protected matchRight(element: SParentElementSchema, result: MatchResult, parentId?: string) {
+    protected matchRight(element: SModelElementSchema, result: MatchResult, parentId?: string) {
         let match = result[element.id]
         if (match !== undefined) {
             match.right = element

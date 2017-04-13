@@ -42,7 +42,7 @@ export class ViewRegistry extends ProviderRegistry<View, SModelElement> {
         this.register(EMPTY_ROOT.type, EmptyView)
     }
 
-    missing(key: string, element: SModelElement) {
+    missing(key: string, element: SModelElement): View {
         return new MissingView()
     }
 }

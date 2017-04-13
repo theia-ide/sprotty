@@ -10,13 +10,15 @@ const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
     rebind(TYPES.IModelFactory).to(ChipModelFactory).inSingletonScope()
     rebind<IViewerOptions>(TYPES.IViewerOptions).toConstantValue({
-        baseDiv: 'sprotty-cores'
+        baseDiv: 'sprotty-cores',
+        boundsComputation: 'fixed'
     })
-    bind(TYPES.IDiagramServer).to(WebSocketDiagramServer).inSingletonScope()
 })
 
-export default () => {
+export default (useWebsocket: boolean) => {
     const container = new Container()
     container.load(defaultModule, boundsModule, selectModule, viewportModule, multicoreModule)
+    if (useWebsocket)
+        container.rebind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     return container
 }

@@ -1,15 +1,22 @@
-import { ActionHandlerRegistry, IActionDispatcher, SetModelAction, TYPES, ViewRegistry } from "../../../src/base"
+import { TYPES, ActionHandlerRegistry, IActionDispatcher, SetModelAction, ViewRegistry, LocalModelSource } from "../../../src/base"
 import { Direction } from "../../../src/utils"
-import { SetBoundsCommand, FitToScreenAction } from '../../../src/features';
+import { SetBoundsCommand, FitToScreenAction } from '../../../src/features'
 import { Channel, ChannelSchema, Core, CoreSchema, Crossbar, CrossbarSchema, ProcessorSchema } from "./chipmodel"
 import { ChannelView, CoreView, CrossbarView, ProcessorView } from "./views"
 import { ChipModelFactory } from "./chipmodel-factory"
 import createContainer from "./di.config"
 
 export default function runMulticore() {
-    const container = createContainer()
+    const container = createContainer(false)
 
-    // init gmodel
+    // Register views
+    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
+    viewRegistry.register('processor', ProcessorView)
+    viewRegistry.register('core', CoreView)
+    viewRegistry.register('crossbar', CrossbarView)
+    viewRegistry.register('channel', ChannelView)
+
+    // Initialize model
     const dim = 32
     const cores: CoreSchema[] = []
     const channels: ChannelSchema[] = []
@@ -73,37 +80,24 @@ export default function runMulticore() {
     children = children.concat(crossbars)
     children = children.concat(cores)
 
-    const modelFactory = container.get<ChipModelFactory>(TYPES.IModelFactory)
-    const processorSchema: ProcessorSchema = {
+    const processor: ProcessorSchema = {
         id: 'processor',
         type: 'processor',
         rows: dim,
         columns: dim,
         children: children
     }
-    const processor = modelFactory.createRoot(processorSchema)
-
-    // Register views
-    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
-    viewRegistry.register('processor', ProcessorView)
-    viewRegistry.register('core', CoreView)
-    viewRegistry.register('crossbar', CrossbarView)
-    viewRegistry.register('channel', ChannelView)
-
-    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
-    actionHandlerRegistry.registerTranslator(SetBoundsCommand.KIND, update => new FitToScreenAction([]))
 
     // Run
-    const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
-    dispatcher.dispatch(new SetModelAction(processor))
+    const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
+    modelSource.setModel(processor)
 
     function changeModel() {
-        for (let i = 0; i < processor.children.length; ++i) {
-            const child = processor.children[i] as (Core | Channel | Crossbar)
+        for (let i = 0; i < processor.children!.length; ++i) {
+            const child = processor.children![i] as (Core | Channel | Crossbar)
             child.load = Math.max(0, Math.min(1, child.load + Math.random() * 0.2 - 0.1))
         }
-        const action = new SetModelAction(processor)
-        dispatcher.dispatch(action)
+        modelSource.updateModel(processor)
     }
 
     // setInterval(changeModel.bind(this), 5000)

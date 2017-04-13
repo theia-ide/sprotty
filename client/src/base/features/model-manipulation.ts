@@ -64,8 +64,11 @@ export class UpdateModelAction implements Action {
     readonly kind = UpdateModelCommand.KIND
     modelType: string
     modelId: string
-    newRoot?: SModelRootSchema
-    animate?: boolean
+
+    constructor(public newRoot: SModelRootSchema, public animate?: boolean) {
+        this.modelType = newRoot.type
+        this.modelId = newRoot.id
+    }
 }
 
 export interface UpdateAnimationData {

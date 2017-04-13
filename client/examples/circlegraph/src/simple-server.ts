@@ -1,4 +1,4 @@
-import { ActionHandlerRegistry, IActionDispatcher, RequestModelAction, TYPES, ViewRegistry } from "../../../src/base"
+import { TYPES, RequestModelAction, ViewRegistry } from "../../../src/base"
 import { SelectCommand } from "../../../src/features"
 import { SGraphView, StraightEdgeView } from "../../../src/graph"
 import { WebSocketDiagramServer } from "../../../src/remote"
@@ -22,14 +22,7 @@ function createWebSocket(url: string, options?: any): WebSocket {
 }
 
 export default function runSimpleServer() {
-    const container = createContainer()
-
-    // Register commands
-    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
-    const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
-
-    actionHandlerRegistry.registerServerMessage(SelectCommand.KIND)
-    actionHandlerRegistry.registerServerMessage(RequestModelAction.KIND)
+    const container = createContainer(true)
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
@@ -39,12 +32,11 @@ export default function runSimpleServer() {
 
     // Connect to the diagram server
     const websocket = createWebSocket('ws://localhost:62000')
-    const diagramServer = container.get<WebSocketDiagramServer>(TYPES.IDiagramServer)
+    const diagramServer = container.get<WebSocketDiagramServer>(TYPES.ModelSource)
     diagramServer.listen(websocket)
     websocket.addEventListener('open', event => {
         // Run
-        const action = new RequestModelAction()
-        dispatcher.dispatch(action)
+        diagramServer.handle(new RequestModelAction())
     })
 
 }

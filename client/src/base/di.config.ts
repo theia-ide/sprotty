@@ -10,10 +10,10 @@ import { FocusFixDecorator, VNodeDecorator } from "./view/vnode-decorators"
 import { ActionHandlerRegistry } from "./intent/actions"
 import { ViewRegistry } from "./view/views"
 import { SModelFactory } from "./model/smodel-factory"
-import { SetModelCommand, UpdateModelCommand } from "./features/model-manipulation"
 import { TYPES } from "./types"
 import { ViewerCache } from "./view/viewer-cache"
 import { AnimationFrameSyncer } from "./animations/animation-frame-syncer"
+import { LocalModelSource } from "./model/model-source";
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
@@ -54,7 +54,8 @@ let defaultContainerModule = new ContainerModule(bind => {
         }
     })
     bind<IViewerOptions>(TYPES.IViewerOptions).toConstantValue({
-        baseDiv: 'sprotty'
+        baseDiv: 'sprotty',
+        boundsComputation: 'fixed'
     })
     bind(TYPES.ModelRendererFactory).toFactory<ModelRenderer>((context: interfaces.Context) => {
         return (decorators: VNodeDecorator[]) => {
@@ -75,9 +76,8 @@ let defaultContainerModule = new ContainerModule(bind => {
     // Model Factory ---------------------------------------------
     bind(TYPES.IModelFactory).to(SModelFactory).inSingletonScope()
 
-    // Default commands
-    bind(TYPES.ICommand).toConstructor(SetModelCommand)
-    bind(TYPES.ICommand).toConstructor(UpdateModelCommand)
+    // Model Source
+    bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
 })
 
 export default defaultContainerModule

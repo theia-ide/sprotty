@@ -1,7 +1,7 @@
 import "reflect-metadata"
 import "mocha"
 import { expect } from "chai"
-import { SModelRootSchema, SParentElementSchema } from "../model/smodel"
+import { SModelRootSchema, SModelElementSchema } from "../model/smodel"
 import { ModelMatcher } from "./model-matching"
 
 describe('ModelMatcher', () => {
@@ -100,7 +100,7 @@ describe('ModelMatcher', () => {
                             id: 'child2'
                         }
                     ]
-                } as SParentElementSchema
+                }
             ]
         }
         const right: SModelRootSchema = {
@@ -116,7 +116,7 @@ describe('ModelMatcher', () => {
                             id: 'child1'
                         }
                     ]
-                } as SParentElementSchema
+                }
             ]
         }
         const result = modelMatcher.match(left, right)

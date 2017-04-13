@@ -1,7 +1,6 @@
 import { injectable } from "inversify"
 import {
-    SChildElement, SModelElement, SModelElementSchema, SModelIndex, SModelRoot, SModelRootSchema, SParentElement,
-    SParentElementSchema
+    SChildElement, SModelElement, SModelElementSchema, SModelIndex, SModelRoot, SModelRootSchema, SParentElement
 } from "./smodel"
 
 export interface IModelFactory {
@@ -34,9 +33,9 @@ export class SModelFactory implements IModelFactory {
         return elem
     }
 
-    protected initializeParent(parent: SParentElement, schema: SParentElementSchema): SParentElement {
+    protected initializeParent(parent: SParentElement, schema: SModelElementSchema): SParentElement {
         this.initializeElement(parent, schema)
-        if (schema.children) {
+        if (schema.children !== undefined) {
             parent.children = schema.children.map(childSchema => this.createElement(childSchema, parent))
         }
         return parent
@@ -52,20 +51,20 @@ export class SModelFactory implements IModelFactory {
 
     protected initializeRoot(root: SModelRoot, schema: SModelRootSchema): SModelRoot {
         this.initializeParent(root, schema)
-        this.initializeIndex(root, root.index)
+        initializeIndex(root, root.index)
         return root
     }
+}
 
-    protected initializeIndex(parent: SParentElement, index: SModelIndex): void {
-        parent.children.forEach(child => {
-            if (index.contains(child)) {
-                throw new Error("Duplicate ID in model: " + child.id)
-            }
-            index.add(child)
-            if (child.children.length > 0) {
-                this.initializeIndex(child, index)
-            }
-        })
+export function initializeIndex<T extends SModelElementSchema>(element: T, index: SModelIndex<T>): void {
+    if (index.contains(element)) {
+        throw new Error("Duplicate ID in model: " + element.id)
+    }
+    index.add(element)
+    if (element.children !== undefined) {
+        for (const child of element.children) {
+            initializeIndex(child, index)
+        }
     }
 }
 

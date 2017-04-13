@@ -1,11 +1,11 @@
-import { IActionDispatcher, SetModelAction, TYPES, ViewRegistry } from "../../../src/base"
-import { SGraphFactory, SGraphView, StraightEdgeView } from "../../../src/graph"
-import createContainer from "./di.config"
+import { TYPES, ViewRegistry, LocalModelSource } from "../../../src/base"
+import { SGraphSchema, SGraphView, StraightEdgeView } from "../../../src/graph"
 import { ClassNodeView } from "./views"
 import { SCompartmentView, SLabelView } from "../../../src/graph/view/views"
+import createContainer from "./di.config"
 
 export default function runClassDiagram() {
-    const container = createContainer()
+    const container = createContainer(false)
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
@@ -16,8 +16,7 @@ export default function runClassDiagram() {
     viewRegistry.register('comp:comp', SCompartmentView)
     viewRegistry.register('edge:straight', StraightEdgeView)
 
-    // Initialize gmodel
-    const modelFactory = container.get<SGraphFactory>(TYPES.IModelFactory)
+    // Initialize model
     const node0 = {
         id: 'node0',
         type: 'node:class',
@@ -59,11 +58,9 @@ export default function runClassDiagram() {
             }
         ]
     };
-    const graph = modelFactory.createRoot({id: 'graph', type: 'graph', children: [node0]});
+    const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0] }
 
     // Run
-    const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
-    const action = new SetModelAction(graph);
-    dispatcher.dispatch(action);
-
+    const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
+    modelSource.setModel(graph)
 }

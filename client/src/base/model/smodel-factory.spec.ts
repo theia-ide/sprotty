@@ -1,6 +1,6 @@
 import "mocha"
 import { expect } from "chai"
-import { SParentElementSchema } from "./smodel"
+import { SModelElementSchema } from "./smodel"
 import { SModelFactory } from "./smodel-factory"
 
 describe('model factory', () => {
@@ -36,7 +36,7 @@ describe('model factory', () => {
                             id: 'element3'
                         }
                     ]
-                } as SParentElementSchema
+                } as SModelElementSchema
             ]
         })
         const element1 = root.children[0]
