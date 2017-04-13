@@ -25,21 +25,3 @@ export class FocusFixDecorator implements VNodeDecorator {
     postUpdate(): void {
     }
 }
-
-export class AddRemoveAnimationDecorator implements VNodeDecorator {
-
-    readonly appearFadeStyle = {
-        opacity: '0',
-        transition: 'opacity 0.5s',
-        delayed: {opacity: '1'},
-        remove: {opacity: '0'}
-    }
-
-    decorate(vnode: VNode, element: SModelElement) {
-        mergeStyle(vnode, this.appearFadeStyle)
-        return vnode
-    }
-
-    postUpdate() {
-    }
-}
