@@ -14,10 +14,13 @@ import { initializeIndex } from "./smodel-factory"
 @injectable()
 export abstract class ModelSource implements ActionHandler {
 
-    constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
+    protected actionDispatcher: IActionDispatcher
+    
+    constructor(@inject(TYPES.IActionDispatcher) actionDispatcher: IActionDispatcher,
                 @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
                 @inject(TYPES.IViewerOptions) protected viewerOptions: IViewerOptions) {
         this.initialize(actionHandlerRegistry)
+        this.actionDispatcher = actionDispatcher
     }
 
     initialize(registry: ActionHandlerRegistry): void {

@@ -6,8 +6,8 @@ import { VNodeDecorator } from "../../base/view/vnode-decorators"
 import { TYPES } from "../../base/types"
 import { IActionDispatcher } from "../../base/intent/action-dispatcher"
 import { Bounds, isEmpty, EMPTY_BOUNDS } from '../../utils/geometry';
-import { ComputedBoundsAction, ElementAndBounds, SetBoundsAction, SetBoundsInPageAction } from './bounds-manipulation'
-import { BoundsAware, BoundsInPageAware, isBoundsInPageAware, isSizeable } from "./model"
+import { ComputedBoundsAction, ElementAndBounds, SetBoundsAction } from './bounds-manipulation'
+import { BoundsAware, isSizeable } from "./model"
 import { Layouter } from "./layout"
 import { LAYOUT_TYPES } from "./types"
 
@@ -90,64 +90,3 @@ export class HiddenBoundsUpdater implements VNodeDecorator {
     }
 }
 
-/**
- * Grabs the bounds from an element in page coordinates and fires a SetBoundsInPageAction.
- * Used to grab the size of the SVG element needed to calculate FitToScreenActions.
- */
-@injectable()
-export class BoundsInPageUpdater implements VNodeDecorator {
-
-    @inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher
-    @inject(LAYOUT_TYPES.Layouter) protected layouter : Layouter
-
-    element2boundsData: Map<SModelElement, BoundsData> = new Map
-
-    decorate(vnode: VNode, element: SModelElement): VNode {
-        if (isBoundsInPageAware(element) && isEmpty(element.boundsInPage)) {
-            const boundsData = this.element2boundsData.get(element) || { vnode: vnode }
-            boundsData.bounds = EMPTY_BOUNDS
-            this.element2boundsData.set(element, boundsData)
-        }
-        return vnode
-    }
-
-    postUpdate() {
-        this.getResizesInPageFromDOM()
-        const resizesInPage : ElementAndBounds[] = []
-        this.element2boundsData.forEach(
-            (boundsData, element) => {
-                if(boundsData.bounds) 
-                    resizesInPage.push({
-                        elementId: element.id,
-                        newBounds: boundsData.bounds
-                    })
-            })
-        this.element2boundsData.clear()
-        if(resizesInPage.length > 0)
-            this.actionDispatcher.dispatch(new SetBoundsInPageAction(resizesInPage))
-    }
-
-    protected getResizesInPageFromDOM() {
-        this.element2boundsData.forEach(
-            (boundsData, element) => {
-                if(boundsData.bounds && isBoundsInPageAware(element)) {
-                    const vnode = boundsData.vnode
-                    if (vnode && vnode.elm) {
-                        let newBoundsInPage = this.getBoundsInPage(vnode.elm)
-                        boundsData.bounds = newBoundsInPage
-                    }
-                }
-            }
-        )
-    }
-
-    protected getBoundsInPage(elm: any) {
-        const bounds = elm.getBoundingClientRect()
-        return {
-            x: bounds.left,
-            y: bounds.top,
-            width: bounds.width,
-            height: bounds.height
-        }
-    }
-}

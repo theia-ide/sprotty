@@ -90,7 +90,7 @@ export class Viewer implements IViewer {
     }
 
     update(model: SModelRoot): void {
-        this.logger.log(this, 'rendering in bounds', (model as any).boundsInPage)
+        this.logger.log(this, 'rendering in bounds', model.canvasBounds)
         const newVDOM = <div id={this.options.baseDiv}>
                 {this.renderer.renderElement(model)}
             </div>

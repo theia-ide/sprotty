@@ -1,4 +1,4 @@
-import { BoundsAware, BoundsInPageAware, isBoundsAware, isBoundsInPageAware } from './model';
+import { BoundsAware, isBoundsAware } from './model';
 import { Bounds } from "../../utils/geometry"
 import { SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
@@ -6,13 +6,6 @@ import { CommandExecutionContext, AbstractHiddenCommand, AbstractSystemCommand }
 
 export class SetBoundsAction implements Action {
     readonly kind = SetBoundsCommand.KIND
-
-    constructor(public bounds: ElementAndBounds[]) {
-    }
-}
-
-export class SetBoundsInPageAction implements Action {
-    readonly kind = SetBoundsInPageCommand.KIND
 
     constructor(public bounds: ElementAndBounds[]) {
     }
@@ -41,12 +34,6 @@ export interface ElementAndBounds {
 
 interface ResolvedElementAndBounds {
     element: SModelElement & BoundsAware
-    oldBounds: Bounds
-    newBounds: Bounds
-}
-
-interface ResolvedElementAndBoundsInPage {
-    element: SModelElement & BoundsInPageAware
     oldBounds: Bounds
     newBounds: Bounds
 }
@@ -92,46 +79,6 @@ export class SetBoundsCommand extends AbstractSystemCommand {
                 b.element.bounds = b.newBounds
                 b.element.revalidateBounds = false
             }
-        )
-        return context.root
-    }
-}
-
-export class SetBoundsInPageCommand extends AbstractSystemCommand {
-    static readonly KIND: string  = 'setBoundsInPage'
-
-    protected bounds: ResolvedElementAndBoundsInPage[] = []
-    
-    constructor(protected action: SetBoundsInPageAction) {
-        super()
-    }
-
-    execute(context: CommandExecutionContext) {
-        this.action.bounds.forEach(
-            b => {
-                const element = context.root.index.getById(b.elementId)
-                if (element && isBoundsInPageAware(element)) {
-                    this.bounds.push({
-                        element: element,
-                        oldBounds: element.boundsInPage,
-                        newBounds: b.newBounds,
-                    })
-                }
-            }
-        )
-        return this.redo(context)
-    }
-
-    undo(context: CommandExecutionContext) {
-        this.bounds.forEach(
-            b => b.element.boundsInPage = b.oldBounds
-        )
-        return context.root
-    }
-
-    redo(context: CommandExecutionContext) {
-        this.bounds.forEach(
-            b => b.element.boundsInPage = b.newBounds
         )
         return context.root
     }

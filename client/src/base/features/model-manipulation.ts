@@ -1,3 +1,4 @@
+import { isEmpty } from '../../utils/geometry';
 import { injectable } from "inversify"
 import { Action } from "../intent/actions"
 import {
@@ -12,7 +13,7 @@ import { isFadeable } from "../../features/fade/model"
 import { ResolvedElementFade, FadeAnimation } from "../../features/fade/fade"
 import { isLocateable } from "../../features/move/model"
 import { ResolvedElementMove, MoveAnimation } from "../../features/move/move"
-import { isBoundsAware, isBoundsInPageAware } from "../../features/bounds/model"
+import { isBoundsAware } from "../../features/bounds/model"
 
 export class SetModelAction implements Action {
     readonly kind = SetModelCommand.KIND
@@ -39,6 +40,9 @@ export class SetModelCommand extends AbstractCommand {
     execute(context: CommandExecutionContext): SModelRoot {
         this.oldRoot = context.root
         this.newRoot = context.modelFactory.createRoot(this.action.newRoot)
+        if(!isEmpty(this.oldRoot.canvasBounds)) {
+           this.newRoot.canvasBounds = this.oldRoot.canvasBounds 
+        }
         return this.newRoot
     }
 
@@ -182,8 +186,8 @@ export class UpdateModelCommand extends AbstractCommand {
                 right.revalidateBounds = left.revalidateBounds
             }
         }
-        if (isBoundsInPageAware(left) && isBoundsInPageAware(right)) {
-            right.boundsInPage = left.boundsInPage
+        if (left instanceof SModelRoot && right instanceof SModelRoot) {
+            right.canvasBounds = left.canvasBounds
         }
     }
 

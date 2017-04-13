@@ -116,6 +116,8 @@ export abstract class SShapeElement extends SChildElement implements BoundsAware
  */
 export class SModelRoot extends SParentElement implements SModelRootSchema {
     private _index: SModelIndex<SModelElement>
+    
+    canvasBounds: Bounds = EMPTY_BOUNDS
 
     get index(): SModelIndex<SModelElement> {
         if (!this._index) {

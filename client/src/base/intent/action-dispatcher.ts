@@ -1,3 +1,6 @@
+import { InitializeCanvasBoundsCommand } from '../features/initialize-canvas';
+import { EMPTY_ROOT } from '../model/smodel-factory';
+import { SetModelAction, SetModelCommand } from '../features/model-manipulation';
 import { inject, injectable, optional } from "inversify"
 import { ILogger } from "../../utils/logging"
 import { TYPES } from "../types"
@@ -18,17 +21,33 @@ export interface IActionDispatcher {
 @injectable()
 export class ActionDispatcher implements IActionDispatcher {
 
-    @inject(TYPES.ActionHandlerRegistry) protected actionHandlerRegistry: ActionHandlerRegistry
-    @inject(TYPES.ICommandStack) protected commandStack: ICommandStack
-    @inject(TYPES.ILogger) protected logger: ILogger
-    @inject(TYPES.IAnimationFrameSyncer) protected syncer: AnimationFrameSyncer
+    postpone: boolean
+    postponedActions: Action[]
+
+    constructor(@inject(TYPES.ActionHandlerRegistry) protected actionHandlerRegistry: ActionHandlerRegistry,
+                @inject(TYPES.ICommandStack) protected commandStack: ICommandStack,
+                @inject(TYPES.ILogger) protected logger: ILogger,
+                @inject(TYPES.IAnimationFrameSyncer) protected syncer: AnimationFrameSyncer) {
+        this.postpone = true
+        this.postponedActions = []
+        this.commandStack.execute(new SetModelCommand(new SetModelAction(EMPTY_ROOT)))
+    }
 
     dispatchAll(actions: Action[]): void {
         actions.forEach(action => this.dispatch(action))
     }
 
     dispatch(action: Action): void {
-        if (action.kind == UndoAction.KIND) {
+        if(action.kind === InitializeCanvasBoundsCommand.KIND) {
+            this.postpone = false
+            this.handleAction(action)
+            this.dispatchAll(this.postponedActions)
+            this.postponedActions = []
+        }
+        if(this.postpone) {
+            this.logger.log(this, 'postponing', action)
+            this.postponedActions.push(action)
+        } else if (action.kind == UndoAction.KIND) {
             this.commandStack.undo()
         } else if (action.kind == RedoAction.KIND) {
             this.commandStack.redo()

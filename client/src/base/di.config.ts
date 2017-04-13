@@ -1,3 +1,4 @@
+import { CanvasBoundsInitializer, InitializeCanvasBoundsCommand } from './features/initialize-canvas';
 import { ContainerModule, interfaces } from "inversify"
 import { LogLevel, NullLogger } from "../utils/logging"
 import { ActionDispatcher, IActionDispatcher } from "./intent/action-dispatcher"
@@ -76,8 +77,12 @@ let defaultContainerModule = new ContainerModule(bind => {
     // Model Factory ---------------------------------------------
     bind(TYPES.IModelFactory).to(SModelFactory).inSingletonScope()
 
-    // Model Source
+    // Model Source ---------------------------------------------
     bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
+
+    // Canvas Initialization ---------------------------------------------
+    bind(TYPES.ICommand).toConstructor(InitializeCanvasBoundsCommand)
+    bind(TYPES.VNodeDecorator).to(CanvasBoundsInitializer).inSingletonScope()
 })
 
 export default defaultContainerModule

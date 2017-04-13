@@ -7,7 +7,6 @@ import { ConsoleLogger } from "../../utils/logging"
 import { AnimationFrameSyncer } from "../../base/animations/animation-frame-syncer"
 import { SGraph, SNode, SNodeSchema } from "../../graph/model/sgraph"
 import { SGraphFactory } from "../../graph/index"
-import { SetBoundsInPageAction, SetBoundsInPageCommand } from "./bounds-manipulation"
 
 const boundsInitial = { x: 0, y: 0, width: 0, height: 0 }
 const bounds1 = { x: 10, y: 10, width: 10, height: 10 }
@@ -31,15 +30,8 @@ const mySetBoundsAction = new SetBoundsAction(
     ]
 )
 
-const mySetBoundsInPageAction = new SetBoundsInPageAction(
-    [
-        { elementId: 'graph', newBounds: boundsInPage1 }
-    ]
-)
-
 // create the set bounds command
 const setBoundsCommand = new SetBoundsCommand(mySetBoundsAction)
-const setBoundsInPageCommand = new SetBoundsInPageCommand(mySetBoundsInPageAction)
 
 const context: CommandExecutionContext = {
     root: model,
@@ -69,24 +61,5 @@ describe('SetBoundsCommand', () => {
     })
 })
 
-describe('SetBoundsInPageCommand', () => {
-    it('execute() works as expected', () => {
-        // sanity check for initial bounds values
-        expect(boundsInPageInitial).deep.equals(model.boundsInPage)
-        setBoundsInPageCommand.execute(context)
-
-        expect(boundsInPage1).deep.equals(model.boundsInPage)
-    })
-
-    it('undo() works as expected', () => {
-        setBoundsInPageCommand.undo(context)
-        expect(boundsInPageInitial).deep.equals(model.boundsInPage)
-    })
-
-    it('redo() works as expected', () => {
-        setBoundsInPageCommand.redo(context)
-        expect(boundsInPage1).deep.equals(model.boundsInPage)
-    })
-})
 
 
