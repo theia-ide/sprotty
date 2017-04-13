@@ -1,20 +1,9 @@
-import { TYPES, ViewRegistry, LocalModelSource } from "../../../src/base"
-import { SGraphSchema, SGraphView, StraightEdgeView } from "../../../src/graph"
-import { ClassNodeView } from "./views"
-import { SCompartmentView, SLabelView } from "../../../src/graph/view/views"
+import { TYPES, LocalModelSource } from "../../../src/base"
+import { SGraphSchema } from "../../../src/graph"
 import createContainer from "./di.config"
 
 export default function runClassDiagram() {
     const container = createContainer(false)
-
-    // Register views
-    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
-    viewRegistry.register('graph', SGraphView)
-    viewRegistry.register('node:class', ClassNodeView)
-    viewRegistry.register('label:heading', SLabelView)
-    viewRegistry.register('label:text', SLabelView)
-    viewRegistry.register('comp:comp', SCompartmentView)
-    viewRegistry.register('edge:straight', StraightEdgeView)
 
     // Initialize model
     const node0 = {

@@ -1,8 +1,4 @@
-import {
-    TYPES, RequestModelAction, ViewRegistry
-} from "../../../src/base"
-import { SGraphView } from "../../../src/graph"
-import { BarrierNodeView, ExecutionNodeView, FlowEdgeView } from "./views"
+import { TYPES, RequestModelAction } from "../../../src/base"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import createContainer from "./di.config"
 
@@ -20,13 +16,6 @@ function requestModel(): RequestModelAction {
 
 export function setupFlow(websocket: WebSocket) {
     const container = createContainer(true)
-
-    // Register views
-    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
-    viewRegistry.register('flow', SGraphView)
-    viewRegistry.register('task', ExecutionNodeView)
-    viewRegistry.register('barrier', BarrierNodeView)
-    viewRegistry.register('edge', FlowEdgeView)
 
     // Connect to the diagram server
     const diagramServer = container.get<WebSocketDiagramServer>(TYPES.ModelSource)

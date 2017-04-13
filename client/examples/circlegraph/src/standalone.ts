@@ -1,17 +1,10 @@
-import { TYPES, IActionDispatcher, ViewRegistry, LocalModelSource } from "../../../src/base"
-import { SEdgeSchema, SGraphView, SNode, SNodeSchema, StraightEdgeView, SGraphSchema, SGraphFactory } from "../../../src/graph"
+import { TYPES, IActionDispatcher, LocalModelSource } from "../../../src/base"
+import { SEdgeSchema, SNode, SNodeSchema, SGraphSchema, SGraphFactory } from "../../../src/graph"
 import { ElementMove, MoveAction } from "../../../src/features"
-import { CircleNodeView } from "./views"
 import createContainer from "./di.config"
 
 export default function runStandalone() {
     const container = createContainer(false)
-
-    // Register views
-    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
-    viewRegistry.register('graph', SGraphView)
-    viewRegistry.register('node:circle', CircleNodeView)
-    viewRegistry.register('edge:straight', StraightEdgeView)
 
     // Initialize gmodel
     const node0 = { id: 'node0', type: 'node:circle', position: { x: 100, y: 100 }, size: { width: -1, height: -1 } }

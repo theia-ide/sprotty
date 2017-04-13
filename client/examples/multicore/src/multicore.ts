@@ -1,20 +1,11 @@
-import { TYPES, ActionHandlerRegistry, IActionDispatcher, SetModelAction, ViewRegistry, LocalModelSource } from "../../../src/base"
+import { TYPES, ActionHandlerRegistry, IActionDispatcher, SetModelAction, LocalModelSource } from "../../../src/base"
 import { Direction } from "../../../src/utils"
 import { SetBoundsCommand, FitToScreenAction } from '../../../src/features'
 import { Channel, ChannelSchema, Core, CoreSchema, Crossbar, CrossbarSchema, ProcessorSchema } from "./chipmodel"
-import { ChannelView, CoreView, CrossbarView, ProcessorView } from "./views"
-import { ChipModelFactory } from "./chipmodel-factory"
 import createContainer from "./di.config"
 
 export default function runMulticore() {
     const container = createContainer(false)
-
-    // Register views
-    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
-    viewRegistry.register('processor', ProcessorView)
-    viewRegistry.register('core', CoreView)
-    viewRegistry.register('crossbar', CrossbarView)
-    viewRegistry.register('channel', ChannelView)
 
     // Initialize model
     const dim = 32
