@@ -1,4 +1,4 @@
-import { VNodeDecorator } from '../../base/view/vnode-decorators';
+import { IVNodeDecorator } from '../../base/view/vnode-decorators';
 import "reflect-metadata"
 import "mocha"
 import { expect } from "chai"
@@ -40,7 +40,7 @@ describe('graph views', () => {
     viewRegistry.register('graph', SGraphView)
     viewRegistry.register('node:circle', CircleNodeView)
     viewRegistry.register('edge:straight', StraightEdgeView)
-    const decorators = container.getAll<VNodeDecorator>(TYPES.VNodeDecorator)
+    const decorators = container.getAll<IVNodeDecorator>(TYPES.IVNodeDecorator)
     const context = container.get<ModelRendererFactory>(TYPES.ModelRendererFactory)(decorators)
     const factory = new SGraphFactory()
 

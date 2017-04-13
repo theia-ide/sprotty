@@ -2,7 +2,7 @@ import { inject, injectable, multiInject, optional } from "inversify"
 import { MultiInstanceRegistry } from "../../utils/registry"
 import { ILogger } from "../../utils/logging"
 import { TYPES } from "../types"
-import { Command, CommandActionHandler, CommandFactory } from "./commands"
+import { ICommand, CommandActionHandler, ICommandFactory } from "./commands"
 
 /**
  * An action describes a change to the model declaratively.
@@ -16,17 +16,17 @@ export function isAction(object?: any): object is Action {
     return object !== undefined && object.hasOwnProperty('kind') && typeof(object['kind']) == 'string'
 }
 
-export interface ActionHandler {
-    handle(action: Action): Command | Action | void
+export interface IActionHandler {
+    handle(action: Action): ICommand | Action | void
 }
 
 /**
  * The action handler registry maps actions to their handlers using the Action.kind property.
  */
 @injectable()
-export class ActionHandlerRegistry extends MultiInstanceRegistry<ActionHandler> {
+export class ActionHandlerRegistry extends MultiInstanceRegistry<IActionHandler> {
 
-    constructor(@multiInject(TYPES.ICommand) @optional() commandCtrs: (CommandFactory)[],
+    constructor(@multiInject(TYPES.ICommand) @optional() commandCtrs: (ICommandFactory)[],
                 @inject(TYPES.ILogger) protected logger: ILogger) {
         super()
         commandCtrs.forEach(
@@ -34,7 +34,7 @@ export class ActionHandlerRegistry extends MultiInstanceRegistry<ActionHandler> 
         )
     }
 
-    registerCommand(commandType: CommandFactory): void {
+    registerCommand(commandType: ICommandFactory): void {
         this.register(commandType.KIND, new CommandActionHandler(commandType))
     }
 }

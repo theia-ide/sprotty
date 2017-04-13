@@ -1,4 +1,4 @@
-import { RenderingContext, View } from "../../../src/base/view/views"
+import { RenderingContext, IView } from "../../../src/base/view/views"
 import { VNode } from "snabbdom/vnode"
 import { Channel, Core, Crossbar, Processor } from "./chipmodel"
 import { Direction } from "../../../src/utils/geometry"
@@ -8,7 +8,7 @@ import { ThunkView } from "../../../src/base/view/thunk-view"
 
 const JSX = {createElement: snabbdom.svg}
 
-export class ProcessorView implements View {
+export class ProcessorView implements IView {
     render(model: Processor, context: RenderingContext): VNode {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
         return <svg key={model.id} id={model.id}>
@@ -60,7 +60,7 @@ export class CoreView extends ThunkView {
     }
 }
 
-export class CrossbarView implements View {
+export class CrossbarView implements IView {
     render(model: Crossbar, context: RenderingContext): VNode {
         const rows = (model.parent as Processor).rows
         const columns = (model.parent as Processor).rows

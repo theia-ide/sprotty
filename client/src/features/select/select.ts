@@ -1,7 +1,7 @@
 import { VNode } from "snabbdom/vnode"
 import { SChildElement, SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
-import { AbstractCommand, CommandExecutionContext } from "../../base/intent/commands"
+import { Command, CommandExecutionContext } from "../../base/intent/commands"
 import { SEdge, SNode } from "../../graph/model/sgraph"
 import { MouseListener } from "../../base/view/mouse-tool"
 import { isCtrlOrCmd } from "../../utils/browser"
@@ -21,7 +21,7 @@ type ElementSelection = {
     index: number
 }
 
-export class SelectCommand extends AbstractCommand {
+export class SelectCommand extends Command {
     static readonly KIND = 'elementSelected'
 
     selected: ElementSelection[] = []

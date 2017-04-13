@@ -1,5 +1,5 @@
 import { Container, ContainerModule } from "inversify"
-import { defaultModule, TYPES, IViewerOptions } from "../../../src/base"
+import { defaultModule, TYPES, ViewerOptions } from "../../../src/base"
 import { SGraphFactory } from "../../../src/graph"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
@@ -9,7 +9,7 @@ const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) =>
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
     rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope()
-    rebind<IViewerOptions>(TYPES.IViewerOptions).toConstantValue({
+    rebind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
         baseDiv: 'sprotty',
         boundsComputation: 'dynamic'
     })

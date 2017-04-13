@@ -1,5 +1,5 @@
 import { SParentElement, SModelElement } from "../../base/model/smodel"
-import { Layout } from "./layout"
+import { ILayout } from "./layout"
 import { BoundsAware, Layouting } from "./model"
 import { Bounds, isEmpty } from "../../utils/geometry"
 import { BoundsData } from "./bounds-updater"
@@ -17,7 +17,7 @@ interface VBoxProperties {
     textAlign: string
 }
 
-export class VBoxLayouter implements Layout {
+export class VBoxLayouter implements ILayout {
     static KIND = 'vbox'
 
     layout(container: SParentElement & BoundsAware & Layouting,

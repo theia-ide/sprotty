@@ -6,7 +6,7 @@ import {
     SParentElement
 } from "../model/smodel"
 import { RESERVED_MODEL_PROPERTIES } from "../model/smodel-factory"
-import { AbstractCommand, CommandExecutionContext, CommandResult } from '../intent/commands';
+import { Command, CommandExecutionContext, CommandResult } from '../intent/commands';
 import { CompoundAnimation, Animation } from "../animations/animation"
 import { ModelMatcher, MatchResult } from "./model-matching"
 import { isFadeable } from "../../features/fade/model"
@@ -27,7 +27,7 @@ export class SetModelAction implements Action {
 }
 
 @injectable()
-export class SetModelCommand extends AbstractCommand {
+export class SetModelCommand extends Command {
     static readonly KIND = 'setModel'
 
     oldRoot: SModelRoot
@@ -82,7 +82,7 @@ export interface UpdateAnimationData {
 }
 
 @injectable()
-export class UpdateModelCommand extends AbstractCommand {
+export class UpdateModelCommand extends Command {
     static readonly KIND = 'updateModel'
 
     oldRoot: SModelRoot

@@ -10,10 +10,10 @@ import { eventListenersModule } from "snabbdom/modules/eventlisteners"
 import { classModule } from "snabbdom/modules/class"
 import { SModelElement, SModelRoot, SParentElement } from "../model/smodel"
 import { TYPES } from "../types"
-import { VNodeDecorator } from "./vnode-decorators"
+import { IVNodeDecorator } from "./vnode-decorators"
 import { RenderingContext, ViewRegistry } from "./views"
 import { setClass, setAttr } from "./vnode-utils"
-import { IViewerOptions } from "./options"
+import { ViewerOptions } from "./options"
 import { ILogger, LogLevel } from "../../utils/logging"
 import { isThunk } from "./thunk-view"
 import { EMPTY_ROOT } from "../model/smodel-factory"
@@ -26,14 +26,14 @@ export interface IViewer {
 }
 
 export class ModelRenderer implements RenderingContext {
-    constructor(public viewRegistry: ViewRegistry, private decorators: VNodeDecorator[]) {
+    constructor(public viewRegistry: ViewRegistry, private decorators: IVNodeDecorator[]) {
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
         if(isThunk(vnode))
             return vnode
         return this.decorators.reduce(
-            (vnode: VNode, decorator: VNodeDecorator) => decorator.decorate(vnode, element),
+            (vnode: VNode, decorator: IVNodeDecorator) => decorator.decorate(vnode, element),
             vnode)
     }
 
@@ -51,7 +51,7 @@ export class ModelRenderer implements RenderingContext {
     }
 }
 
-export type ModelRendererFactory = (decorators: VNodeDecorator[]) => ModelRenderer
+export type ModelRendererFactory = (decorators: IVNodeDecorator[]) => ModelRenderer
 
 /**
  * The component that turns the model into an SVG DOM.
@@ -66,9 +66,9 @@ export class Viewer implements IViewer {
     protected lastVDOM: VNode
 
     constructor(@inject(TYPES.ModelRendererFactory) modelRendererFactory: ModelRendererFactory,
-                @multiInject(TYPES.VNodeDecorator)@optional() protected decorators: VNodeDecorator[],
-                @multiInject(TYPES.HiddenVNodeDecorator)@optional() protected hiddenDecorators: VNodeDecorator[],
-                @inject(TYPES.IViewerOptions) protected options: IViewerOptions,
+                @multiInject(TYPES.IVNodeDecorator)@optional() protected decorators: IVNodeDecorator[],
+                @multiInject(TYPES.HiddenVNodeDecorator)@optional() protected hiddenDecorators: IVNodeDecorator[],
+                @inject(TYPES.ViewerOptions) protected options: ViewerOptions,
                 @inject(TYPES.ILogger) protected logger: ILogger) {
         this.patcher = this.createPatcher()
         this.renderer = modelRendererFactory(decorators)

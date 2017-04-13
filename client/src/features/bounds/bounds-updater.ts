@@ -2,7 +2,7 @@ import { inject, injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { almostEquals } from '../../utils'
 import { SModelElement } from "../../base/model/smodel"
-import { VNodeDecorator } from "../../base/view/vnode-decorators"
+import { IVNodeDecorator } from "../../base/view/vnode-decorators"
 import { TYPES } from "../../base/types"
 import { IActionDispatcher } from "../../base/intent/action-dispatcher"
 import { Bounds, isEmpty, EMPTY_BOUNDS } from '../../utils/geometry';
@@ -25,7 +25,7 @@ export class BoundsData {
  * to grab them from a live (but hidden) SVG using getBBox(). 
  */
 @injectable()
-export class HiddenBoundsUpdater implements VNodeDecorator {
+export class HiddenBoundsUpdater implements IVNodeDecorator {
 
     constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
                 @inject(LAYOUT_TYPES.Layouter) protected layouter : Layouter) {}

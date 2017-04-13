@@ -1,5 +1,5 @@
 import { Action } from "../../base/intent/actions"
-import { AbstractCommand, CommandExecutionContext } from "../../base/intent/commands"
+import { Command, CommandExecutionContext } from "../../base/intent/commands"
 import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Bounds, center, combine, EMPTY_BOUNDS, isEmpty } from "../../utils/geometry"
 import { KeyListener } from "../../base/view/key-tool"
@@ -23,7 +23,7 @@ export class FitToScreenAction implements Action {
     }
 }
 
-export abstract class AbstractViewportCommand extends AbstractCommand {
+abstract class BoundsAwareViewportCommand extends Command {
 
     oldViewport: Viewport
     newViewport: Viewport
@@ -90,7 +90,7 @@ export abstract class AbstractViewportCommand extends AbstractCommand {
     }
 }
 
-export class CenterCommand extends AbstractViewportCommand {
+export class CenterCommand extends BoundsAwareViewportCommand {
     static readonly KIND = 'center'
 
     constructor(protected action: CenterAction) {
@@ -113,7 +113,7 @@ export class CenterCommand extends AbstractViewportCommand {
     }
 }
 
-export class FitToScreenCommand extends AbstractViewportCommand {
+export class FitToScreenCommand extends BoundsAwareViewportCommand {
     static readonly KIND = 'fit'
 
     constructor(protected action: CenterAction) {

@@ -2,7 +2,7 @@ import { BoundsAware, isBoundsAware } from './model';
 import { Bounds } from "../../utils/geometry"
 import { SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
-import { CommandExecutionContext, AbstractHiddenCommand, AbstractSystemCommand } from "../../base/intent/commands"
+import { CommandExecutionContext, HiddenCommand, SystemCommand } from "../../base/intent/commands"
 
 export class SetBoundsAction implements Action {
     readonly kind = SetBoundsCommand.KIND
@@ -38,7 +38,7 @@ interface ResolvedElementAndBounds {
     newBounds: Bounds
 }
 
-export class SetBoundsCommand extends AbstractSystemCommand {
+export class SetBoundsCommand extends SystemCommand {
     static readonly KIND: string  = 'setBounds'
 
     protected bounds: ResolvedElementAndBounds[] = []
@@ -84,7 +84,7 @@ export class SetBoundsCommand extends AbstractSystemCommand {
     }
 }
 
-export class RequestBoundsCommand extends AbstractHiddenCommand {
+export class RequestBoundsCommand extends HiddenCommand {
     static readonly KIND: string  = 'requestBounds'
     
     constructor(protected action: RequestBoundsAction) {

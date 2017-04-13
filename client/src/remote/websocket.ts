@@ -1,8 +1,8 @@
 import { injectable } from "inversify"
-import { AbstractDiagramServer } from "./diagram-server"
+import { DiagramServer } from "./diagram-server"
 
 @injectable()
-export class WebSocketDiagramServer extends AbstractDiagramServer {
+export class WebSocketDiagramServer extends DiagramServer {
 
     protected webSocket?: WebSocket
 

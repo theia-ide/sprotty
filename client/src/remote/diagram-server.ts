@@ -1,9 +1,9 @@
 import { inject, injectable } from "inversify"
-import { Action, ActionHandler, ActionHandlerRegistry } from "../base/intent/actions"
+import { Action, IActionHandler, ActionHandlerRegistry } from "../base/intent/actions"
 import { IActionDispatcher } from "../base/intent/action-dispatcher"
-import { Command } from "../base/intent/commands"
+import { ICommand } from "../base/intent/commands"
 import { TYPES } from "../base/types"
-import { IViewerOptions } from "../base/view/options"
+import { ViewerOptions } from "../base/view/options"
 import { ModelSource } from "../base/model/model-source"
 import { ILogger } from "../utils/logging"
 
@@ -17,11 +17,11 @@ export function isActionMessage(object: any): object is ActionMessage {
 }
 
 @injectable()
-export abstract class AbstractDiagramServer extends ModelSource {
+export abstract class DiagramServer extends ModelSource {
 
     constructor(@inject(TYPES.IActionDispatcher) actionDispatcher: IActionDispatcher,
                 @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
-                @inject(TYPES.IViewerOptions) viewerOptions: IViewerOptions,
+                @inject(TYPES.ViewerOptions) viewerOptions: ViewerOptions,
                 @inject(TYPES.ILogger) protected logger: ILogger) {
         super(actionDispatcher, actionHandlerRegistry, viewerOptions)
     }

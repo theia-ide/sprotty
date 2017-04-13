@@ -7,7 +7,7 @@ import { LAYOUT_TYPES } from "./types"
 import { BoundsData } from "./bounds-updater"
 import { VBoxLayouter } from "./vbox-layout"
 
-export class LayoutRegistry extends InstanceRegistry<Layout> {
+export class LayoutRegistry extends InstanceRegistry<ILayout> {
     constructor() {
         super()
         this.register(VBoxLayouter.KIND, new VBoxLayouter())
@@ -31,6 +31,6 @@ export class Layouter {
     }
 }
 
-export interface Layout {
+export interface ILayout {
     layout(container: Layouting & SParentElement, element2boundsData: Map<SModelElement, BoundsData>): void
 }

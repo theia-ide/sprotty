@@ -1,11 +1,11 @@
 import {
-    AbstractCommand,
-    AbstractHiddenCommand,
-    AbstractSystemCommand,
     Command,
+    HiddenCommand,
+    SystemCommand,
+    ICommand,
     CommandExecutionContext,
     CommandResult,
-    AbstractMergeableCommand
+    MergeableCommand
 } from './commands';
 import { SModelRoot } from "../model/smodel"
 import { Container, ContainerModule } from "inversify"
@@ -18,7 +18,7 @@ import { expect } from "chai"
 let operations: string[] = []
 
 
-class TestCommand extends AbstractCommand {
+class TestCommand extends Command {
     constructor(public name: string) {
         super()
     }
@@ -40,7 +40,7 @@ class TestCommand extends AbstractCommand {
 
 }
 
-class TestSystemCommand extends AbstractSystemCommand {
+class TestSystemCommand extends SystemCommand {
     constructor(public name: string) {
         super()
     }
@@ -61,7 +61,7 @@ class TestSystemCommand extends AbstractSystemCommand {
     }    
 }
 
-class TestMergeableCommand extends AbstractMergeableCommand {
+class TestMergeableCommand extends MergeableCommand {
     constructor(public name: string) {
         super()
     }
@@ -90,7 +90,7 @@ class TestMergeableCommand extends AbstractMergeableCommand {
     }
 }
 
-class TestHiddenCommand extends AbstractHiddenCommand {
+class TestHiddenCommand extends HiddenCommand {
       constructor(public name: string) {
         super()
     }

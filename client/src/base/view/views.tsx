@@ -12,7 +12,7 @@ const JSX = {createElement: snabbdom.svg}
 /**
  * Base interface for the components that turn GModelElements into virtual DOM elements.
  */
-export interface View {
+export interface IView {
     render(model: SModelElement, context: RenderingContext): VNode
 }
 
@@ -30,10 +30,10 @@ export interface RenderingContext {
 }
 
 /**
- * Allows to look up the View for a given SModelElement based on its type.
+ * Allows to look up the IView for a given SModelElement based on its type.
  */
 @injectable()
-export class ViewRegistry extends ProviderRegistry<View, SModelElement> {
+export class ViewRegistry extends ProviderRegistry<IView, SModelElement> {
     constructor() {
         super()
         this.registerDefaults()
@@ -43,18 +43,18 @@ export class ViewRegistry extends ProviderRegistry<View, SModelElement> {
         this.register(EMPTY_ROOT.type, EmptyView)
     }
 
-    missing(key: string, element: SModelElement): View {
+    missing(key: string, element: SModelElement): IView {
         return new MissingView()
     }
 }
 
-export class EmptyView implements View {
+export class EmptyView implements IView {
     render(model: SModelRoot, context: RenderingContext): VNode {
         return <svg key={model.id} id={model.id} class-empty={true} />
     }
 }
 
-export class MissingView implements View {
+export class MissingView implements IView {
     render(model: SModelElement, context: RenderingContext): VNode {
         const position: Point = (model as any).position || ORIGIN_POINT
         return <text class-missing={true} id={model.id} x={position.x} y={position.y}>?{model.id}?</text>

@@ -1,6 +1,6 @@
 import { inject, injectable } from "inversify"
 import { TYPES } from "../base/types"
-import { IViewerOptions } from "../base/view/options"
+import { ViewerOptions } from "../base/view/options"
 
 export interface ILogger {
     logLevel: LogLevel
@@ -27,7 +27,7 @@ export class NullLogger implements ILogger {
 export class ConsoleLogger implements ILogger {
 
     constructor(@inject(TYPES.LogLevel) public logLevel: LogLevel = LogLevel.log,
-                @inject(TYPES.IViewerOptions) protected viewOptions: IViewerOptions = { baseDiv: '' } as IViewerOptions) {}
+                @inject(TYPES.ViewerOptions) protected viewOptions: ViewerOptions = { baseDiv: '' } as ViewerOptions) {}
 
     error(thisArg: any, message: string, ...params: any[]): void {
         if (this.logLevel >= LogLevel.error)

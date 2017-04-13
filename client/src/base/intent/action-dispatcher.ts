@@ -27,7 +27,7 @@ export class ActionDispatcher implements IActionDispatcher {
     constructor(@inject(TYPES.ActionHandlerRegistry) protected actionHandlerRegistry: ActionHandlerRegistry,
                 @inject(TYPES.ICommandStack) protected commandStack: ICommandStack,
                 @inject(TYPES.ILogger) protected logger: ILogger,
-                @inject(TYPES.IAnimationFrameSyncer) protected syncer: AnimationFrameSyncer) {
+                @inject(TYPES.AnimationFrameSyncer) protected syncer: AnimationFrameSyncer) {
         this.postpone = true
         this.postponedActions = []
         this.commandStack.execute(new SetModelCommand(new SetModelAction(EMPTY_ROOT)))

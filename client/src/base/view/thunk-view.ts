@@ -1,13 +1,13 @@
 import { h } from "snabbdom"
 import { VNode, VNodeData } from "snabbdom/vnode"
 import { SModelElement } from "../model/smodel"
-import { RenderingContext, View } from "./views"
+import { RenderingContext, IView } from "./views"
 
 /**
  * An view that avoids calculation and patching of VNodes unless some model properties have changed.
  * Based on snabbdom's thunks.
  */
-export abstract class ThunkView implements View {
+export abstract class ThunkView implements IView {
 
     /**
      * Returns the array of values that are watched for changes.

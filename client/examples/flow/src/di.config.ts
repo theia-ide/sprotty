@@ -1,5 +1,5 @@
 import { Container, ContainerModule } from "inversify"
-import { defaultModule, IViewerOptions, TYPES } from "../../../src/base"
+import { defaultModule, ViewerOptions, TYPES } from "../../../src/base"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { boundsModule, moveModule, fadeModule } from "../../../src/features"
@@ -11,7 +11,7 @@ const flowModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
     rebind(TYPES.IModelFactory).to(FlowModelFactory).inSingletonScope()
-    rebind<IViewerOptions>(TYPES.IViewerOptions).toConstantValue({
+    rebind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
         baseDiv: 'sprotty-flow',
         boundsComputation: 'dynamic'
     })

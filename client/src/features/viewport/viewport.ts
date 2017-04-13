@@ -1,6 +1,6 @@
 import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
-import { AbstractMergeableCommand, Command, CommandExecutionContext } from "../../base/intent/commands"
+import { MergeableCommand, ICommand, CommandExecutionContext } from "../../base/intent/commands"
 import { Animation } from "../../base/animations/animation"
 import { isViewport, Viewport } from "./model"
 
@@ -13,7 +13,7 @@ export class ViewportAction implements Action {
     }
 }
 
-export class ViewportCommand extends AbstractMergeableCommand {
+export class ViewportCommand extends MergeableCommand {
     static readonly KIND = 'viewport'
 
     protected element: SModelElement & Viewport
@@ -52,7 +52,7 @@ export class ViewportCommand extends AbstractMergeableCommand {
         return new ViewportAnimation(this.element, this.oldViewport, this.newViewport, context).start()
     }
 
-    merge(command: Command, context: CommandExecutionContext) {
+    merge(command: ICommand, context: CommandExecutionContext) {
         if (!this.action.animate && command instanceof ViewportCommand && this.element == command.element) {
             this.newViewport = command.newViewport
             return true

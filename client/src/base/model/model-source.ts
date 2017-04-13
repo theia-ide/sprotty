@@ -1,24 +1,24 @@
 import { inject, injectable } from "inversify"
 import { TYPES } from "../types"
-import { Action, ActionHandler, ActionHandlerRegistry } from "../intent/actions"
+import { Action, IActionHandler, ActionHandlerRegistry } from "../intent/actions"
 import { IActionDispatcher } from "../intent/action-dispatcher"
-import { Command } from "../intent/commands"
+import { ICommand } from "../intent/commands"
 import { SetModelAction, SetModelCommand, UpdateModelAction, UpdateModelCommand, RequestModelAction } from "../features/model-manipulation"
 import { FitToScreenAction } from "../../features/viewport/center-fit"
 import { ComputedBoundsAction, RequestBoundsAction } from "../../features/bounds/bounds-manipulation"
-import { IViewerOptions } from "../view/options"
+import { ViewerOptions } from "../view/options"
 import { Bounds } from "../../utils/geometry"
 import { SModelRootSchema, SModelElementSchema, SModelIndex } from "./smodel"
 import { initializeIndex } from "./smodel-factory"
 
 @injectable()
-export abstract class ModelSource implements ActionHandler {
+export abstract class ModelSource implements IActionHandler {
 
     protected actionDispatcher: IActionDispatcher
     
     constructor(@inject(TYPES.IActionDispatcher) actionDispatcher: IActionDispatcher,
                 @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
-                @inject(TYPES.IViewerOptions) protected viewerOptions: IViewerOptions) {
+                @inject(TYPES.ViewerOptions) protected viewerOptions: ViewerOptions) {
         this.initialize(actionHandlerRegistry)
         this.actionDispatcher = actionDispatcher
     }
@@ -35,7 +35,7 @@ export abstract class ModelSource implements ActionHandler {
         }
     }
 
-    abstract handle(action: Action): Command | Action | void
+    abstract handle(action: Action): ICommand | Action | void
 }
 
 @injectable()

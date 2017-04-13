@@ -1,15 +1,15 @@
 import * as snabbdom from "snabbdom-jsx"
 import { VNode } from "snabbdom/vnode"
-import { RenderingContext, View } from "../../base/view/views"
+import { RenderingContext, IView } from "../../base/view/views"
 import { SCompartment, SEdge, SGraph, SLabel, SNode } from "../model/sgraph"
 import { center, manhattanDistance, Point } from "../../utils/geometry"
 
 const JSX = {createElement: snabbdom.svg}
 
 /**
- * View component that turns an SGraph element and its children into a tree of virtual DOM elements.
+ * IView component that turns an SGraph element and its children into a tree of virtual DOM elements.
  */
-export class SGraphView implements View {
+export class SGraphView implements IView {
 
     render(model: SGraph, context: RenderingContext): VNode {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
@@ -21,13 +21,13 @@ export class SGraphView implements View {
     }
 }
 
-export abstract class SNodeView implements View {
+export abstract class SNodeView implements IView {
     abstract render(model: SNode, context: RenderingContext): VNode
 
     abstract getAnchor(node: SNode, refPoint: Point): Point
 }
 
-export class StraightEdgeView implements View {
+export class StraightEdgeView implements IView {
     minimalPointDistance: number = 2
 
     render(edge: SEdge, context: RenderingContext): VNode {
@@ -115,13 +115,13 @@ export class StraightEdgeView implements View {
     }
 }
 
-export class SLabelView implements View {
+export class SLabelView implements IView {
     render(label: SLabel, context: RenderingContext): VNode {
         return <text key={label.id} id={label.id} class-label={true}>{label.text}</text>
     }
 }
 
-export class SCompartmentView implements View {
+export class SCompartmentView implements IView {
     render(model: SCompartment, context: RenderingContext): VNode {
         const translate = `translate(${model.bounds.x}, ${model.bounds.y})`
         return <g key={model.id} id={model.id} transform={translate} class-comp="{true}">

@@ -3,13 +3,13 @@ import { IModelFactory } from "../model/smodel-factory"
 import { IViewer } from "../view/viewer"
 import { ILogger } from "../../utils/logging"
 import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
-import { Action, ActionHandler } from "./actions"
+import { Action, IActionHandler } from "./actions"
 
 /**
  * A command holds the behaviour of an action.
  * It is executed on a command stack and can be undone / redone.
  *
- * A Command should store all information it needs to undo itself at a
+ * A command should store all information it needs to undo itself at a
  * later stage. It typically resolves the model elements it is going 
  * to manipulate as a first step in the execute method.
  * 
@@ -17,10 +17,10 @@ import { Action, ActionHandler } from "./actions"
  * matches the associated action. This is used as a key in the 
  * ActionHandlerRegistry.
  * 
- * Clients should not implement the Command interface directly but 
+ * Clients should not implement the ICommand interface directly but
  * rather inherit from one of its abstract implementators.
  */
-export interface Command {
+export interface ICommand {
     execute(context: CommandExecutionContext): CommandResult
 
     undo(context: CommandExecutionContext): CommandResult
@@ -38,15 +38,15 @@ export interface Command {
  */
 export type CommandResult = SModelRoot | Promise<SModelRoot>
 
-export interface CommandFactory {
+export interface ICommandFactory {
     KIND: string
-    new (a: Action): Command
+    new (a: Action): ICommand
 }
 
 /**
  * Base class for all commands.
  */
-export abstract class AbstractCommand implements Command {
+export abstract class Command implements ICommand {
 
     abstract execute(context: CommandExecutionContext): CommandResult
 
@@ -63,14 +63,14 @@ export abstract class AbstractCommand implements Command {
  * the user would have to push CTRL-Z for each mouse move element that 
  * resuted in a command.
  */
-export abstract class AbstractMergeableCommand extends AbstractCommand {
+export abstract class MergeableCommand extends Command {
     /**
      * Tries to merge the given command with this.
      * 
      * @param command 
      * @param context 
      */
-    merge(command: Command, context: CommandExecutionContext): boolean {
+    merge(command: ICommand, context: CommandExecutionContext): boolean {
         return false
     }
 }
@@ -90,7 +90,7 @@ export abstract class AbstractMergeableCommand extends AbstractCommand {
  * neither undoable nor redoable. The command stack does not push them on 
  * any stack and forwards the resulting model to the invisible viewer.
  */
-export abstract class AbstractHiddenCommand extends AbstractCommand {
+export abstract class HiddenCommand extends Command {
     abstract execute(context: CommandExecutionContext): SModelRoot
 
     undo(context: CommandExecutionContext): CommandResult {
@@ -114,7 +114,7 @@ export abstract class AbstractHiddenCommand extends AbstractCommand {
  * based on a model state that has changed. The command stack handles system 
  * commands in a special way to overcome these issues.
  */
-export abstract class AbstractSystemCommand extends AbstractCommand {
+export abstract class SystemCommand extends Command {
 }
 
 /**
@@ -143,11 +143,11 @@ export interface CommandExecutionContext {
     syncer: AnimationFrameSyncer
 }
 
-export class CommandActionHandler implements ActionHandler {
-    constructor(private commandType: new (a: Action) => Command) {
+export class CommandActionHandler implements IActionHandler {
+    constructor(private commandType: new (a: Action) => ICommand) {
     }
 
-    handle(action: Action): Command | Action | undefined {
+    handle(action: Action): ICommand | Action | undefined {
         return new this.commandType(action)
     }
 }

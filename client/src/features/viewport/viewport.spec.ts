@@ -28,7 +28,7 @@ const context: CommandExecutionContext = {
     syncer: new AnimationFrameSyncer()
 }
 
-describe('ViewportCommand', () => {
+describe('BoundsAwareViewportCommand', () => {
     it('execute() works as expected', () => {
         cmd.execute(context)
         expect(almostEquals(viewport.zoom, newViewportData.zoom)).to.be.true

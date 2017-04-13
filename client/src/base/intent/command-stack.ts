@@ -1,12 +1,12 @@
 import { HiddenBoundsUpdater } from '../../features/bounds/bounds-updater';
 import { inject, injectable } from "inversify"
 import {
-    AbstractHiddenCommand,
-    Command,
+    HiddenCommand,
+    ICommand,
     CommandExecutionContext,
     CommandResult,
-    AbstractSystemCommand,
-    AbstractMergeableCommand
+    SystemCommand,
+    MergeableCommand
 } from './commands';
 import { EMPTY_ROOT, IModelFactory } from "../model/smodel-factory"
 import { IViewer, IViewerProvider } from "../view/viewer"
@@ -31,14 +31,14 @@ export interface ICommandStack {
      * such that it can be rolled back later and the redo stack is 
      * cleared.
      */
-    execute(command: Command): Promise<SModelRoot>
+    execute(command: ICommand): Promise<SModelRoot>
 
     /**
      * Executes all of the given commands. As opposed to calling 
      * execute() multiple times, the Viewer is only updated once after
      * the last command has been executed.
      */
-    executeAll(commands: Command[]): Promise<SModelRoot>
+    executeAll(commands: ICommand[]): Promise<SModelRoot>
 
     /**
      * Takes the topmost command from the undo stack, undoes its 
@@ -95,14 +95,14 @@ export class CommandStack implements ICommandStack {
     constructor(@inject(TYPES.IModelFactory) protected modelFactory: IModelFactory,
                 @inject(TYPES.IViewerProvider) protected viewerProvider: IViewerProvider,
                 @inject(TYPES.ILogger) protected logger: ILogger,
-                @inject(TYPES.IAnimationFrameSyncer) protected syncer: AnimationFrameSyncer) {}
+                @inject(TYPES.AnimationFrameSyncer) protected syncer: AnimationFrameSyncer) {}
 
     protected currentPromise: Promise<CommandStackState> = Promise.resolve({root: EMPTY_ROOT})
 
     protected viewer: IViewer
 
-    protected undoStack: Command[] = []
-    protected redoStack: Command[] = []
+    protected undoStack: ICommand[] = []
+    protected redoStack: ICommand[] = []
 
     /**
      * System commands should be transparent to the user in undo/redo 
@@ -116,9 +116,9 @@ export class CommandStack implements ICommandStack {
      * On undo, all commands form this stack are undone as well as 
      * system ommands should be transparent to the user.
      */
-    protected offStack: AbstractSystemCommand[] = []
+    protected offStack: SystemCommand[] = []
 
-    executeAll(commands: Command[]): Promise<SModelRoot> {
+    executeAll(commands: ICommand[]): Promise<SModelRoot> {
         commands.forEach(
             command => {
                 this.logger.log(this, 'Executing', command)
@@ -128,7 +128,7 @@ export class CommandStack implements ICommandStack {
         return this.thenUpdate()
     }
 
-    execute(command: Command): Promise<SModelRoot> {
+    execute(command: ICommand): Promise<SModelRoot> {
         this.logger.log(this, 'Executing', command)
         this.handleCommand(command, command.execute, this.mergeOrPush)
         return this.thenUpdate()
@@ -140,7 +140,7 @@ export class CommandStack implements ICommandStack {
         const command = this.undoStack.pop()
         if(command !== undefined) {
             this.logger.log(this, 'Undoing', command)
-            this.handleCommand(command, command.undo, (command: Command, context: CommandExecutionContext) => {
+            this.handleCommand(command, command.undo, (command: ICommand, context: CommandExecutionContext) => {
                 this.redoStack.push(command)
             })
         }
@@ -152,7 +152,7 @@ export class CommandStack implements ICommandStack {
         const command = this.redoStack.pop()
         if(command !== undefined) {
             this.logger.log(this, 'Redoing', command)
-            this.handleCommand(command, command.redo, (command: Command, context: CommandExecutionContext) => {
+            this.handleCommand(command, command.redo, (command: ICommand, context: CommandExecutionContext) => {
                 this.undoStack.push(command)
             })
         }
@@ -168,9 +168,9 @@ export class CommandStack implements ICommandStack {
      * resolving the Promise to return the new model. Usually puts the 
      * command on the appropriate stack.
      */
-    protected handleCommand(command: Command,
+    protected handleCommand(command: ICommand,
                             operation: (context: CommandExecutionContext)=>CommandResult,
-                            beforeResolve: (command: Command, context: CommandExecutionContext)=>void) {
+                            beforeResolve: (command: ICommand, context: CommandExecutionContext)=>void) {
         this.currentPromise = this.currentPromise.then(
             state => {
                 let newHiddenRoot: SModelRoot | undefined = undefined
@@ -178,7 +178,7 @@ export class CommandStack implements ICommandStack {
                     (resolve: (result: CommandStackState) => void, reject: (result: CommandStackState) => void) => {
                         const context = this.createContext(state.root)
                         const newResult = operation.call(command, context) as CommandResult
-                        if(command instanceof AbstractHiddenCommand) {
+                        if(command instanceof HiddenCommand) {
                             resolve({...state, ...{ 
                                 hiddenRoot: newResult as SModelRoot,
                                 hiddenRootChanged: true
@@ -268,10 +268,10 @@ export class CommandStack implements ICommandStack {
      * 
      * Mergable commands are merged if possible.
      */
-    protected mergeOrPush(command: Command, context: CommandExecutionContext) {
-        if(command instanceof AbstractHiddenCommand)
+    protected mergeOrPush(command: ICommand, context: CommandExecutionContext) {
+        if(command instanceof HiddenCommand)
             return;
-        if(command instanceof AbstractSystemCommand && this.redoStack.length > 0) {
+        if(command instanceof SystemCommand && this.redoStack.length > 0) {
             this.offStack.push(command)
         } else {
             this.offStack.forEach(command => this.undoStack.push(command))
@@ -279,7 +279,7 @@ export class CommandStack implements ICommandStack {
             this.redoStack = []
             if (this.undoStack.length > 0) {
                 const lastCommand = this.undoStack[this.undoStack.length - 1]
-                if (lastCommand instanceof AbstractMergeableCommand && lastCommand.merge(command, context))
+                if (lastCommand instanceof MergeableCommand && lastCommand.merge(command, context))
                     return
             }
             this.undoStack.push(command)
@@ -305,10 +305,10 @@ export class CommandStack implements ICommandStack {
      */
     protected undoPreceedingSystemCommands() {
         let command = this.undoStack[this.undoStack.length - 1]
-        while(command !== undefined && command instanceof AbstractSystemCommand) {
+        while(command !== undefined && command instanceof SystemCommand) {
             this.undoStack.pop()
             this.logger.log(this, 'Undoing', command)
-            this.handleCommand(command, command.undo, (command: Command, context: CommandExecutionContext) => {
+            this.handleCommand(command, command.undo, (command: ICommand, context: CommandExecutionContext) => {
                 this.redoStack.push(command)
             })
             command = this.undoStack[this.undoStack.length - 1]
@@ -322,10 +322,10 @@ export class CommandStack implements ICommandStack {
      */
     protected redoFollowingSystemCommands() {
         let command = this.redoStack[this.redoStack.length -1]
-        while (command !== undefined && command instanceof AbstractSystemCommand) {
+        while (command !== undefined && command instanceof SystemCommand) {
             this.redoStack.pop()
             this.logger.log(this, 'Redoing ', command)
-            this.handleCommand(command, command.redo, (command: Command, context: CommandExecutionContext) => {
+            this.handleCommand(command, command.redo, (command: ICommand, context: CommandExecutionContext) => {
                 this.undoStack.push(command)
             })
             command = this.redoStack[this.redoStack.length -1]

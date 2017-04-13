@@ -4,11 +4,11 @@ import { IActionDispatcher } from "../intent/action-dispatcher"
 import { TYPES } from "../types"
 import { SModelElement, SModelRoot } from "../model/smodel"
 import { Action } from "../intent/actions"
-import { VNodeDecorator } from "./vnode-decorators"
+import { IVNodeDecorator } from "./vnode-decorators"
 import { on } from "./vnode-utils"
 
 @injectable()
-export class KeyTool implements VNodeDecorator {
+export class KeyTool implements IVNodeDecorator {
 
     constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
                 @multiInject(TYPES.KeyListener)@optional() protected keyListeners: KeyListener[] = []) {}

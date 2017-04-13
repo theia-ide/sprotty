@@ -2,9 +2,9 @@ import { Action } from '../intent/actions';
 import { IActionDispatcher } from '../intent/action-dispatcher';
 import { injectable, inject } from "inversify";
 import { TYPES } from "../types";
-import { VNodeDecorator } from "../view/vnode-decorators";
+import { IVNodeDecorator } from "../view/vnode-decorators";
 import { SModelElement, SModelRoot } from "../model/smodel";
-import { AbstractSystemCommand, CommandExecutionContext } from '../intent/commands';
+import { SystemCommand, CommandExecutionContext } from '../intent/commands';
 import { SModelExtension } from "../model/smodel-extension";
 import { almostEquals, Bounds, isEmpty } from '../../utils/geometry';
 import { VNode } from "snabbdom/vnode";
@@ -15,7 +15,7 @@ import { VNode } from "snabbdom/vnode";
  * as FitToScreenAction.
  */
 @injectable()
-export class CanvasBoundsInitializer implements VNodeDecorator {
+export class CanvasBoundsInitializer implements IVNodeDecorator {
 
     rootAndVnode: [SModelRoot, VNode] | undefined
 
@@ -63,7 +63,7 @@ export class InitializeCanvasBoundsAction implements Action {
     }
 }
 
-export class InitializeCanvasBoundsCommand extends AbstractSystemCommand {
+export class InitializeCanvasBoundsCommand extends SystemCommand {
     static readonly KIND: string  = 'initializeCanvasBounds'
 
     private oldCanvasBounds: Bounds
