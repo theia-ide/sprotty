@@ -19,8 +19,8 @@ export class ProcessorView implements View {
     }
 }
 
-const CORE_WIDTH = 50
-const CORE_DISTANCE = 15
+export const CORE_WIDTH = 50
+export const CORE_DISTANCE = 15
 
 export class CoreView extends ThunkView {
 

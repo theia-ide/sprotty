@@ -2,6 +2,7 @@ import { SChildElement, SModelElementSchema, SModelRootSchema } from "../../../s
 import { Bounds, Direction, EMPTY_BOUNDS } from "../../../src/utils"
 import { BoundsAware, boundsFeature, Selectable, selectFeature, viewportFeature } from "../../../src/features"
 import { ViewportRootElement } from "../../../src/features/viewport/viewport-root"
+import { CORE_DISTANCE, CORE_WIDTH } from "./views";
 
 export interface ProcessorSchema extends SModelRootSchema {
     rows: number
@@ -11,6 +12,15 @@ export interface ProcessorSchema extends SModelRootSchema {
 export class Processor extends ViewportRootElement implements ProcessorSchema {
     rows: number = 0
     columns: number = 0
+
+    get bounds(): Bounds {
+        return {
+            x: -3 * CORE_DISTANCE,
+            y: -3 * CORE_DISTANCE, 
+            width: this.columns * (CORE_WIDTH + CORE_DISTANCE) + 5 * CORE_DISTANCE,
+            height: this.rows * (CORE_WIDTH + CORE_DISTANCE) + 5 * CORE_DISTANCE
+        }
+    }
 
     hasFeature(feature: symbol): boolean {
         return feature === viewportFeature || feature === boundsFeature
