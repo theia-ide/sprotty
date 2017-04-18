@@ -36,15 +36,6 @@ export class ChipModelFactory extends SModelFactory {
             return super.createRoot(schema)
     }
 
-    protected initializeElement(elem: SModelElement, schema: SModelElementSchema): SModelElement {
-        super.initializeElement(elem, schema)
-        if (this.isChannelSchema(schema))
-            (elem as Channel).direction = schema.direction
-        else if (this.isCrossbarSchema(schema))
-            (elem as Crossbar).direction = schema.direction
-        return elem
-    }
-
     private validate(coreOrChannel: CoreSchema | ChannelSchema, processor?: SParentElement) {
         if (processor) {
             if (!(processor instanceof Processor))
