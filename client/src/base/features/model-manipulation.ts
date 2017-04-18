@@ -5,7 +5,6 @@ import {
     SModelRoot, SModelRootSchema, SModelElement, SModelElementSchema, SChildElement, SModelIndex,
     SParentElement
 } from "../model/smodel"
-import { RESERVED_MODEL_PROPERTIES } from "../model/smodel-factory"
 import { Command, CommandExecutionContext, CommandResult } from '../intent/commands';
 import { CompoundAnimation, Animation } from "../animations/animation"
 import { ModelMatcher, MatchResult } from "./model-matching"

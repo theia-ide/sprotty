@@ -7,9 +7,9 @@ export interface IModelFactory {
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement
 
     createRoot(schema: SModelRootSchema): SModelRoot
-}
 
-export const RESERVED_MODEL_PROPERTIES = ['children', 'index', '_index', 'root', 'parent']
+    createSchema(element: SModelElement): SModelElementSchema
+}
 
 @injectable()
 export class SModelFactory implements IModelFactory {
@@ -22,15 +22,33 @@ export class SModelFactory implements IModelFactory {
         return this.initializeRoot(new SModelRoot(), schema)
     }
 
+    createSchema(element: SModelElement): SModelElementSchema {
+        const schema = {}
+        for (let key in element) {
+             if (!this.isReserved(key)) {
+                const value: any = (element as any)[key]
+                if (typeof value != 'function')
+                    (schema as any)[key] = value
+            }
+        }
+        if(element instanceof SParentElement)
+            (schema as any)['children'] = element.children.map(child => this.createSchema(child))
+        return schema as SModelElementSchema
+    }
+
     protected initializeElement(elem: SModelElement, schema: SModelElementSchema): SModelElement {
         for (let key in schema) {
-            if (RESERVED_MODEL_PROPERTIES.indexOf(key) < 0 && key in schema) {
+            if (!this.isReserved(key)) {
                 const value: any = (schema as any)[key]
                 if (typeof value != 'function')
                     (elem as any)[key] = value
             }
         }
         return elem
+    }
+
+    protected isReserved(propertyName: string) {
+        return ['children', 'index', '_index', 'root', 'parent'].indexOf(propertyName) >=0
     }
 
     protected initializeParent(parent: SParentElement, schema: SModelElementSchema): SParentElement {
@@ -68,7 +86,7 @@ export function initializeIndex<T extends SModelElementSchema>(element: T, index
     }
 }
 
-export const EMPTY_ROOT = new SModelFactory().createRoot({
+export const EMPTY_ROOT: SModelRoot = new SModelFactory().createRoot({
     id: 'EMPTY',
     type: 'NONE'
 })
