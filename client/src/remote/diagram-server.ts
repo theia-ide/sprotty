@@ -7,6 +7,9 @@ import { ViewerOptions } from "../base/view/options"
 import { ModelSource } from "../base/model/model-source"
 import { ILogger } from "../utils/logging"
 
+/**
+ * Wrapper for messages when transferring them vie a DiagramServer.
+ */
 export interface ActionMessage {
     clientId: string
     action: Action
@@ -16,6 +19,13 @@ export function isActionMessage(object: any): object is ActionMessage {
     return object !== undefined && object.hasOwnProperty('clientId') && object.hasOwnProperty('action')
 }
 
+/**
+ * A ModelSource that communicates with an external model provider, e.g.
+ * a model editor.
+ * 
+ * This class defines which actions are sent to and received from the
+ * external model source.
+ */
 @injectable()
 export abstract class DiagramServer extends ModelSource {
 
