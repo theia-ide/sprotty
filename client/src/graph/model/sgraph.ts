@@ -15,7 +15,7 @@ export interface SGraphSchema extends SModelRootSchema {
     zoom?: number
 }
 
-export class SGraph extends ViewportRootElement implements SGraphSchema {
+export class SGraph extends ViewportRootElement {
 }
 
 export interface SNodeSchema extends SModelElementSchema {
@@ -26,7 +26,7 @@ export interface SNodeSchema extends SModelElementSchema {
     revalidateBounds?: boolean
 }
 
-export class SNode extends SShapeElement implements SNodeSchema, Selectable, BoundsAware, Locateable, Fadeable {
+export class SNode extends SShapeElement implements Selectable, BoundsAware, Locateable, Fadeable {
     children: SCompartmentElement[]
     layout?: string
     selected: boolean = false
@@ -44,7 +44,7 @@ export interface SEdgeSchema extends SModelElementSchema {
     routingPoints?: Point[]
 }
 
-export class SEdge extends SChildElement implements SEdgeSchema, Fadeable {
+export class SEdge extends SChildElement implements Fadeable {
     sourceId: string
     targetId: string
     routingPoints: Point[] = []
@@ -76,9 +76,10 @@ export interface SLabelSchema extends SModelElementSchema {
     revalidateBounds?: boolean
 }
 
-export class SLabel extends SShapeElement implements SLabelSchema, BoundsAware, Selectable {
+export class SLabel extends SShapeElement implements BoundsAware, Selectable {
     text: string
     selected: boolean = false
+    revalidateBounds: boolean = true
 
     hasFeature(feature: symbol) {
         return feature === boundsFeature || feature === selectFeature
@@ -90,13 +91,15 @@ export interface SCompartmentSchema extends SModelElementSchema {
     position?: Point
     size?: Dimension
     layout?: string
-    spacing?: number
     revalidateBounds?: boolean
 }
 
-export class SCompartment extends SShapeElement implements SCompartmentSchema, BoundsAware, Layouting {
+export class SCompartment extends SShapeElement implements BoundsAware, Layouting {
     children: SCompartmentElement[]
+    position: Point
+    size: Dimension 
     layout: string
+    revalidateBounds: boolean
 
     hasFeature(feature: symbol) {
         return feature === boundsFeature || feature === layoutFeature

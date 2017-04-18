@@ -1,3 +1,4 @@
+import { SModelStorage } from './model/smodel-storage';
 import { CanvasBoundsInitializer, InitializeCanvasBoundsCommand } from './features/initialize-canvas';
 import { ContainerModule, interfaces } from "inversify"
 import { LogLevel, NullLogger } from "../utils/logging"
@@ -83,6 +84,7 @@ let defaultContainerModule = new ContainerModule(bind => {
     // Canvas Initialization ---------------------------------------------
     bind(TYPES.ICommand).toConstructor(InitializeCanvasBoundsCommand)
     bind(TYPES.IVNodeDecorator).to(CanvasBoundsInitializer).inSingletonScope()
+    bind(TYPES.SModelStorage).to(SModelStorage).inSingletonScope
 })
 
 export default defaultContainerModule

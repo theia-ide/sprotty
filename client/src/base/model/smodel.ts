@@ -15,7 +15,7 @@ export interface SModelRootSchema extends SModelElementSchema {
  * Base class for all elements of the diagram model.
  * Each model element must have a unique ID and a type that is used to look up its view.
  */
-export class SModelElement implements SModelElementSchema {
+export class SModelElement {
     type: string
     id: string
 
@@ -114,7 +114,7 @@ export abstract class SShapeElement extends SChildElement implements BoundsAware
 /**
  * Base class for the root elements of the diagram model tree.
  */
-export class SModelRoot extends SParentElement implements SModelRootSchema {
+export class SModelRoot extends SParentElement {
     private _index: SModelIndex<SModelElement>
     
     canvasBounds: Bounds = EMPTY_BOUNDS

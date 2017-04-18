@@ -12,6 +12,7 @@ export const TYPES = {
     IModelFactory: Symbol('IModelFactory'),
     ModelRendererFactory: Symbol('ModelRendererFactory'),
     ModelSource: Symbol('ModelSource'),
+    SModelStorage: Symbol('SModelStorage'),
     MouseListener: Symbol('MouseListener'),
     IViewer: Symbol('IViewer'),
     ViewerOptions: Symbol('ViewerOptions'),
