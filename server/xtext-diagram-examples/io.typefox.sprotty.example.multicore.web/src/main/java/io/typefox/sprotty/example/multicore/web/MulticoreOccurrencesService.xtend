@@ -16,9 +16,13 @@ class MulticoreOccurrencesService extends OccurrencesService {
 	
 	override findOccurrences(XtextWebDocumentAccess document, int offset) {
 		val p = document.readOnly[ doc, cancelIndicator |
-			val element = doc.resource.resolveContainedElementAt(offset)
-			val node = element.node
-			return doc.resourceId -> if (node === null || node.textRegion.contains(offset)) element
+			var element = doc.resource.resolveContainedElementAt(offset)
+			var node = element.node
+			while (node !== null && !node.textRegion.contains(offset)) {
+				element = element.eContainer
+				node = element.node
+			}
+			return doc.resourceId -> element
 		]
 		val resourceId = p.key
 		val containedEObject = p.value
