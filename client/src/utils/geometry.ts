@@ -72,7 +72,13 @@ export function combine(b0: Bounds, b1: Bounds) {
  * @returns {Point} the center point
  */
 export function center(b: Bounds): Point {
-    return { x: b.x + 0.5 * b.width, y: b.y + 0.5 * b.height }
+    if (isEmpty(b))
+        return b
+    else
+        return {
+            x: b.x + 0.5 * b.width,
+            y: b.y + 0.5 * b.height
+        }
 }
 
 /**

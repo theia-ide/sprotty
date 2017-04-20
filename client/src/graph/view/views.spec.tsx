@@ -67,7 +67,7 @@ describe('graph views', () => {
         const vnode = view.render(graph.index.getById('edge0') as SEdge, context)
         const html = toHTML(vnode)
         expect(html).to.be.equal(
-            '<g id="edge0"><path class="edge" d="M 179.49969448243914,146.30667390896087 L 206.3723157897707,168.33946319554624" /></g>')
+            '<g id="edge0"><path class="edge" d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" /></g>')
     })
 
     it('render a circle node', () => {
@@ -86,7 +86,7 @@ describe('graph views', () => {
             + '<g transform="scale(1) translate(0,0)">'
             +   '<g id="node0" transform="translate(100, 100)"><circle class="node" r="40" cx="40" cy="40" /></g>'
             +   '<g id="node1" class="selected" transform="translate(200, 150)"><circle class="node selected" r="40" cx="40" cy="40" /></g>'
-            +   '<g id="edge0"><path class="edge" d="M 179.49969448243914,146.30667390896087 L 206.3723157897707,168.33946319554624" /></g>'
+            +   '<g id="edge0"><path class="edge" d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" /></g>'
             + '</g>' 
             + '</svg>')
     })
