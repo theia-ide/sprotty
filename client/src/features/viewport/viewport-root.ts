@@ -9,7 +9,7 @@ export class ViewportRootElement extends SModelRoot implements BoundsAware, View
     revalidateBounds: boolean = true
     boundsInPage: Bounds = EMPTY_BOUNDS
 
-    scroll: Point = { x:0, y:0 }
+    scroll: Point = { x: 0, y: 0 }
     zoom: number = 1
 
     get bounds(): Bounds {

@@ -70,6 +70,7 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 		val program = doc.resource.contents.head as Program
 		val selection = selectionProvider.getSelection(doc.resourceId)
 		val processorView = diagramGenerator.generateProcessorView(program, selection, cancelIndicator)
+		val oldProcessorView = modelProvider.getModel(doc.resourceId, processorView.type)
 		modelProvider.putModel(doc.resourceId, processorView)
 		modelProvider.setLayoutDone(doc.resourceId, processorView.type)
 		cancelIndicator.checkCanceled
@@ -83,8 +84,8 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 			diagramServers.filter[resourceId == doc.resourceId].toList
 		}
 		for (diagramServer : filteredServers) {
-			diagramServer.notifyClients(processorView)
-			diagramServer.notifyClients(flowView)
+			diagramServer.notifyClients(processorView, oldProcessorView)
+			diagramServer.notifyClients(flowView, oldFlowView)
 		}
 	}
 	

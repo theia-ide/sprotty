@@ -13,6 +13,7 @@ import { ResolvedElementFade, FadeAnimation } from "../../features/fade/fade"
 import { isLocateable } from "../../features/move/model"
 import { ResolvedElementMove, MoveAnimation } from "../../features/move/move"
 import { isBoundsAware } from "../../features/bounds/model"
+import { ViewportRootElement } from "../../features/viewport/viewport-root"
 
 export class SetModelAction implements Action {
     readonly kind = SetModelCommand.KIND
@@ -188,6 +189,10 @@ export class UpdateModelCommand extends Command {
         }
         if (left instanceof SModelRoot && right instanceof SModelRoot) {
             right.canvasBounds = left.canvasBounds
+        }
+        if (left instanceof ViewportRootElement && right instanceof ViewportRootElement) {
+            right.scroll = left.scroll
+            right.zoom = left.zoom
         }
     }
 

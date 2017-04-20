@@ -3,6 +3,7 @@ package io.typefox.sprotty.server.examples
 import io.typefox.sprotty.api.AbstractDiagramServer
 import io.typefox.sprotty.api.ActionMessage
 import io.typefox.sprotty.api.ComputedBoundsAction
+import io.typefox.sprotty.api.Point
 import io.typefox.sprotty.api.SEdge
 import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.api.SNode
@@ -21,18 +22,12 @@ class SimpleDiagramServer extends AbstractDiagramServer {
 				new SNode => [
 					type = 'node:circle'
 					id = 'node0'
-					position => [
-						x = 100.0
-						y = 100.0
-					]
+					position = new Point(100.0, 100.0)
 				],
 				new SNode => [
 					type = 'node:circle'
 					id = 'node1'
-					position => [
-						x = 300.0
-						y = 150.0
-					]
+					position = new Point(300.0, 150.0)
 				],
 				new SEdge => [
 					type = 'edge:straight'

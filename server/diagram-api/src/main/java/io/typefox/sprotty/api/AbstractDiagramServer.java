@@ -42,7 +42,7 @@ public abstract class AbstractDiagramServer implements Consumer<ActionMessage> {
 	protected void handle(RequestModelAction request, ActionMessage message) {
 		SModelRoot root = getModel(message);
 		if (root != null) {
-			sendModel(root, message.getClientId());
+			sendModel(root, message.getClientId(), true);
 		}
 	}
 	
@@ -50,13 +50,19 @@ public abstract class AbstractDiagramServer implements Consumer<ActionMessage> {
 	
 	protected abstract boolean needsLayout(SModelRoot root);
 	
-	protected void sendModel(SModelRoot root, String clientId) {
+	protected void sendModel(SModelRoot root, String clientId, boolean initial) {
 		if (needsLayout(root)) {
 			sendAction(new RequestBoundsAction( action -> {
 				action.setRoot(root);
 			}), clientId);
-		} else {
+		} else if (initial) {
 			sendAction(new SetModelAction( action -> {
+				action.setModelType(root.getType());
+				action.setModelId(root.getId());
+				action.setNewRoot(root);
+			}), clientId);
+		} else {
+			sendAction(new UpdateModelAction( action -> {
 				action.setModelType(root.getType());
 				action.setModelId(root.getId());
 				action.setNewRoot(root);
