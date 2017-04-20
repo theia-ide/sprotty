@@ -25,35 +25,44 @@ export class SModelFactory implements IModelFactory {
     createSchema(element: SModelElement): SModelElementSchema {
         const schema = {}
         for (let key in element) {
-             if (!this.isReserved(key)) {
+             if (!this.isReserved(element, key)) {
                 const value: any = (element as any)[key]
                 if (typeof value != 'function')
                     (schema as any)[key] = value
             }
         }
-        if(element instanceof SParentElement)
+        if (element instanceof SParentElement)
             (schema as any)['children'] = element.children.map(child => this.createSchema(child))
         return schema as SModelElementSchema
     }
 
-    protected initializeElement(elem: SModelElement, schema: SModelElementSchema): SModelElement {
+    protected initializeElement(element: SModelElement, schema: SModelElementSchema): SModelElement {
         for (let key in schema) {
-            if (!this.isReserved(key)) {
+            if (!this.isReserved(element, key)) {
                 const value: any = (schema as any)[key]
                 if (typeof value != 'function')
-                    (elem as any)[key] = value
+                    (element as any)[key] = value
             }
         }
-        return elem
+        return element
     }
 
-    protected isReserved(propertyName: string) {
-        return ['children', 'index', '_index', 'root', 'parent'].indexOf(propertyName) >=0
+    protected isReserved(element: SModelElement, propertyName: string) {
+        if (['children', 'parent', '_index'].indexOf(propertyName) >= 0)
+            return true
+        let obj = element
+        do {
+            const descriptor = Object.getOwnPropertyDescriptor(obj, propertyName)
+            if (descriptor !== undefined)
+                return descriptor.get !== undefined
+            obj = Object.getPrototypeOf(obj)
+        } while (obj)
+        return false
     }
 
     protected initializeParent(parent: SParentElement, schema: SModelElementSchema): SParentElement {
         this.initializeElement(parent, schema)
-        if (schema.children !== undefined) {
+        if (schema.children !== undefined && schema.children.constructor === Array) {
             parent.children = schema.children.map(childSchema => this.createElement(childSchema, parent))
         }
         return parent
@@ -79,7 +88,7 @@ export function initializeIndex<T extends SModelElementSchema>(element: T, index
         throw new Error("Duplicate ID in model: " + element.id)
     }
     index.add(element)
-    if (element.children !== undefined) {
+    if (element.children !== undefined && element.children.constructor === Array) {
         for (const child of element.children) {
             initializeIndex(child, index)
         }
