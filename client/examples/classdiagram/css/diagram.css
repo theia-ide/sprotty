@@ -1,3 +1,10 @@
+.sprotty-hidden {
+    display: block;
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
 .node {
     fill: #cdc;
     stroke: #152;

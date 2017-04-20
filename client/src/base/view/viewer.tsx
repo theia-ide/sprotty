@@ -97,11 +97,9 @@ export class Viewer implements IViewer {
         setClass(newVDOM, this.options.baseDiv, true)
         if (this.lastVDOM !== undefined) {
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
-        } else {
-            if(typeof document !== 'undefined') {
-                const placeholder = document.getElementById(this.options.baseDiv)
-                this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
-            }
+        } else if (typeof document !== 'undefined') {
+            const placeholder = document.getElementById(this.options.baseDiv)
+            this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
         this.renderer.postUpdate()
     }
@@ -113,6 +111,7 @@ export class Viewer implements IViewer {
         this.logger.log(this, 'rendering hidden')
         const hiddenVNode = this.hiddenRenderer.renderElement(hiddenModel)
         setAttr(hiddenVNode, 'opacity', 0)
+        setClass(hiddenVNode, 'sprotty-hidden', true)
         const newVDOM = <div id={this.options.baseDiv}>
                 {this.lastVDOM.children![0]}
                 {hiddenVNode}
