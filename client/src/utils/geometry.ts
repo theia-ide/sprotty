@@ -52,7 +52,7 @@ export const EMPTY_BOUNDS: Bounds = {
  * @param {Bounds} b1 - Second bounds object
  * @returns {Bounds} The combined bounds
  */
-export function combine(b0: Bounds, b1: Bounds) {
+export function combine(b0: Bounds, b1: Bounds): Bounds {
     if (isEmpty(b0))
         return b1
     if (isEmpty(b1))
@@ -82,12 +82,19 @@ export function center(b: Bounds): Point {
 }
 
 /**
- * Returns the center point of the bounds of an object
+ * Checks whether the given bounds are empty, i.e. the width or height is not positive.
  * @param {Bounds} b - Bounds object
  * @returns {boolean} 
  */
-export function isEmpty(b: Bounds) {
+export function isEmpty(b: Bounds): boolean {
     return b.width <= 0 || b.height <= 0
+}
+
+/**
+ * Checks whether the point p is included in the bounds b.
+ */
+export function includes(b: Bounds, p: Point): boolean {
+    return p.x >= b.x && p.x <= b.x + b.width && p.y >= b.y && p.y <= b.y + b.height
 }
 
 /**
