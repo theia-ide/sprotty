@@ -9,7 +9,7 @@ import { ComputedBoundsAction, RequestBoundsAction } from "../../features/bounds
 import { ViewerOptions } from "../view/options"
 import { Bounds } from "../../utils/geometry"
 import { SModelRootSchema, SModelElementSchema, SModelIndex } from "./smodel"
-import { initializeIndex } from "./smodel-factory"
+import { Match } from "../features/model-matching"
 
 /**
  * A model source is serving the model to the event cycle. It represents
@@ -74,17 +74,82 @@ export class LocalModelSource extends ModelSource {
         }
     }
 
-    updateModel(newRoot?: SModelRootSchema, animate: boolean = true): void {
+    updateModel(newRoot?: SModelRootSchema): void {
         if (newRoot !== undefined)
             this.currentRoot = newRoot
-        if (this.currentRoot === undefined) {
-            this.fireModelNotAvailable()
-        } else {
-            if (this.viewerOptions.boundsComputation == 'dynamic') {
+        if (this.currentRoot !== undefined) {
+            if (this.viewerOptions.boundsComputation == 'dynamic')
                 this.actionDispatcher.dispatch(new RequestBoundsAction(this.currentRoot))
-            } else {
-                this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot, animate))
+            else
+                this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
+        } else {
+            this.fireModelNotAvailable()
+        }
+    }
+
+    applyMatches(matches: Match[]): void {
+        if (this.currentRoot !== undefined) {
+            const update = new UpdateModelAction()
+            update.modelType = this.currentRoot.type
+            update.modelId = this.currentRoot.id
+            update.matches = matches
+            this.actionDispatcher.dispatch(update)
+        } else {
+            this.fireModelNotAvailable()
+        }
+    }
+
+    addElements(elements: (SModelElementSchema | { element: SModelElementSchema, parentId: string })[]): void {
+        if (this.currentRoot !== undefined) {
+            const matches: Match[] = []
+            for (const i in elements) {
+                const e: any = elements[i]
+                if (e.element !== undefined && e.parentId !== undefined) {
+                    matches.push({
+                        right: e.element,
+                        rightParentId: e.parentId
+                    })
+                } else if (e.id !== undefined) {
+                    matches.push({
+                        right: e,
+                        rightParentId: this.currentRoot.id
+                    })
+                }
             }
+            this.applyMatches(matches)
+        } else {
+            this.fireModelNotAvailable()
+        }
+    }
+
+    removeElements(elements: (string | { elementId: string, parentId: string })[]) {
+        if (this.currentRoot !== undefined) {
+            const matches: Match[] = []
+            const index = new SModelIndex()
+            index.add(this.currentRoot)
+            for (const i in elements) {
+                const e: any = elements[i]
+                if (e.elementId !== undefined && e.parentId !== undefined) {
+                    const element = index.getById(e.elementId)
+                    if (element !== undefined) {
+                        matches.push({
+                            left: element,
+                            leftParentId: e.parentId
+                        })
+                    }
+                } else {
+                    const element = index.getById(e)
+                    if (element !== undefined) {
+                        matches.push({
+                            left: element,
+                            leftParentId: this.currentRoot.id
+                        })
+                    }
+                }
+            }
+            this.applyMatches(matches)
+        } else {
+            this.fireModelNotAvailable()
         }
     }
 
@@ -99,22 +164,21 @@ export class LocalModelSource extends ModelSource {
         }
     }
 
-    handleRequestModel(action: RequestModelAction): void {
+    protected handleRequestModel(action: RequestModelAction): void {
         if (this.currentRoot !== undefined)
             this.setModel(this.currentRoot)
         else
             this.fireModelNotAvailable()
     }
 
-    handleComputedBounds(action: ComputedBoundsAction): void {
+    protected handleComputedBounds(action: ComputedBoundsAction): void {
         if (this.currentRoot !== undefined) {
             const index = new SModelIndex()
-            initializeIndex(this.currentRoot, index)
+            index.add(this.currentRoot)
             for (const b of action.bounds) {
                 const element = index.getById(b.elementId)
-                if (element !== undefined) {
+                if (element !== undefined)
                     this.applyBounds(element, b.newBounds)
-                }
             }
             this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
         } else {

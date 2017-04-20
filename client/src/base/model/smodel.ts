@@ -135,11 +135,24 @@ export class SModelIndex<T extends SModelElementSchema> {
     private id2element: Map<string, T> = new Map
 
     add(element: T): void {
+        if (this.contains(element)) {
+            throw new Error("Duplicate ID in model: " + element.id)
+        }
         this.id2element.set(element.id, element)
+        if (element.children !== undefined && element.children.constructor === Array) {
+            for (const child of element.children) {
+                this.add(child as any)
+            }
+        }
     }
 
     remove(element: T): void {
         this.id2element.delete(element.id)
+        if (element.children !== undefined && element.children.constructor === Array) {
+            for (const child of element.children) {
+                this.remove(child as any)
+            }
+        }
     }
 
     contains(element: T): boolean {

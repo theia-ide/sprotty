@@ -12,6 +12,7 @@ import { FadeAnimation } from "../../features/fade/fade"
 import { MoveAnimation } from "../../features/move/move"
 import { CompoundAnimation } from "../animations/animation"
 import { SetModelAction, SetModelCommand, UpdateModelCommand } from "./model-manipulation"
+import { ModelMatcher } from "./model-matching"
 
 function compare(expected: SModelElementSchema, actual: SModelElement) {
     for (const p in expected) {
@@ -143,14 +144,16 @@ describe('UpdateModelCommand', () => {
     it('redo() returns the new model', () => {
         context.root = model1 /* the old model */
         const newModel = command1.redo(context)
-        compare(model2, newModel)
+        compare(model2, newModel as SModelRoot)
     })
 
     class TestUpdateModelCommand extends UpdateModelCommand {
         testAnimation(root: SModelRoot, context: CommandExecutionContext) {
             this.oldRoot = root
             this.newRoot = context.modelFactory.createRoot(this.action.newRoot!)
-            return this.computeAnimation(this.oldRoot, this.newRoot, context)
+            const matcher = new ModelMatcher()
+            const matchResult = matcher.match(root, this.newRoot)
+            return this.computeAnimation(this.newRoot, matchResult, context)
         }
     }
 

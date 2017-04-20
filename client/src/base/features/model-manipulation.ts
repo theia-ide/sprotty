@@ -7,8 +7,8 @@ import {
 } from "../model/smodel"
 import { Command, CommandExecutionContext, CommandResult } from '../intent/commands';
 import { CompoundAnimation, Animation } from "../animations/animation"
-import { ModelMatcher, MatchResult } from "./model-matching"
-import { isFadeable } from "../../features/fade/model"
+import { ModelMatcher, MatchResult, Match } from "./model-matching"
+import { isFadeable, Fadeable } from "../../features/fade/model"
 import { ResolvedElementFade, FadeAnimation } from "../../features/fade/fade"
 import { isLocateable } from "../../features/move/model"
 import { ResolvedElementMove, MoveAnimation } from "../../features/move/move"
@@ -68,11 +68,16 @@ export class UpdateModelAction implements Action {
     readonly kind = UpdateModelCommand.KIND
     modelType: string
     modelId: string
+    newRoot?: SModelRootSchema
+    matches?: Match[]
+    animate?: boolean = true
 
-    // TODO support a match result as alternative (or additional?) parameter
-    constructor(public newRoot: SModelRootSchema, public animate?: boolean) {
-        this.modelType = newRoot.type
-        this.modelId = newRoot.id
+    constructor(newRoot?: SModelRootSchema) {
+        if (newRoot !== undefined) {
+            this.modelType = newRoot.type
+            this.modelId = newRoot.id
+            this.newRoot = newRoot
+        }
     }
 }
 
@@ -90,32 +95,86 @@ export class UpdateModelCommand extends Command {
 
     constructor(public action: UpdateModelAction) {
         super()
+        if (action.animate === undefined)
+            action.animate = true
     }
 
     execute(context: CommandExecutionContext): CommandResult {
-        this.oldRoot = context.root
+        let newRoot: SModelRoot
         if (this.action.newRoot !== undefined) {
-            this.newRoot = context.modelFactory.createRoot(this.action.newRoot)
-            if ((this.action.animate === undefined || this.action.animate) && context.root.id == this.action.newRoot.id) {
-                const animationOrRoot = this.computeAnimation(this.oldRoot, this.newRoot, context)
-                if (animationOrRoot instanceof Animation)
-                    return animationOrRoot.start()
-                else
-                    return animationOrRoot
-            } else {
-                return this.newRoot
-            }
+            newRoot = context.modelFactory.createRoot(this.action.newRoot)
         } else {
-            // TODO invalidate the model
-            this.newRoot = context.root
-            return this.newRoot
+            newRoot = context.modelFactory.createRoot(context.root)
+            if (this.action.matches !== undefined)
+                this.applyMatches(newRoot, this.action.matches, context)
+        }
+        this.oldRoot = context.root
+        this.newRoot = newRoot
+        return this.performUpdate(this.oldRoot, this.newRoot, context)
+    }
+
+    protected performUpdate(oldRoot: SModelRoot, newRoot: SModelRoot, context: CommandExecutionContext): CommandResult {
+        if (this.action.animate && oldRoot.id == newRoot.id) {
+            let matchResult: MatchResult
+            if (this.action.matches === undefined) {
+                const matcher = new ModelMatcher()
+                matchResult = matcher.match(oldRoot, newRoot)
+            } else {
+                matchResult = this.convertToMatchResult(this.action.matches, oldRoot, newRoot)
+            }
+            const animationOrRoot = this.computeAnimation(newRoot, matchResult, context)
+            if (animationOrRoot instanceof Animation)
+                return animationOrRoot.start()
+            else
+                return animationOrRoot
+        } else {
+            return newRoot
         }
     }
 
-    protected computeAnimation(leftRoot: SModelRoot, rightRoot: SModelRoot, context: CommandExecutionContext): SModelRoot | Animation {
-        const matcher = new ModelMatcher()
-        const matchResult = matcher.match(leftRoot, rightRoot)
+    protected applyMatches(root: SModelRoot, matches: Match[], context: CommandExecutionContext): void {
+        const index = root.index
+        for (const match of matches) {
+            if (match.left !== undefined) {
+                const element = index.getById(match.left.id)
+                if (element instanceof SChildElement)
+                    element.parent.remove(element)
+            }
+            if (match.right !== undefined) {
+                const element = context.modelFactory.createElement(match.right)
+                let parent: SModelElement | undefined
+                if (match.rightParentId !== undefined)
+                    parent = index.getById(match.rightParentId)
+                if (parent instanceof SParentElement)
+                    parent.add(element)
+                else
+                    root.add(element)
+            }
+        }
+    }
 
+    protected convertToMatchResult(matches: Match[], leftRoot: SModelRoot, rightRoot: SModelRoot): MatchResult {
+        const result: MatchResult = {}
+        for (const match of matches) {
+            const converted: Match = {}
+            let id: string | undefined = undefined
+            if (match.left !== undefined) {
+                id = match.left.id
+                converted.left = leftRoot.index.getById(id)
+                converted.leftParentId = match.leftParentId
+            }
+            if (match.right !== undefined) {
+                id = match.right.id
+                converted.right = rightRoot.index.getById(id)
+                converted.rightParentId = match.rightParentId
+            }
+            if (id !== undefined)
+                result[id] = converted
+        }
+        return result
+    }
+
+    protected computeAnimation(newRoot: SModelRoot, matchResult: MatchResult, context: CommandExecutionContext): SModelRoot | Animation {
         const animationData: UpdateAnimationData = {
             fades: [] as ResolvedElementFade[]
         }
@@ -138,11 +197,12 @@ export class UpdateModelCommand extends Command {
                 // An element has been removed
                 const left = match.left
                 if (isFadeable(left) && match.leftParentId !== undefined) {
-                    const parent = rightRoot.index.getById(match.leftParentId)
+                    const parent = newRoot.index.getById(match.leftParentId)
                     if (parent instanceof SParentElement) {
-                        parent.add(left)
+                        const leftCopy = context.modelFactory.createElement(left) as SChildElement & Fadeable
+                        parent.add(leftCopy)
                         animationData.fades.push({
-                            element: left,
+                            element: leftCopy,
                             type: 'out'
                         })
                     }
@@ -150,13 +210,13 @@ export class UpdateModelCommand extends Command {
             }
         }
 
-        const animations = this.createAnimations(animationData, rightRoot, context)
+        const animations = this.createAnimations(animationData, newRoot, context)
         if (animations.length >= 2) {
-            return new CompoundAnimation(rightRoot, context, animations)
+            return new CompoundAnimation(newRoot, context, animations)
         } else if (animations.length == 1) {
             return animations[0]
         } else {
-            return rightRoot
+            return newRoot
         }
     }
 
@@ -211,11 +271,11 @@ export class UpdateModelCommand extends Command {
         return animations
     }
 
-    undo(context: CommandExecutionContext): SModelRoot {
-        return this.oldRoot
+    undo(context: CommandExecutionContext): CommandResult {
+        return this.performUpdate(this.newRoot, this.oldRoot, context)
     }
 
-    redo(context: CommandExecutionContext): SModelRoot {
-        return this.newRoot
+    redo(context: CommandExecutionContext): CommandResult {
+        return this.performUpdate(this.oldRoot, this.newRoot, context)
     }
 }

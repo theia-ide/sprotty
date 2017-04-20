@@ -1,4 +1,4 @@
-import { TYPES, IActionDispatcher, LocalModelSource } from "../../../src/base"
+import { TYPES, IActionDispatcher, LocalModelSource, SModelElementSchema } from "../../../src/base"
 import { SEdgeSchema, SNode, SNodeSchema, SGraphSchema, SGraphFactory } from "../../../src/graph"
 import { ElementMove, MoveAction } from "../../../src/features"
 import createContainer from "./di.config"
@@ -13,7 +13,7 @@ export default function runStandalone() {
     const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0, node1, edge0] }
 
     let count = 2
-    function addNode() {
+    function addNode(): SModelElementSchema[] {
         const newNode: SNodeSchema = {
             id: 'node' + count,
             type: 'node:circle',
@@ -34,6 +34,7 @@ export default function runStandalone() {
         }
         graph.children.push(newNode)
         graph.children.push(newEdge)
+        return [newNode, newEdge]
     }
 
     for (let i = 0; i < 200; ++i) {
@@ -45,15 +46,11 @@ export default function runStandalone() {
     modelSource.setModel(graph)
 
     // Button features
-    /*
-    This does not work at the moment. We need a more flexible UpdateModelCommand that
-    can do partial updates.
     document.getElementById('addNode')!.addEventListener('click', () => {
-        addNode()
-        modelSource.setModel(graph)
+        const newElements = addNode()
+        modelSource.addElements(newElements)
         document.getElementById('graph')!.focus()
     })
-    */
 
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
     const factory = container.get<SGraphFactory>(TYPES.IModelFactory)

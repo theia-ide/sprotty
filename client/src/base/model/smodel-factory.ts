@@ -78,20 +78,8 @@ export class SModelFactory implements IModelFactory {
 
     protected initializeRoot(root: SModelRoot, schema: SModelRootSchema): SModelRoot {
         this.initializeParent(root, schema)
-        initializeIndex(root, root.index)
+        root.index.add(root)
         return root
-    }
-}
-
-export function initializeIndex<T extends SModelElementSchema>(element: T, index: SModelIndex<T>): void {
-    if (index.contains(element)) {
-        throw new Error("Duplicate ID in model: " + element.id)
-    }
-    index.add(element)
-    if (element.children !== undefined && element.children.constructor === Array) {
-        for (const child of element.children) {
-            initializeIndex(child, index)
-        }
     }
 }
 
