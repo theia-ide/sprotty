@@ -151,7 +151,9 @@ export class MoveMouseListener extends MouseListener {
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): Action[] {
-        if (this.lastDragPosition) {
+        if(event.buttons == 0) 
+            this.mouseUp(target, event)
+        else if (this.lastDragPosition) {
             const viewport = getParent<Viewport>(target, isViewport)
             this.hasDragged = true
             const zoom = viewport ? viewport.zoom : 1
