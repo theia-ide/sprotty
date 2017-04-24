@@ -32,13 +32,14 @@ export default function runStandalone() {
             sourceId: 'node0',
             targetId: 'node' + count++
         }
-        graph.children.push(newNode)
-        graph.children.push(newEdge)
         return [newNode, newEdge]
     }
 
     for (let i = 0; i < 200; ++i) {
-        addNode()
+        const newElements = addNode()
+        for (const e of newElements) {
+            graph.children.push(e)
+        }
     }
 
     // Run

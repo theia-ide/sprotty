@@ -48,7 +48,7 @@ export class SModelFactory implements IModelFactory {
     }
 
     protected isReserved(element: SModelElement, propertyName: string) {
-        if (['children', 'parent', '_index'].indexOf(propertyName) >= 0)
+        if (['children', 'parent', 'index'].indexOf(propertyName) >= 0)
             return true
         let obj = element
         do {
@@ -83,7 +83,7 @@ export class SModelFactory implements IModelFactory {
     }
 }
 
-export const EMPTY_ROOT: SModelRoot = new SModelFactory().createRoot({
-    id: 'EMPTY',
-    type: 'NONE'
-})
+export const EMPTY_ROOT: Readonly<SModelRoot> = Object.freeze(new SModelFactory().createRoot({
+    type: 'NONE',
+    id: 'EMPTY'
+}))

@@ -22,8 +22,13 @@ let defaultContainerModule = new ContainerModule(bind => {
     bind(TYPES.ILogger).to(NullLogger).inSingletonScope()
     bind(TYPES.LogLevel).toConstantValue(LogLevel.warn)
 
-    // Animation Frame Sync ------------------------------------------
-    bind(TYPES.AnimationFrameSyncer).to(AnimationFrameSyncer).inSingletonScope()
+    // Registries ---------------------------------------------
+    bind(TYPES.ActionHandlerRegistry).to(ActionHandlerRegistry).inSingletonScope()
+    bind(TYPES.ViewRegistry).to(ViewRegistry).inSingletonScope()
+
+    // Model Creation ---------------------------------------------
+    bind(TYPES.IModelFactory).to(SModelFactory).inSingletonScope()
+    bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
 
     // Action Dispatcher ---------------------------------------------
     bind(TYPES.IActionDispatcher).to(ActionDispatcher).inSingletonScope()
@@ -71,15 +76,8 @@ let defaultContainerModule = new ContainerModule(bind => {
     bind(TYPES.IVNodeDecorator).to(KeyTool).inSingletonScope()
     bind(TYPES.IVNodeDecorator).to(FocusFixDecorator).inSingletonScope()
 
-    // Registries ---------------------------------------------
-    bind(TYPES.ActionHandlerRegistry).to(ActionHandlerRegistry).inSingletonScope()
-    bind(TYPES.ViewRegistry).to(ViewRegistry).inSingletonScope()
-
-    // Model Factory ---------------------------------------------
-    bind(TYPES.IModelFactory).to(SModelFactory).inSingletonScope()
-
-    // Model Source ---------------------------------------------
-    bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
+    // Animation Frame Sync ------------------------------------------
+    bind(TYPES.AnimationFrameSyncer).to(AnimationFrameSyncer).inSingletonScope()
 
     // Canvas Initialization ---------------------------------------------
     bind(TYPES.ICommand).toConstructor(InitializeCanvasBoundsCommand)

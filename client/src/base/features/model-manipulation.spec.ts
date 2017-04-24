@@ -3,7 +3,7 @@ import "mocha"
 import { expect } from "chai"
 import { SModelElement, SModelElementSchema, SModelRoot, SModelRootSchema } from "../model/smodel"
 import { EMPTY_ROOT } from "../model/smodel-factory"
-import { SNodeSchema } from "../../graph/model/sgraph"
+import { SNodeSchema, SGraphSchema } from "../../graph/model/sgraph"
 import { SGraphFactory } from "../../graph/model/sgraph-factory"
 import { CommandExecutionContext } from "../intent/commands"
 import { ConsoleLogger } from "../../utils/logging"
@@ -23,7 +23,7 @@ function compare(expected: SModelElementSchema, actual: SModelElement) {
                 compare(expectedProp[i], actualProp[i])
             }
         } else {
-            expect(expectedProp).to.deep.equal(actualProp)
+            expect(actualProp).to.deep.equal(expectedProp)
         }
     }
 }
@@ -316,5 +316,77 @@ describe('UpdateModelCommand', () => {
         expect(child1Move.elementId).to.equal('child1')
         expect(child1Move.fromPosition).to.deep.equal({ x: 100, y: 100 })
         expect(child1Move.toPosition).to.deep.equal({ x: 150, y: 200 })
+    })
+
+    it('applies a given model diff', () => {
+        context.root = graphFactory.createRoot({
+            type: 'graph',
+            id: 'model',
+            children: [
+                {
+                    type: 'node',
+                    id: 'child1',
+                    position: { x: 100, y: 100 }
+                } as SNodeSchema,
+                {
+                    type: 'node',
+                    id: 'child2'
+                }
+            ]
+        })
+        const command2 = new TestUpdateModelCommand({
+            kind: UpdateModelCommand.KIND,
+            modelType: 'graph',
+            modelId: 'model',
+            animate: false,
+            matches: [
+                {
+                    right: {
+                        type: 'node',
+                        id: 'child3'
+                    },
+                    rightParentId: 'model'
+                },
+                {
+                    left: {
+                        type: 'node',
+                        id: 'child2'
+                    },
+                    leftParentId: 'model'
+                },
+                {
+                    left: {
+                        type: 'node',
+                        id: 'child1',
+                        position: { x: 100, y: 100 }
+                    } as SNodeSchema,
+                    leftParentId: 'model',
+                    right: {
+                        type: 'node',
+                        id: 'child1',
+                        position: { x: 150, y: 200 }
+                    } as SNodeSchema,
+                    rightParentId: 'model',
+                }
+            ]
+        })
+        const newModel = command2.execute(context) as SModelRoot
+        expect(newModel.children).to.have.lengthOf(2)
+        const expected: SGraphSchema = {
+            type: 'graph',
+            id: 'model',
+            children: [
+                {
+                    type: 'node',
+                    id: 'child3'
+                },
+                {
+                    type: 'node',
+                    id: 'child1',
+                    position: { x: 150, y: 200 }
+                }
+            ]
+        }
+        compare(expected, newModel)
     })
 })

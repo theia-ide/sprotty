@@ -1,9 +1,9 @@
-import { EMPTY_BOUNDS } from '../../utils/geometry';
-import { InitializeCanvasBoundsAction } from '../features/initialize-canvas';
 import "reflect-metadata"
 import "mocha"
-import { Container, ContainerModule } from "inversify"
 import { expect } from "chai"
+import { Container } from "inversify"
+import { EMPTY_BOUNDS } from '../../utils/geometry';
+import { InitializeCanvasBoundsAction } from '../features/initialize-canvas';
 import { TYPES } from "../types"
 import { EMPTY_ROOT } from "../model/smodel-factory"
 import { RedoAction, UndoAction } from "../../features/undo-redo/undo-redo"
@@ -14,7 +14,7 @@ import { IActionDispatcher } from "./action-dispatcher"
 import { ActionHandlerRegistry } from "./actions"
 import defaultModule from "../di.config"
 
-describe('action dispatcher', () => {
+describe('ActionDispatcher', () => {
 
     let execCount = 0
     let undoCount = 0
@@ -29,12 +29,9 @@ describe('action dispatcher', () => {
         redo() { ++redoCount; return promise }
     }
 
-    const module = new ContainerModule((bind, unbind, isBound, rebind) => {
-        rebind(TYPES.ICommandStack).toConstantValue(mockCommandStack)
-    })
-
     const container = new Container()
-    container.load(defaultModule, module)
+    container.load(defaultModule)
+    container.rebind(TYPES.ICommandStack).toConstantValue(mockCommandStack)
 
     const actionDispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
 

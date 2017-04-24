@@ -1,3 +1,7 @@
+import "reflect-metadata"
+import "mocha"
+import { expect } from "chai"
+import { Container } from "inversify"
 import {
     Command,
     HiddenCommand,
@@ -8,12 +12,10 @@ import {
     MergeableCommand
 } from './commands';
 import { SModelRoot } from "../model/smodel"
-import { Container, ContainerModule } from "inversify"
 import { TYPES } from "../types"
 import { defaultModule } from "../index"
 import { IViewer } from "../view/viewer"
 import { ICommandStack } from "./command-stack"
-import { expect } from "chai"
 
 let operations: string[] = []
 
@@ -115,12 +117,9 @@ describe('CommandStack', () => {
         }
     }
 
-    const module = new ContainerModule((bind, unbind, isBound, rebind) => {
-        rebind(TYPES.IViewer).toConstantValue(mockViewer)
-    })
-
     const container = new Container()
-    container.load(defaultModule, module)
+    container.load(defaultModule)
+    container.rebind(TYPES.IViewer).toConstantValue(mockViewer)
 
     const commandStack = container.get<ICommandStack>(TYPES.ICommandStack)
 

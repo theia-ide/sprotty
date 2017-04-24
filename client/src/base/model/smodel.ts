@@ -112,29 +112,31 @@ export abstract class SShapeElement extends SChildElement implements BoundsAware
 }
 
 /**
- * Base class for the root elements of the diagram model tree.
+ * Base class for the root element of the diagram model tree.
  */
 export class SModelRoot extends SParentElement {
-    private _index: SModelIndex<SModelElement>
+    readonly index: SModelIndex<SModelElement>
     
     canvasBounds: Bounds = EMPTY_BOUNDS
 
-    get index(): SModelIndex<SModelElement> {
-        if (!this._index) {
-            this._index = new SModelIndex<SModelElement>()
-        }
-        return this._index
+    constructor() {
+        super()
+        // Override the index property from SModelElement, which has a getter, with a data property
+        Object.defineProperty(this, 'index', {
+            value: new SModelIndex<SModelElement>(),
+            writable: false
+        })
     }
 }
 
 /**
  * Used to speed up model element lookup by id.
  */
-export class SModelIndex<T extends SModelElementSchema> {
+export class SModelIndex<E extends SModelElementSchema> {
 
-    private id2element: Map<string, T> = new Map
+    private id2element: Map<string, E> = new Map
 
-    add(element: T): void {
+    add(element: E): void {
         if (this.contains(element)) {
             throw new Error("Duplicate ID in model: " + element.id)
         }
@@ -146,7 +148,7 @@ export class SModelIndex<T extends SModelElementSchema> {
         }
     }
 
-    remove(element: T): void {
+    remove(element: E): void {
         this.id2element.delete(element.id)
         if (element.children !== undefined && element.children.constructor === Array) {
             for (const child of element.children) {
@@ -155,7 +157,7 @@ export class SModelIndex<T extends SModelElementSchema> {
         }
     }
 
-    contains(element: T): boolean {
+    contains(element: E): boolean {
         return this.id2element.get(element.id) !== undefined
     }
 
@@ -163,12 +165,12 @@ export class SModelIndex<T extends SModelElementSchema> {
         this.id2element.delete(elementId)
     }
 
-    getById(id: string): T | undefined {
+    getById(id: string): E | undefined {
         return this.id2element.get(id)
     }
 
-    all(): T[] {
-        const all: T[] = []
+    all(): E[] {
+        const all: E[] = []
         this.id2element.forEach(
             element => all.push(element)
         )

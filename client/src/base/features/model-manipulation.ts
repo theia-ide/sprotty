@@ -1,6 +1,6 @@
-import { isEmpty } from '../../utils/geometry';
 import { injectable } from "inversify"
 import { Action } from "../intent/actions"
+import { isEmpty } from '../../utils/geometry'
 import {
     SModelRoot, SModelRootSchema, SModelElement, SModelElementSchema, SChildElement, SModelIndex,
     SParentElement

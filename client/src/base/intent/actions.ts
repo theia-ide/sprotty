@@ -26,8 +26,7 @@ export interface IActionHandler {
 @injectable()
 export class ActionHandlerRegistry extends MultiInstanceRegistry<IActionHandler> {
 
-    constructor(@multiInject(TYPES.ICommand) @optional() commandCtrs: (ICommandFactory)[],
-                @inject(TYPES.ILogger) protected logger: ILogger) {
+    constructor(@multiInject(TYPES.ICommand) @optional() commandCtrs: (ICommandFactory)[]) {
         super()
         commandCtrs.forEach(
             commandCtr => this.registerCommand(commandCtr)

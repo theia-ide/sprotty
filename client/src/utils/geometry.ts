@@ -9,10 +9,10 @@ export interface Point {
 /**
  * (x,y) coordinates of the origin
  */
-export const ORIGIN_POINT: Point = {
+export const ORIGIN_POINT: Point = Object.freeze({
     x: 0,
     y: 0
-}
+})
 
 /**  
  * The Dimension of an object is composed of its width and height
@@ -25,10 +25,10 @@ export interface Dimension {
 /**
  * A dimension with both width and height set to a negative value, which is considered as undefined.
  */
-export const EMPTY_DIMENSION: Dimension = {
+export const EMPTY_DIMENSION: Dimension = Object.freeze({
     width: -1,
     height: -1
-}
+})
 
 /** 
  * The bounds are the position (x, y) and dimension (width, height)
@@ -37,12 +37,12 @@ export const EMPTY_DIMENSION: Dimension = {
 export interface Bounds extends Point, Dimension {
 }
 
-export const EMPTY_BOUNDS: Bounds = {
+export const EMPTY_BOUNDS: Bounds = Object.freeze({
     x: 0,
     y: 0,
     width: -1,
     height: -1
-}
+})
 
 /**
  * Combines the bounds of two objects into one, so that the new 

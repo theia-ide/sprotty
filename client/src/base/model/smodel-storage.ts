@@ -1,7 +1,7 @@
+import { inject, injectable } from "inversify"
 import { TYPES } from '../types'
 import { SModelRootSchema } from '../model/smodel'
 import { SModelFactory, EMPTY_ROOT } from '../model/smodel-factory'
-import { inject, injectable } from "inversify"
 import { ViewerOptions } from "../view/options"
 
 @injectable()
