@@ -1,6 +1,5 @@
 export * from "./model/smodel"
 export * from "./model/smodel-factory"
-export * from "./model/model-source"
 export * from "./model/smodel-storage"
 export * from "./types"
 export * from "./intent/actions"

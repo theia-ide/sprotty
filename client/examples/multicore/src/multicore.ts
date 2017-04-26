@@ -1,8 +1,8 @@
-import { TYPES, ActionHandlerRegistry, IActionDispatcher, SetModelAction, LocalModelSource } from "../../../src/base"
 import { Direction } from "../../../src/utils"
-import { SetBoundsCommand, FitToScreenAction } from '../../../src/features'
 import { Channel, ChannelSchema, Core, CoreSchema, Crossbar, CrossbarSchema, ProcessorSchema } from "./chipmodel"
 import createContainer from "./di.config"
+import { LocalModelSource } from "../../../src/local"
+import { TYPES } from "../../../src/base/types"
 
 export default function runMulticore() {
     const container = createContainer(false)

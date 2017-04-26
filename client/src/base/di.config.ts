@@ -15,7 +15,6 @@ import { SModelFactory } from "./model/smodel-factory"
 import { TYPES } from "./types"
 import { ViewerCache } from "./view/viewer-cache"
 import { AnimationFrameSyncer } from "./animations/animation-frame-syncer"
-import { LocalModelSource } from "./model/model-source";
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
@@ -28,7 +27,6 @@ let defaultContainerModule = new ContainerModule(bind => {
 
     // Model Creation ---------------------------------------------
     bind(TYPES.IModelFactory).to(SModelFactory).inSingletonScope()
-    bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
 
     // Action Dispatcher ---------------------------------------------
     bind(TYPES.IActionDispatcher).to(ActionDispatcher).inSingletonScope()

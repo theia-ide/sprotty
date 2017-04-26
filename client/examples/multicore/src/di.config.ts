@@ -5,6 +5,7 @@ import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { boundsModule, selectModule, viewportModule } from "../../../src/features"
 import { ProcessorView, CoreView, CrossbarView, ChannelView } from "./views"
+import { LocalModelSource } from "../../../src/local/local-model-source"
 
 const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
@@ -20,7 +21,9 @@ export default (useWebsocket: boolean) => {
     const container = new Container()
     container.load(defaultModule, boundsModule, selectModule, viewportModule, multicoreModule)
     if (useWebsocket)
-        container.rebind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
+        container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
+    else
+        container.bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
     
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)

@@ -1,16 +1,17 @@
 import "reflect-metadata"
 import "mocha"
 import { expect } from "chai"
-import { injectable, Container } from "inversify"
-import { TYPES } from "../types"
-import { Action } from "../intent/actions"
-import { IActionDispatcher } from "../intent/action-dispatcher"
-import { ViewerOptions } from "../view/options"
-import { SetModelAction, UpdateModelAction } from "../features/model-manipulation"
-import defaultModule from "../di.config"
-import { LocalModelSource } from "./model-source"
-import { SModelRootSchema } from "./smodel"
-import { ComputedBoundsAction, RequestBoundsAction } from "../../features/bounds/bounds-manipulation"
+import { Container, injectable } from "inversify"
+import { LocalModelSource } from "./local-model-source"
+import { ComputedBoundsAction, RequestBoundsAction } from "../features/bounds/bounds-manipulation"
+import { IActionDispatcher } from "../base/intent/action-dispatcher"
+import { Action } from "../base/intent/actions"
+import { TYPES } from "../base/types"
+import { ViewerOptions } from "../base/view/options"
+import { SModelRootSchema } from "../base/model/smodel"
+import { SetModelAction } from "../base/features/model-manipulation"
+import { UpdateModelAction } from "../features/update/update-model"
+import defaultContainerModule from "../base/di.config"
 
 describe('LocalModelSource', () => {
 
@@ -31,7 +32,8 @@ describe('LocalModelSource', () => {
 
     function setup(boundsComputation: 'fixed' | 'dynamic') {
         const container = new Container()
-        container.load(defaultModule)
+        container.load(defaultContainerModule)
+        container.bind(TYPES.ModelSource).to(LocalModelSource)
         container.rebind(TYPES.IActionDispatcher).to(MockActionDispatcher).inSingletonScope()
         container.rebind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
             baseDiv: 'sprotty',

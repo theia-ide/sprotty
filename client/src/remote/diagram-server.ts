@@ -1,14 +1,15 @@
-import { SetModelAction, SetModelCommand, UpdateModelCommand } from '../base/features/model-manipulation';
+import { SetModelAction, SetModelCommand } from "../base/features/model-manipulation"
 import { inject, injectable } from "inversify"
-import { Action, IActionHandler, ActionHandlerRegistry } from "../base/intent/actions"
+import { Action, ActionHandlerRegistry } from "../base/intent/actions"
 import { IActionDispatcher } from "../base/intent/action-dispatcher"
-import { ICommand } from "../base/intent/commands"
 import { TYPES } from "../base/types"
 import { ViewerOptions } from "../base/view/options"
-import { ModelSource } from "../base/model/model-source"
 import { ILogger } from "../utils/logging"
 import { SModelStorage } from "../base/model/smodel-storage"
 import { SModelRootSchema } from "../base/model/smodel"
+import { ModelSource } from "../base/model/model-source"
+import { UpdateModelCommand } from "../features/update/update-model"
+import { ComputedBoundsAction } from "../features/bounds/bounds-manipulation"
 
 /**
  * Wrapper for messages when transferring them vie a DiagramServer.
@@ -43,6 +44,18 @@ export abstract class DiagramServer extends ModelSource {
 
     protected get clientId(): string {
         return this.viewerOptions.baseDiv
+    }
+
+    initialize(registry: ActionHandlerRegistry): void {
+        super.initialize(registry)
+
+        // Register model manipulation commands
+        registry.registerCommand(UpdateModelCommand)
+
+        // Register this model source
+        if (this.viewerOptions.boundsComputation == 'dynamic') {
+            registry.register(ComputedBoundsAction.KIND, this)
+        }
     }
 
     handle(action: Action): void {

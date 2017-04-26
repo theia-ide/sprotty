@@ -1,4 +1,4 @@
-import { SModelRootSchema, SModelElementSchema } from "../model/smodel"
+import { SModelRootSchema, SModelElementSchema } from "../../base/model/smodel"
 
 export interface Match {
     left?: SModelElementSchema

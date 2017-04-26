@@ -1,6 +1,6 @@
 import { TYPES, RequestModelAction } from "../../../src/base"
-import { WebSocketDiagramServer } from "../../../src/remote"
 import createContainer from "./di.config"
+import { WebSocketDiagramServer } from "../../../src/remote"
 
 const WebSocket = require("reconnecting-websocket")
 

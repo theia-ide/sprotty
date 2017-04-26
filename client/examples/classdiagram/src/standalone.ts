@@ -1,6 +1,7 @@
-import { TYPES, LocalModelSource } from "../../../src/base"
+import { TYPES } from "../../../src/base"
 import { SGraphSchema } from "../../../src/graph"
 import createContainer from "./di.config"
+import { LocalModelSource } from "../../../src/local"
 
 export default function runClassDiagram() {
     const container = createContainer(false)

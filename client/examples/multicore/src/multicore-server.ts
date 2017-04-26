@@ -1,5 +1,4 @@
-import { TYPES, RequestModelAction, UpdateModelAction } from "../../../src/base"
-import { SelectCommand, SetBoundsCommand } from "../../../src/features"
+import { RequestModelAction, TYPES } from "../../../src/base"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import createContainer from "./di.config"
 
