@@ -9,9 +9,10 @@ export interface ProcessorSchema extends SModelRootSchema {
     columns: number
 }
 
-export class Processor extends ViewportRootElement implements ProcessorSchema {
+export class Processor extends ViewportRootElement implements ProcessorSchema, BoundsAware {
     rows: number = 0
     columns: number = 0
+    revalidateBounds: boolean = true
 
     get bounds(): Bounds {
         return {

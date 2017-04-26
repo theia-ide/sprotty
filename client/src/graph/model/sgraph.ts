@@ -1,4 +1,4 @@
-import { SChildElement, SModelElementSchema, SModelRootSchema, SShapeElement } from "../../base/model/smodel"
+import { SChildElement, SModelElementSchema, SModelRootSchema } from "../../base/model/smodel"
 import { Bounds, EMPTY_BOUNDS, Point, ORIGIN_POINT, Dimension, EMPTY_DIMENSION } from "../../utils/geometry"
 import { ViewportRootElement } from "../../features/viewport/viewport-root"
 import { Selectable, selectFeature } from "../../features/select/model"
@@ -8,14 +8,47 @@ import { Fadeable, fadeFeature } from "../../features/fade/model"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
-    position?: Point
-    size?: Dimension
+    bounds?: Bounds
     revalidateBounds?: boolean
     scroll?: Point
     zoom?: number
 }
 
 export class SGraph extends ViewportRootElement {
+}
+
+export abstract class SShapeElement extends SChildElement implements BoundsAware, Locateable {
+    position: Point = ORIGIN_POINT
+    size: Dimension = EMPTY_DIMENSION
+    revalidateBounds: boolean = true
+
+    get bounds(): Bounds {
+        return {
+            x: this.position.x,
+            y: this.position.y,
+            width: this.size.width,
+            height: this.size.height
+        }
+    }
+
+    set bounds(newBounds: Bounds) {
+        this.position = {
+            x: newBounds.x,
+            y: newBounds.y
+        }
+        this.size = {
+            width: newBounds.width,
+            height: newBounds.height
+        }
+    }
+
+    localToParent(point: Point): Point {
+        return {...point, ...{
+                x: point.x + this.position.x,
+                y: point.y + this.position.y
+            }
+        }
+    }
 }
 
 export interface SNodeSchema extends SModelElementSchema {

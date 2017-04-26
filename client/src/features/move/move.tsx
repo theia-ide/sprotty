@@ -1,3 +1,4 @@
+import { SChildElement } from '../../base';
 import * as snabbdom from "snabbdom-jsx"
 import { VNode } from "snabbdom/vnode"
 import { Point } from "../../utils/geometry"
@@ -193,7 +194,7 @@ export class MoveMouseListener extends MouseListener {
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        if (isLocateable(element)) {
+        if (isLocateable(element) && element instanceof SChildElement && element.parent !== undefined) {
             const translate = 'translate(' + element.position.x + ', ' + element.position.y + ')'
             setAttr(vnode, 'transform', translate)
         }

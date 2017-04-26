@@ -44,6 +44,13 @@ export const EMPTY_BOUNDS: Bounds = Object.freeze({
     height: -1
 })
 
+export function isBounds(element: any): element is Bounds {
+    return 'x' in element
+        && 'y' in element 
+        && 'width' in element 
+        && 'height' in element
+}
+
 /**
  * Combines the bounds of two objects into one, so that the new 
  * bounds are the minimum bounds that covers both of the original 

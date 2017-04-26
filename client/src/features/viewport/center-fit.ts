@@ -1,10 +1,12 @@
+import { ViewportRootElement } from './viewport-root';
+import { SChildElement } from '../../base';
 import { Action } from "../../base/intent/actions"
 import { Command, CommandExecutionContext } from "../../base/intent/commands"
 import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Bounds, center, combine, EMPTY_BOUNDS, isEmpty } from "../../utils/geometry"
 import { KeyListener } from "../../base/view/key-tool"
 import { isCtrlOrCmd } from "../../utils/browser"
-import { isBoundsAware, isSizeable } from "../bounds/model"
+import { isBoundsAware, isSizeable, BoundsAware } from "../bounds/model"
 import { isSelectable } from "../select/model"
 import { ViewportAnimation } from "./viewport"
 import { isViewport, Viewport } from "./model"
@@ -29,7 +31,7 @@ abstract class BoundsAwareViewportCommand extends Command {
     newViewport: Viewport
 
     protected initialize(model: SModelRoot) {
-        if (isViewport(model) && isSizeable(model)) {
+        if (isViewport(model)) {
             this.oldViewport = {
                 scroll: model.scroll,
                 zoom: model.zoom
@@ -39,14 +41,14 @@ abstract class BoundsAwareViewportCommand extends Command {
                 id => {
                     const element = model.index.getById(id)
                     if (element && isBoundsAware(element))
-                        allBounds.push(element.bounds)
+                        allBounds.push(this.boundsInViewport(element, element.bounds, model))
                 }
             )
             if (allBounds.length == 0) {
                 model.index.all().forEach(
                     element => {
                         if (isSelectable(element) && element.selected && isBoundsAware(element))
-                            allBounds.push(element.bounds)
+                            allBounds.push(this.boundsInViewport(element, element.bounds, model))
                     }
                 )
             }
@@ -54,7 +56,7 @@ abstract class BoundsAwareViewportCommand extends Command {
                 model.index.all().forEach(
                     element => {
                         if (isBoundsAware(element))
-                            allBounds.push(element.bounds)
+                            allBounds.push(this.boundsInViewport(element, element.bounds, model))
                     }
                 )
             }
@@ -62,6 +64,13 @@ abstract class BoundsAwareViewportCommand extends Command {
             if(!isEmpty(bounds))
                 this.newViewport = this.getNewViewport(bounds, model)
         }
+    }
+
+    protected boundsInViewport(element: SModelElement, bounds: Bounds, viewport: SModelRoot & Viewport): Bounds {
+        if(element instanceof SChildElement && element.parent !== viewport)
+            return this.boundsInViewport(element.parent, element.parent.localToParent(bounds) as Bounds, viewport)
+        else 
+            return bounds
     }
 
     protected abstract getNewViewport(bounds: Bounds, model: SModelRoot): Viewport
