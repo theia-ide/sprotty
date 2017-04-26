@@ -74,9 +74,10 @@ export class VBoxLayouter implements ILayout {
         container.children.forEach(
             child => {
                 let boundsData = element2boundsData.get(child)
-                if(!boundsData || !boundsData.bounds) {
+                if(!boundsData) {
                     boundsData = {
-                        bounds: (child as any).bounds
+                        bounds: (child as any).bounds,
+                        boundsChanged: false
                     }
                     element2boundsData.set(child, boundsData)
                 }

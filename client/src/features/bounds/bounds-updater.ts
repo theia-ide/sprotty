@@ -13,7 +13,8 @@ import { LAYOUT_TYPES } from "./types"
 
 export class BoundsData {
     vnode?: VNode
-    bounds?: Bounds
+    bounds: Bounds
+    boundsChanged: boolean
 }
 
 /**
@@ -36,7 +37,8 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
         if (isSizeable(element) && element.revalidateBounds) {
             this.element2boundsData.set(element, {
                 vnode: vnode,
-                bounds: EMPTY_BOUNDS,
+                bounds: element.bounds,
+                boundsChanged: false
             })
         }
         return vnode
@@ -48,15 +50,14 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
         const resizes : ElementAndBounds[] = []
         this.element2boundsData.forEach(
             (boundsData, element) => {
-                if(boundsData.bounds)
+                if(boundsData.boundsChanged && boundsData.bounds !== undefined)
                     resizes.push({
                         elementId: element.id,
                         newBounds: boundsData.bounds
                     })
             })
         this.element2boundsData.clear()
-        if(resizes.length > 0)
-            this.actionDispatcher.dispatch(new ComputedBoundsAction(resizes))
+        this.actionDispatcher.dispatch(new ComputedBoundsAction(resizes))
     }
 
     protected getBoundsFromDOM() {
@@ -67,12 +68,12 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
                     if (vnode && vnode.elm) {
                         const newBounds = this.getBounds(vnode.elm, element)
                         if(!(almostEquals(newBounds.x, element.bounds.x)
-                            && almostEquals(newBounds.y, element.bounds.y)
-                            && almostEquals(newBounds.width, element.bounds.width)
-                            && almostEquals(newBounds.height, element.bounds.height)))
+                                && almostEquals(newBounds.y, element.bounds.y)
+                                && almostEquals(newBounds.width, element.bounds.width)
+                                && almostEquals(newBounds.height, element.bounds.height))) {
                             boundsData.bounds = newBounds  
-                        else 
-                            boundsData.bounds = undefined
+                            boundsData.boundsChanged = true
+                        }
                     }
                 }
             }
