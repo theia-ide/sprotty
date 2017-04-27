@@ -22,7 +22,6 @@ const nodeBoundsAware: SNode = modelFactory.createElement(nodeSchema0) as SNode
 model.add(nodeBoundsAware)
 
 nodeBoundsAware.bounds = boundsInitial
-model.boundsInPage = boundsInPageInitial
 
 const mySetBoundsAction = new SetBoundsAction(
     [
