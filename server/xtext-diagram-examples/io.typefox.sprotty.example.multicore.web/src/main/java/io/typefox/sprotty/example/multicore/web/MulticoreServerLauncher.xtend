@@ -83,7 +83,7 @@ class MulticoreServerLauncher {
 		Resource.Factory.Registry.INSTANCE.extensionToFactoryMap.put('elkg', new ElkGraphResourceFactory)
 		val injector = new MulticoreAllocationWebSetup().createInjectorAndDoEMFRegistration()
 		
-		val server = new Server(new InetSocketAddress('localhost', 8080))
+		val server = new Server(new InetSocketAddress(8080))
 		val webAppContext = new WebAppContext => [
 			resourceBase = 'src/main/webapp'
 			welcomeFiles = #['index.html']

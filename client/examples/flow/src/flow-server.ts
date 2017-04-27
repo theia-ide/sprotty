@@ -33,6 +33,6 @@ export function setupFlow(websocket: WebSocket) {
 }
 
 export default function runFlowServer() {
-    const websocket = new WebSocket('ws://localhost:8080/diagram')
+    const websocket = new WebSocket('ws://' + window.location.host + '/diagram')
     setupFlow(websocket)
 }

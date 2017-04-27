@@ -33,6 +33,6 @@ export function setupMulticore(websocket: WebSocket) {
 }
 
 export default function runMulticoreServer() {
-    const websocket = new WebSocket('ws://localhost:8080/diagram')
+    const websocket = new WebSocket('ws://' + window.location.host + '/diagram')
     setupMulticore(websocket)
 }
