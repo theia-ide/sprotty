@@ -183,7 +183,7 @@ export class UpdateModelCommand extends Command {
                 right.position = leftPos
             }
         }
-        if (isBoundsAware(left) && isBoundsAware(right)) {
+        if (isBoundsAware(left) && isBoundsAware(right) && right.revalidateBounds) {
             if (right.bounds.width < 0 || right.bounds.height < 0) {
                 right.bounds = {
                     x: right.bounds.x,

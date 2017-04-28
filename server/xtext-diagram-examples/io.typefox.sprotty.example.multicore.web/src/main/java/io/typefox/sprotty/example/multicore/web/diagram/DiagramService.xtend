@@ -5,6 +5,7 @@ import com.google.inject.Singleton
 import io.typefox.sprotty.api.SGraph
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Program
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Step
+import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskAllocation
 import io.typefox.sprotty.layout.LayoutUtil
 import java.util.Enumeration
 import java.util.Iterator
@@ -91,10 +92,20 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 	
 	def void setSelection(XtextWebDocumentAccess document, String resourceId, EObject selectedElement) {
 		val previousElement = selectionProvider.getSelection(resourceId)
-		selectionProvider.setSelection(resourceId, selectedElement)
-		if (previousElement.getContainerOfType(Step) != selectedElement.getContainerOfType(Step)) {
+		val selectedStep = selectedElement.getContainerOfType(Step)
+		val selectedTaskAllocation = selectedElement.getContainerOfType(TaskAllocation)
+		if (previousElement.getContainerOfType(Step) != selectedStep
+			|| previousElement.getContainerOfType(TaskAllocation) != selectedTaskAllocation) {
 			val validationResult = validationService.getResult(document)
 			if (!validationResult.issues.exists[severity == 'error']) {
+				if(selectedTaskAllocation !== null) {
+					selectionProvider.setSelection(resourceId, selectedStep)
+					document.readOnly[ it, cancelIndicator |
+						doCompute(CancelIndicator.NullImpl)
+						return null
+					]
+				}
+				selectionProvider.setSelection(resourceId, selectedElement)
 				document.readOnly[ it, cancelIndicator |
 					doCompute(CancelIndicator.NullImpl)
 					return null

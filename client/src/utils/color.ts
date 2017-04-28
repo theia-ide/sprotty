@@ -4,10 +4,16 @@ export interface RGBColor {
     blue: number
 }
 
+export function rgb(red: number, green: number, blue: number): RGBColor {
+    return {
+        red: red,
+        green: green,
+        blue: blue
+    }
+}
+
 export function toSVG(c: RGBColor): string {
-    return 'rgb(' + Math.round(c.red * 255)
-        + ',' + Math.round(c.green * 255)
-        + ',' + Math.round(c.blue * 255) + ')'
+    return 'rgb(' + c.red + ',' + c.green + ',' + c.blue + ')'
 }
 
 export class ColorMap {

@@ -1,6 +1,7 @@
+import { SShapeElement } from '../../../src/graph';
 import { SChildElement, SModelElementSchema, SModelRootSchema } from "../../../src/base"
 import { Bounds, Direction, EMPTY_BOUNDS } from "../../../src/utils"
-import { BoundsAware, boundsFeature, Selectable, selectFeature, viewportFeature } from "../../../src/features"
+import { BoundsAware, boundsFeature, Selectable, selectFeature, viewportFeature, Fadeable, fadeFeature } from "../../../src/features"
 import { ViewportRootElement } from "../../../src/features/viewport/viewport-root"
 import { CORE_DISTANCE, CORE_WIDTH } from "./views";
 
@@ -9,10 +10,10 @@ export interface ProcessorSchema extends SModelRootSchema {
     columns: number
 }
 
-export class Processor extends ViewportRootElement implements ProcessorSchema, BoundsAware {
+export class Processor extends ViewportRootElement implements BoundsAware {
     rows: number = 0
     columns: number = 0
-    revalidateBounds: boolean = true
+    revalidateBounds: boolean = false
 
     get bounds(): Bounds {
         return {
@@ -35,15 +36,28 @@ export interface CoreSchema extends SModelElementSchema {
     selected?: boolean
 }
 
-export class Core extends SChildElement implements CoreSchema, Selectable {
+export class Core extends SShapeElement implements Selectable, Fadeable {
     column: number = 0
     row: number = 0
     load: number = 0
     selected: boolean = false
+    opacity: number = 1
 
     hasFeature(feature: symbol): boolean {
-        return feature === selectFeature
+        return feature === selectFeature || feature === fadeFeature
     }
+}
+
+export interface AllocatedTaskSchema extends SModelElementSchema {
+    name: string
+    kernelNr: number
+    stackSize: string
+}
+
+export class AllocatedTask extends SChildElement {
+    name: string
+    kernelNr: number
+    stackSize: string
 }
 
 export interface CrossbarSchema extends SModelElementSchema {
@@ -52,16 +66,9 @@ export interface CrossbarSchema extends SModelElementSchema {
     load: number
 }
 
-export class Crossbar extends SChildElement implements CrossbarSchema, Selectable, BoundsAware {
+export class Crossbar extends SChildElement {
     direction: Direction
     load: number = 0
-    selected: boolean = false
-    revalidateBounds: boolean = true
-    bounds: Bounds = EMPTY_BOUNDS
-
-    hasFeature(feature: symbol): boolean {
-        return feature === selectFeature || feature === boundsFeature
-    }
 }
 
 export interface ChannelSchema extends SModelElementSchema {
@@ -72,7 +79,7 @@ export interface ChannelSchema extends SModelElementSchema {
     load: number
 }
 
-export class Channel extends SChildElement implements ChannelSchema, Selectable {
+export class Channel extends SChildElement implements Selectable {
     column: number = 0
     row: number = 0
     direction: Direction

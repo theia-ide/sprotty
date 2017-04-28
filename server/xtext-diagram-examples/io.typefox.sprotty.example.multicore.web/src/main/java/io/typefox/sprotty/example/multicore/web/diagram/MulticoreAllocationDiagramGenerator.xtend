@@ -2,9 +2,11 @@ package io.typefox.sprotty.example.multicore.web.diagram
 
 import com.google.inject.Singleton
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Barrier
+import io.typefox.sprotty.example.multicore.multicoreAllocation.Kernel
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Program
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Step
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Task
+import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskAllocation
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskFinished
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskRunning
 import org.eclipse.emf.ecore.EObject
@@ -16,68 +18,101 @@ import static extension org.eclipse.xtext.EcoreUtil2.*
 class MulticoreAllocationDiagramGenerator {
 	
 	def Processor generateProcessorView(Program program, EObject selection, CancelIndicator cancelIndicator) {
-		val processor = new Processor => [
-		    type = 'processor'
-		    id = 'processor'
-		    rows = 0
-		    columns = 0
-		    children = newArrayList
-		]
 		if (program !== null) {
-			val dim = Math.ceil(Math.sqrt(program.numberOfCores)) as int
-			val step = selection.getContainerOfType(Step)
-			for (var i = 0; i < dim; i++) {
-			    for (var j = 0; j < dim; j++) {
-			        processor.children += createCore(dim, i, j, step)
-			        processor.children += createChannel(i, j, CoreDirection.up)
-			        processor.children += createChannel(i, j, CoreDirection.down)
-			        processor.children += createChannel(i, j, CoreDirection.left)
-			        processor.children += createChannel(i, j, CoreDirection.right)
-			    }
-			    processor.children += createChannel(dim, i, CoreDirection.up)
-			    processor.children += createChannel(dim, i, CoreDirection.down)
-			    processor.children += createChannel(i, dim, CoreDirection.left)
-			    processor.children += createChannel(i, dim, CoreDirection.right)
+			val taskAllocation = selection.getContainerOfType(TaskAllocation)
+			if(taskAllocation !== null) {
+				return createKernelCentricView(program, taskAllocation)
+			} else {
+				return createFullView(program, selection)
 			}
-			
-			processor.children += createCrossbar(CoreDirection.up)
-			processor.children += createCrossbar(CoreDirection.down)
-			processor.children += createCrossbar(CoreDirection.left)
-			processor.children += createCrossbar(CoreDirection.right)
-			processor.rows = dim
-			processor.columns = dim
+		}
+		return createProcessor(0)
+	}
+	
+	def createKernelCentricView(Program program, TaskAllocation allocation) {
+		val kernel = allocation.task.kernel
+		val kernelIndex = program.declarations.filter(Kernel).toList.indexOf(kernel)
+		val step = allocation.eContainer as Step
+		val allocationsSameKernel = step.allocations.filter[ task.kernel == kernel ]
+		val core2allocation = allocationsSameKernel.toMap[core]
+		val dim = Math.ceil(Math.sqrt(core2allocation.size)) as int
+		val processor = createProcessor(dim)
+		var i = 0
+		for(core: core2allocation.keySet.sort) {
+			processor.children += createCore(core, i/dim, i%dim, kernelIndex, core2allocation.get(core))
+			i++
 		}
 		return processor
 	}
 	
-	private def createCore(int dim, int rowParam, int columnParam, Step step) {
-		val pos = rowParam + '_' + columnParam
+	private def Processor createFullView(Program program, EObject selection) {
+		val dim = Math.ceil(Math.sqrt(program.numberOfCores)) as int
+		val processor = createProcessor(dim) 
+		val kernels = program.declarations.filter(Kernel).toList
+		val coreIndex2task = newHashMap 
+		val step = selection.getContainerOfType(Step)
+		if(step !== null) {
+			step.allocations.forEach [
+				coreIndex2task.put(core, it)
+			]
+		}
+		for (var i = 0; i < dim; i++) {
+		    for (var j = 0; j < dim; j++) {
+		    	val coreIndex = dim * i + j + 1
+		    	val taskAllocation = coreIndex2task.get(coreIndex)
+				val kernelIndex = if(taskAllocation !== null) 
+						kernels.indexOf(taskAllocation.task.kernel)
+					else
+						-1
+		        processor.children += createCore(coreIndex, i, j, kernelIndex, taskAllocation)
+//			        processor.children += createChannel(i, j, CoreDirection.up)
+//			        processor.children += createChannel(i, j, CoreDirection.down)
+//			        processor.children += createChannel(i, j, CoreDirection.left)
+//			        processor.children += createChannel(i, j, CoreDirection.right)
+		    }
+//			    processor.children += createChannel(dim, i, CoreDirection.up)
+//			    processor.children += createChannel(dim, i, CoreDirection.down)
+//			    processor.children += createChannel(i, dim, CoreDirection.left)
+//			    processor.children += createChannel(i, dim, CoreDirection.right)
+		}
+		
+		processor.children += createCrossbar(CoreDirection.up)
+		processor.children += createCrossbar(CoreDirection.down)
+		processor.children += createCrossbar(CoreDirection.left)
+		processor.children += createCrossbar(CoreDirection.right)
+		processor.rows = dim
+		processor.columns = dim
+		return processor
+	}
+	
+	private def Processor createProcessor(int dimension) {
+		new Processor => [
+		    type = 'processor'
+		    id = 'processor'
+		    rows = dimension
+		    columns = dimension
+		    children = newArrayList
+		]
+	}
+	
+	private def createCore(int coreIndex, int rowParam, int columnParam,  
+		int kernelIndex, TaskAllocation taskAllocation) {
 		val core = new Core
-        core.id = 'core_' + pos
+        core.id = 'core_' + coreIndex
         core.type = 'core'
         core.row = rowParam
         core.column = columnParam
-        if (step !== null) {
-            core.children = newArrayList
-			val coreIndex = rowParam * dim + columnParam + 1
-        	for (running : step.allocations.filter(TaskRunning)) {
-        		if (running.core == coreIndex && running.task !== null && !running.task.eIsProxy)
-        			core.children += createAllocatedTask(running.task, pos)
-        	}
+        if (taskAllocation !== null) {
+			core.children = #[createAllocatedTask(taskAllocation, coreIndex, kernelIndex)]
         }
         return core
 	}
 	
-	private def createAllocatedTask(Task task, String corePos) {
+	private def createAllocatedTask(TaskAllocation task, int coreIndex, int kernelIndex) {
 		val alloc = new AllocatedTask
-		alloc.id = 'task_' + corePos + '_' + task.name
+		alloc.id = 'task_' + coreIndex + '_' + task.task.name
 		alloc.type = 'task'
-		alloc.name = task.name
-		val kernel = task.kernel
-		if (kernel !== null && !kernel.eIsProxy) {
-			alloc.kernel = kernel.name
-			alloc.stackSize = kernel.stackSize
-		}
+		alloc.kernelNr = kernelIndex
 		return alloc
 	}
 	

@@ -1,8 +1,8 @@
 import { RenderingContext, IView } from "../../../src/base/view/views"
 import { VNode } from "snabbdom/vnode"
-import { Channel, Core, Crossbar, Processor } from "./chipmodel"
+import { AllocatedTask, Channel, Core, Crossbar, Processor } from './chipmodel';
 import { Direction } from "../../../src/utils/geometry"
-import { ColorMap, toSVG } from "../../../src/utils/color"
+import { ColorMap, RGBColor, toSVG, rgb } from '../../../src/utils';
 import * as snabbdom from "snabbdom-jsx"
 import { ThunkView } from "../../../src/base/view/thunk-view"
 
@@ -22,38 +22,31 @@ export class ProcessorView implements IView {
 export const CORE_WIDTH = 50
 export const CORE_DISTANCE = 15
 
-export class CoreView extends ThunkView {
+export class CoreView implements IView {
 
-    selector(model: Core) {
-        return 'g'
-    }
-
-    watchedArgs(model: Core) {
-        return [model.load, model.selected]
-    }
-
-    doRender(model: Core, context: RenderingContext): VNode {
-        const position = {
-            x: model.column * (CORE_WIDTH + CORE_DISTANCE),
-            y: model.row * (CORE_WIDTH + CORE_DISTANCE),
-        }
-        const nodeName = this.padLeft(model.row) + this.padLeft(model.column)
-        const transform = 'translate(' + position.x + ',' + position.y + ')'
+    render(model: Core, context: RenderingContext): VNode {
+        const nodeName = parseInt(model.id.substr(5))
+        const fillColor = model.children.length > 0 
+            ? KernelColor.getSVG((model.children[0] as AllocatedTask).kernelNr)
+            : toSVG({red: 150, green:150, blue: 150})
         return <g class-core={true}
                   id={model.id}
-                  key={model.id}
-                  transform={transform}>
-                <rect width={CORE_WIDTH}
-                      height={CORE_WIDTH}
+                  key={model.id}>
+                <rect width={model.size.width}
+                      height={model.size.height}
                       rx={4}
                       ry={4}
-                      fill={LoadColor.getSVG(model.load)}/>
-                <text class-text={true} x={CORE_WIDTH / 2} y={CORE_WIDTH / 2}>{nodeName}</text>
+                      fill={fillColor}/>
+                <text class-text={true} x={CORE_WIDTH / 2} y={CORE_WIDTH / 2}>{this.padLeft(nodeName)}</text>
             </g>
     }
 
     private padLeft(n: number): string {
         if (n < 10)
+            return '000' + n
+        if (n < 100)
+            return '00' + n
+        if (n < 1000)
             return '0' + n
         else
             return '' + n
@@ -105,16 +98,15 @@ export class CrossbarView implements IView {
     }
 }
 
-class LoadColor {
-    static colorMap = new ColorMap([
-        {red: 0.9, green: 0.9, blue: 0.9},
-        {red: 0, green: 1, blue: 0},
-        {red: 1, green: 1, blue: 0},
-        {red: 1, green: 0, blue: 0}
-    ])
+class KernelColor {
+    static colorMap: RGBColor[] = [
+        rgb(141,211,199), rgb(255,255,179), rgb(190,186,218), rgb(251,128,114), 
+        rgb(128,177,211), rgb(253,180,98), rgb(179,222,105), rgb(252,205,229), 
+        rgb(217,217,217), rgb(188,128,189), rgb(204,235,197), rgb(255,237,111)
+    ]
 
-    static getSVG(load: number): string {
-        return toSVG(LoadColor.colorMap.getColor(load))
+    static getSVG(index: number): string {
+        return toSVG(KernelColor.colorMap[index % KernelColor.colorMap.length])
     }
 }
 
@@ -191,6 +183,6 @@ export class ChannelView extends ThunkView {
                         key={model.id}
                         points={points}
                         transform={transform}
-                        fill={LoadColor.getSVG(model.load)} />
+                        fill={toSVG({red: 120, green: 180, blue: 220})} />
     }
 }

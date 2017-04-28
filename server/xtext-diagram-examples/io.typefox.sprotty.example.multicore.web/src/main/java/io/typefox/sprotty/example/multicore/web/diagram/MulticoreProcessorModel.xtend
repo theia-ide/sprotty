@@ -20,9 +20,8 @@ class Core extends SModelElement {
 
 @Accessors@EqualsHashCode@ToString
 class AllocatedTask extends SModelElement {
-	String name
-	String kernel
-	int stackSize
+	int kernelNr
+	String stackSize
 }
 
 @Accessors@EqualsHashCode@ToString

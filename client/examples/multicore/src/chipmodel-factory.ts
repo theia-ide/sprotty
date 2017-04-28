@@ -6,6 +6,7 @@ import {
     Channel, ChannelSchema, Core, CoreSchema, Crossbar, CrossbarSchema, Processor, ProcessorSchema
 } from "./chipmodel"
 import { Direction } from "../../../src/utils"
+import { CORE_WIDTH, CORE_DISTANCE } from "./views";
 
 
 export class ChipModelFactory extends SModelFactory {
@@ -14,7 +15,14 @@ export class ChipModelFactory extends SModelFactory {
         try {
             if (this.isCoreSchema(schema)) {
                 this.validate(schema, parent)
-                return this.initializeChild(new Core(), schema, parent)
+                const core = this.initializeChild(new Core(), schema, parent) as Core
+                core.bounds = {
+                    x: core.column * (CORE_WIDTH + CORE_DISTANCE),
+                    y: core.row * (CORE_WIDTH + CORE_DISTANCE),
+                    width: CORE_WIDTH,
+                    height: CORE_WIDTH
+                }
+                return core
             } else if (this.isChannelSchema(schema)) {
                 this.validate(schema, parent)
                 return this.initializeChild(new Channel(), schema, parent)
