@@ -1,10 +1,8 @@
-import { RenderingContext, IView } from "../../../src/base/view/views"
+import { SModelElement, RenderingContext, IView, ThunkView } from '../../../src/base';
 import { VNode } from "snabbdom/vnode"
 import { AllocatedTask, Channel, Core, Crossbar, Processor } from './chipmodel';
-import { Direction } from "../../../src/utils/geometry"
-import { ColorMap, RGBColor, toSVG, rgb } from '../../../src/utils';
-import * as snabbdom from "snabbdom-jsx"
-import { ThunkView } from "../../../src/base/view/thunk-view"
+import { Direction, ColorMap, RGBColor, toSVG, rgb } from "../../../src/utils"
+import * as snabbdom from 'snabbdom-jsx';
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -20,15 +18,37 @@ export class ProcessorView implements IView {
 }
 
 export const CORE_WIDTH = 50
-export const CORE_DISTANCE = 15
+export const CORE_DISTANCE = 10
 
-export class CoreView implements IView {
+export class CoreView extends ThunkView {
 
-    render(model: Core, context: RenderingContext): VNode {
+    watchedArgs(model: Core): any[] {
+        return [ model.children, model.position, model.row, model.column, model.opacity ]
+    }
+
+    selector(model: Core): string {
+        return 'g'
+    }
+
+    doRender(model: Core, context: RenderingContext): VNode {
         const nodeName = parseInt(model.id.substr(5))
-        const fillColor = model.children.length > 0 
-            ? KernelColor.getSVG((model.children[0] as AllocatedTask).kernelNr)
-            : toSVG({red: 150, green:150, blue: 150})
+        let fillColor: string
+        let content: VNode
+        if(model.children.length > 0) {
+            const task = model.children[0] as AllocatedTask
+            fillColor = KernelColor.getSVG(task.kernelNr)
+            let i=0
+            content = <g>
+                <text class-heading={true} x={CORE_WIDTH / 2} y={15}>{this.padLeft(nodeName)}</text>
+                {task.runtimeInfo.map(
+                    (info: string) => <text class-info={true} x={4} y={18 + 5*++i}>{info}</text>
+                )}
+            </g>
+        } else {
+            fillColor = toSVG({red: 150, green:150, blue: 150})
+            content = <text class-heading={true} x={CORE_WIDTH / 2} y={15}>{this.padLeft(nodeName)}</text>
+        }
+        
         return <g class-core={true}
                   id={model.id}
                   key={model.id}>
@@ -37,7 +57,7 @@ export class CoreView implements IView {
                       rx={4}
                       ry={4}
                       fill={fillColor}/>
-                <text class-text={true} x={CORE_WIDTH / 2} y={CORE_WIDTH / 2}>{this.padLeft(nodeName)}</text>
+                {content}
             </g>
     }
 

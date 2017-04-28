@@ -8,6 +8,11 @@ export * from "./view/views"
 export * from "./view/options"
 export * from "./view/key-tool"
 export * from "./view/mouse-tool"
+export * from "./view/thunk-view"
+export * from './view/viewer'
+export * from './view/viewer-cache'
+export * from './view/vnode-utils'
+export * from './view/vnode-decorators'
 export * from "./features/model-manipulation"
 export * from "./animations/animation-frame-syncer"
 

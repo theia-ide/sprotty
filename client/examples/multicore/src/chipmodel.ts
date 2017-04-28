@@ -39,7 +39,6 @@ export interface CoreSchema extends SModelElementSchema {
 export class Core extends SShapeElement implements Selectable, Fadeable {
     column: number = 0
     row: number = 0
-    load: number = 0
     selected: boolean = false
     opacity: number = 1
 
@@ -51,13 +50,13 @@ export class Core extends SShapeElement implements Selectable, Fadeable {
 export interface AllocatedTaskSchema extends SModelElementSchema {
     name: string
     kernelNr: number
-    stackSize: string
+    runtimeInfo: string[]
 }
 
 export class AllocatedTask extends SChildElement {
     name: string
     kernelNr: number
-    stackSize: string
+    runtimeInfo: string[]
 }
 
 export interface CrossbarSchema extends SModelElementSchema {

@@ -5,6 +5,7 @@ import io.typefox.sprotty.api.SModelRoot
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
 import org.eclipse.xtend.lib.annotations.ToString
+import java.util.List
 
 @Accessors@EqualsHashCode@ToString
 class Processor extends SModelRoot {
@@ -21,7 +22,7 @@ class Core extends SModelElement {
 @Accessors@EqualsHashCode@ToString
 class AllocatedTask extends SModelElement {
 	int kernelNr
-	String stackSize
+	List<String> runtimeInfo
 }
 
 @Accessors@EqualsHashCode@ToString

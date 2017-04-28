@@ -1,5 +1,15 @@
 import { Direction } from "../../../src/utils"
-import { Channel, ChannelSchema, Core, CoreSchema, Crossbar, CrossbarSchema, ProcessorSchema } from "./chipmodel"
+import {
+    AllocatedTask,
+    AllocatedTaskSchema,
+    Channel,
+    ChannelSchema,
+    Core,
+    CoreSchema,
+    Crossbar,
+    CrossbarSchema,
+    ProcessorSchema
+} from './chipmodel';
 import createContainer from "./di.config"
 import { LocalModelSource } from "../../../src/local"
 import { TYPES } from "../../../src/base/types"
@@ -85,11 +95,23 @@ export default function runMulticore() {
 
     function changeModel() {
         for (let i = 0; i < processor.children!.length; ++i) {
-            const child = processor.children![i] as (Core | Channel | Crossbar)
-            child.load = Math.max(0, Math.min(1, child.load + Math.random() * 0.2 - 0.1))
+            const child = processor.children![i] 
+            if(child.type == 'core') {
+                const task: AllocatedTaskSchema = {
+                    id: child.id + '_t',
+                    type: 'task',
+                    name: 't',
+                    kernelNr: Math.round(Math.random() * 11),
+                    runtimeInfo: ['']
+                }
+                if(child.children === undefined) 
+                    child.children = [task]
+                else
+                    child.children[0] = task
+            }
         }
         modelSource.updateModel(processor)
     }
 
-    // setInterval(changeModel.bind(this), 5000)
+    setInterval(() => changeModel(), 150)
 }

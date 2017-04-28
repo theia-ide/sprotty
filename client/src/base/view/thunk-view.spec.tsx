@@ -1,4 +1,6 @@
-import { RenderingContext, ThunkView, ModelRenderer } from './';
+import { ModelRenderer } from './viewer';
+import { ThunkView } from './thunk-view';
+import { RenderingContext } from './views';
 import "mocha"
 import { expect } from "chai"
 import { SModelElement } from "../model/smodel"

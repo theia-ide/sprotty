@@ -113,6 +113,7 @@ class MulticoreAllocationDiagramGenerator {
 		alloc.id = 'task_' + coreIndex + '_' + task.task.name
 		alloc.type = 'task'
 		alloc.kernelNr = kernelIndex
+		alloc.runtimeInfo = #[ 'task: ' + task.task.name, 'bar', 'baz' ]
 		return alloc
 	}
 	

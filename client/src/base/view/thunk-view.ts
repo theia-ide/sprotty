@@ -58,25 +58,36 @@ export abstract class ThunkView implements IView {
         const vnode = (cur.fn as any).apply(undefined, cur.args);
         this.copyToThunk(vnode, thunk);
     }
-
+    
     protected prepatch(oldVnode: VNode, thunk: VNode): void {
         let i: number, old = oldVnode.data as VNodeData, cur = thunk.data as VNodeData;
-        const oldArgs = old.args, args = cur.args;
+        if(!this.equals(old.args as any[], cur.args as any[])) 
+            this.copyToThunk((cur.fn as any).apply(undefined, cur.args), thunk);
+        else
+            this.copyToThunk(oldVnode, thunk);
+    }
 
-        if ((oldArgs as any).length !== (args as any).length) {
-            this.copyToThunk((cur.fn as any).apply(undefined, args), thunk);
-            return;
-        }
-        for (i = 0; i < (args as any).length; ++i) {
-            if ((oldArgs as any)[i] !== (args as any)[i]) {
-                this.copyToThunk((cur.fn as any).apply(undefined, args), thunk);
-                return;
+    protected equals(oldArg: any, newArg: any) {
+        if (Array.isArray(oldArg) && Array.isArray(newArg)) {
+            if (oldArg.length !== newArg.length) 
+                return false
+            for (let i = 0; i < newArg.length; ++i) {
+                if(!this.equals(oldArg[i], newArg[i])) 
+                    return false
             }
-        }
-        this.copyToThunk(oldVnode, thunk);
+        } else if(typeof oldArg =='object' && typeof newArg == 'object') {
+            if(Object.keys(oldArg).length !== Object.keys(newArg).length) 
+                return false
+            for(let key in oldArg) {
+                if(key != 'parent' && key != 'root' && (!(key in newArg) || !this.equals(oldArg[key], newArg[key]))) 
+                    return false
+            }
+        } else if (oldArg !== newArg) {
+            return false
+        }   
+        return true
     }
 }
-
 
 export interface ThunkVNode extends VNode {
     thunk: boolean
