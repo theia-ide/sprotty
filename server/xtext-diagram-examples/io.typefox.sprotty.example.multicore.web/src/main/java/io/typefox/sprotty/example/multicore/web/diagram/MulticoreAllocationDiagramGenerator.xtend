@@ -113,7 +113,25 @@ class MulticoreAllocationDiagramGenerator {
 		alloc.id = 'task_' + coreIndex + '_' + task.task.name
 		alloc.type = 'task'
 		alloc.kernelNr = kernelIndex
-		alloc.runtimeInfo = #[ 'task: ' + task.task.name, 'bar', 'baz' ]
+		
+		
+			
+		// hack: find better way to determine if task has finished
+		if (task.programCounter.equals('0xFFFF')) {
+			alloc.runtimeInfo = #[ 'task: ' + task.task.name, 'Task Finished']
+		} 
+		else {
+			val stackBeginAddr = Integer.parseInt(task.task.kernel.stackBeginAddr.substring(2), 16) as int
+			val stackSize = task.task.kernel.stackSize as float
+			val currentStackPointer = Integer.parseInt(task.stackPointer.substring(2), 16) as int
+			val percentStackUsed = ((stackBeginAddr - currentStackPointer) / stackSize) * 100.0 as float
+			val percentStackUsedFormatted = String.format("%.1f", percentStackUsed)
+		
+			alloc.runtimeInfo = #[ 'task: ' + task.task.name, 'file: ' + task.sourceFile, 
+			'$pc: ' + task.programCounter, '$sp: ' + task.stackPointer, 
+			'stack used: ' + (stackBeginAddr - currentStackPointer) + ' (' + percentStackUsedFormatted + '%)' 
+			]
+		}
 		return alloc
 	}
 	

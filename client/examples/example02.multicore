@@ -1,0 +1,149 @@
+program ExampleFlow2 for 16 cores
+
+kernel k1 {
+    stackSize = 100
+    stackStartAddr = 0x7FFF
+}
+kernel k2 {
+    stackSize = 120
+    stackStartAddr = 0x7FFF
+}
+kernel k3 {
+    stackSize = 80
+    stackStartAddr = 0x7FFF
+}
+kernel k4 {
+    stackSize = 80
+    stackStartAddr = 0x7FFF
+}
+kernel k5 {
+    stackSize = 80
+    stackStartAddr = 0x7FFF
+}
+kernel k6 {
+    stackSize = 80
+    stackStartAddr = 0x7FFF
+}
+kernel k7 {
+    stackSize = 80
+    stackStartAddr = 0x7FFF
+}
+kernel k8 {
+    stackSize = 80
+    stackStartAddr = 0x7FFF
+}
+kernel k9 {
+    stackSize = 80
+    stackStartAddr = 0x7FFF
+}
+kernel k10 {
+    stackSize = 80
+    stackStartAddr = 0x7FFF
+}
+kernel k11 {
+    stackSize = 80
+    stackStartAddr = 0x7FFF
+}
+
+task t11: execute k1
+
+join t11
+then {
+    task t21: execute k2
+    task t22: execute k2
+    task t23: execute k2
+    task t24: execute k2
+}
+
+join t21
+then task t31: execute k3
+join t22
+then task t32: execute k3
+join t23
+then task t33: execute k3
+join t24
+then task t34: execute k3
+
+join t31, t32
+then task t41: execute k4
+join t33, t34
+then task t42: execute k4
+
+join t41
+then {
+   task t51: execute k5
+   task t52: execute k5
+}  
+join t42
+then {
+   task t53: execute k5
+   task t54: execute k5
+}
+
+join t51, t52, t53, t54
+then {
+   task t61: execute k6
+   task t62: execute k6
+   task t63: execute k6
+   task t64: execute k6
+}
+
+join t61, t62, t63, t64
+then {
+	task t71: execute k7
+	task t72: execute k7
+	task t73: execute k7
+	task t74: execute k7
+	task t75: execute k7
+	task t76: execute k7
+}
+
+join t71
+then {
+   task t81: execute k8
+   task t82: execute k8
+}
+join t72
+then {
+   task t83: execute k8
+   task t84: execute k8
+}
+join t73
+then {
+   task t85: execute k8
+   task t86: execute k8
+}
+join t74
+then {
+   task t87: execute k8
+   task t88: execute k8
+}
+join t75
+then {
+   task t89: execute k8
+   task t810: execute k8
+}
+join t76
+then {
+   task t811: execute k8
+   task t812: execute k8
+}
+
+join t81, t82, t83, t84, t85, t86, t87, t88, t89, t810, t811, t812
+then task t91: execute k9
+
+join t91
+then {
+   task t101: execute k10
+   task t102: execute k10
+}
+
+join t101, t102
+then task t111: execute k11
+
+
+step 1 {
+    core 1 runs t11 { $pc=0x1234 $sp = 0x7FA0 srcfile="k0/main.c" }
+}
+
+

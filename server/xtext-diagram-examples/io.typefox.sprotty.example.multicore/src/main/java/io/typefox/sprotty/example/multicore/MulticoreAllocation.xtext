@@ -13,6 +13,7 @@ Kernel:
 	'kernel' name=ID ('{'
 		('duration' '=' duration=INT)?
 		('stackSize' '=' stackSize=INT)?
+		('stackStartAddr' '=' stackBeginAddr=HEX)?
 	'}')?;
 
 Task:
@@ -31,7 +32,21 @@ TaskAllocation:
 	TaskRunning | TaskFinished;
 
 TaskRunning:
-	'core' core=INT 'runs' task=[Task];
+	'core' core=INT 'runs' task=[Task] ('{'
+		('$pc' '=' programCounter=HEX)?
+		('$sp' '=' stackPointer=HEX)?
+		('srcfile' '=' sourceFile=STRING)?
+		('stackTrace' '=' stackTrace=STRING)?
+	'}')?; 
 
 TaskFinished:
-	'core' core=INT 'finished' task=[Task];
+	'core' core=INT 'finished' task=[Task] ('{'
+		('$pc' '=' programCounter=HEX)?
+		('$sp' '=' stackPointer=HEX)?
+		('srcfile' '=' sourceFile=STRING)?
+		('stackTrace' '=' stackTrace=STRING)?
+	'}')?;
+
+	
+terminal HEX:
+    '0x' ('0'..'9'| 'a'..'f'| 'A'..'F')+;
