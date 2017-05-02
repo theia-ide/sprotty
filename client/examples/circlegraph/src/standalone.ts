@@ -8,8 +8,8 @@ export default function runStandalone() {
     const container = createContainer(false)
 
     // Initialize gmodel
-    const node0 = { id: 'node0', type: 'node:circle', position: { x: 100, y: 100 }, size: { width: -1, height: -1 } }
-    const node1 = { id: 'node1', type: 'node:circle', position: { x: 200, y: 150 }, size: { width: -1, height: -1 }, selected: true }
+    const node0 = { id: 'node0', type: 'node:circle', position: { x: 100, y: 100 }, size: { width: 80, height: 80 } }
+    const node1 = { id: 'node1', type: 'node:circle', position: { x: 200, y: 150 }, size: { width: 80, height: 80 }, selected: true }
     const edge0 = { id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1' }
     const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0, node1, edge0] }
 
@@ -23,8 +23,8 @@ export default function runStandalone() {
                 y: Math.random() * 768
             },
             size: {
-                width: 40,
-                height: 40
+                width: 80,
+                height: 80
             }
         }
         const newEdge: SEdgeSchema = {
