@@ -127,7 +127,6 @@ describe('LocalModelSource', () => {
                     id: 'child1',
                     position: { x: 10, y: 10 },
                     size: { width: 20, height: 20 },
-                    revalidateBounds: false
                 }
             ]
         })

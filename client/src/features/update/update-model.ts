@@ -10,6 +10,7 @@ import { isLocateable } from "../move/model"
 import { isBoundsAware } from "../bounds/model"
 import { ViewportRootElement } from "../viewport/viewport-root"
 import { injectable } from "inversify"
+import { isEmpty } from "../../utils/geometry";
 
 export class UpdateModelAction implements Action {
     readonly kind = UpdateModelCommand.KIND
@@ -183,15 +184,12 @@ export class UpdateModelCommand extends Command {
                 right.position = leftPos
             }
         }
-        if (isBoundsAware(left) && isBoundsAware(right) && right.revalidateBounds) {
-            if (right.bounds.width < 0 || right.bounds.height < 0) {
-                right.bounds = {
-                    x: right.bounds.x,
-                    y: right.bounds.y,
-                    width: left.bounds.width,
-                    height: left.bounds.height
-                }
-                right.revalidateBounds = left.revalidateBounds
+        if (isBoundsAware(left) && isBoundsAware(right) && isEmpty(right.bounds)) {
+            right.bounds = {
+                x: right.bounds.x,
+                y: right.bounds.y,
+                width: left.bounds.width,
+                height: left.bounds.height
             }
         }
         if (left instanceof SModelRoot && right instanceof SModelRoot) {

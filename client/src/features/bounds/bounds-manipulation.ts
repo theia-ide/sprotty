@@ -65,20 +65,14 @@ export class SetBoundsCommand extends SystemCommand {
 
     undo(context: CommandExecutionContext) {
         this.bounds.forEach(
-            b => {
-                b.element.bounds = b.oldBounds
-                b.element.revalidateBounds = true
-            }
+            b => b.element.bounds = b.oldBounds
         )
         return context.root
     }
 
     redo(context: CommandExecutionContext) {
         this.bounds.forEach(
-            b => {
-                b.element.bounds = b.newBounds
-                b.element.revalidateBounds = false
-            }
+            b => b.element.bounds = b.newBounds
         )
         return context.root
     }

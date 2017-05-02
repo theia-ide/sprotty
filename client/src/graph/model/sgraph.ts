@@ -9,7 +9,6 @@ import { Fadeable, fadeFeature } from "../../features/fade/model"
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
     bounds?: Bounds
-    revalidateBounds?: boolean
     scroll?: Point
     zoom?: number
 }
@@ -20,7 +19,6 @@ export class SGraph extends ViewportRootElement {
 export abstract class SShapeElement extends SChildElement implements BoundsAware, Locateable {
     position: Point = ORIGIN_POINT
     size: Dimension = EMPTY_DIMENSION
-    revalidateBounds: boolean = true
 
     get bounds(): Bounds {
         return {
@@ -56,7 +54,6 @@ export interface SNodeSchema extends SModelElementSchema {
     position?: Point
     size?: Dimension
     layout?: string
-    revalidateBounds?: boolean
 }
 
 export class SNode extends SShapeElement implements Selectable, BoundsAware, Locateable, Fadeable {
@@ -106,13 +103,11 @@ export interface SLabelSchema extends SModelElementSchema {
     position?: Point
     size?: Dimension
     selected?: boolean
-    revalidateBounds?: boolean
 }
 
 export class SLabel extends SShapeElement implements BoundsAware, Selectable {
     text: string
     selected: boolean = false
-    revalidateBounds: boolean = true
 
     hasFeature(feature: symbol) {
         return feature === boundsFeature || feature === selectFeature
@@ -124,7 +119,6 @@ export interface SCompartmentSchema extends SModelElementSchema {
     position?: Point
     size?: Dimension
     layout?: string
-    revalidateBounds?: boolean
 }
 
 export class SCompartment extends SShapeElement implements BoundsAware, Layouting {
@@ -132,7 +126,6 @@ export class SCompartment extends SShapeElement implements BoundsAware, Layoutin
     position: Point
     size: Dimension 
     layout: string
-    revalidateBounds: boolean
 
     hasFeature(feature: symbol) {
         return feature === boundsFeature || feature === layoutFeature

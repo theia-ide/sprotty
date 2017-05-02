@@ -30,7 +30,6 @@ class SModelRoot extends SModelElement {
 class SGraph extends SModelRoot implements BoundsAware {
 	Point position
 	Dimension size
-	Boolean revalidateBounds
 
 	new() {}
 	new(Consumer<SGraph> initializer) {
@@ -42,7 +41,6 @@ class SGraph extends SModelRoot implements BoundsAware {
 class SNode extends SModelElement implements BoundsAware  {
 	Point position
 	Dimension size
-	Boolean revalidateBounds
 	
 	new() {}
 	new(Consumer<SNode> initializer) {

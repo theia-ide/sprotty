@@ -26,7 +26,6 @@ public final class LayoutUtil {
 				Bounds newBounds = b.getNewBounds();
 				bae.setPosition(new Point(newBounds.getX(), newBounds.getY()));
 				bae.setSize(new Dimension(newBounds.getWidth(), newBounds.getHeight()));
-				bae.setRevalidateBounds(false);
 			}
 		}
 	}
@@ -46,7 +45,6 @@ public final class LayoutUtil {
 					newBae.setPosition(new Point(oldBae.getPosition()));
 				if (oldBae.getSize() != null)
 					newBae.setSize(new Dimension(oldBae.getSize()));
-				newBae.setRevalidateBounds(true);
 			}
 		} else if (element instanceof SEdge) {
 			SModelElement oldElement = oldIndex.get(element.getId());

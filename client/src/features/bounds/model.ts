@@ -6,7 +6,6 @@ export const boundsFeature = Symbol('boundsFeature')
 export const layoutFeature = Symbol('layoutFeature')
 
 export interface BoundsAware extends SModelExtension {
-    revalidateBounds: boolean
     bounds: Bounds
 }
 
@@ -15,7 +14,7 @@ export interface Layouting extends SModelExtension {
 }
 
 export function isBoundsAware(element: SModelElement): element is SModelElement & BoundsAware {
-    return 'bounds' in element && 'revalidateBounds' in element
+    return 'bounds' in element
 }
 
 export function isLayouting(element: SModelElement): element is SParentElement & Layouting & BoundsAware {

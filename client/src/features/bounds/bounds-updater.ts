@@ -34,7 +34,7 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
     private readonly element2boundsData: Map<SModelElement, BoundsData> = new Map
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        if (isSizeable(element) && element.revalidateBounds) {
+        if (isSizeable(element)) {
             this.element2boundsData.set(element, {
                 vnode: vnode,
                 bounds: element.bounds,

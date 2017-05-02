@@ -57,7 +57,4 @@ interface BoundsAware {
 	def void setPosition(Point position)
 	def Dimension getSize()
 	def void setSize(Dimension size)
-	
-	def Boolean getRevalidateBounds()
-	def void setRevalidateBounds(Boolean revalidateBounds)
 }

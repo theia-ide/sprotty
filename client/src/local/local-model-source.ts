@@ -174,6 +174,5 @@ export class LocalModelSource extends ModelSource {
         const e = element as any
         e.position = { x: newBounds.x, y: newBounds.y }
         e.size = { width: newBounds.width, height: newBounds.height }
-        e.revalidateBounds = false
     }
 }
