@@ -1,4 +1,4 @@
-import { SModelElement, RenderingContext, IView, ThunkView } from '../../../src/base';
+import { IView, RenderingContext, setAttr, SModelElement, ThunkView } from '../../../src/base';
 import { VNode } from "snabbdom/vnode"
 import { AllocatedTask, Channel, Core, Crossbar, Processor } from './chipmodel';
 import { Direction, ColorMap, RGBColor, toSVG, rgb } from "../../../src/utils"
@@ -10,6 +10,11 @@ export class ProcessorView implements IView {
     render(model: Processor, context: RenderingContext): VNode {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
         return <svg key={model.id} id={model.id}>
+                <defs>
+                    <clipPath id="core-clip">
+                        <rect width={CORE_WIDTH} height={CORE_WIDTH} rx={4} ry={4}/>
+                    </clipPath>
+                </defs>
                 <g transform={transform}>
                     {context.renderChildren(model, context)}
                 </g>
@@ -44,6 +49,7 @@ export class CoreView extends ThunkView {
                     (info: string) => <text class-info={true} x={4} y={18 + 5*++i}>{info}</text>
                 )}
             </g>
+            setAttr(content, 'clip-path', 'url(#core-clip)')
         } else {
             fillColor = toSVG({red: 150, green:150, blue: 150})
             content = <text class-heading={true} x={CORE_WIDTH / 2} y={15}>{this.padLeft(nodeName)}</text>
