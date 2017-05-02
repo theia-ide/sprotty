@@ -35,9 +35,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	
 	public static void initialize(ILayoutMetaDataProvider ...providers) {
 		LayoutMetaDataService metaDataService = LayoutMetaDataService.getInstance();
-		metaDataService.registerLayoutMetaDataProvider(new CoreOptions());
+		metaDataService.registerLayoutMetaDataProviders(new CoreOptions());
 		for (ILayoutMetaDataProvider p : providers) {
-			metaDataService.registerLayoutMetaDataProvider(p);
+			metaDataService.registerLayoutMetaDataProviders(p);
 		}
 	}
 	
