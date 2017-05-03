@@ -6,7 +6,7 @@ A next-gen web-based graphics framework.
 
 - Eclipse with Xtend and Buildship (version >=2) is required
 - Import server projects using _Import > Gradle_
-- Run server: On _ServerLauncher.xtend_ choose _Run as > Java Application_
+- Run server: On _MulticoreServerLauncher.xtend_ choose _Run as > Java Application_
 
 
 ## Client development
@@ -14,5 +14,5 @@ A next-gen web-based graphics framework.
 - Use _webstorm_ or _VS Code_
 - On the command line do `npm install`
 - To build and run do `npm run watch`
-- Point your browser to the `index.html` file. 
+- Point your browser to the `localhost:8080`. 
 - To debug from _webstorm_, choose _Debug index.html_ from its context menu.
