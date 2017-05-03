@@ -19,8 +19,26 @@ require(['webjars/ace/1.2.3/src/ace'], function() {
             syntaxDefinition: 'xtext-resources/generated/mode-multicore'
         });
         window.xtextServices = editor.xtextServices;
-        jQuery.ajax('/examples/example02.multicore').done(function(exampleCode) {
-            editor.xtextServices.editorContext.setText(exampleCode);
+
+        var examples = ["example01", "example02"];
+        var exampleSelectionEl = jQuery("#exampleSelection");
+        var exampleChangeHandler = function(choosenExample){
+            jQuery.ajax('/examples/' + choosenExample + '.multicore').done(function(exampleCode) {
+                editor.xtextServices.editorContext.setText(exampleCode);
+            });
+        };
+
+        jQuery.each(examples, function(idx, val){
+            exampleSelectionEl.append(jQuery("<option>", {"value":val, text:val}));
         });
+
+        exampleSelectionEl.change(function(){
+            exampleChangeHandler(exampleSelectionEl.val());
+        });
+
+        // load first example initially.
+        exampleChangeHandler(examples[0]);
     });
 });
+
+
