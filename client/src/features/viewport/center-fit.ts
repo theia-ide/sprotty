@@ -21,7 +21,9 @@ export class CenterAction implements Action {
 export class FitToScreenAction implements Action {
     readonly kind = FitToScreenCommand.KIND
 
-    constructor(public readonly elementIds: string[]) {
+    constructor(public readonly elementIds: string[], 
+                public readonly padding?: number, 
+                public readonly maxZoom?: number) {
     }
 }
 
@@ -125,7 +127,7 @@ export class CenterCommand extends BoundsAwareViewportCommand {
 export class FitToScreenCommand extends BoundsAwareViewportCommand {
     static readonly KIND = 'fit'
 
-    constructor(protected action: CenterAction) {
+    constructor(protected action: FitToScreenAction) {
         super()
     }
 
@@ -135,9 +137,14 @@ export class FitToScreenCommand extends BoundsAwareViewportCommand {
 
     getNewViewport(bounds: Bounds, model: SModelRoot) {
         const c = center(bounds)
-        const zoom = Math.min(
-            model.canvasBounds.width / bounds.width,
-            model.canvasBounds.height / bounds.height)
+        const delta = this.action.padding === undefined
+            ? 0
+            : 2 *  this.action.padding
+        let zoom = Math.min(
+            model.canvasBounds.width / (bounds.width + delta),
+            model.canvasBounds.height / bounds.height + delta)
+        if (this.action.maxZoom !== undefined) 
+           zoom = Math.min(zoom, this.action.maxZoom) 
         return {
             scroll: {
                 x: c.x - 0.5 * model.canvasBounds.width / zoom,

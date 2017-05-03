@@ -137,6 +137,8 @@ class FitToScreenAction implements Action {
 	String kind = KIND
 	
 	List<String> elementIds
+	Double padding
+	Double maxZoom
 	
 	new() {}
 	new(Consumer<FitToScreenAction> initializer) {
