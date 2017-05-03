@@ -213,7 +213,8 @@ class MulticoreAllocationDiagramGenerator {
 	private def createBarrier(Barrier declaration) {
 		val bnode = new BarrierNode
 		bnode.type = 'barrier'
-		bnode.id = 'barrier_' + declaration.joined.map[name].join('+') + '>>' + declaration.triggered.map[name].join('+')
+		bnode.id = 'barrier_' + declaration.name
+		bnode.name = declaration.name
 		return bnode
 	}
 	

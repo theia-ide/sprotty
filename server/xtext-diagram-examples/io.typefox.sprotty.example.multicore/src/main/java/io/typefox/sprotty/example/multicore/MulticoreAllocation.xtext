@@ -20,8 +20,8 @@ Task:
 	'task' name=ID ':' 'execute' kernel=[Kernel];
 
 Barrier:
-	'join' joined+=[Task] (',' joined+=[Task])*
-	('then' (triggered+=Task | '{' triggered+=Task* '}'))?;
+	'barrier' name=ID ':' 'join' joined+=[Task] (',' joined+=[Task])*
+	('then' (triggered+=Task | '{' triggered+=Task* '}'))?;	
 
 Step:
 	'step' index=INT '{'

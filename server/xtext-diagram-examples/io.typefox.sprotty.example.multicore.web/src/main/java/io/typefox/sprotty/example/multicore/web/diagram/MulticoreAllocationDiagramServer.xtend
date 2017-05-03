@@ -116,7 +116,7 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 				.setProperty(LayeredOptions.NODE_PLACEMENT_STRATEGY, NodePlacementStrategy.NETWORK_SIMPLEX)
 			configurator.configureByType('barrier')
 				.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.free())
-				.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(50, 10))
+				.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(50, 20))
 				.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER)
 				.setProperty(LayeredOptions.NODE_PLACEMENT_NETWORK_SIMPLEX_NODE_FLEXIBILITY, NodeFlexibility.NODE_SIZE)
 			layoutEngine.layout(root, configurator)
