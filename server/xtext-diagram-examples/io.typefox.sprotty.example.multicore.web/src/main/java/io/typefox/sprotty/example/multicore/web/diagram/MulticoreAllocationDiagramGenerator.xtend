@@ -65,15 +65,15 @@ class MulticoreAllocationDiagramGenerator {
 					else
 						-1
 		        processor.children += createCore(coreIndex, i, j, kernelIndex, taskAllocation)
-//			        processor.children += createChannel(i, j, CoreDirection.up)
-//			        processor.children += createChannel(i, j, CoreDirection.down)
-//			        processor.children += createChannel(i, j, CoreDirection.left)
-//			        processor.children += createChannel(i, j, CoreDirection.right)
+		        processor.children += createChannel(i, j, CoreDirection.up)
+		        processor.children += createChannel(i, j, CoreDirection.down)
+		        processor.children += createChannel(i, j, CoreDirection.left)
+		        processor.children += createChannel(i, j, CoreDirection.right)
 		    }
-//			    processor.children += createChannel(dim, i, CoreDirection.up)
-//			    processor.children += createChannel(dim, i, CoreDirection.down)
-//			    processor.children += createChannel(i, dim, CoreDirection.left)
-//			    processor.children += createChannel(i, dim, CoreDirection.right)
+		    processor.children += createChannel(dim, i, CoreDirection.up)
+		    processor.children += createChannel(dim, i, CoreDirection.down)
+		    processor.children += createChannel(i, dim, CoreDirection.left)
+		    processor.children += createChannel(i, dim, CoreDirection.right)
 		}
 		
 		processor.children += createCrossbar(CoreDirection.up)
@@ -113,8 +113,6 @@ class MulticoreAllocationDiagramGenerator {
 		alloc.id = 'task_' + coreIndex + '_' + task.task.name
 		alloc.type = 'task'
 		alloc.kernelNr = kernelIndex
-		
-		
 			
 		// hack: find better way to determine if task has finished
 		if (task.programCounter.equals('0xFFFF')) {

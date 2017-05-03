@@ -95,7 +95,7 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 		val selectedStep = selectedElement.getContainerOfType(Step)
 		val selectedTaskAllocation = selectedElement.getContainerOfType(TaskAllocation)
 		if (previousElement.getContainerOfType(Step) != selectedStep
-			|| previousElement.getContainerOfType(TaskAllocation) != selectedTaskAllocation) {
+			|| previousElement.getContainerOfType(TaskAllocation)?.task?.kernel != selectedTaskAllocation?.task?.kernel) {
 			val validationResult = validationService.getResult(document)
 			if (!validationResult.issues.exists[severity == 'error']) {
 				if(selectedTaskAllocation !== null) {
