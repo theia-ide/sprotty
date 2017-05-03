@@ -72,12 +72,15 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		}
 	}
 	
-	override protected def sendModel(SModelRoot root, String clientId, boolean initial) {
-		sendModel(root, null, clientId, initial)
-	}
-	
-	protected def sendModel(SModelRoot newRoot, SModelRoot oldRoot, String clientId, boolean initial) {
-		super.sendModel(newRoot, clientId, initial)
+	override protected modelSent(SModelRoot newRoot, SModelRoot oldRoot, String clientId, boolean initial) {
+		if (newRoot instanceof Flow) {
+			val activeNodes = newRoot.children.filter(TaskNode).filter[status !== null].map[id]
+			sendAction(new FitToScreenAction() [
+				elementIds = activeNodes.toList
+				maxZoom = 1.0
+				padding = 10.0
+			], clientId)
+		}
 		if (newRoot instanceof Processor) {
 			val sizeChanged = if (oldRoot instanceof Processor)
 				newRoot.rows != oldRoot.rows || newRoot.columns != oldRoot.columns

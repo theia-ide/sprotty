@@ -42,7 +42,7 @@ public abstract class AbstractDiagramServer implements Consumer<ActionMessage> {
 	protected void handle(RequestModelAction request, ActionMessage message) {
 		SModelRoot root = getModel(message);
 		if (root != null) {
-			sendModel(root, message.getClientId(), true);
+			sendModel(null, root, message.getClientId(), true);
 		}
 	}
 	
@@ -50,24 +50,29 @@ public abstract class AbstractDiagramServer implements Consumer<ActionMessage> {
 	
 	protected abstract boolean needsLayout(SModelRoot root);
 	
-	protected void sendModel(SModelRoot root, String clientId, boolean initial) {
-		if (needsLayout(root)) {
+	protected void sendModel(SModelRoot newRoot, SModelRoot oldRoot, String clientId, boolean initial) {
+		if (needsLayout(newRoot)) {
 			sendAction(new RequestBoundsAction( action -> {
-				action.setRoot(root);
+				action.setRoot(newRoot);
 			}), clientId);
 		} else if (initial) {
 			sendAction(new SetModelAction( action -> {
-				action.setModelType(root.getType());
-				action.setModelId(root.getId());
-				action.setNewRoot(root);
+				action.setModelType(newRoot.getType());
+				action.setModelId(newRoot.getId());
+				action.setNewRoot(newRoot);
 			}), clientId);
+			modelSent(oldRoot, newRoot, clientId, initial);
 		} else {
 			sendAction(new UpdateModelAction( action -> {
-				action.setModelType(root.getType());
-				action.setModelId(root.getId());
-				action.setNewRoot(root);
+				action.setModelType(newRoot.getType());
+				action.setModelId(newRoot.getId());
+				action.setNewRoot(newRoot);
 			}), clientId);
+			modelSent(newRoot, oldRoot, clientId, initial);
 		}
+	}
+	
+	protected void modelSent(SModelRoot newRoot, SModelRoot oldRoot, String clientId, boolean initial) {
 	}
 	
 	protected void handle(ComputedBoundsAction computedBounds, ActionMessage message) {
@@ -79,6 +84,7 @@ public abstract class AbstractDiagramServer implements Consumer<ActionMessage> {
 				update.setModelId(root.getId());
 				update.setNewRoot(root);
 			}), message.getClientId());
+			modelSent(root, root, message.getClientId(), false);
 		}
 	}
 	
