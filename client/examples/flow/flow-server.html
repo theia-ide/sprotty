@@ -1,27 +1,37 @@
 <!DOCTYPE html>
 <html>
+
 <head>
     <meta charset="utf-8">
     <meta name="viewport" content="width=device-width, initial-scale=1">
     <title>Sprotty Flow Example</title>
     <link rel="stylesheet" href="/webjars/bootstrap/3.3.7/css/bootstrap.min.css">
-	<link rel="stylesheet" type="text/css" href="/xtext/2.11.0/xtext-ace.css"/>
+    <link rel="stylesheet" type="text/css" href="/xtext/2.11.0/xtext-ace.css" />
     <link href="./css/page.css" rel="stylesheet" type="text/css">
     <link href="./css/diagram.css" rel="stylesheet" type="text/css">
 </head>
+
 <body>
-<div class="container">
-    <h1>Sprotty Flow Example</h1>
-    <div class="row" id="sprotty-app" data-app="flow-server">
-        <div class="col-md-6">
-            <div id="xtext-editor"></div>
-        </div>
-        <div class="col-md-6">
-            <div id="sprotty-flow" class="sprotty"></div>
+    <div class="container">
+        <h1>Sprotty Flow Example</h1>
+        <form class="form-inline">
+            <div class="form-group">
+                <label for="exampleSelection">Choose an example</label>
+                <select id="exampleSelection" class="form-control">
+                </select>
+            </div>
+        </form>
+        <div class="row" id="sprotty-app" data-app="flow-server">
+            <div class="col-md-6">
+                <div id="xtext-editor"></div>
+            </div>
+            <div class="col-md-6">
+                <div id="sprotty-flow" class="sprotty"></div>
+            </div>
         </div>
     </div>
-</div>
-<script src="/webjars/requirejs/2.3.2/require.min.js" data-main="/examples/multicore/src/xtext-editor-setup.js" ></script>
-<script src="/bundle.js"></script>
+    <script src="/webjars/requirejs/2.3.2/require.min.js" data-main="/examples/multicore/src/xtext-editor-setup.js"></script>
+    <script src="/bundle.js"></script>
 </body>
+
 </html>
