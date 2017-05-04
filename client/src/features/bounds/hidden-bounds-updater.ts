@@ -7,7 +7,7 @@ import { TYPES } from "../../base/types"
 import { IActionDispatcher } from "../../base/intent/action-dispatcher"
 import { Bounds, isEmpty, EMPTY_BOUNDS } from '../../utils/geometry';
 import { ComputedBoundsAction, ElementAndBounds, SetBoundsAction } from './bounds-manipulation'
-import { BoundsAware, isSizeable } from "./model"
+import { BoundsAware, isSizeable, isLayouting } from "./model"
 import { Layouter } from "./layout"
 import { LAYOUT_TYPES } from "./types"
 
@@ -34,7 +34,7 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
     private readonly element2boundsData: Map<SModelElement, BoundsData> = new Map
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        if (isSizeable(element)) {
+        if (isSizeable(element) || isLayouting(element)) {
             this.element2boundsData.set(element, {
                 vnode: vnode,
                 bounds: element.bounds,

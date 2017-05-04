@@ -21,6 +21,8 @@ import { Action, IActionHandler } from "./actions"
  * rather inherit from one of its abstract implementators.
  */
 export interface ICommand {
+    readonly blockUntilActionKind?: string
+
     execute(context: CommandExecutionContext): CommandResult
 
     undo(context: CommandExecutionContext): CommandResult

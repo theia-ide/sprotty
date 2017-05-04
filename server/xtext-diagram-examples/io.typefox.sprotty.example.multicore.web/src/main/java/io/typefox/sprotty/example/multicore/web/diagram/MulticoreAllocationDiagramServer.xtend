@@ -49,13 +49,20 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		}
 	}
 	
-	override protected needsLayout(SModelRoot root) {
+	override protected needsServerLayout(SModelRoot root) {
 		switch root.type {
 			case 'flow': !modelProvider.isLayoutDone(resourceId, root.type)
 			default: false
 		}
 	}
-	
+
+	override protected needsClientLayout(SModelRoot root) {
+		switch root.type {
+			case 'processor': true
+			default: false
+		}
+	}
+
 	override protected handle(RequestModelAction action, ActionMessage message) {
 		val resourceId = action.options?.get('resourceId')
 		LOG.info('Model requested for resource ' + resourceId)
@@ -67,12 +74,12 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 	def notifyClients(SModelRoot newRoot, SModelRoot oldRoot) {
 		if (remoteEndpoint !== null) {
 			for (client : type2Clients.get(newRoot.type)) {
-				sendModel(newRoot, oldRoot, client, false)
+				sendModel(newRoot, oldRoot, client)
 			}
 		}
 	}
 	
-	override protected modelSent(SModelRoot newRoot, SModelRoot oldRoot, String clientId, boolean initial) {
+	override protected modelSent(SModelRoot newRoot, SModelRoot oldRoot, String clientId) {
 		if (newRoot instanceof Flow) {
 			val activeNodes = newRoot.children.filter(TaskNode).filter[status !== null].map[id]
 			sendAction(new FitToScreenAction() [

@@ -13,6 +13,9 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.util.CancelIndicator
 
 import static extension org.eclipse.xtext.EcoreUtil2.*
+import io.typefox.sprotty.api.SModelElement
+import io.typefox.sprotty.api.SCompartment
+import io.typefox.sprotty.api.SLabel
 
 @Singleton
 class MulticoreAllocationDiagramGenerator {
@@ -97,40 +100,91 @@ class MulticoreAllocationDiagramGenerator {
 	
 	private def createCore(int coreIndex, int rowParam, int columnParam,  
 		int kernelIndex, TaskAllocation taskAllocation) {
-		val core = new Core
-        core.id = 'core_' + coreIndex
-        core.type = 'core'
-        core.row = rowParam
-        core.column = columnParam
-        if (taskAllocation !== null) {
-			core.children = #[createAllocatedTask(taskAllocation, coreIndex, kernelIndex)]
-        }
+		val core = new Core [
+	        id = 'core_' + coreIndex
+	        type = 'core'
+	        row = rowParam
+	        column = columnParam
+	        kernelNr = kernelIndex
+	        layout = 'vbox'
+			resizeContainer = false
+	        children = newArrayList
+			children += new SLabel => [
+				id = 'nr_' + coreIndex
+				type = 'label:heading' 
+				text = padLeft(coreIndex)
+			]
+			if (taskAllocation !== null)
+				children += createInfoCompartment(taskAllocation, coreIndex, kernelIndex)
+		]
         return core
 	}
 	
-	private def createAllocatedTask(TaskAllocation task, int coreIndex, int kernelIndex) {
-		val alloc = new AllocatedTask
-		alloc.id = 'task_' + coreIndex + '_' + task.task.name
-		alloc.type = 'task'
-		alloc.kernelNr = kernelIndex
-			
+	private def String padLeft(int n) {
+        if (n < 10)
+            '000' + n
+        else if (n < 100)
+            '00' + n
+        else if (n < 1000)
+            '0' + n
+        else
+            '' + n
+    }
+	
+	
+	private def createInfoCompartment(TaskAllocation task, int coreIndex, int kernelIndex) {
+		val result = <SModelElement>newArrayList
 		// hack: find better way to determine if task has finished
 		if (task.programCounter.equals('0xFFFF')) {
-			alloc.runtimeInfo = #[ 'task: ' + task.task.name, 'Task Finished']
-		} 
-		else {
+			result += new SLabel [
+				id = 't_' + coreIndex
+				type = 'label:info' 				
+				text = 'task: ' + task.task.name 
+			]
+			result += new SLabel [
+				id = 'f_' + coreIndex
+				type = 'label:info' 				
+				text =  'Task Finished' 
+			]
+		} else {
 			val stackBeginAddr = Integer.parseInt(task.task.kernel.stackBeginAddr.substring(2), 16) as int
 			val stackSize = task.task.kernel.stackSize as float
 			val currentStackPointer = Integer.parseInt(task.stackPointer.substring(2), 16) as int
 			val percentStackUsed = ((stackBeginAddr - currentStackPointer) / stackSize) * 100.0 as float
 			val percentStackUsedFormatted = String.format("%.1f", percentStackUsed)
-		
-			alloc.runtimeInfo = #[ 'task: ' + task.task.name, 'file: ' + task.sourceFile, 
-			'$pc: ' + task.programCounter, '$sp: ' + task.stackPointer, 
-			'stack used: ' + (stackBeginAddr - currentStackPointer) + ' (' + percentStackUsedFormatted + '%)' 
+			result += new SLabel [
+				id = 't_' + coreIndex
+				type = 'label:info' 								
+				text = 'task: ' + task.task.name
+			]
+			result += new SLabel [
+				id = 'f_' + coreIndex
+				type = 'label:info' 								
+				text = 'file: ' + task.sourceFile
+			]
+			result += new SLabel [
+				id = 'pc_' + coreIndex
+				type = 'label:info' 								
+				text = '$pc: ' + task.programCounter
+			]
+			result += new SLabel [
+				id = 'sp_' + coreIndex
+				type = 'label:info' 								
+				text = '$sp: ' + task.stackPointer
+			]
+			result += new SLabel [
+				id = 'st_' + coreIndex
+				type = 'label:info' 								
+				text = 'stack used: ' + (stackBeginAddr - currentStackPointer) + ' (' + percentStackUsedFormatted + '%)' 
 			]
 		}
-		return alloc
+		return new SCompartment [
+			id = 'comp_' + coreIndex
+			type = 'comp'
+			layout = 'vbox'
+			resizeContainer = false
+			children = result
+		]
 	}
 	
 	private def createChannel(int rowParam, int columnParam, CoreDirection directionParam) {

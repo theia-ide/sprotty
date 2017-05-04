@@ -2,10 +2,10 @@ package io.typefox.sprotty.example.multicore.web.diagram
 
 import io.typefox.sprotty.api.SModelElement
 import io.typefox.sprotty.api.SModelRoot
+import java.util.function.Consumer
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
 import org.eclipse.xtend.lib.annotations.ToString
-import java.util.List
 
 @Accessors@EqualsHashCode@ToString
 class Processor extends SModelRoot {
@@ -17,12 +17,15 @@ class Processor extends SModelRoot {
 class Core extends SModelElement {
 	int row
 	int column
-}
-
-@Accessors@EqualsHashCode@ToString
-class AllocatedTask extends SModelElement {
 	int kernelNr
-	List<String> runtimeInfo
+	String layout
+	Boolean resizeContainer
+	 
+	new() {}
+	new(Consumer<Core> initializer) {
+		initializer.accept(this)
+	}
+	
 }
 
 @Accessors@EqualsHashCode@ToString

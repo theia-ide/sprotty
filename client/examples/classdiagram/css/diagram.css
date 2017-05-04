@@ -33,6 +33,7 @@
     stroke-width: 0;
     fill: #000;
     font-weight: inherit;
+    text-align: inherit;
 }
 
 .edge {

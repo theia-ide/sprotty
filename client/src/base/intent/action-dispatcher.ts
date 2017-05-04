@@ -10,7 +10,7 @@ import { ICommandStack } from "./command-stack"
 import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
 
 export interface IActionDispatcher {
-    dispatch(action: Action): void
+    dispatch(action: Action, onExecute?: (action: Action)=>void): void
     dispatchAll(actions: Action[]): void
 }
 
@@ -21,32 +21,45 @@ export interface IActionDispatcher {
 @injectable()
 export class ActionDispatcher implements IActionDispatcher {
 
-    postpone: boolean
-    postponedActions: Action[]
+    blockUntilActionKind: string | undefined
+    postponedActions: ActionAndHook[]
 
     constructor(@inject(TYPES.ActionHandlerRegistry) protected actionHandlerRegistry: ActionHandlerRegistry,
                 @inject(TYPES.ICommandStack) protected commandStack: ICommandStack,
                 @inject(TYPES.ILogger) protected logger: ILogger,
                 @inject(TYPES.AnimationFrameSyncer) protected syncer: AnimationFrameSyncer) {
-        this.postpone = true
         this.postponedActions = []
-        this.commandStack.execute(new SetModelCommand(new SetModelAction(EMPTY_ROOT)))
+        const initialCommand = new SetModelCommand(new SetModelAction(EMPTY_ROOT))
+        this.commandStack.execute(initialCommand)
+        this.blockUntilActionKind = initialCommand.blockUntilActionKind
     }
 
     dispatchAll(actions: Action[]): void {
         actions.forEach(action => this.dispatch(action))
     }
 
-    dispatch(action: Action): void {
-        if(action.kind === InitializeCanvasBoundsCommand.KIND) {
-            this.postpone = false
+    dispatch(action: Action, onExecute?: (action: Action)=>void): void {
+        if(action.kind == this.blockUntilActionKind) {
+            this.blockUntilActionKind = undefined
             this.handleAction(action)
-            this.dispatchAll(this.postponedActions)
+            const actions = this.postponedActions
             this.postponedActions = []
-        } else if(this.postpone) {
-            this.logger.log(this, 'postponing', action)
-            this.postponedActions.push(action)
-        } else if (action.kind == UndoAction.KIND) {
+            actions.forEach(
+                a => this.dispatch(a.action, a.onExecute)
+            )
+            return
+        } 
+        if(this.blockUntilActionKind !== undefined) {
+            this.logger.log(this, 'waiting for ' + this.blockUntilActionKind + '. postponing', action)
+            this.postponedActions.push({
+                action: action,
+                onExecute: onExecute
+            })
+            return
+        }
+        if(onExecute !== undefined)
+            onExecute.call(null, action) 
+        if (action.kind == UndoAction.KIND) {
             this.commandStack.undo()
         } else if (action.kind == RedoAction.KIND) {
             this.commandStack.redo()
@@ -63,8 +76,10 @@ export class ActionDispatcher implements IActionDispatcher {
                 const result = handler.handle(action)
                 if (isAction(result))
                     this.dispatch(result)
-                else if (result !== undefined)
+                else if (result !== undefined) {
                     this.commandStack.execute(result)
+                    this.blockUntilActionKind = result.blockUntilActionKind
+                }
             }
         } else {
             this.logger.warn(this, 'missing handler for action', action)
@@ -72,3 +87,7 @@ export class ActionDispatcher implements IActionDispatcher {
     }
 }
 
+interface ActionAndHook {
+    action: Action
+    onExecute?: (action: Action)=>void
+}

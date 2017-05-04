@@ -1,3 +1,4 @@
+import { SCompartmentView, SLabelView } from '../../../src/graph';
 import { Container, ContainerModule } from "inversify"
 import { defaultModule, ViewerOptions, TYPES, ViewRegistry } from "../../../src/base"
 import { ChipModelFactory } from "./chipmodel-factory"
@@ -31,6 +32,8 @@ export default (useWebsocket: boolean) => {
     viewRegistry.register('core', CoreView)
     viewRegistry.register('crossbar', CrossbarView)
     viewRegistry.register('channel', ChannelView)
-
+    viewRegistry.register('label:heading', SLabelView)
+    viewRegistry.register('label:info', SLabelView)
+    viewRegistry.register('comp', SCompartmentView)
     return container
 }

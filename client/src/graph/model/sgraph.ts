@@ -54,6 +54,7 @@ export interface SNodeSchema extends SModelElementSchema {
     position?: Point
     size?: Dimension
     layout?: string
+    resizeContainer?: boolean
 }
 
 export class SNode extends SShapeElement implements Selectable, BoundsAware, Locateable, Fadeable {
@@ -61,6 +62,7 @@ export class SNode extends SShapeElement implements Selectable, BoundsAware, Loc
     layout?: string
     selected: boolean = false
     opacity: number = 1
+    resizeContainer: boolean = true
 
     hasFeature(feature: symbol): boolean {
         return feature === selectFeature || feature === moveFeature || feature === boundsFeature
@@ -119,6 +121,7 @@ export interface SCompartmentSchema extends SModelElementSchema {
     position?: Point
     size?: Dimension
     layout?: string
+    resizeContainer?: boolean
 }
 
 export class SCompartment extends SShapeElement implements BoundsAware, Layouting {
@@ -126,6 +129,7 @@ export class SCompartment extends SShapeElement implements BoundsAware, Layoutin
     position: Point
     size: Dimension 
     layout: string
+    resizeContainer: boolean = true
 
     hasFeature(feature: symbol) {
         return feature === boundsFeature || feature === layoutFeature

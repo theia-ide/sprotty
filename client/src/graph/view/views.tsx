@@ -1,8 +1,10 @@
+import { setAttr } from '../../base';
 import * as snabbdom from "snabbdom-jsx"
 import { VNode } from "snabbdom/vnode"
 import { RenderingContext, IView } from "../../base/view/views"
 import { SCompartment, SEdge, SGraph, SLabel, SNode } from "../model/sgraph"
 import { center, manhattanDistance, Point } from "../../utils/geometry"
+import { getSubType } from '../../base/model/smodel'
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -117,7 +119,9 @@ export class StraightEdgeView implements IView {
 
 export class SLabelView implements IView {
     render(label: SLabel, context: RenderingContext): VNode {
-        return <text key={label.id} id={label.id} class-label={true}>{label.text}</text>
+        const vnode = <text key={label.id} id={label.id} class-label={true}>{label.text}</text>
+        setAttr(vnode, 'class', getSubType(label))
+        return vnode
     }
 }
 

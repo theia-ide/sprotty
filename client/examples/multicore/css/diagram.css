@@ -3,17 +3,24 @@
     stroke-width: 1;
     rx: 4;
     ry: 4;
+    line-height: 1px;
 }
 
 .crossbar {
     fill: #aaa;
     stroke: #333;
-    stroke-width: 1;
+    stroke-width: 0;
 }
 
 .channel {
     stroke: #666;
     stroke-width: 1;
+}
+
+.label {
+    stroke-width: 0;
+    fill: #000;
+    font-weight: inherit;
 }
 
 .selected {
@@ -27,7 +34,7 @@
     fill: #000;
     font-size: 9pt;
     font-weight: bold;
-    text-anchor: middle;
+    text-align: center;
 }
 
 .info {
@@ -35,7 +42,15 @@
     stroke: #000;
     fill: #000;
     font-size: 4pt;
-    text-anchor: start;
+    text-align: start;
+}
+
+.comp {
+    padding-left: 0px;
+    padding-right: 0px;
+    padding-top: 0px;
+    padding-bottom: 0px;
+    line-height: 0px;
 }
 
 .missing {

@@ -1,3 +1,4 @@
+import { InitializeCanvasBoundsCommand } from './initialize-canvas';
 import { injectable } from "inversify"
 import { Action } from "../intent/actions"
 import { isEmpty } from "../../utils/geometry"
@@ -41,6 +42,10 @@ export class SetModelCommand extends Command {
 
     redo(context: CommandExecutionContext): SModelRoot {
         return this.newRoot
+    }
+
+    get blockUntilActionKind() {
+        return InitializeCanvasBoundsCommand.KIND
     }
 }
 

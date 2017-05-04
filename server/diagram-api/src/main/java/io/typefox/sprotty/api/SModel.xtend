@@ -59,3 +59,26 @@ class SEdge extends SModelElement {
 		initializer.accept(this)
 	}
 }
+
+@Accessors@EqualsHashCode@ToString
+class SCompartment extends SModelElement {
+	String layout
+	Boolean resizeContainer
+	
+	new() {}
+	new(Consumer<SCompartment> initializer) {
+		initializer.accept(this)
+	}
+}
+
+@Accessors@EqualsHashCode@ToString
+class SLabel extends SModelElement implements BoundsAware  {
+	Point position
+	Dimension size
+	String text
+	
+	new() {}
+	new(Consumer<SLabel> initializer) {
+		initializer.accept(this)
+	}
+}

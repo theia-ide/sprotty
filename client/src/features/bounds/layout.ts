@@ -4,7 +4,7 @@ import { isLayouting, Layouting } from "./model"
 import { Bounds } from "../../utils/geometry"
 import { inject, injectable } from "inversify"
 import { LAYOUT_TYPES } from "./types"
-import { BoundsData } from "./bounds-updater"
+import { BoundsData } from "./hidden-bounds-updater"
 import { VBoxLayouter } from "./vbox-layout"
 
 export class LayoutRegistry extends InstanceRegistry<ILayout> {

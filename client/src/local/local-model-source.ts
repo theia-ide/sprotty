@@ -1,5 +1,9 @@
 import { injectable } from "inversify"
-import { ComputedBoundsAction, RequestBoundsAction } from "../features/bounds/bounds-manipulation"
+import {
+    ComputedBoundsAction,
+    RequestBoundsAction,
+    RequestBoundsCommand
+} from '../features/bounds/bounds-manipulation';
 import { Bounds } from "../utils/geometry"
 import { Match } from "../features/update/model-matching"
 import { UpdateModelAction, UpdateModelCommand } from "../features/update/update-model"
@@ -33,7 +37,7 @@ export class LocalModelSource extends ModelSource {
         
         // Register model manipulation commands
         registry.registerCommand(UpdateModelCommand)
-
+        
         // Register this model source
         if (this.viewerOptions.boundsComputation == 'dynamic') {
             registry.register(ComputedBoundsAction.KIND, this)
