@@ -2,7 +2,7 @@ import { Container, ContainerModule } from "inversify"
 import { defaultModule, ViewerOptions, TYPES, ViewRegistry } from "../../../src/base"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
-import { boundsModule, moveModule, fadeModule } from "../../../src/features"
+import { boundsModule, moveModule, fadeModule, hoverModule } from "../../../src/features"
 import { FlowModelFactory } from "./flowmodel-factory"
 import viewportModule from "../../../src/features/viewport/di.config"
 import selectModule from "../../../src/features/select/di.config"
@@ -22,7 +22,7 @@ const flowModule = new ContainerModule((bind, unbind, isBound, rebind) => {
 
 export default (useWebsocket: boolean) => {
     const container = new Container()
-    container.load(defaultModule, selectModule, moveModule, boundsModule, fadeModule, viewportModule, flowModule)
+    container.load(defaultModule, selectModule, moveModule, boundsModule, fadeModule, viewportModule, flowModule, hoverModule)
     if (useWebsocket)
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else

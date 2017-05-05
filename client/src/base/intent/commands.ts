@@ -149,7 +149,7 @@ export class CommandActionHandler implements IActionHandler {
     constructor(private commandType: new (a: Action) => ICommand) {
     }
 
-    handle(action: Action): ICommand | Action | undefined {
+    handle(action: Action): ICommand {
         return new this.commandType(action)
     }
 }

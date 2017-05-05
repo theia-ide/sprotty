@@ -57,3 +57,8 @@
     font-family: SansSerif;
     font-size: 14pt;
 }
+
+.mouseover {
+    stroke: #333;
+    stroke-width: 2;
+}

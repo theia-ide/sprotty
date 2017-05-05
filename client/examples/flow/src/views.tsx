@@ -13,7 +13,7 @@ export class TaskNodeView extends CircularNodeView {
     render(node: TaskNode, context: RenderingContext): VNode {
         const radius = this.getRadius(node)
         return <g key={node.id} id={node.id} >
-                <circle class-node={true} class-task={true} class-selected={node.selected}
+                <circle class-mouseover={node.mouseover} class-node={true} class-task={true} class-selected={node.selected}
                         class-running={node.status == 'running'}
                         class-finished={node.status == 'finished'}
                         r={radius} cx={radius} cy={radius}></circle>

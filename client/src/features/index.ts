@@ -8,6 +8,8 @@ export * from "./bounds/bounds-manipulation"
 export * from "./bounds/model"
 export * from "./select/select"
 export * from "./select/model"
+export * from "./hover/hover"
+export * from "./hover/model"
 export * from "./undo-redo/undo-redo"
 export * from "./viewport/viewport"
 export * from "./viewport/center-fit"
@@ -21,5 +23,6 @@ import fadeModule from "./fade/di.config"
 import selectModule from "./select/di.config"
 import undoRedoModule from "./undo-redo/di.config"
 import viewportModule from "./viewport/di.config"
+import hoverModule from "./hover/di.config"
 
-export { moveModule, boundsModule, fadeModule, selectModule, undoRedoModule, viewportModule }
+export { moveModule, boundsModule, fadeModule, selectModule, undoRedoModule, viewportModule, hoverModule }
