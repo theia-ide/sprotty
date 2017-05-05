@@ -1,6 +1,6 @@
 import { Container, ContainerModule } from "inversify"
 import { defaultModule, TYPES, ViewRegistry } from "../../../src/base"
-import { SGraphFactory, SGraphView, StraightEdgeView } from "../../../src/graph"
+import { SGraphFactory, SGraphView, PolylineEdgeView } from "../../../src/graph"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule } from "../../../src/features"
@@ -24,7 +24,7 @@ export default (useWebsocket: boolean) => {
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
     viewRegistry.register('graph', SGraphView)
     viewRegistry.register('node:circle', CircleNodeView)
-    viewRegistry.register('edge:straight', StraightEdgeView)
+    viewRegistry.register('edge:straight', PolylineEdgeView)
 
     return container
 }

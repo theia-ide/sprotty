@@ -1,7 +1,7 @@
 import { VNode } from "snabbdom/vnode"
 import { RenderingContext } from "../../../src/base"
 import { SEdge } from "../../../src/graph/model/sgraph"
-import { StraightEdgeView } from "../../../src/graph/view/views"
+import { PolylineEdgeView } from "../../../src/graph/view/views"
 import { CircularNodeView, RectangularNodeView } from "../../../src/lib"
 import { angle, Point, toDegrees } from "../../../src/utils/geometry"
 import * as snabbdom from "snabbdom-jsx"
@@ -9,7 +9,7 @@ import { BarrierNode, TaskNode } from "./flowmodel"
 
 const JSX = {createElement: snabbdom.svg}
 
-export class ExecutionNodeView extends CircularNodeView {
+export class TaskNodeView extends CircularNodeView {
     render(node: TaskNode, context: RenderingContext): VNode {
         const radius = this.getRadius(node)
         return <g key={node.id} id={node.id} >
@@ -34,7 +34,7 @@ export class BarrierNodeView extends RectangularNodeView {
     }
 }
 
-export class FlowEdgeView extends StraightEdgeView {
+export class FlowEdgeView extends PolylineEdgeView {
     protected renderAdditionals(edge: SEdge, segments: Point[], context: RenderingContext): VNode[] {
         const p1 = segments[segments.length - 2]
         const p2 = segments[segments.length - 1]

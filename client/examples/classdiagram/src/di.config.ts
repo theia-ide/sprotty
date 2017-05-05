@@ -1,6 +1,6 @@
 import { Container, ContainerModule } from "inversify"
 import { defaultModule, TYPES, ViewerOptions, ViewRegistry } from "../../../src/base"
-import { SGraphFactory, SGraphView, SLabelView, SCompartmentView, StraightEdgeView } from "../../../src/graph"
+import { SGraphFactory, SGraphView, SLabelView, SCompartmentView, PolylineEdgeView } from "../../../src/graph"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule } from "../../../src/features"
@@ -32,7 +32,7 @@ export default (useWebsocket: boolean) => {
     viewRegistry.register('label:heading', SLabelView)
     viewRegistry.register('label:text', SLabelView)
     viewRegistry.register('comp:comp', SCompartmentView)
-    viewRegistry.register('edge:straight', StraightEdgeView)
+    viewRegistry.register('edge:straight', PolylineEdgeView)
 
     return container
 }

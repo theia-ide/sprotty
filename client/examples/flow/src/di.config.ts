@@ -7,7 +7,7 @@ import { FlowModelFactory } from "./flowmodel-factory"
 import viewportModule from "../../../src/features/viewport/di.config"
 import selectModule from "../../../src/features/select/di.config"
 import { SGraphView } from "../../../src/graph"
-import { ExecutionNodeView, BarrierNodeView, FlowEdgeView } from "./views"
+import { TaskNodeView, BarrierNodeView, FlowEdgeView } from "./views"
 import { LocalModelSource } from "../../../src/local/local-model-source"
 
 const flowModule = new ContainerModule((bind, unbind, isBound, rebind) => {
@@ -31,7 +31,7 @@ export default (useWebsocket: boolean) => {
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
     viewRegistry.register('flow', SGraphView)
-    viewRegistry.register('task', ExecutionNodeView)
+    viewRegistry.register('task', TaskNodeView)
     viewRegistry.register('barrier', BarrierNodeView)
     viewRegistry.register('edge', FlowEdgeView)
 

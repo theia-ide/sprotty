@@ -29,7 +29,7 @@ export abstract class SNodeView implements IView {
     abstract getAnchor(node: SNode, refPoint: Point): Point
 }
 
-export class StraightEdgeView implements IView {
+export class PolylineEdgeView implements IView {
     minimalPointDistance: number = 2
 
     render(edge: SEdge, context: RenderingContext): VNode {

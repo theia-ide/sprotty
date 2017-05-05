@@ -11,7 +11,7 @@ import { RenderingContext, ViewRegistry } from "../../base/view/views"
 import { Viewer, ModelRendererFactory } from "../../base/view/viewer"
 import { TYPES } from "../../base/types"
 import { SGraphFactory } from "../model/sgraph-factory"
-import { SGraphView, StraightEdgeView } from "./views"
+import { SGraphView, PolylineEdgeView } from "./views"
 import defaultModule from "../../base/di.config"
 import selectModule from "../../features/select/di.config"
 import moveModule from "../../features/move/di.config"
@@ -39,7 +39,7 @@ describe('graph views', () => {
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
     viewRegistry.register('graph', SGraphView)
     viewRegistry.register('node:circle', CircleNodeView)
-    viewRegistry.register('edge:straight', StraightEdgeView)
+    viewRegistry.register('edge:straight', PolylineEdgeView)
     const decorators = container.getAll<IVNodeDecorator>(TYPES.IVNodeDecorator)
     const context = container.get<ModelRendererFactory>(TYPES.ModelRendererFactory)(decorators)
     const factory = new SGraphFactory()
@@ -63,7 +63,7 @@ describe('graph views', () => {
     const graph = factory.createRoot({id: 'graph', type: 'graph', children: [node0, node1, edge0]}) as SGraph;
 
     it('render a straight edge', () => {
-        const view = new StraightEdgeView()
+        const view = new PolylineEdgeView()
         const vnode = view.render(graph.index.getById('edge0') as SEdge, context)
         const html = toHTML(vnode)
         expect(html).to.be.equal(
