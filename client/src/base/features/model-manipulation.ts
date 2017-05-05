@@ -23,7 +23,7 @@ export class SetModelCommand extends Command {
     oldRoot: SModelRoot
     newRoot: SModelRoot
 
-    constructor(public action: SetModelAction) {
+    constructor(public action: SetModelAction, private isInitial: boolean = false) {
         super()
     }
 
@@ -45,7 +45,10 @@ export class SetModelCommand extends Command {
     }
 
     get blockUntilActionKind() {
-        return InitializeCanvasBoundsCommand.KIND
+        if(this.isInitial) 
+            return InitializeCanvasBoundsCommand.KIND
+        else 
+            return undefined
     }
 }
 

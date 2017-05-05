@@ -175,14 +175,14 @@ class MulticoreAllocationDiagramGenerator {
 			result += new SLabel [
 				id = 'st_' + coreIndex
 				type = 'label:info' 								
-				text = 'stack used: ' + (stackBeginAddr - currentStackPointer) + ' (' + percentStackUsedFormatted + '%)' 
+				text = 'stack used: ' + (stackBeginAddr - currentStackPointer) //+ ' (' + percentStackUsedFormatted + '%)' 
 			]
 		}
 		return new SCompartment [
 			id = 'comp_' + coreIndex
 			type = 'comp'
 			layout = 'vbox'
-			resizeContainer = false
+			resizeContainer = true
 			children = result
 		]
 	}

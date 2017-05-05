@@ -16,7 +16,7 @@ export default function runMulticore() {
     const container = createContainer(false)
 
     // Initialize model
-    const dim = 32
+    const dim = 64
     const cores: CoreSchema[] = []
     const channels: ChannelSchema[] = []
     for (let i = 0; i < dim; ++i) {
@@ -27,7 +27,14 @@ export default function runMulticore() {
                 type: 'core',
                 column: i,
                 row: j,
-                kernelNr: Math.round(Math.random() * 11)
+                kernelNr: Math.round(Math.random() * 11),
+                layout: 'vbox',
+    			resizeContainer: false,
+                children: [{
+                    id: 'nr_' + pos,
+				    type: 'label:heading',
+				    text: '' + pos
+                }]
             })
             channels.push(createChannel(i, j, Direction.up))
             channels.push(createChannel(i, j, Direction.down))

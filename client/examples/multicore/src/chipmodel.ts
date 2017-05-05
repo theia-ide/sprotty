@@ -1,4 +1,4 @@
-import { SShapeElement } from '../../../src/graph';
+import { SCompartmentElementSchema, SShapeElement } from '../../../src/graph';
 import { SChildElement, SModelElementSchema, SModelRootSchema } from "../../../src/base"
 import { Bounds, Direction, EMPTY_BOUNDS } from "../../../src/utils"
 import {
@@ -43,6 +43,9 @@ export interface CoreSchema extends SModelElementSchema {
     column: number
     kernelNr?: number
     selected?: boolean
+    layout: string
+    resizeContainer: boolean
+    children: SCompartmentElementSchema[]
 }
 
 export class Core extends SShapeElement implements Selectable, Fadeable, Layouting {

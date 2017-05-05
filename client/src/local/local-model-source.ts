@@ -39,27 +39,18 @@ export class LocalModelSource extends ModelSource {
         registry.registerCommand(UpdateModelCommand)
         
         // Register this model source
-        if (this.viewerOptions.boundsComputation == 'dynamic') {
-            registry.register(ComputedBoundsAction.KIND, this)
-        }
+        registry.register(ComputedBoundsAction.KIND, this)
     }
 
     setModel(root: SModelRootSchema): void {
         this.currentRoot = root
-        if (this.viewerOptions.boundsComputation == 'dynamic') {
-            this.actionDispatcher.dispatch(new RequestBoundsAction(root))
-        } else {
-            this.actionDispatcher.dispatch(new SetModelAction(root))
-        }
+        this.actionDispatcher.dispatch(new RequestBoundsAction(root))
     }
 
     updateModel(newRoot?: SModelRootSchema): void {
         if (newRoot !== undefined)
             this.currentRoot = newRoot
-        if (this.viewerOptions.boundsComputation == 'dynamic')
-            this.actionDispatcher.dispatch(new RequestBoundsAction(this.currentRoot))
-        else
-            this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
+        this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
     }
 
     applyMatches(matches: Match[]): void {
