@@ -99,7 +99,7 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 			val validationResult = validationService.getResult(document)
 			if (!validationResult.issues.exists[severity == 'error']) {
 				if(selectedTaskAllocation !== null) {
-					selectionProvider.setSelection(resourceId, selectedStep)
+					selectionProvider.setSelection(resourceId, previousElement.getContainerOfType(Step) ?: selectedStep)
 					document.readOnly[ it, cancelIndicator |
 						doCompute(CancelIndicator.NullImpl)
 						return null

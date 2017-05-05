@@ -1,3 +1,4 @@
+import { InitializeCanvasBoundsCommand } from './initialize-canvas';
 import { injectable } from "inversify"
 import { Action } from "../intent/actions"
 import { isEmpty } from "../../utils/geometry"
@@ -22,7 +23,7 @@ export class SetModelCommand extends Command {
     oldRoot: SModelRoot
     newRoot: SModelRoot
 
-    constructor(public action: SetModelAction) {
+    constructor(public action: SetModelAction, private isInitial: boolean = false) {
         super()
     }
 
@@ -41,6 +42,13 @@ export class SetModelCommand extends Command {
 
     redo(context: CommandExecutionContext): SModelRoot {
         return this.newRoot
+    }
+
+    get blockUntilActionKind() {
+        if(this.isInitial) 
+            return InitializeCanvasBoundsCommand.KIND
+        else 
+            return undefined
     }
 }
 

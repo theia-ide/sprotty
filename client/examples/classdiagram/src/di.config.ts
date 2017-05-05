@@ -7,7 +7,7 @@ import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule 
 import { ClassNodeView } from "./views"
 import { LocalModelSource } from "../../../src/local/local-model-source"
 
-const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
     rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope()
@@ -19,7 +19,7 @@ const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) =>
 
 export default (useWebsocket: boolean) => {
     const container = new Container()
-    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, circlegraphModule)
+    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, classDiagramModule)
     if (useWebsocket)
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else

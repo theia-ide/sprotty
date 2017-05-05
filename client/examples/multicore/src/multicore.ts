@@ -1,7 +1,5 @@
 import { Direction } from "../../../src/utils"
 import {
-    AllocatedTask,
-    AllocatedTaskSchema,
     Channel,
     ChannelSchema,
     Core,
@@ -18,7 +16,7 @@ export default function runMulticore() {
     const container = createContainer(false)
 
     // Initialize model
-    const dim = 32
+    const dim = 64
     const cores: CoreSchema[] = []
     const channels: ChannelSchema[] = []
     for (let i = 0; i < dim; ++i) {
@@ -29,7 +27,14 @@ export default function runMulticore() {
                 type: 'core',
                 column: i,
                 row: j,
-                load: Math.random()
+                kernelNr: Math.round(Math.random() * 11),
+                layout: 'vbox',
+    			resizeContainer: false,
+                children: [{
+                    id: 'nr_' + pos,
+				    type: 'label:heading',
+				    text: '' + pos
+                }]
             })
             channels.push(createChannel(i, j, Direction.up))
             channels.push(createChannel(i, j, Direction.down))
@@ -97,17 +102,7 @@ export default function runMulticore() {
         for (let i = 0; i < processor.children!.length; ++i) {
             const child = processor.children![i] 
             if(child.type == 'core') {
-                const task: AllocatedTaskSchema = {
-                    id: child.id + '_t',
-                    type: 'task',
-                    name: 't',
-                    kernelNr: Math.round(Math.random() * 11),
-                    runtimeInfo: ['']
-                }
-                if(child.children === undefined) 
-                    child.children = [task]
-                else
-                    child.children[0] = task
+                (child as CoreSchema).kernelNr = Math.round(Math.random() * 11)
             }
         }
         modelSource.updateModel(processor)

@@ -7,6 +7,7 @@ export interface SModelElementSchema {
 }
 
 export interface SModelRootSchema extends SModelElementSchema {
+    canvasBounds?: Bounds
 }
 
 /**
@@ -160,6 +161,16 @@ export function getBasicType(schema: SModelElementSchema): string {
     let colonIndex = schema.type.indexOf(':')
     if (colonIndex >= 0)
         return schema.type.substring(0, colonIndex)
+    else
+        return schema.type
+}
+
+export function getSubType(schema: SModelElementSchema): string {
+    if (!schema.type)
+        return ''
+    let colonIndex = schema.type.indexOf(':')
+    if (colonIndex >= 0)
+        return schema.type.substring(colonIndex + 1)
     else
         return schema.type
 }

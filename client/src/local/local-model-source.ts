@@ -1,5 +1,9 @@
 import { injectable } from "inversify"
-import { ComputedBoundsAction, RequestBoundsAction } from "../features/bounds/bounds-manipulation"
+import {
+    ComputedBoundsAction,
+    RequestBoundsAction,
+    RequestBoundsCommand
+} from '../features/bounds/bounds-manipulation';
 import { Bounds } from "../utils/geometry"
 import { Match } from "../features/update/model-matching"
 import { UpdateModelAction, UpdateModelCommand } from "../features/update/update-model"
@@ -33,29 +37,20 @@ export class LocalModelSource extends ModelSource {
         
         // Register model manipulation commands
         registry.registerCommand(UpdateModelCommand)
-
+        
         // Register this model source
-        if (this.viewerOptions.boundsComputation == 'dynamic') {
-            registry.register(ComputedBoundsAction.KIND, this)
-        }
+        registry.register(ComputedBoundsAction.KIND, this)
     }
 
     setModel(root: SModelRootSchema): void {
         this.currentRoot = root
-        if (this.viewerOptions.boundsComputation == 'dynamic') {
-            this.actionDispatcher.dispatch(new RequestBoundsAction(root))
-        } else {
-            this.actionDispatcher.dispatch(new SetModelAction(root))
-        }
+        this.actionDispatcher.dispatch(new RequestBoundsAction(root))
     }
 
     updateModel(newRoot?: SModelRootSchema): void {
         if (newRoot !== undefined)
             this.currentRoot = newRoot
-        if (this.viewerOptions.boundsComputation == 'dynamic')
-            this.actionDispatcher.dispatch(new RequestBoundsAction(this.currentRoot))
-        else
-            this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
+        this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
     }
 
     applyMatches(matches: Match[]): void {

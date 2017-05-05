@@ -1,3 +1,4 @@
+import { SGraphFactory } from '../../../src/graph';
 import {
     getBasicType, SChildElement, SModelElement, SModelElementSchema, SModelFactory, SModelRoot, SModelRootSchema,
     SParentElement
@@ -9,7 +10,7 @@ import { Direction } from "../../../src/utils"
 import { CORE_WIDTH, CORE_DISTANCE } from "./views";
 
 
-export class ChipModelFactory extends SModelFactory {
+export class ChipModelFactory extends SGraphFactory {
 
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
         try {

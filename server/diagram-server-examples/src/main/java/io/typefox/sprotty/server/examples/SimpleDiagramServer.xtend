@@ -39,7 +39,11 @@ class SimpleDiagramServer extends AbstractDiagramServer {
 		]
 	}
 	
-	override protected needsLayout(SModelRoot root) {
+	override protected needsServerLayout(SModelRoot root) {
+		false
+	}
+	
+	override protected needsClientLayout(SModelRoot root) {
 		false
 	}
 	

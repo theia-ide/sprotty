@@ -1,8 +1,10 @@
+import { EMPTY_BOUNDS } from '../../utils';
+import { SChildElement } from '../../base';
 import { SParentElement, SModelElement } from "../../base/model/smodel"
-import { ILayout } from "./layout"
-import { BoundsAware, Layouting } from "./model"
+import { ILayout, StatefulLayouter } from './layout';
+import { BoundsAware, isBoundsAware, isLayouting, Layouting } from './model';
 import { Bounds, isEmpty } from "../../utils/geometry"
-import { BoundsData } from "./bounds-updater"
+import { BoundsData } from "./hidden-bounds-updater"
 import { VNode } from "snabbdom/vnode"
 
 /**
@@ -21,67 +23,32 @@ export class VBoxLayouter implements ILayout {
     static KIND = 'vbox'
 
     layout(container: SParentElement & BoundsAware & Layouting,
-           element2boundsData: Map<SModelElement, BoundsData>) {
-        const boundsData = element2boundsData.get(container)
-        if(!boundsData)
-            return
+           layouter: StatefulLayouter) {
+        const boundsData = layouter.getBoundsData(container)
         const properties = this.getLayoutProperties(boundsData.vnode)
-        const maxWidth = this.getMaxWidth(container, element2boundsData)
+        const maxWidth = container.resizeContainer
+            ? this.getMaxWidth(container, layouter)
+            : Math.max(0, this.getFixedContainerBounds(container, layouter).width) - properties.paddingLeft - properties.paddingRight
         if (maxWidth > 0) {
-            let y = this.layoutChildren(container, element2boundsData, properties, maxWidth)
-            boundsData.bounds = {
-                x: container.bounds.x,
-                y: container.bounds.y,
-                width: maxWidth + properties.paddingLeft + properties.paddingRight,
-                height: y - properties.lineHeight + properties.paddingBottom
+            let y = this.layoutChildren(container, layouter, properties, maxWidth)
+            if(container.resizeContainer) {
+                boundsData.bounds = {
+                    x: container.bounds.x,
+                    y: container.bounds.y,
+                    width: maxWidth + properties.paddingLeft + properties.paddingRight,
+                    height: y - properties.lineHeight + properties.paddingBottom
+                }
+                boundsData.boundsChanged = true
             }
         }
     }
 
-    protected layoutChildren(container: SParentElement & BoundsAware & Layouting,
-                             element2boundsData: Map<SModelElement, BoundsData>,
-                             properties: VBoxProperties,
-                             maxWidth: number) {
-        let y = properties.paddingTop
-        container.children.forEach(
-            child => {
-                const boundsData = element2boundsData.get(child)! // can't be undefined here as it is set in getMaxWidth
-                const bounds = boundsData.bounds
-                if (bounds && !isEmpty(bounds)) {
-                    let dx = 0
-                    if (properties.textAlign == 'left')
-                        dx = 0
-                    else if (properties.textAlign == 'center')
-                        dx = 0.5 * (maxWidth - bounds.width)
-                    else if (properties.textAlign == 'right')
-                        dx = maxWidth - bounds.width
-                    boundsData.bounds = {
-                        x: properties.paddingLeft + (child as any).bounds.x - bounds.x + dx,
-                        y: y + (child as any).bounds.y - bounds.y,
-                        width: bounds.width,
-                        height: bounds.height
-                    }
-                    y += bounds.height + properties.lineHeight
-                }
-            }
-        )
-        return y
-    }
-
     protected getMaxWidth(container: SParentElement & BoundsAware & Layouting,
-                          element2boundsData: Map<SModelElement, BoundsData>) {
+                          layouter: StatefulLayouter) {
         let maxWidth = -1
         container.children.forEach(
             child => {
-                let boundsData = element2boundsData.get(child)
-                if(!boundsData) {
-                    boundsData = {
-                        bounds: (child as any).bounds,
-                        boundsChanged: false
-                    }
-                    element2boundsData.set(child, boundsData)
-                }
-                const bounds = boundsData.bounds
+                const bounds = layouter.getBoundsData(child).bounds
                 if (bounds && !isEmpty(bounds))
                     maxWidth = Math.max(maxWidth, bounds.width)
             }
@@ -89,10 +56,63 @@ export class VBoxLayouter implements ILayout {
         return maxWidth
     }
 
+    protected getFixedContainerBounds(
+            container: SModelElement, 
+            layouter: StatefulLayouter): Bounds {
+        let currentContainer = container 
+        while(true) {
+            if(isBoundsAware(currentContainer)) {
+                const bounds = currentContainer.bounds
+                if(isLayouting(currentContainer) && currentContainer.resizeContainer)
+                    layouter.log.error(currentContainer, 'Resizable container found while detecting fixed bounds')
+                if(!isEmpty(bounds))
+                    return bounds
+            }
+            if(currentContainer instanceof SChildElement) {
+                currentContainer = currentContainer.parent
+            } else {
+                layouter.log.error(currentContainer, 'Cannot detect fixed bounds')
+                return EMPTY_BOUNDS
+            }
+        }
+    }
+
+    protected layoutChildren(container: SParentElement & BoundsAware & Layouting,
+                             layouter: StatefulLayouter,
+                             properties: VBoxProperties,
+                             maxWidth: number) {
+        let y = properties.paddingTop
+        container.children.forEach(
+            child => {
+                const boundsData = layouter.getBoundsData(child)
+                const bounds = boundsData.bounds
+                const textAlign = this.getLayoutProperties(boundsData.vnode).textAlign
+                if (bounds && !isEmpty(bounds)) {
+                    let dx = 0
+                    if (textAlign == 'left')
+                        dx = 0
+                    else if (textAlign == 'center')
+                        dx = 0.5 * (maxWidth - bounds.width)
+                    else if (textAlign == 'right')
+                        dx = maxWidth - bounds.width
+                    boundsData.bounds = {
+                        x: properties.paddingLeft + (child as any).bounds.x - bounds.x + dx,
+                        y: y + (child as any).bounds.y - bounds.y,
+                        width: bounds.width,
+                        height: bounds.height
+                    }
+                    boundsData.boundsChanged = true
+                    y += bounds.height + properties.lineHeight
+                }
+            }
+        )
+        return y
+    }
+
     protected getLayoutProperties(vnode: VNode | undefined): VBoxProperties {
         const style = (vnode && vnode.elm) ? getComputedStyle(vnode.elm as any) : undefined
         return {
-            lineHeight: this.getFloatValue(style, 'line-height', 3),
+            lineHeight: this.getFloatValue(style, 'line-height', 1),
             paddingTop: this.getFloatValue(style, 'padding-top', 5),
             paddingBottom: this.getFloatValue(style, 'padding-bottom', 5),
             paddingLeft: this.getFloatValue(style, 'padding-left', 5),

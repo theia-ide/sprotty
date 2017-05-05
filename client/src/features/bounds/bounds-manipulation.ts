@@ -14,7 +14,7 @@ export class SetBoundsAction implements Action {
 export class RequestBoundsAction implements Action {
     readonly kind = RequestBoundsCommand.KIND
 
-    constructor(public root: SModelRootSchema) {
+    constructor(public newRoot: SModelRootSchema) {
     }
 }
 
@@ -86,6 +86,10 @@ export class RequestBoundsCommand extends HiddenCommand {
     }
 
     execute(context: CommandExecutionContext): SModelRoot {
-        return context.modelFactory.createRoot(this.action.root)
+        return context.modelFactory.createRoot(this.action.newRoot)
+    }
+
+    get blockUntilActionKind() {
+        return ComputedBoundsAction.KIND
     }
 }

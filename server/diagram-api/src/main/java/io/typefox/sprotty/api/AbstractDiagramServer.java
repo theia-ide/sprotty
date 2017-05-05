@@ -42,37 +42,41 @@ public abstract class AbstractDiagramServer implements Consumer<ActionMessage> {
 	protected void handle(RequestModelAction request, ActionMessage message) {
 		SModelRoot root = getModel(message);
 		if (root != null) {
-			sendModel(null, root, message.getClientId(), true);
+			sendModel(root, null, message.getClientId());
 		}
 	}
 	
 	protected abstract SModelRoot getModel(ActionMessage message);
 	
-	protected abstract boolean needsLayout(SModelRoot root);
+	protected abstract boolean needsServerLayout(SModelRoot root);
 	
-	protected void sendModel(SModelRoot newRoot, SModelRoot oldRoot, String clientId, boolean initial) {
-		if (needsLayout(newRoot)) {
+	protected abstract boolean needsClientLayout(SModelRoot root);
+	
+	protected void sendModel(SModelRoot newRoot, SModelRoot oldRoot, String clientId) {
+		if (needsServerLayout(newRoot) || needsClientLayout(newRoot)) {
 			sendAction(new RequestBoundsAction( action -> {
-				action.setRoot(newRoot);
+				action.setNewRoot(newRoot);
 			}), clientId);
-		} else if (initial) {
+			if(needsClientLayout(newRoot))
+				modelSent(newRoot, oldRoot, clientId);
+		} else if (oldRoot == null) {
 			sendAction(new SetModelAction( action -> {
 				action.setModelType(newRoot.getType());
 				action.setModelId(newRoot.getId());
 				action.setNewRoot(newRoot);
 			}), clientId);
-			modelSent(oldRoot, newRoot, clientId, initial);
+			modelSent(newRoot, oldRoot, clientId);
 		} else {
 			sendAction(new UpdateModelAction( action -> {
 				action.setModelType(newRoot.getType());
 				action.setModelId(newRoot.getId());
 				action.setNewRoot(newRoot);
 			}), clientId);
-			modelSent(newRoot, oldRoot, clientId, initial);
+			modelSent(newRoot, oldRoot, clientId);
 		}
 	}
 	
-	protected void modelSent(SModelRoot newRoot, SModelRoot oldRoot, String clientId, boolean initial) {
+	protected void modelSent(SModelRoot newRoot, SModelRoot oldRoot, String clientId) {
 	}
 	
 	protected void handle(ComputedBoundsAction computedBounds, ActionMessage message) {
@@ -84,7 +88,7 @@ public abstract class AbstractDiagramServer implements Consumer<ActionMessage> {
 				update.setModelId(root.getId());
 				update.setNewRoot(root);
 			}), message.getClientId());
-			modelSent(root, root, message.getClientId(), false);
+			modelSent(root, root, message.getClientId());
 		}
 	}
 	

@@ -1,6 +1,6 @@
 import { IView, RenderingContext, setAttr, SModelElement, ThunkView } from '../../../src/base';
 import { VNode } from "snabbdom/vnode"
-import { AllocatedTask, Channel, Core, Crossbar, Processor } from './chipmodel';
+import { Channel, Core, Crossbar, Processor } from './chipmodel';
 import { Direction, ColorMap, RGBColor, toSVG, rgb } from "../../../src/utils"
 import * as snabbdom from 'snabbdom-jsx';
 
@@ -25,36 +25,24 @@ export class ProcessorView implements IView {
 export const CORE_WIDTH = 50
 export const CORE_DISTANCE = 10
 
-export class CoreView extends ThunkView {
+export class CoreView implements IView {//extends ThunkView {
 
-    watchedArgs(model: Core): any[] {
-        return [ model.children, model.position, model.row, model.column, model.opacity ]
-    }
+    // watchedArgs(model: Core): any[] {
+    //     return [ model.children, model.position, model.row, model.column, model.opacity ]
+    // }
 
-    selector(model: Core): string {
-        return 'g'
-    }
+    // selector(model: Core): string {
+    //     return 'g'
+    // }
 
-    doRender(model: Core, context: RenderingContext): VNode {
+    // doRender(model: Core, context: RenderingContext): VNode {
+    render(model: Core, context: RenderingContext): VNode {
         const nodeName = parseInt(model.id.substr(5))
-        let fillColor: string
-        let content: VNode
-        if(model.children.length > 0) {
-            const task = model.children[0] as AllocatedTask
-            fillColor = KernelColor.getSVG(task.kernelNr)
-            let i=0
-            content = <g>
-                <text class-heading={true} x={CORE_WIDTH / 2} y={15}>{this.padLeft(nodeName)}</text>
-                {task.runtimeInfo.map(
-                    (info: string) => <text class-info={true} x={4} y={18 + 5*++i}>{info}</text>
-                )}
+        const fillColor = KernelColor.getSVG(model.kernelNr)
+        const content = <g>
+                {context.renderChildren(model, context)}
             </g>
-            setAttr(content, 'clip-path', 'url(#core-clip)')
-        } else {
-            fillColor = toSVG({red: 150, green:150, blue: 150})
-            content = <text class-heading={true} x={CORE_WIDTH / 2} y={15}>{this.padLeft(nodeName)}</text>
-        }
-        
+        setAttr(content, 'clip-path', 'url(#core-clip)')
         return <g class-core={true}
                   id={model.id}
                   key={model.id}>
@@ -65,17 +53,6 @@ export class CoreView extends ThunkView {
                       fill={fillColor}/>
                 {content}
             </g>
-    }
-
-    private padLeft(n: number): string {
-        if (n < 10)
-            return '000' + n
-        if (n < 100)
-            return '00' + n
-        if (n < 1000)
-            return '0' + n
-        else
-            return '' + n
     }
 }
 

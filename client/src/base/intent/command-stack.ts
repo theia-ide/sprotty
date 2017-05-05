@@ -1,4 +1,3 @@
-import { HiddenBoundsUpdater } from '../../features/bounds/bounds-updater';
 import { inject, injectable } from "inversify"
 import {
     HiddenCommand,

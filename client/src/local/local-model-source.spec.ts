@@ -115,7 +115,7 @@ describe('LocalModelSource', () => {
         expect(dispatcher.actions).to.have.lengthOf(3)
         const action0 = dispatcher.actions[0] as RequestBoundsAction
         expect(action0).to.be.instanceOf(RequestBoundsAction)
-        expect(action0.root).to.equal(root1)
+        expect(action0.newRoot).to.equal(root1)
         const action1 = dispatcher.actions[1] as UpdateModelAction
         expect(action1).to.be.instanceOf(UpdateModelAction)
         expect(action1.newRoot).to.deep.equal({
@@ -132,7 +132,7 @@ describe('LocalModelSource', () => {
         })
         const action2 = dispatcher.actions[2] as RequestBoundsAction
         expect(action2).to.be.instanceOf(RequestBoundsAction)
-        expect(action2.root).to.equal(root2)
+        expect(action2.newRoot).to.equal(root2)
     })
 
     it('adds and removes elements', () => {

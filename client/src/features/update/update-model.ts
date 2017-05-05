@@ -10,7 +10,8 @@ import { isLocateable } from "../move/model"
 import { isBoundsAware } from "../bounds/model"
 import { ViewportRootElement } from "../viewport/viewport-root"
 import { injectable } from "inversify"
-import { isEmpty } from "../../utils/geometry";
+import { isEmpty, Bounds } from "../../utils/geometry";
+import { InitializeCanvasBoundsCommand } from "../../base/features/initialize-canvas";
 
 export class UpdateModelAction implements Action {
     readonly kind = UpdateModelCommand.KIND
@@ -76,6 +77,7 @@ export class UpdateModelCommand extends Command {
             else
                 return animationOrRoot
         } else {
+            newRoot.canvasBounds = oldRoot.canvasBounds
             return newRoot
         }
     }
@@ -224,3 +226,4 @@ export class UpdateModelCommand extends Command {
         return this.performUpdate(this.oldRoot, this.newRoot, context)
     }
 }
+

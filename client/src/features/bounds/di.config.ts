@@ -1,7 +1,7 @@
 import { ContainerModule } from "inversify"
 import { TYPES } from "../../base/types"
 import { SetBoundsCommand, RequestBoundsCommand } from "./bounds-manipulation"
-import { HiddenBoundsUpdater } from './bounds-updater';
+import { HiddenBoundsUpdater } from './hidden-bounds-updater';
 import { Layouter, LayoutRegistry } from "./layout"
 import { LAYOUT_TYPES } from "./types"
 

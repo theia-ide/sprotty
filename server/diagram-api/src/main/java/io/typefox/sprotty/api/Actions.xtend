@@ -110,7 +110,7 @@ class RequestBoundsAction implements Action {
 	public static val KIND = 'requestBounds'
 	String kind = KIND
 	
-	SModelRoot root
+	SModelRoot newRoot
 	
 	new() {}
 	new(Consumer<RequestBoundsAction> initializer) {
