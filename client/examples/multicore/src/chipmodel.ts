@@ -10,10 +10,12 @@ import {
     Layouting,
     Selectable,
     selectFeature,
-    viewportFeature
+    viewportFeature,
+    hoverFeature
 } from '../../../src/features';
 import { ViewportRootElement } from "../../../src/features/viewport/viewport-root"
 import { CORE_DISTANCE, CORE_WIDTH } from "./views";
+import {Hoverable} from "../../../src/features/hover/model";
 
 export interface ProcessorSchema extends SModelRootSchema {
     rows: number
@@ -48,7 +50,8 @@ export interface CoreSchema extends SModelElementSchema {
     children: SCompartmentElementSchema[]
 }
 
-export class Core extends SShapeElement implements Selectable, Fadeable, Layouting {
+export class Core extends SShapeElement implements Selectable, Fadeable, Hoverable, Layouting {
+    mouseover: boolean = false
     column: number = 0
     row: number = 0
     kernelNr: number = -1
@@ -58,7 +61,7 @@ export class Core extends SShapeElement implements Selectable, Fadeable, Layouti
     resizeContainer: boolean = false
 
     hasFeature(feature: symbol): boolean {
-        return feature === selectFeature || feature === fadeFeature || feature == layoutFeature
+        return feature === selectFeature || feature === fadeFeature || feature == layoutFeature || feature === hoverFeature
     }
 }
 

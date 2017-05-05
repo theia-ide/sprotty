@@ -9,9 +9,7 @@ export default function runStandalone() {
 
     // Initialize gmodel
     const node0 = { id: 'node0', type: 'node:circle', position: { x: 100, y: 100 }, size: { width: 80, height: 80 } }
-    const node1 = { id: 'node1', type: 'node:circle', position: { x: 200, y: 150 }, size: { width: 80, height: 80 }, selected: true }
-    const edge0 = { id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1' }
-    const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0, node1, edge0] }
+    const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0] }
 
     let count = 2
     function addNode(): SModelElementSchema[] {

@@ -28,7 +28,7 @@ export const CORE_DISTANCE = 10
 export class CoreView implements IView {//extends ThunkView {
 
     // watchedArgs(model: Core): any[] {
-    //     return [ model.children, model.position, model.row, model.column, model.opacity ]
+    //     return [ model.children, model.position, model.row, model.column, model.opacity, model.mouseover ]
     // }
 
     // selector(model: Core): string {
@@ -50,7 +50,9 @@ export class CoreView implements IView {//extends ThunkView {
                       height={model.size.height}
                       rx={4}
                       ry={4}
-                      fill={fillColor}/>
+                      fill={fillColor}
+                      class-mouseover={model.mouseover}
+                />
                 {content}
             </g>
     }
