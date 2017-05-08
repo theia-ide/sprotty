@@ -13,7 +13,7 @@ export function mergeStyle(vnode: VNode, style: any) {
     getData(vnode).style = {...(getData(vnode).style || {}), ...style}
 }
 
-export function on(vnode: VNode, event: string, listener: (r: any, e: SModelElement) => void, element: SModelElement) {
+export function on(vnode: VNode, event: string, listener: (model: SModelElement, event: Event) => void, element: SModelElement) {
     const on = getOn(vnode)
     if (on[event])
         throw new Error('EventListener for ' + event + ' already registered on VNode')

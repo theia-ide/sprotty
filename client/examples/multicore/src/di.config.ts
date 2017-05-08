@@ -4,7 +4,7 @@ import { defaultModule, ViewerOptions, TYPES, ViewRegistry } from "../../../src/
 import { ChipModelFactory } from "./chipmodel-factory"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
-import { boundsModule, selectModule, viewportModule, moveModule, fadeModule } from "../../../src/features"
+import { boundsModule, selectModule, viewportModule, moveModule, fadeModule, hoverModule } from "../../../src/features"
 import { ProcessorView, CoreView, CrossbarView, ChannelView } from "./views"
 import { LocalModelSource } from "../../../src/local/local-model-source"
 
@@ -20,7 +20,7 @@ const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
 
 export default (useWebsocket: boolean) => {
     const container = new Container()
-    container.load(defaultModule, boundsModule, selectModule, moveModule, viewportModule, fadeModule, multicoreModule)
+    container.load(defaultModule, boundsModule, selectModule, moveModule, viewportModule, fadeModule, multicoreModule, hoverModule)
     if (useWebsocket)
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else

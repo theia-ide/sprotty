@@ -60,3 +60,8 @@
     font-size: 14pt;
     text-anchor: middle;
 }
+
+.mouseover {
+    stroke: #333;
+    stroke-width: 2;
+}

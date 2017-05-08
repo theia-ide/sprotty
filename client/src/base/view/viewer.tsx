@@ -33,7 +33,7 @@ export class ModelRenderer implements RenderingContext {
         if(isThunk(vnode))
             return vnode
         return this.decorators.reduce(
-            (vnode: VNode, decorator: IVNodeDecorator) => decorator.decorate(vnode, element),
+            (n: VNode, decorator: IVNodeDecorator) => decorator.decorate(n, element),
             vnode)
     }
 
@@ -43,7 +43,7 @@ export class ModelRenderer implements RenderingContext {
     }
 
     renderChildren(element: SParentElement): VNode[] {
-        return element.children.map((element) => this.renderElement(element))
+        return element.children.map((child) => this.renderElement(child))
     }
 
     postUpdate() {
