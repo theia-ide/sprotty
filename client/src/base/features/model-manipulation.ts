@@ -10,7 +10,7 @@ export class SetModelAction implements Action {
     modelType: string
     modelId: string
 
-    constructor(public newRoot: SModelRootSchema) {
+    constructor(public newRoot: SModelRootSchema, public isInitial: boolean = false) {
         this.modelType = newRoot.type
         this.modelId = newRoot.id
     }
@@ -23,7 +23,7 @@ export class SetModelCommand extends Command {
     oldRoot: SModelRoot
     newRoot: SModelRoot
 
-    constructor(public action: SetModelAction, private isInitial: boolean = false) {
+    constructor(public action: SetModelAction) {
         super()
     }
 
@@ -45,7 +45,7 @@ export class SetModelCommand extends Command {
     }
 
     get blockUntilActionKind() {
-        if(this.isInitial) 
+        if(this.action.isInitial) 
             return InitializeCanvasBoundsCommand.KIND
         else 
             return undefined

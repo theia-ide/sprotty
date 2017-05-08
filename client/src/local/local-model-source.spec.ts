@@ -65,8 +65,8 @@ describe('LocalModelSource', () => {
         modelSource.updateModel(root2)
 
         expect(dispatcher.actions).to.have.lengthOf(2)
-        const action0 = dispatcher.actions[0] as SetModelAction
-        expect(action0).to.be.instanceOf(SetModelAction)
+        const action0 = dispatcher.actions[0] as RequestBoundsAction
+        expect(action0).to.be.instanceOf(RequestBoundsAction)
         expect(action0.newRoot).to.equal(root1)
         const action1 = dispatcher.actions[1] as UpdateModelAction
         expect(action1).to.be.instanceOf(UpdateModelAction)
@@ -130,8 +130,8 @@ describe('LocalModelSource', () => {
                 }
             ]
         })
-        const action2 = dispatcher.actions[2] as RequestBoundsAction
-        expect(action2).to.be.instanceOf(RequestBoundsAction)
+        const action2 = dispatcher.actions[2] as UpdateModelAction
+        expect(action2).to.be.instanceOf(UpdateModelAction)
         expect(action2.newRoot).to.equal(root2)
     })
 

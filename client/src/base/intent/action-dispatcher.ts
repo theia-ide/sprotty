@@ -29,9 +29,9 @@ export class ActionDispatcher implements IActionDispatcher {
                 @inject(TYPES.ILogger) protected logger: ILogger,
                 @inject(TYPES.AnimationFrameSyncer) protected syncer: AnimationFrameSyncer) {
         this.postponedActions = []
-        const initialCommand = new SetModelCommand(new SetModelAction(EMPTY_ROOT))
-        this.commandStack.execute(initialCommand)
+        const initialCommand = new SetModelCommand(new SetModelAction(EMPTY_ROOT, true))
         this.blockUntilActionKind = initialCommand.blockUntilActionKind
+        this.commandStack.execute(initialCommand)
     }
 
     dispatchAll(actions: Action[]): void {

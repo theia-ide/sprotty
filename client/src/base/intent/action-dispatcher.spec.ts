@@ -36,7 +36,7 @@ describe('ActionDispatcher', () => {
     const actionDispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
 
     it('undo/redo/execute', () => {
-        // an initial SetModelAciton is fired automatically
+        // an initial SetModelAction is fired automatically
         expect(execCount).to.be.equal(1)
         expect(undoCount).to.be.equal(0)
         expect(redoCount).to.be.equal(0)
