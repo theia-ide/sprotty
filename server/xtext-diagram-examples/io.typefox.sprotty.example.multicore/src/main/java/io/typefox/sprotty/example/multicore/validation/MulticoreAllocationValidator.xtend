@@ -57,15 +57,15 @@ class MulticoreAllocationValidator extends AbstractMulticoreAllocationValidator 
 	
 	private def void fireNameUsed(EObject element) {
 		if (element instanceof Step) {
-			error("Step index is already used.", element, STEP__INDEX)
+			error("Step index must be unique.", element, STEP__INDEX)
 		} else if (element instanceof Barrier) {
-			error("Barrier name is already used.", element, BARRIER__NAME)
+			error("Barrier name must be unique.", element, BARRIER__NAME)
 		} else {
 			val feature = switch element {
 				Kernel: KERNEL__NAME
 				Task: TASK__NAME
 			}
-			error("Name is already used.", element, feature)
+			error("Name must be unique.", element, feature)
 		}
 	}
 	

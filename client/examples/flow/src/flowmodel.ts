@@ -20,6 +20,7 @@ export class TaskNode extends SNode implements TaskNodeSchema {
 }
 
 export interface BarrierNodeSchema extends SNodeSchema {
+    name: string
 }
 
 export class BarrierNode extends SNode implements BarrierNodeSchema {
