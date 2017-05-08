@@ -18,26 +18,54 @@ require(['webjars/ace/1.2.3/src/ace'], function() {
             baseUrl: baseUrl,
             syntaxDefinition: 'xtext-resources/generated/mode-multicore'
         });
-        window.xtextServices = editor.xtextServices;
+        var services = editor.xtextServices;
+        var editorAccess = services.editorContext;
+        window.xtextServices = services;
 
-        var examples = ["example01", "example02"];
-        var exampleSelectionEl = jQuery("#exampleSelection");
+        // Handling example files --------
+
+        var examples = ['example01', 'example02'];
+        var exampleSelectionEl = jQuery('#exampleSelection');
         var exampleChangeHandler = function(choosenExample){
             jQuery.ajax('/examples/' + choosenExample + '.multicore').done(function(exampleCode) {
-                editor.xtextServices.editorContext.setText(exampleCode);
+                editorAccess.setText(exampleCode);
             });
         };
 
         jQuery.each(examples, function(idx, val){
-            exampleSelectionEl.append(jQuery("<option>", {"value":val, text:val}));
+            exampleSelectionEl.append(jQuery('<option>', {'value':val, text:val}));
         });
 
         exampleSelectionEl.change(function(){
             exampleChangeHandler(exampleSelectionEl.val());
         });
 
-        // load first example initially.
+        // Load first example initially.
         exampleChangeHandler(examples[0]);
+
+
+        // Create custom services --------
+
+        require(['xtext/services/XtextService', 'xtext/ServiceBuilder'], function(XtextService, ServiceBuilder) {
+            services.selectionService = new XtextService();
+            services.selectionService.initialize(services, 'select');
+            services.selectionService._initServerData = function(serverData, editorContext, params) {
+                serverData.elementId = params.elementId;
+                serverData.modelType = params.modelType;
+                serverData.caretOffset = editorContext.getCaretOffset();
+            }
+
+            services.select = function(addParams) {
+                var params = ServiceBuilder.mergeOptions(addParams, services.options);
+                return services.selectionService.invoke(editorAccess, params).done(function(result) {
+                    if (result.offset >= 0) {
+                        var pos = editor.getSession().getDocument().indexToPosition(result.offset);
+                        editor.scrollToLine(pos.row, true, true);
+                        editor.moveCursorTo(pos.row, pos.column);
+                    }
+                });
+            }
+        });
     });
 });
 

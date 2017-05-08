@@ -1,17 +1,18 @@
-import { Animation, CompoundAnimation } from '../../base/animations/animation';
-import { Command, CommandExecutionContext, CommandResult } from '../../base/intent/commands';
+import { injectable } from "inversify"
+import { Animation, CompoundAnimation } from '../../base/animations/animation'
+import { Command, CommandExecutionContext, CommandResult } from '../../base/intent/commands'
 import { FadeAnimation, ResolvedElementFade } from '../fade/fade'
 import { Action } from '../../base/intent/actions'
 import { SModelRootSchema, SModelRoot, SChildElement, SModelElement, SParentElement } from "../../base/model/smodel"
 import { MoveAnimation, ResolvedElementMove } from "../move/move"
-import { MatchResult, ModelMatcher, Match } from "./model-matching";
+import { MatchResult, ModelMatcher, Match } from "./model-matching"
 import { Fadeable, isFadeable } from "../fade/model"
 import { isLocateable } from "../move/model"
 import { isBoundsAware } from "../bounds/model"
 import { ViewportRootElement } from "../viewport/viewport-root"
-import { injectable } from "inversify"
-import { isEmpty, Bounds } from "../../utils/geometry";
-import { InitializeCanvasBoundsCommand } from "../../base/features/initialize-canvas";
+import { isEmpty, Bounds } from "../../utils/geometry"
+import { InitializeCanvasBoundsCommand } from "../../base/features/initialize-canvas"
+import { isSelectable } from "../select/model"
 
 export class UpdateModelAction implements Action {
     readonly kind = UpdateModelCommand.KIND
@@ -193,6 +194,9 @@ export class UpdateModelCommand extends Command {
                 width: left.bounds.width,
                 height: left.bounds.height
             }
+        }
+        if (isSelectable(left) && isSelectable(right)) {
+            right.selected = left.selected
         }
         if (left instanceof SModelRoot && right instanceof SModelRoot) {
             right.canvasBounds = left.canvasBounds

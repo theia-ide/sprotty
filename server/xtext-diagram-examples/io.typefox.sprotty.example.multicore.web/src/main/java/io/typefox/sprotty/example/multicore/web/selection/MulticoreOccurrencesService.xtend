@@ -1,4 +1,4 @@
-package io.typefox.sprotty.example.multicore.web
+package io.typefox.sprotty.example.multicore.web.selection
 
 import com.google.inject.Inject
 import io.typefox.sprotty.example.multicore.web.diagram.DiagramService
@@ -14,8 +14,8 @@ class MulticoreOccurrencesService extends OccurrencesService {
 	
 	@Inject DiagramService diagramService
 	
-	override findOccurrences(XtextWebDocumentAccess document, int offset) {
-		val p = document.readOnly[ doc, cancelIndicator |
+	override findOccurrences(XtextWebDocumentAccess access, int offset) {
+		val p = access.readOnly[ doc, cancelIndicator |
 			var element = doc.resource.resolveContainedElementAt(offset)
 			var node = element.node
 			while (node !== null && !node.textRegion.contains(offset)) {
@@ -26,8 +26,8 @@ class MulticoreOccurrencesService extends OccurrencesService {
 		]
 		val resourceId = p.key
 		val containedEObject = p.value
-		diagramService.setSelection(document, resourceId, containedEObject)
-		return super.findOccurrences(document, offset)
+		diagramService.setSelection(access, resourceId, containedEObject)
+		return super.findOccurrences(access, offset)
 	}
 	
 }

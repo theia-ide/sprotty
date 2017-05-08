@@ -24,8 +24,7 @@
 }
 
 .selected {
-    stroke: #dd8;
-    stroke-width: 6;
+    stroke-width: 4;
 }
 
 .heading {

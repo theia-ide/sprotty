@@ -46,8 +46,7 @@
 }
 
 .selected {
-    stroke: #dd8;
-    stroke-width: 2;
+    stroke-width: 4;
 }
 
 .missing {

@@ -1,5 +1,6 @@
 package io.typefox.sprotty.example.multicore.web
 
+import io.typefox.sprotty.example.multicore.web.selection.MulticoreOccurrencesService
 import org.eclipse.xtext.web.server.XtextServiceDispatcher
 import org.eclipse.xtext.web.server.model.IWebDocumentProvider
 import org.eclipse.xtext.web.server.occurrences.OccurrencesService
