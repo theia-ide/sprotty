@@ -30,7 +30,9 @@ export class BarrierNodeView extends RectangularNodeView {
     render(node: BarrierNode, context: RenderingContext): VNode {
         return <g key={node.id} id={node.id} >
                 <rect class-node={true} class-barrier={true} class-selected={node.selected} x="0" y="0" width={node.bounds.width} height={node.bounds.height}></rect>
+                <text x={node.bounds.width/2} y={node.bounds.height/2 + 5} class-text={true}>{node.name}</text>
             </g>
+            
     }
 }
 

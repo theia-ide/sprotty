@@ -16,17 +16,17 @@ kernel k2 {
 task t0: execute k0
 task t1: execute k1
 
-join t0, t1
+barrier b1: join t0, t1
 then {
     task t2: execute k0
     task t3: execute k1
     task t4: execute k2
 }
 
-join t4
+barrier b2: join t4
 then task t5: execute k2
 
-join t2, t3, t5
+barrier b3: join t2, t3, t5
 then task t6: execute k2
 
 step 1 {
@@ -54,4 +54,5 @@ step 4 {
 step 5 {
     core 4 runs t6 { $pc=0x1234 $sp=0x7FF0 srcfile="k1/main.c" }
 }
+
 

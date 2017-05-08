@@ -20,6 +20,7 @@ class TaskNode extends SNode {
 
 @Accessors@EqualsHashCode@ToString
 class BarrierNode extends SNode {
+	String name	
 }
 
 @Accessors@EqualsHashCode@ToString
