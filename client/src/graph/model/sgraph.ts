@@ -17,6 +17,12 @@ export interface SGraphSchema extends SModelRootSchema {
 export class SGraph extends ViewportRootElement {
 }
 
+export interface SShapeElementSchema extends SModelElementSchema {
+    position?: Point
+    size?: Dimension
+    children?: SGraphElementSchema[]
+}
+
 export abstract class SShapeElement extends SChildElement implements BoundsAware, Locateable {
     position: Point = ORIGIN_POINT
     size: Dimension = EMPTY_DIMENSION
@@ -50,10 +56,7 @@ export abstract class SShapeElement extends SChildElement implements BoundsAware
     }
 }
 
-export interface SNodeSchema extends SModelElementSchema {
-    children?: SGraphElementSchema[]
-    position?: Point
-    size?: Dimension
+export interface SNodeSchema extends SShapeElementSchema {
     layout?: string
     resizeContainer?: boolean
 }
@@ -103,10 +106,8 @@ export type SGraphElement = SNode | SEdge
 export type SCompartmentElementSchema = SCompartmentSchema | SLabelSchema
 export type SCompartmentElement = SCompartment | SLabel
 
-export interface SLabelSchema extends SModelElementSchema {
+export interface SLabelSchema extends SShapeElementSchema {
     text: string
-    position?: Point
-    size?: Dimension
     selected?: boolean
 }
 
@@ -119,18 +120,13 @@ export class SLabel extends SShapeElement implements Selectable {
     }
 }
 
-export interface SCompartmentSchema extends SModelElementSchema {
-    children: SCompartmentElementSchema[]
-    position?: Point
-    size?: Dimension
+export interface SCompartmentSchema extends SShapeElementSchema {
     layout?: string
     resizeContainer?: boolean
 }
 
 export class SCompartment extends SShapeElement implements BoundsAware, Layouting {
     children: SCompartmentElement[]
-    position: Point
-    size: Dimension 
     layout: string
     resizeContainer: boolean = true
 
