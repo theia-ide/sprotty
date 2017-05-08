@@ -81,21 +81,40 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 	
 	override protected modelSent(SModelRoot newRoot, SModelRoot oldRoot, String clientId) {
 		if (newRoot instanceof Flow) {
-			val activeNodes = newRoot.children.filter(TaskNode).filter[status !== null].map[id]
-			sendAction(new FitToScreenAction() [
-				elementIds = activeNodes.toList
-				maxZoom = 1.0
-				padding = 10.0
-			], clientId)
+			val taskNodes = newRoot.children.filter(TaskNode)
+			val selectedNode = taskNodes.findFirst[selected !== null && selected]
+			if (selectedNode === null) {
+				val activeNodes = taskNodes.filter[status !== null].map[id]
+				sendAction(new FitToScreenAction [
+					elementIds = activeNodes.toList
+					maxZoom = 1.0
+					padding = 10.0
+				], clientId)
+			} else {
+				sendAction(new SelectAction [
+					selectedElementsIDs = #[selectedNode.id]
+					deselectAll = true
+				], clientId)
+				sendAction(new FitToScreenAction [
+					elementIds = #[selectedNode.id]
+					maxZoom = 1.0
+					padding = 10.0
+				], clientId)
+			}
 		}
 		if (newRoot instanceof Processor) {
-			val sizeChanged = if (oldRoot instanceof Processor)
-				newRoot.rows != oldRoot.rows || newRoot.columns != oldRoot.columns
-			else
-				true
-			if (sizeChanged) {
+			val selectedCores = newRoot.children.filter(Core).filter[selected !== null && selected].toList
+			var sizeChanged = true
+			var selectionChanged = true
+			if (oldRoot instanceof Processor) {
+				sizeChanged = newRoot.rows != oldRoot.rows || newRoot.columns != oldRoot.columns
+				selectionChanged = selectedCores != oldRoot.children.filter(Core).filter[selected !== null && selected].toList
+			}
+			if (sizeChanged || selectionChanged) {
 				sendAction(new FitToScreenAction [
-					elementIds = emptyList
+					elementIds = selectedCores.map[id]
+					maxZoom = 3.0
+					padding = 10.0
 				], clientId)
 			}
 		}

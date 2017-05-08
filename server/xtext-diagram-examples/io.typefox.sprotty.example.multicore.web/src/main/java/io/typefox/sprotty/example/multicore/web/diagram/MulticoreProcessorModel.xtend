@@ -20,6 +20,7 @@ class Core extends SModelElement {
 	int kernelNr
 	String layout
 	Boolean resizeContainer
+	Boolean selected
 	 
 	new() {}
 	new(Consumer<Core> initializer) {

@@ -15,6 +15,7 @@ class Flow extends SGraph {
 class TaskNode extends SNode {
 	String name
 	String status
+	Boolean selected
 }
 
 @Accessors@EqualsHashCode@ToString

@@ -86,7 +86,7 @@ abstract class BoundsAwareViewportCommand extends Command {
 
     undo(context: CommandExecutionContext) {
         const model = context.root
-        if (isViewport(model) && this.newViewport)
+        if (isViewport(model) && this.newViewport && !this.equal(this.newViewport, this.oldViewport))
             return new ViewportAnimation(model, this.newViewport, this.oldViewport, context).start()
         else
             return model
@@ -94,10 +94,14 @@ abstract class BoundsAwareViewportCommand extends Command {
 
     redo(context: CommandExecutionContext) {
         const model = context.root
-        if (isViewport(model) && this.newViewport)
+        if (isViewport(model) && this.newViewport && !this.equal(this.newViewport, this.oldViewport))
             return new ViewportAnimation(model, this.oldViewport, this.newViewport, context).start()
         else
             return model
+    }
+
+    protected equal(vp1: Viewport, vp2: Viewport): boolean {
+        return vp1.zoom == vp2.zoom && vp1.scroll.x == vp2.scroll.x && vp1.scroll.y == vp2.scroll.y
     }
 }
 

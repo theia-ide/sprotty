@@ -92,13 +92,14 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 	
 	def void setSelection(XtextWebDocumentAccess document, String resourceId, EObject selectedElement) {
 		val previousElement = selectionProvider.getSelection(resourceId)
+		val previousStep = previousElement.getContainerOfType(Step)
+		val previousTaskAllocation = previousElement.getContainerOfType(TaskAllocation)
 		val selectedStep = selectedElement.getContainerOfType(Step)
 		val selectedTaskAllocation = selectedElement.getContainerOfType(TaskAllocation)
-		if (previousElement.getContainerOfType(Step) != selectedStep
-			|| previousElement.getContainerOfType(TaskAllocation)?.task?.kernel != selectedTaskAllocation?.task?.kernel) {
+		if (previousStep != selectedStep || previousTaskAllocation != selectedTaskAllocation) {
 			val validationResult = validationService.getResult(document)
 			if (!validationResult.issues.exists[severity == 'error']) {
-				if(selectedTaskAllocation !== null) {
+				if (selectedTaskAllocation !== null && previousStep != selectedStep) {
 					selectionProvider.setSelection(resourceId, previousElement.getContainerOfType(Step) ?: selectedStep)
 					document.readOnly[ it, cancelIndicator |
 						doCompute(CancelIndicator.NullImpl)

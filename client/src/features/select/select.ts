@@ -1,5 +1,5 @@
 import { VNode } from "snabbdom/vnode"
-import { SChildElement, SModelElement, SModelRoot } from "../../base/model/smodel"
+import { SChildElement, SModelElement, SModelRoot, SParentElement } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
 import { Command, CommandExecutionContext } from "../../base/intent/commands"
 import { SEdge, SNode } from "../../graph/model/sgraph"
@@ -11,6 +11,7 @@ import { setClass } from "../../base/view/vnode-utils"
 
 export class SelectAction implements Action {
     kind = SelectCommand.KIND
+    deselectAll: boolean = false
 
     constructor(public readonly selectedElementsIDs: string[], public readonly deselectedElementsIDs: string[]) {
     }
@@ -61,8 +62,24 @@ export class SelectCommand extends Command {
                 })
             this.selected = connectedEdges.concat(this.selected)
         }
-        this.action.deselectedElementsIDs.forEach(
-            id => {
+        if (this.action.deselectAll) {
+            const elementStack: SModelElement[] = [model]
+            do {
+                const element = elementStack.pop()!
+                if (element instanceof SParentElement) {
+                    for (const child of element.children) {
+                        elementStack.push(child)
+                    }
+                }
+                if (element instanceof SChildElement && isSelectable(element)) {
+                    this.deselected.push({
+                        element: element,
+                        index: element.parent.children.indexOf(element)
+                    })
+                }
+            } while (elementStack.length > 0)
+        } else {
+            this.action.deselectedElementsIDs.forEach(id => {
                 const element = model.index.getById(id)
                 if (element instanceof SChildElement && isSelectable(element)) {
                     this.deselected.push({
@@ -71,6 +88,7 @@ export class SelectCommand extends Command {
                     })
                 }
             })
+        }
         return this.redo(context)
     }
 
@@ -96,13 +114,13 @@ export class SelectCommand extends Command {
             const childrenLength = element.parent.children.length
             element.parent.move(element, childrenLength - 1)
         }
-        this.selected.forEach(selection => {
-            if (isSelectable(selection.element))
-                selection.element.selected = true
-        })
         this.deselected.forEach(selection => {
             if (isSelectable(selection.element))
                 selection.element.selected = false
+        })
+        this.selected.forEach(selection => {
+            if (isSelectable(selection.element))
+                selection.element.selected = true
         })
         return context.root
     }

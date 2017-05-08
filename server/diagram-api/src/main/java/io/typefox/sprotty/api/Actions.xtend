@@ -83,6 +83,7 @@ class SelectAction implements Action {
 	
 	List<String> selectedElementsIDs
 	List<String> deselectedElementsIDs
+	Boolean deselectAll
 	
 	new() {}
 	new(Consumer<SelectAction> initializer) {

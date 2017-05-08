@@ -1,6 +1,9 @@
 package io.typefox.sprotty.example.multicore.web.diagram
 
 import com.google.inject.Singleton
+import io.typefox.sprotty.api.SCompartment
+import io.typefox.sprotty.api.SLabel
+import io.typefox.sprotty.api.SModelElement
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Barrier
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Kernel
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Program
@@ -13,9 +16,6 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.util.CancelIndicator
 
 import static extension org.eclipse.xtext.EcoreUtil2.*
-import io.typefox.sprotty.api.SModelElement
-import io.typefox.sprotty.api.SCompartment
-import io.typefox.sprotty.api.SLabel
 
 @Singleton
 class MulticoreAllocationDiagramGenerator {
@@ -23,7 +23,7 @@ class MulticoreAllocationDiagramGenerator {
 	def Processor generateProcessorView(Program program, EObject selection, CancelIndicator cancelIndicator) {
 		if (program !== null) {
 			val taskAllocation = selection.getContainerOfType(TaskAllocation)
-			if(taskAllocation !== null) {
+			if (taskAllocation !== null) {
 				return createKernelCentricView(program, taskAllocation)
 			} else {
 				return createFullView(program, selection)
@@ -32,7 +32,7 @@ class MulticoreAllocationDiagramGenerator {
 		return createProcessor(0)
 	}
 	
-	def createKernelCentricView(Program program, TaskAllocation allocation) {
+	private def createKernelCentricView(Program program, TaskAllocation allocation) {
 		val kernel = allocation.task.kernel
 		val kernelIndex = program.declarations.filter(Kernel).toList.indexOf(kernel)
 		val step = allocation.eContainer as Step
@@ -41,8 +41,8 @@ class MulticoreAllocationDiagramGenerator {
 		val dim = Math.ceil(Math.sqrt(core2allocation.size)) as int
 		val processor = createProcessor(dim)
 		var i = 0
-		for(core: core2allocation.keySet.sort) {
-			processor.children += createCore(core, i/dim, i%dim, kernelIndex, core2allocation.get(core))
+		for (core: core2allocation.keySet.sort) {
+			processor.children += createCore(core, i/dim, i%dim, kernelIndex, core2allocation.get(core), allocation.core == core)
 			i++
 		}
 		return processor
@@ -54,7 +54,7 @@ class MulticoreAllocationDiagramGenerator {
 		val kernels = program.declarations.filter(Kernel).toList
 		val coreIndex2task = newHashMap 
 		val step = selection.getContainerOfType(Step)
-		if(step !== null) {
+		if (step !== null) {
 			step.allocations.forEach [
 				coreIndex2task.put(core, it)
 			]
@@ -67,7 +67,7 @@ class MulticoreAllocationDiagramGenerator {
 						kernels.indexOf(taskAllocation.task.kernel)
 					else
 						-1
-		        processor.children += createCore(coreIndex, i, j, kernelIndex, taskAllocation)
+		        processor.children += createCore(coreIndex, i, j, kernelIndex, taskAllocation, false)
 		        processor.children += createChannel(i, j, CoreDirection.up)
 		        processor.children += createChannel(i, j, CoreDirection.down)
 		        processor.children += createChannel(i, j, CoreDirection.left)
@@ -99,7 +99,7 @@ class MulticoreAllocationDiagramGenerator {
 	}
 	
 	private def createCore(int coreIndex, int rowParam, int columnParam,  
-		int kernelIndex, TaskAllocation taskAllocation) {
+			int kernelIndex, TaskAllocation taskAllocation, boolean selectedParam) {
 		val core = new Core [
 	        id = 'core_' + coreIndex
 	        type = 'core'
@@ -116,6 +116,8 @@ class MulticoreAllocationDiagramGenerator {
 			]
 			if (taskAllocation !== null)
 				children += createInfoCompartment(taskAllocation, coreIndex, kernelIndex)
+			if (selectedParam)
+				selected = selectedParam
 		]
         return core
 	}
@@ -214,10 +216,11 @@ class MulticoreAllocationDiagramGenerator {
 		]
 		if (program !== null) {
 			val step = selection.getContainerOfType(Step)
+			val allocation = selection.getContainerOfType(TaskAllocation)
 			val nodes = newHashMap
 			// Transform tasks
 			for (declaration : program.declarations.filter(Task)) {
-				val tnode = createTask(declaration, step)
+				val tnode = createTask(declaration, step, allocation)
 				nodes.put(declaration, tnode)
 				flow.children += tnode
 			}
@@ -227,7 +230,7 @@ class MulticoreAllocationDiagramGenerator {
 				nodes.put(declaration, bnode)
 				flow.children += bnode
 				for (triggered : declaration.triggered) {
-					val tnode = createTask(triggered, step)
+					val tnode = createTask(triggered, step, allocation)
 					nodes.put(triggered, tnode)
 					flow.children += tnode
 				}
@@ -250,7 +253,7 @@ class MulticoreAllocationDiagramGenerator {
 		return flow
 	}
 	
-	private def createTask(Task declaration, Step step) {
+	private def createTask(Task declaration, Step step, TaskAllocation taskAllocation) {
 		val tnode = new TaskNode
 		tnode.type = 'task'
 		tnode.id = 'task_' + declaration.name
@@ -260,6 +263,8 @@ class MulticoreAllocationDiagramGenerator {
 				tnode.status = 'running'
 			else if (step.allocations.filter(TaskFinished).exists[task == declaration])
 				tnode.status = 'finished'
+			if (taskAllocation !== null && taskAllocation.task == declaration)
+				tnode.selected = true
 		}
 		return tnode
 	}

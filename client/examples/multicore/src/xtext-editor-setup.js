@@ -62,6 +62,7 @@ require(['webjars/ace/1.2.3/src/ace'], function() {
                         var pos = editor.getSession().getDocument().indexToPosition(result.offset);
                         editor.scrollToLine(pos.row, true, true);
                         editor.moveCursorTo(pos.row, pos.column);
+                        editor.clearSelection();
                     }
                 });
             }
