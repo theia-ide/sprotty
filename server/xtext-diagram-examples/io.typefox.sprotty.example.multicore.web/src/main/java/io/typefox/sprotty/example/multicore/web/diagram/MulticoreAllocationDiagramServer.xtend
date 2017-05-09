@@ -82,8 +82,8 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 	override protected modelSent(SModelRoot newRoot, SModelRoot oldRoot, String clientId) {
 		if (newRoot instanceof Flow) {
 			val taskNodes = newRoot.children.filter(TaskNode)
-			val selectedNode = taskNodes.findFirst[selected !== null && selected]
-			if (selectedNode === null) {
+			val selectedNodes = taskNodes.filter[selected !== null && selected].toList
+			if (selectedNodes.empty) {
 				val activeNodes = taskNodes.filter[status !== null].map[id]
 				sendAction(new FitToScreenAction [
 					elementIds = activeNodes.toList
@@ -92,11 +92,11 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 				], clientId)
 			} else {
 				sendAction(new SelectAction [
-					selectedElementsIDs = #[selectedNode.id]
+					selectedElementsIDs = selectedNodes.map[id]
 					deselectAll = true
 				], clientId)
 				sendAction(new FitToScreenAction [
-					elementIds = #[selectedNode.id]
+					elementIds = selectedNodes.map[id]
 					maxZoom = 1.0
 					padding = 10.0
 				], clientId)
@@ -111,6 +111,10 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 				selectionChanged = selectedCores != oldRoot.children.filter(Core).filter[selected !== null && selected].toList
 			}
 			if (sizeChanged || selectionChanged) {
+				sendAction(new SelectAction [
+					selectedElementsIDs = selectedCores.map[id]
+					deselectAll = true
+				], clientId)
 				sendAction(new FitToScreenAction [
 					elementIds = selectedCores.map[id]
 					maxZoom = 3.0
