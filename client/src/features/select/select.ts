@@ -11,9 +11,10 @@ import { setClass } from "../../base/view/vnode-utils"
 
 export class SelectAction implements Action {
     kind = SelectCommand.KIND
+    selectAll: boolean = false
     deselectAll: boolean = false
 
-    constructor(public readonly selectedElementsIDs: string[], public readonly deselectedElementsIDs: string[]) {
+    constructor(public readonly selectedElementsIDs: string[] = [], public readonly deselectedElementsIDs: string[] = []) {
     }
 }
 
@@ -35,8 +36,26 @@ export class SelectCommand extends Command {
     execute(context: CommandExecutionContext): SModelRoot {
         const selectedNodeIds: string[] = []
         const model = context.root
-        this.action.selectedElementsIDs.forEach(
-            id => {
+        if (this.action.selectAll) {
+            const elementStack: SModelElement[] = [model]
+            do {
+                const element = elementStack.pop()!
+                if (element instanceof SParentElement) {
+                    for (const child of element.children) {
+                        elementStack.push(child)
+                    }
+                }
+                if (element instanceof SChildElement && isSelectable(element)) {
+                    this.selected.push({
+                        element: element,
+                        index: element.parent.children.indexOf(element)
+                    })
+                    if (element instanceof SNode)
+                        selectedNodeIds.push(element.id)
+                }
+            } while (elementStack.length > 0)
+        } else {
+            this.action.selectedElementsIDs.forEach(id => {
                 const element = model.index.getById(id)
                 if (element instanceof SChildElement && isSelectable(element)) {
                     this.selected.push({
@@ -47,6 +66,7 @@ export class SelectCommand extends Command {
                         selectedNodeIds.push(id)
                 }
             })
+        }
         if (selectedNodeIds.length > 0) {
             const connectedEdges: ElementSelection[] = []
             model.index.all().forEach(

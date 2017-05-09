@@ -28,6 +28,7 @@
 }
 
 .mouseover {
+    stroke: #888;
     stroke-width: 3;
 }
 

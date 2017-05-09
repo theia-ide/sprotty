@@ -43,6 +43,7 @@
 }
 
 .mouseover {
+    stroke: #555;
     stroke-width: 3;
 }
 
