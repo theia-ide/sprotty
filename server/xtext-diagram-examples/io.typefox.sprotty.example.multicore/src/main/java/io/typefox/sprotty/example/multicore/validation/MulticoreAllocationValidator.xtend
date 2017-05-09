@@ -23,6 +23,7 @@ import static extension org.eclipse.xtext.EcoreUtil2.*
  * This class contains custom validation rules. 
  */
 class MulticoreAllocationValidator extends AbstractMulticoreAllocationValidator {
+	
 	@Check
 	def void checkUniqueNames(Program program) {
 		checkUniqueNames(program.declarations, newHashMap)
@@ -38,7 +39,6 @@ class MulticoreAllocationValidator extends AbstractMulticoreAllocationValidator 
 					checkUniqueNames(declaration.triggered, usedNames)
 					declaration.name
 				}
-				
 			}
 			if (name !== null) {
 				if (usedNames.containsKey(name)) {
@@ -58,12 +58,11 @@ class MulticoreAllocationValidator extends AbstractMulticoreAllocationValidator 
 	private def void fireNameUsed(EObject element) {
 		if (element instanceof Step) {
 			error("Step index must be unique.", element, STEP__INDEX)
-		} else if (element instanceof Barrier) {
-			error("Barrier name must be unique.", element, BARRIER__NAME)
 		} else {
 			val feature = switch element {
 				Kernel: KERNEL__NAME
 				Task: TASK__NAME
+				Barrier: BARRIER__NAME
 			}
 			error("Name must be unique.", element, feature)
 		}
@@ -71,9 +70,13 @@ class MulticoreAllocationValidator extends AbstractMulticoreAllocationValidator 
 	
 	@Check
 	def void checkBarrier(Barrier barrier) {
+		val joinedTasks = newHashSet
 		barrier.joined.filter[it !== null && !eIsProxy].forEach[ joinedTask, index |
 			if (barrier.triggered.contains(joinedTask)) {
 				error("Cannot join a task that is triggered by the same barrier.", BARRIER__JOINED, index)
+			}
+			if (!joinedTasks.add(joinedTask)) {
+				error("Cannot join a task multiple times", BARRIER__JOINED, index)
 			}
 		]
 	}

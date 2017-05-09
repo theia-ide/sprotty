@@ -12,6 +12,7 @@ import io.typefox.sprotty.example.multicore.multicoreAllocation.Task
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskAllocation
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskFinished
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskRunning
+import java.util.Set
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.util.CancelIndicator
 
@@ -218,6 +219,7 @@ class MulticoreAllocationDiagramGenerator {
 			val step = selection.getContainerOfType(Step)
 			val allocation = selection.getContainerOfType(TaskAllocation)
 			val nodes = newHashMap
+			val assignedFlowIds = newHashSet
 			// Transform tasks
 			for (declaration : program.declarations.filter(Task)) {
 				val tnode = createTask(declaration, step, allocation)
@@ -238,13 +240,13 @@ class MulticoreAllocationDiagramGenerator {
 			// Transform flows
 			for (declaration : program.declarations.filter(Barrier)) {
 				declaration.joined.forEach[ joined, k |
-					val edge = createFlow(nodes.get(joined)?.id, nodes.get(declaration)?.id)
+					val edge = createFlow(nodes.get(joined)?.id, nodes.get(declaration)?.id, assignedFlowIds)
 					edge.targetIndex = k
 					flow.children += edge
 				]
 				val edgeCount = declaration.joined.size + declaration.triggered.size
 				declaration.triggered.forEach[ triggered, k |
-					val edge = createFlow(nodes.get(declaration)?.id, nodes.get(triggered)?.id)
+					val edge = createFlow(nodes.get(declaration)?.id, nodes.get(triggered)?.id, assignedFlowIds)
 					edge.sourceIndex = edgeCount - k
 					flow.children += edge
 				]
@@ -277,10 +279,16 @@ class MulticoreAllocationDiagramGenerator {
 		return bnode
 	}
 	
-	private def createFlow(String sourceId, String targetId) {
+	private def createFlow(String sourceId, String targetId, Set<String> assignedFlowIds) {
 		val edge = new FlowEdge
 		edge.type = 'edge'
-		edge.id = 'flow_' + sourceId + '--' + targetId
+		val baseId = 'flow_' + sourceId + '--' + targetId
+		edge.id = baseId
+		var i = 2
+		while (assignedFlowIds.contains(edge.id)) {
+			edge.id = baseId + '_' + (i++)
+		}
+		assignedFlowIds.add(edge.id)
 		edge.sourceId = sourceId
 		edge.targetId = targetId
 		return edge
