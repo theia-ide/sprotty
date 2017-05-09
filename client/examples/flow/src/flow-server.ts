@@ -12,7 +12,7 @@ function getXtextServices(): any {
 class SelectionHandler implements IActionHandler {
     handle(action: SelectAction): void {
         const xtextService = getXtextServices()
-        if (xtextService !== undefined) {
+        if (xtextService !== undefined && !action.deselectAll) {
             const selectedElement = action.selectedElementsIDs.length > 0 ? action.selectedElementsIDs[0] : 'flow'
             xtextService.select({
                 elementId: selectedElement,

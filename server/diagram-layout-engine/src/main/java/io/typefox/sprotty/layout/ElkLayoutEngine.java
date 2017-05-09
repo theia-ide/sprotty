@@ -36,9 +36,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	public static void initialize(ILayoutMetaDataProvider ...providers) {
 		LayoutMetaDataService metaDataService = LayoutMetaDataService.getInstance();
 		metaDataService.registerLayoutMetaDataProviders(new CoreOptions());
-		for (ILayoutMetaDataProvider p : providers) {
-			metaDataService.registerLayoutMetaDataProviders(p);
-		}
+		metaDataService.registerLayoutMetaDataProviders(providers);
 	}
 	
 	private IGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
