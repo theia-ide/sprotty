@@ -16,18 +16,29 @@ require(['webjars/ace/1.2.3/src/ace'], function() {
         var editor = xtext.createEditor({
             xtextLang: 'multicore',
             baseUrl: baseUrl,
-            syntaxDefinition: 'xtext-resources/generated/mode-multicore'
+            syntaxDefinition: 'xtext-resources/generated/mode-multicore',
+            selectionUpdateDelay: 50
         });
         var services = editor.xtextServices;
         var editorAccess = services.editorContext;
         window.xtextServices = services;
+        var executionState = {
+            running: false
+        };
+        function stopExecution() {
+            if (executionState.running) {
+                executionState.running = false;
+                clearTimeout(executionState.timeoutId);
+            }
+        }
+
 
         // Handling example files --------
 
         var examples = ['example01', 'example02'];
-        var exampleSelectionEl = jQuery('#exampleSelection');
-        var exampleChangeHandler = function(choosenExample){
-            jQuery.ajax('/examples/' + choosenExample + '.multicore').done(function(exampleCode) {
+        var exampleSelectionEl = jQuery('#example-selection');
+        var exampleChangeHandler = function(chosenExample){
+            jQuery.ajax('/examples/' + chosenExample + '.multicore').done(function(exampleCode) {
                 editorAccess.setText(exampleCode);
             });
         };
@@ -38,6 +49,7 @@ require(['webjars/ace/1.2.3/src/ace'], function() {
 
         exampleSelectionEl.change(function(){
             exampleChangeHandler(exampleSelectionEl.val());
+            stopExecution();
         });
 
         // Load first example initially.
@@ -52,20 +64,47 @@ require(['webjars/ace/1.2.3/src/ace'], function() {
             services.selectionService._initServerData = function(serverData, editorContext, params) {
                 serverData.elementId = params.elementId;
                 serverData.modelType = params.modelType;
+                serverData.stepType = params.stepType;
                 serverData.caretOffset = editorContext.getCaretOffset();
             }
 
             services.select = function(addParams) {
                 var params = ServiceBuilder.mergeOptions(addParams, services.options);
                 return services.selectionService.invoke(editorAccess, params).done(function(result) {
-                    if (result.offset >= 0) {
+                    var currentOffset = editorAccess.getCaretOffset();
+                    if (result.offset >= 0 && result.offset != currentOffset) {
                         var pos = editor.getSession().getDocument().indexToPosition(result.offset);
                         editor.scrollToLine(pos.row, true, true);
                         editor.moveCursorTo(pos.row, pos.column);
                         editor.clearSelection();
+                    } else {
+                        stopExecution();
                     }
                 });
             }
+        });
+
+
+        // Handling execution buttons --------
+
+        jQuery('#execution-run').click(function(event) {
+            if (!executionState.running) {
+                executionState.running = true;
+                function nextStep() {
+                    services.select({ stepType: 'next' });
+                    executionState.timeoutId = setTimeout(nextStep, 2000);
+                }
+                nextStep();
+            }
+        });
+        jQuery('#execution-stop').click(function(event) {
+            stopExecution();
+        });
+        jQuery('#execution-previous').click(function(event) {
+            services.select({ stepType: 'previous' });
+        });
+        jQuery('#execution-next').click(function(event) {
+            services.select({ stepType: 'next' });
         });
     });
 });

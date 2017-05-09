@@ -16,9 +16,14 @@
         <h1>Sprotty Flow Example</h1>
         <form class="form-inline">
             <div class="form-group">
-                <label for="exampleSelection">Choose an example</label>
-                <select id="exampleSelection" class="form-control">
-                </select>
+                <label for="example-selection">Choose an example:</label>
+                <select id="example-selection" class="form-control"></select>
+            </div>
+            <div class="form-group">
+                <button type="button" id="execution-run" title="Start Execution"><img src="../multicore/images/play.png" height="14px"/></button>
+                <button type="button" id="execution-stop" title="Stop Execution"><img src="../multicore/images/stop.png" height="14px"/></button>
+                <button type="button" id="execution-previous" title="Previous Step"><img src="../multicore/images/back.png" height="14px"/></button>
+                <button type="button" id="execution-next" title="Next Step"><img src="../multicore/images/next.png" height="14px"/></button>
             </div>
         </form>
         <div class="row" id="sprotty-app" data-app="flow-server">
@@ -28,6 +33,10 @@
             <div class="col-md-6">
                 <div id="sprotty-flow" class="sprotty"></div>
             </div>
+        </div>
+        <div class="copyright">
+            &copy; 2017 <a href="http://typefox.io">TypeFox GmbH</a>.
+            Icons made by <a href="http://www.flaticon.com/authors/madebyoliver" title="Madebyoliver">Madebyoliver</a> from <a href="http://www.flaticon.com" title="Flaticon">www.flaticon.com</a> licensed by <a href="http://creativecommons.org/licenses/by/3.0/" title="Creative Commons BY 3.0" target="_blank">CC 3.0 BY</a>
         </div>
     </div>
     <script src="/webjars/requirejs/2.3.2/require.min.js" data-main="/examples/multicore/src/xtext-editor-setup.js"></script>

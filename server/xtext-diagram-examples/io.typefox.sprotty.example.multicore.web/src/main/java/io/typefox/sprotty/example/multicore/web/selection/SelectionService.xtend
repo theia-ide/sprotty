@@ -15,12 +15,46 @@ class SelectionService {
 	
 	@Inject extension EObjectAtOffsetHelper
 	
-	def getOffset(XtextWebDocumentAccess access, String modelType, String elementId, int caretOffset) {
+	def getOffsetById(XtextWebDocumentAccess access, String modelType, String elementId, int caretOffset) {
 		access.readOnly[ doc, cancelIndicator |
 			val program = doc.resource.contents.head as Program
 			val currentSelection = doc.getCurrentSelection(caretOffset)
-			val element = getNewSelection(program, currentSelection, modelType, elementId)
+			val element = getObjectById(program, currentSelection, modelType, elementId)
 			val node = element.node
+			return new SelectionResult(if (node !== null) node.offset else -1)
+		]
+	}
+	
+	def getNextStepOffset(XtextWebDocumentAccess access, int caretOffset) {
+		access.readOnly[ doc, cancelIndicator |
+			val program = doc.resource.contents.head as Program
+			val currentSelection = doc.getCurrentSelection(caretOffset)
+			val currentStep = currentSelection.getContainerOfType(Step)
+			val allSteps = program.declarations.filter(Step)
+			val nextStep = if (currentStep === null)
+				allSteps.minBy[index]
+			else if (allSteps.exists[index > currentStep.index])
+				allSteps.filter[index > currentStep.index].minBy[index]
+			else
+				currentStep
+			val node = nextStep.node
+			return new SelectionResult(if (node !== null) node.offset else -1)
+		]
+	}
+	
+	def getPreviousStepOffset(XtextWebDocumentAccess access, int caretOffset) {
+		access.readOnly[ doc, cancelIndicator |
+			val program = doc.resource.contents.head as Program
+			val currentSelection = doc.getCurrentSelection(caretOffset)
+			val currentStep = currentSelection.getContainerOfType(Step)
+			val allSteps = program.declarations.filter(Step)
+			val previousStep = if (currentStep === null)
+				allSteps.maxBy[index]
+			else if (allSteps.exists[index < currentStep.index])
+				allSteps.filter[index < currentStep.index].maxBy[index]
+			else
+				currentStep
+			val node = previousStep.node
 			return new SelectionResult(if (node !== null) node.offset else -1)
 		]
 	}
@@ -35,7 +69,7 @@ class SelectionService {
 		return element
 	}
 	
-	protected def EObject getNewSelection(Program program, EObject currentSelection, String modelType, String elementId) {
+	protected def EObject getObjectById(Program program, EObject currentSelection, String modelType, String elementId) {
 		switch modelType {
 			case 'processor': {
 				if (elementId == 'processor') {
