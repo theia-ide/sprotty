@@ -4,7 +4,7 @@ import { VNode } from "snabbdom/vnode"
 import { IActionDispatcher } from "../intent/action-dispatcher"
 import { TYPES } from "../types"
 import { SModelElement, SModelRoot } from "../model/smodel"
-import { Action } from "../intent/actions"
+import { Action, isAction } from "../intent/actions"
 import { IVNodeDecorator } from "./vnode-decorators"
 import { on } from "./vnode-utils"
 
@@ -52,7 +52,15 @@ export class MouseTool implements IVNodeDecorator {
             .reduce((a, b) => a.concat(b))
         if (actions.length > 0) {
             event.preventDefault()
-            this.actionDispatcher.dispatchAll(actions)
+            for (const actionOrPromise of actions) {
+                if (isAction(actionOrPromise)) {
+                    this.actionDispatcher.dispatch(actionOrPromise)
+                } else {
+                    actionOrPromise.then((action: Action) => {
+                        this.actionDispatcher.dispatch(action)
+                    })
+                }
+            }
         }
     }
 
@@ -105,27 +113,27 @@ export class MouseTool implements IVNodeDecorator {
 @injectable()
 export class MouseListener {
 
-    mouseOver(target: SModelElement, event: MouseEvent): Action[] {
+    mouseOver(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         return []
     }
 
-    mouseOut(target: SModelElement, event: MouseEvent): Action[] {
+    mouseOut(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         return []
     }
 
-    mouseDown(target: SModelElement, event: MouseEvent): Action[] {
+    mouseDown(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         return []
     }
 
-    mouseMove(target: SModelElement, event: MouseEvent): Action[] {
+    mouseMove(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         return []
     }
 
-    mouseUp(target: SModelElement, event: MouseEvent): Action[] {
+    mouseUp(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         return []
     }
 
-    wheel(target: SModelElement, event: WheelEvent): Action[] {
+    wheel(target: SModelElement, event: WheelEvent): (Action | Promise<Action>)[] {
         return []
     }
 

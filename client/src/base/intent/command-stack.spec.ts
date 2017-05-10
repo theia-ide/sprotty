@@ -9,8 +9,8 @@ import {
     ICommand,
     CommandExecutionContext,
     CommandResult,
-    MergeableCommand
-} from './commands';
+    MergeableCommand, PopupCommand
+} from './commands'
 import { SModelRoot } from "../model/smodel"
 import { TYPES } from "../types"
 import { defaultModule } from "../index"
@@ -103,10 +103,32 @@ class TestHiddenCommand extends HiddenCommand {
     }
 }
 
+class TestPopupCommand extends PopupCommand {
+    constructor(public name: string ) {
+        super()
+    }
+
+    execute(context: CommandExecutionContext): CommandResult {
+        operations.push('exec ' + this.name)
+        return context.root
+    }
+
+    undo(context: CommandExecutionContext): CommandResult {
+        operations.push('undo ' + this.name)
+        return context.root
+    }
+
+    redo(context: CommandExecutionContext): CommandResult {
+        operations.push('redo ' + this.name)
+        return context.root
+    }
+}
+
 describe('CommandStack', () => {
 
     let viewerUpdates: number = 0
     let hiddenViewerUpdates: number = 0
+    let popupUpdates: number = 0
 
     const mockViewer: IViewer = {
         update() {
@@ -114,6 +136,9 @@ describe('CommandStack', () => {
         },
         updateHidden() {
             ++hiddenViewerUpdates
+        },
+        updatePopup() {
+            ++popupUpdates
         }
     }
 
@@ -128,6 +153,7 @@ describe('CommandStack', () => {
     const system = new TestSystemCommand('System')
     const mergable = new TestMergeableCommand('Mergable')
     const hidden = new TestHiddenCommand('Hidden')
+    const popup = new TestPopupCommand('Popup')
 
     it('calls viewer correctly', async () => {
         await commandStack.executeAll([foo, bar, system])
@@ -138,19 +164,24 @@ describe('CommandStack', () => {
         expect(viewerUpdates).to.be.equal(3)
         await commandStack.execute(system)
         expect(viewerUpdates).to.be.equal(4)
+        await commandStack.execute(popup)
+        expect(popupUpdates).to.be.equal(1)
         expect(0).to.be.equal(hiddenViewerUpdates)
     })
 
     it('handles plain undo/redo', async () => {
         operations = []
         viewerUpdates = 0
-        await commandStack.executeAll([foo, bar])
+        popupUpdates = 0
+        await commandStack.executeAll([foo, bar, popup])
         await commandStack.undo()
         await commandStack.redo()
         await commandStack.undo()
         await commandStack.undo()
         await commandStack.redo()
-        expect(operations).to.be.eql(['exec Foo', 'exec Bar', 'undo Bar', 'redo Bar', 'undo Bar', 'undo Foo', 'redo Foo'])
+
+        expect(operations).to.be.eql(
+            ['exec Foo', 'exec Bar', 'exec Popup', 'undo Bar', 'redo Bar', 'undo Bar', 'undo Foo', 'redo Foo'])
         expect(6).to.be.equal(viewerUpdates)
         expect(0).to.be.equal(hiddenViewerUpdates)
     })

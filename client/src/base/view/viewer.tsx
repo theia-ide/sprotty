@@ -17,12 +17,14 @@ import { ViewerOptions } from "./options"
 import { ILogger, LogLevel } from "../../utils/logging"
 import { isThunk } from "./thunk-view"
 import { EMPTY_ROOT } from "../model/smodel-factory"
+import { isUndefined } from "util"
 
 const JSX = {createElement: snabbdom.html}  // must be html here, as we're creating a div
 
 export interface IViewer {
     update(model: SModelRoot): void
     updateHidden(hiddenModel: SModelRoot): void
+    updatePopup(popupModel: SModelRoot): void
 }
 
 export class ModelRenderer implements RenderingContext {
@@ -30,7 +32,7 @@ export class ModelRenderer implements RenderingContext {
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        if(isThunk(vnode))
+        if (isThunk(vnode))
             return vnode
         return this.decorators.reduce(
             (n: VNode, decorator: IVNodeDecorator) => decorator.decorate(n, element),
@@ -59,15 +61,15 @@ export type ModelRendererFactory = (decorators: IVNodeDecorator[]) => ModelRende
  */
 @injectable()
 export class Viewer implements IViewer {
-
     protected renderer: ModelRenderer
     protected hiddenRenderer: ModelRenderer
     protected readonly patcher: Patcher
     protected lastVDOM: VNode
+    protected lastPopupVDOM: VNode
 
     constructor(@inject(TYPES.ModelRendererFactory) modelRendererFactory: ModelRendererFactory,
-                @multiInject(TYPES.IVNodeDecorator)@optional() protected decorators: IVNodeDecorator[],
-                @multiInject(TYPES.HiddenVNodeDecorator)@optional() protected hiddenDecorators: IVNodeDecorator[],
+                @multiInject(TYPES.IVNodeDecorator) @optional() protected decorators: IVNodeDecorator[],
+                @multiInject(TYPES.HiddenVNodeDecorator) @optional() protected hiddenDecorators: IVNodeDecorator[],
                 @inject(TYPES.ViewerOptions) protected options: ViewerOptions,
                 @inject(TYPES.ILogger) protected logger: ILogger) {
         this.patcher = this.createPatcher()
@@ -89,12 +91,45 @@ export class Viewer implements IViewer {
         return init(this.createModules())
     }
 
+    updatePopup(model: SModelRoot): void {
+        this.logger.log(this, 'rendering popup', model)
+
+        const content: VNode[] = []
+        let clearPopup = model.type === EMPTY_ROOT.type
+        let inlineStyle: Object = {}
+
+        if (!clearPopup) {
+            content.push(this.renderer.renderElement(model))
+
+            const position = model.canvasBounds
+            inlineStyle = {
+                top: position.y + 'px',
+                left: position.x + 'px'
+            }
+        }
+
+        const newVDOM = <div style={inlineStyle} class-hidden={clearPopup} id={this.options.popupDiv}>
+            {content}
+        </div>
+
+        if (this.lastPopupVDOM !== undefined) {
+            this.lastPopupVDOM = this.patcher.call(this, this.lastPopupVDOM, newVDOM)
+        } else if (typeof document !== 'undefined') {
+            let placeholder = document.getElementById(this.options.popupDiv)
+            if (placeholder === null) {
+                placeholder = document.createElement("div")
+                document.body.appendChild(placeholder)
+            }
+            this.lastPopupVDOM = this.patcher.call(this, placeholder, newVDOM)
+        }
+    }
+
     update(model: SModelRoot): void {
         this.logger.log(this, 'rendering', model)
         const newVDOM = <div id={this.options.baseDiv}>
-                {this.renderer.renderElement(model)}
-            </div>
-        setClass(newVDOM, this.options.baseDiv, true)
+            {this.renderer.renderElement(model)}
+        </div>
+        setClass(newVDOM, this.options.baseClass, true)
         if (this.lastVDOM !== undefined) {
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
         } else if (typeof document !== 'undefined') {
@@ -113,9 +148,9 @@ export class Viewer implements IViewer {
         setAttr(hiddenVNode, 'opacity', 0)
         setClass(hiddenVNode, 'sprotty-hidden', true)
         const newVDOM = <div id={this.options.baseDiv}>
-                {this.lastVDOM.children![0]}
-                {hiddenVNode}
-            </div>
+            {this.lastVDOM.children![0]}
+            {hiddenVNode}
+        </div>
         setClass(newVDOM, this.options.baseDiv, true)
         this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
         this.hiddenRenderer.postUpdate()

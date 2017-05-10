@@ -58,7 +58,7 @@ export interface SNodeSchema extends SModelElementSchema {
     resizeContainer?: boolean
 }
 
-export class SNode extends SShapeElement implements Selectable, BoundsAware, Locateable, Fadeable, Hoverable {
+export class SNode extends SShapeElement implements Selectable, Fadeable, Hoverable {
     mouseover: boolean = false
     children: SCompartmentElement[]
     layout?: string
@@ -109,7 +109,7 @@ export interface SLabelSchema extends SModelElementSchema {
     selected?: boolean
 }
 
-export class SLabel extends SShapeElement implements BoundsAware, Selectable {
+export class SLabel extends SShapeElement implements Selectable {
     text: string
     selected: boolean = false
 

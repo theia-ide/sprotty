@@ -12,22 +12,35 @@ import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
  */
 @injectable()
 export class ViewerCache implements IViewer {
-
-    constructor(@inject(TYPES.IViewer)@named('delegate') protected delegate: IViewer,
-                @inject(TYPES.AnimationFrameSyncer) protected syncer: AnimationFrameSyncer) {}
+    constructor(@inject(TYPES.IViewer) @named('delegate') protected delegate: IViewer,
+                @inject(TYPES.AnimationFrameSyncer) protected syncer: AnimationFrameSyncer) {
+    }
 
     cachedModelRoot: SModelRoot | undefined
     cachedHiddenModelRoot: SModelRoot | undefined
+    cachedPopup: SModelRoot | undefined
+
+    protected isCacheEmpty(): boolean {
+        return this.cachedModelRoot === undefined && this.cachedHiddenModelRoot === undefined &&
+            this.cachedPopup === undefined
+    }
+
+    updatePopup(model: SModelRoot): void {
+        const isCacheEmpty = this.isCacheEmpty()
+        this.cachedPopup = model
+        if (isCacheEmpty)
+            this.scheduleUpdate()
+    }
 
     update(model: SModelRoot): void {
-        const isCacheEmpty = this.cachedModelRoot === undefined && this.cachedHiddenModelRoot === undefined
+        const isCacheEmpty = this.isCacheEmpty()
         this.cachedModelRoot = model
         if (isCacheEmpty)
             this.scheduleUpdate()
     }
 
     updateHidden(hiddenModel: SModelRoot): void {
-        const isCacheEmpty = this.cachedModelRoot === undefined && this.cachedHiddenModelRoot === undefined
+        const isCacheEmpty = this.isCacheEmpty()
         this.cachedHiddenModelRoot = hiddenModel
         if (isCacheEmpty)
             this.scheduleUpdate()
@@ -44,6 +57,11 @@ export class ViewerCache implements IViewer {
                 const nextModelRoot = this.cachedModelRoot
                 this.delegate.update(nextModelRoot)
                 this.cachedModelRoot = undefined
+            }
+            if (this.cachedPopup) {
+                const nextModelRoot = this.cachedPopup
+                this.delegate.updatePopup(nextModelRoot)
+                this.cachedPopup = undefined
             }
         })
     }

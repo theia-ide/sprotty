@@ -3,23 +3,28 @@ import { defaultModule, TYPES, ViewerOptions, ViewRegistry } from "../../../src/
 import { SGraphFactory, SGraphView, SLabelView, SCompartmentView, PolylineEdgeView } from "../../../src/graph"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
-import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule } from "../../../src/features"
+import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule, hoverModule } from "../../../src/features"
 import { ClassNodeView } from "./views"
 import { LocalModelSource } from "../../../src/local/local-model-source"
+import { ClassDiagramFactory } from "./model-factory"
+import { TextRootView } from "../../../src/lib/views-html"
 
 const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
-    rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope()
+    rebind(TYPES.IModelFactory).to(ClassDiagramFactory).inSingletonScope()
     rebind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
         baseDiv: 'sprotty',
-        boundsComputation: 'dynamic'
+        baseClass: 'classDiagram',
+        boundsComputation: 'dynamic',
+        popupDiv: 'sprotty-popup',
+        popupClass: 'classPopup'
     })
 })
 
 export default (useWebsocket: boolean) => {
     const container = new Container()
-    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, classDiagramModule)
+    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, hoverModule, classDiagramModule)
     if (useWebsocket)
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else
@@ -33,6 +38,7 @@ export default (useWebsocket: boolean) => {
     viewRegistry.register('label:text', SLabelView)
     viewRegistry.register('comp:comp', SCompartmentView)
     viewRegistry.register('edge:straight', PolylineEdgeView)
+    viewRegistry.register('text', TextRootView)
 
     return container
 }
