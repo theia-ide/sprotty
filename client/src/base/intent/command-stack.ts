@@ -5,8 +5,8 @@ import {
     CommandExecutionContext,
     CommandResult,
     SystemCommand,
-    MergeableCommand
-} from './commands';
+    MergeableCommand, PopupCommand
+} from './commands'
 import { EMPTY_ROOT, IModelFactory } from "../model/smodel-factory"
 import { IViewer, IViewerProvider } from "../view/viewer"
 import { ILogger } from "../../utils/logging"
@@ -133,11 +133,11 @@ export class CommandStack implements ICommandStack {
         return this.thenUpdate()
     }
 
-    undo() : Promise<SModelRoot>  {
+    undo(): Promise<SModelRoot> {
         this.undoOffStackSystemCommands()
         this.undoPreceedingSystemCommands()
         const command = this.undoStack.pop()
-        if(command !== undefined) {
+        if (command !== undefined) {
             this.logger.log(this, 'Undoing', command)
             this.handleCommand(command, command.undo, (command: ICommand, context: CommandExecutionContext) => {
                 this.redoStack.push(command)
@@ -146,10 +146,10 @@ export class CommandStack implements ICommandStack {
         return this.thenUpdate()
     }
 
-    redo() : Promise<SModelRoot> {
+    redo(): Promise<SModelRoot> {
         this.undoOffStackSystemCommands()
         const command = this.redoStack.pop()
-        if(command !== undefined) {
+        if (command !== undefined) {
             this.logger.log(this, 'Redoing', command)
             this.handleCommand(command, command.redo, (command: ICommand, context: CommandExecutionContext) => {
                 this.undoStack.push(command)
@@ -168,8 +168,8 @@ export class CommandStack implements ICommandStack {
      * command on the appropriate stack.
      */
     protected handleCommand(command: ICommand,
-                            operation: (context: CommandExecutionContext)=>CommandResult,
-                            beforeResolve: (command: ICommand, context: CommandExecutionContext)=>void) {
+                            operation: (context: CommandExecutionContext) => CommandResult,
+                            beforeResolve: (command: ICommand, context: CommandExecutionContext) => void) {
         this.currentPromise = this.currentPromise.then(
             state => {
                 let newHiddenRoot: SModelRoot | undefined = undefined
@@ -177,27 +177,40 @@ export class CommandStack implements ICommandStack {
                     (resolve: (result: CommandStackState) => void, reject: (result: CommandStackState) => void) => {
                         const context = this.createContext(state.root)
                         const newResult = operation.call(command, context) as CommandResult
-                        if(command instanceof HiddenCommand) {
-                            resolve({...state, ...{ 
-                                hiddenRoot: newResult as SModelRoot,
-                                hiddenRootChanged: true
-                            }})
+                        if (command instanceof HiddenCommand) {
+                            resolve({
+                                ...state, ...{
+                                    hiddenRoot: newResult as SModelRoot,
+                                    hiddenRootChanged: true
+                                }
+                            })
+                        } else if (command instanceof PopupCommand) {
+                            resolve({
+                                ...state, ...{
+                                    popupRoot: newResult as SModelRoot,
+                                    popupChanged: true
+                                }
+                            })
                         } else if (newResult instanceof Promise) {
                             newResult.then(
                                 (newModel: SModelRoot) => {
                                     beforeResolve.call(this, command, context)
-                                    resolve({...state, ...{
-                                        root: newModel,
-                                        rootChanged: true
-                                    }})
+                                    resolve({
+                                        ...state, ...{
+                                            root: newModel,
+                                            rootChanged: true
+                                        }
+                                    })
                                 }
                             )
                         } else {
                             beforeResolve.call(this, command, context)
-                            resolve({...state, ...{
-                                root: newResult,
-                                rootChanged: true
-                            }})
+                            resolve({
+                                ...state, ...{
+                                    root: newResult,
+                                    rootChanged: true
+                                }
+                            })
                         }
                     })
                 return promise
@@ -211,15 +224,19 @@ export class CommandStack implements ICommandStack {
     protected thenUpdate() {
         this.currentPromise = this.currentPromise.then(
             state => {
-                if (state.hiddenRootChanged && state.hiddenRoot !== undefined) 
+                if (state.hiddenRootChanged && state.hiddenRoot !== undefined)
                     this.updateHidden(state.hiddenRoot)
-                if(state.rootChanged)
+                if (state.rootChanged)
                     this.update(state.root)
-                return { 
+                if (state.popupChanged && state.popupRoot !== undefined)
+                    this.updatePopup(state.popupRoot)
+                return {
                     root: state.root,
                     hiddenRoot: undefined,
+                    popupRoot: undefined,
                     rootChanged: false,
-                    hiddenRootChanged: false
+                    hiddenRootChanged: false,
+                    popupChanged: false
                 }
             }
         )
@@ -231,8 +248,22 @@ export class CommandStack implements ICommandStack {
     /**
      * Notify the <code>Viewer</code> that the model has changed.
      */
+    updatePopup(model: SModelRoot): void {
+        if (this.viewer) {
+            this.viewer.updatePopup(model)
+            return
+        }
+        this.viewerProvider().then(viewer => {
+            this.viewer = viewer
+            this.updatePopup(model)
+        })
+    }
+
+    /**
+     * Notify the <code>Viewer</code> that the model has changed.
+     */
     update(model: SModelRoot): void {
-        if(this.viewer) {
+        if (this.viewer) {
             this.viewer.update(model)
             return
         }
@@ -246,7 +277,7 @@ export class CommandStack implements ICommandStack {
      * Notify the <code>Viewer</code> that the hidden model has changed.
      */
     updateHidden(model: SModelRoot): void {
-        if(this.viewer) {
+        if (this.viewer) {
             this.viewer.updateHidden(model)
             return
         }
@@ -258,19 +289,19 @@ export class CommandStack implements ICommandStack {
 
     /**
      * Handling of commands after their execution.
-     * 
+     *
      * Hidden commands are not pushed to any stack.
-     * 
-     * System commands are pushed to the <code>offStack</code> when the redo 
+     *
+     * System commands are pushed to the <code>offStack</code> when the redo
      * stack is not empty, allowing to undo the before a redo to keep the chain
      * of commands consistent.
-     * 
+     *
      * Mergable commands are merged if possible.
      */
     protected mergeOrPush(command: ICommand, context: CommandExecutionContext) {
-        if(command instanceof HiddenCommand)
-            return;
-        if(command instanceof SystemCommand && this.redoStack.length > 0) {
+        if (command instanceof HiddenCommand)
+            return
+        if (command instanceof SystemCommand && this.redoStack.length > 0) {
             this.offStack.push(command)
         } else {
             this.offStack.forEach(command => this.undoStack.push(command))
@@ -285,26 +316,26 @@ export class CommandStack implements ICommandStack {
         }
     }
 
-    /** 
+    /**
      * Reverts all system commands on the offStack.
      */
     protected undoOffStackSystemCommands() {
         let command = this.offStack.pop()
-        while(command !== undefined) {
+        while (command !== undefined) {
             this.logger.log(this, 'Undoing off-stack', command)
             this.handleCommand(command, command.undo, () => {})
             command = this.offStack.pop()
         }
     }
 
-    /** 
-     * System commands should be transparent to the user, so this method 
-     * is called from <code>undo()</code> to revert all system commands 
+    /**
+     * System commands should be transparent to the user, so this method
+     * is called from <code>undo()</code> to revert all system commands
      * at the top of the undoStack.
      */
     protected undoPreceedingSystemCommands() {
         let command = this.undoStack[this.undoStack.length - 1]
-        while(command !== undefined && command instanceof SystemCommand) {
+        while (command !== undefined && command instanceof SystemCommand) {
             this.undoStack.pop()
             this.logger.log(this, 'Undoing', command)
             this.handleCommand(command, command.undo, (command: ICommand, context: CommandExecutionContext) => {
@@ -314,27 +345,27 @@ export class CommandStack implements ICommandStack {
         }
     }
 
-    /** 
-     * System commands should be transparent to the user, so this method 
-     * is called from <code>redo()</code> to re-execute all system commands 
+    /**
+     * System commands should be transparent to the user, so this method
+     * is called from <code>redo()</code> to re-execute all system commands
      * at the top of the redoStack.
      */
     protected redoFollowingSystemCommands() {
-        let command = this.redoStack[this.redoStack.length -1]
+        let command = this.redoStack[this.redoStack.length - 1]
         while (command !== undefined && command instanceof SystemCommand) {
             this.redoStack.pop()
             this.logger.log(this, 'Redoing ', command)
             this.handleCommand(command, command.redo, (command: ICommand, context: CommandExecutionContext) => {
                 this.undoStack.push(command)
             })
-            command = this.redoStack[this.redoStack.length -1]
+            command = this.redoStack[this.redoStack.length - 1]
         }
     }
 
     /**
      * Assembles the context object that is passed to the commands execution method.
      */
-    protected createContext(currentModel: SModelRoot) : CommandExecutionContext {
+    protected createContext(currentModel: SModelRoot): CommandExecutionContext {
         const context: CommandExecutionContext = {
             root: currentModel,
             modelChanged: this,
@@ -348,13 +379,15 @@ export class CommandStack implements ICommandStack {
 }
 
 /**
- * Internal type to pass the results between the <code>Promises</code> in the 
+ * Internal type to pass the results between the <code>Promises</code> in the
  * <code>ICommandStack</code>.
  */
 interface CommandStackState {
-    root: SModelRoot,
-    hiddenRoot: SModelRoot | undefined
+    root: SModelRoot
+    hiddenRoot: SModelRoot | undefined
+    popupRoot: SModelRoot | undefined
     rootChanged: boolean
     hiddenRootChanged: boolean
+    popupChanged: boolean
 }
 

@@ -1,5 +1,6 @@
-import { SModelElement } from "../../base/model/smodel"
+import { SModelElement, SModelElementSchema, SModelRootSchema } from "../../base/model/smodel"
 import { SModelExtension } from "../../base/model/smodel-extension"
+import { Point } from "../../utils/geometry"
 
 export const hoverFeature = Symbol('hoverFeature')
 

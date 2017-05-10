@@ -106,6 +106,9 @@ export abstract class HiddenCommand extends Command {
     }
 }
 
+export abstract class PopupCommand extends Command {
+}
+
 /**
  * A system command is triggered by the system, e.g. in order to update bounds
  * in the model with data fetched from the DOM.
@@ -146,7 +149,7 @@ export interface CommandExecutionContext {
 }
 
 export class CommandActionHandler implements IActionHandler {
-    constructor(private commandType: new (a: Action) => ICommand) {
+    constructor(private commandType: ICommandFactory) {
     }
 
     handle(action: Action): ICommand {

@@ -16,7 +16,10 @@ const flowModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.IModelFactory).to(FlowModelFactory).inSingletonScope()
     rebind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
         baseDiv: 'sprotty-flow',
-        boundsComputation: 'dynamic'
+        baseClass: 'sprotty',
+        boundsComputation: 'dynamic',
+        popupDiv: 'sprotty-popup',
+        popupClass: 'sprotty'
     })
 })
 

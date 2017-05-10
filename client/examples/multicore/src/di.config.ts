@@ -14,7 +14,10 @@ const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.IModelFactory).to(ChipModelFactory).inSingletonScope()
     rebind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
         baseDiv: 'sprotty-cores',
-        boundsComputation: 'fixed'
+        baseClass: 'sprotty',
+        boundsComputation: 'fixed',
+        popupDiv: 'sprotty-popup',
+        popupClass: 'sprotty'
     })
 })
 

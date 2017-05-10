@@ -60,6 +60,9 @@ let defaultContainerModule = new ContainerModule(bind => {
     })
     bind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
         baseDiv: 'sprotty',
+        baseClass: 'sprotty-diagram',
+        popupDiv: 'sprotty-popup',
+        popupClass: 'popup',
         boundsComputation: 'fixed'
     })
     bind(TYPES.ModelRendererFactory).toFactory<ModelRenderer>((context: interfaces.Context) => {

@@ -11,6 +11,8 @@ import { Action, ActionHandlerRegistry } from "../base/intent/actions"
 import { RequestModelAction, SetModelAction } from "../base/features/model-manipulation"
 import { SModelElementSchema, SModelIndex, SModelRootSchema } from "../base/model/smodel"
 import { ModelSource } from "../base/model/model-source"
+import { RequestPopupModelAction, SetPopupModelAction } from "../features/hover/hover"
+import { isLocateable } from "../features/move/model"
 
 /**
  * A model source that handles actions for bounds calculation and model 
@@ -18,6 +20,8 @@ import { ModelSource } from "../base/model/model-source"
  */
 @injectable()
 export class LocalModelSource extends ModelSource {
+
+    popupModelProvider: (elementId: string) => (SModelRootSchema | undefined)
 
     protected currentRoot: SModelRootSchema = {
         type: 'NONE',
@@ -40,6 +44,7 @@ export class LocalModelSource extends ModelSource {
         
         // Register this model source
         registry.register(ComputedBoundsAction.KIND, this)
+        registry.register(RequestPopupModelAction.KIND, this)
     }
 
     setModel(root: SModelRootSchema): void {
@@ -143,10 +148,23 @@ export class LocalModelSource extends ModelSource {
         switch (action.kind) {
             case RequestModelAction.KIND:
                 this.handleRequestModel(action as RequestModelAction)
-                break;
+                break
             case ComputedBoundsAction.KIND:
                 this.handleComputedBounds(action as ComputedBoundsAction)
-                break;
+                break
+            case RequestPopupModelAction.KIND:
+                this.handleRequestPopupModel(action as RequestPopupModelAction)
+                break
+        }
+    }
+
+    protected handleRequestPopupModel(action: RequestPopupModelAction): void {
+        if (this.popupModelProvider !== undefined) {
+            const popupRoot = this.popupModelProvider(action.element)
+            if (popupRoot !== undefined) {
+                popupRoot.canvasBounds = action.bounds
+                this.actionDispatcher.dispatch(new SetPopupModelAction(popupRoot))
+            }
         }
     }
 
