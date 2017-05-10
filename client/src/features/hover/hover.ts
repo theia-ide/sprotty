@@ -5,9 +5,6 @@ import { hasPopupFeature, isHoverable } from "./model"
 import { Command, CommandExecutionContext, CommandResult, PopupCommand } from "../../base/intent/commands"
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { Bounds } from "../../utils/geometry"
-import { SLabel } from "../../graph/model/sgraph"
-import { isNullOrUndefined } from "util"
-
 
 export class HoverAction implements Action {
     kind = HoverCommand.KIND
