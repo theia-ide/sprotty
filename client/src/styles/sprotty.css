@@ -1,8 +1,15 @@
-.hidden {
-    display: none;
+.sprotty {
+    padding: 0px;
 }
 
-#sprotty-popup {
+.sprotty-hidden {
+    display: block;
+    position: absolute;
+    width: 0px;
+    height: 0px;
+}
+
+.sprotty-popup {
     position: absolute;
     background: white;
     border-radius: 5px;
@@ -10,6 +17,10 @@
     max-width: 400px;
 }
 
-#sprotty-popup > div {
+.sprotty-popup > div {
     margin: 10px;
+}
+
+.sprotty-popup-closed {
+    display: none;
 }

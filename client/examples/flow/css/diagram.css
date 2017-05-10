@@ -8,11 +8,11 @@
 }
 
 .running {
-    fill: #f00;
+    fill: #ff707e;
 }
 
 .finished {
-    fill: #0f0;
+    fill: #60ff7e;
 }
 
 .barrier {

@@ -1,6 +1,6 @@
+import { ContainerModule, interfaces } from "inversify"
 import { SModelStorage } from './model/smodel-storage';
 import { CanvasBoundsInitializer, InitializeCanvasBoundsCommand } from './features/initialize-canvas';
-import { ContainerModule, interfaces } from "inversify"
 import { LogLevel, NullLogger } from "../utils/logging"
 import { ActionDispatcher, IActionDispatcher } from "./intent/action-dispatcher"
 import { CommandStack, ICommandStack } from "./intent/command-stack"
@@ -12,9 +12,9 @@ import { FocusFixDecorator, IVNodeDecorator } from "./view/vnode-decorators"
 import { ActionHandlerRegistry } from "./intent/actions"
 import { ViewRegistry } from "./view/views"
 import { SModelFactory } from "./model/smodel-factory"
-import { TYPES } from "./types"
 import { ViewerCache } from "./view/viewer-cache"
 import { AnimationFrameSyncer } from "./animations/animation-frame-syncer"
+import { TYPES } from "./types"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
@@ -60,9 +60,11 @@ let defaultContainerModule = new ContainerModule(bind => {
     })
     bind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
         baseDiv: 'sprotty',
-        baseClass: 'sprotty-diagram',
+        baseClass: 'sprotty',
+        hiddenClass: 'sprotty-hidden',
         popupDiv: 'sprotty-popup',
-        popupClass: 'popup',
+        popupClass: 'sprotty-popup',
+        popupClosedClass: 'sprotty-popup-closed',
         boundsComputation: 'fixed'
     })
     bind(TYPES.ModelRendererFactory).toFactory<ModelRenderer>((context: interfaces.Context) => {

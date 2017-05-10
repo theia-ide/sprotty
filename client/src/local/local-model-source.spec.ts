@@ -7,7 +7,7 @@ import { ComputedBoundsAction, RequestBoundsAction } from "../features/bounds/bo
 import { IActionDispatcher } from "../base/intent/action-dispatcher"
 import { Action } from "../base/intent/actions"
 import { TYPES } from "../base/types"
-import { ViewerOptions } from "../base/view/options"
+import { overrideViewerOptions } from "../base/view/options"
 import { SModelRootSchema } from "../base/model/smodel"
 import { SetModelAction } from "../base/features/model-manipulation"
 import { UpdateModelAction } from "../features/update/update-model"
@@ -35,12 +35,8 @@ describe('LocalModelSource', () => {
         container.load(defaultContainerModule)
         container.bind(TYPES.ModelSource).to(LocalModelSource)
         container.rebind(TYPES.IActionDispatcher).to(MockActionDispatcher).inSingletonScope()
-        container.rebind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
-            baseDiv: 'sprotty',
-            baseClass: 'sprotty-diagramm',
-            boundsComputation: boundsComputation,
-            popupDiv: 'popup',
-            popupClass: 'popup'
+        overrideViewerOptions(container, {
+            boundsComputation: boundsComputation
         })
         return container
     }

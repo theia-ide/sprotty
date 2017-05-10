@@ -94,23 +94,22 @@ export class Viewer implements IViewer {
     updatePopup(model: SModelRoot): void {
         this.logger.log(this, 'rendering popup', model)
 
-        const content: VNode[] = []
-        let clearPopup = model.type === EMPTY_ROOT.type
-        let inlineStyle: Object = {}
-
-        if (!clearPopup) {
-            content.push(this.renderer.renderElement(model))
-
+        let newVDOM: VNode
+        if (model.type === EMPTY_ROOT.type) {
+            newVDOM = <div id={this.options.popupDiv}></div>
+            setClass(newVDOM, this.options.popupClass, true)
+            setClass(newVDOM, this.options.popupClosedClass, true)
+        } else {
             const position = model.canvasBounds
-            inlineStyle = {
+            const inlineStyle = {
                 top: position.y + 'px',
                 left: position.x + 'px'
             }
+            newVDOM = <div id={this.options.popupDiv} style={inlineStyle}>
+                {this.renderer.renderElement(model)}
+            </div>
+            setClass(newVDOM, this.options.popupClass, true)
         }
-
-        const newVDOM = <div style={inlineStyle} class-hidden={clearPopup} id={this.options.popupDiv}>
-            {content}
-        </div>
 
         if (this.lastPopupVDOM !== undefined) {
             this.lastPopupVDOM = this.patcher.call(this, this.lastPopupVDOM, newVDOM)
@@ -146,7 +145,7 @@ export class Viewer implements IViewer {
         this.logger.log(this, 'rendering hidden')
         const hiddenVNode = this.hiddenRenderer.renderElement(hiddenModel)
         setAttr(hiddenVNode, 'opacity', 0)
-        setClass(hiddenVNode, 'sprotty-hidden', true)
+        setClass(hiddenVNode, this.options.hiddenClass, true)
         const newVDOM = <div id={this.options.baseDiv}>
             {this.lastVDOM.children![0]}
             {hiddenVNode}

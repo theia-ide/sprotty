@@ -1,5 +1,5 @@
 import { Container, ContainerModule } from "inversify"
-import { defaultModule, TYPES, ViewerOptions, ViewRegistry } from "../../../src/base"
+import { defaultModule, TYPES, ViewRegistry, overrideViewerOptions } from "../../../src/base"
 import { SGraphFactory, SGraphView, SLabelView, SCompartmentView, PolylineEdgeView } from "../../../src/graph"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
@@ -13,13 +13,6 @@ const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) =
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
     rebind(TYPES.IModelFactory).to(ClassDiagramFactory).inSingletonScope()
-    rebind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
-        baseDiv: 'sprotty',
-        baseClass: 'classDiagram',
-        boundsComputation: 'dynamic',
-        popupDiv: 'sprotty-popup',
-        popupClass: 'classPopup'
-    })
 })
 
 export default (useWebsocket: boolean) => {
@@ -29,6 +22,9 @@ export default (useWebsocket: boolean) => {
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else
         container.bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
+    overrideViewerOptions(container, {
+        boundsComputation: 'dynamic'
+    })
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)

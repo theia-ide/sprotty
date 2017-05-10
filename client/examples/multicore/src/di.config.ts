@@ -1,6 +1,6 @@
 import { SCompartmentView, SLabelView } from '../../../src/graph';
 import { Container, ContainerModule } from "inversify"
-import { defaultModule, ViewerOptions, TYPES, ViewRegistry } from "../../../src/base"
+import { defaultModule, TYPES, ViewRegistry, overrideViewerOptions } from "../../../src/base"
 import { ChipModelFactory } from "./chipmodel-factory"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
@@ -12,13 +12,6 @@ const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
     rebind(TYPES.IModelFactory).to(ChipModelFactory).inSingletonScope()
-    rebind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
-        baseDiv: 'sprotty-cores',
-        baseClass: 'sprotty',
-        boundsComputation: 'fixed',
-        popupDiv: 'sprotty-popup',
-        popupClass: 'sprotty'
-    })
 })
 
 export default (useWebsocket: boolean) => {
@@ -28,7 +21,11 @@ export default (useWebsocket: boolean) => {
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else
         container.bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
-    
+    overrideViewerOptions(container, {
+        baseDiv: 'sprotty-cores',
+        boundsComputation: 'fixed'
+    })
+
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
     viewRegistry.register('processor', ProcessorView)

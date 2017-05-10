@@ -1,5 +1,5 @@
 import { Container, ContainerModule } from "inversify"
-import { defaultModule, ViewerOptions, TYPES, ViewRegistry } from "../../../src/base"
+import { defaultModule, TYPES, ViewRegistry, overrideViewerOptions } from "../../../src/base"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { boundsModule, moveModule, fadeModule, hoverModule } from "../../../src/features"
@@ -14,13 +14,6 @@ const flowModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
     rebind(TYPES.IModelFactory).to(FlowModelFactory).inSingletonScope()
-    rebind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
-        baseDiv: 'sprotty-flow',
-        baseClass: 'sprotty',
-        boundsComputation: 'dynamic',
-        popupDiv: 'sprotty-popup',
-        popupClass: 'sprotty'
-    })
 })
 
 export default (useWebsocket: boolean) => {
@@ -30,6 +23,10 @@ export default (useWebsocket: boolean) => {
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else
         container.bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
+    overrideViewerOptions(container, {
+        baseDiv: 'sprotty-flow',
+        boundsComputation: 'dynamic'
+    })
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
