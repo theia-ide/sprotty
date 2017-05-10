@@ -37,7 +37,10 @@ describe('LocalModelSource', () => {
         container.rebind(TYPES.IActionDispatcher).to(MockActionDispatcher).inSingletonScope()
         container.rebind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
             baseDiv: 'sprotty',
-            boundsComputation: boundsComputation
+            baseClass: 'sprotty-diagramm',
+            boundsComputation: boundsComputation,
+            popupDiv: 'popup',
+            popupClass: 'popup'
         })
         return container
     }
