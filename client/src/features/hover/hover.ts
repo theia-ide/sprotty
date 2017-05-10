@@ -23,13 +23,6 @@ export class RequestPopupModelAction implements Action {
     }
 }
 
-export class ClearPopupModelAction implements Action {
-    readonly kind = ClearPopupModelCommand.KIND
-
-    constructor(public readonly element: string) {
-    }
-}
-
 export class SetPopupModelAction implements Action {
     readonly kind = SetPopupModelCommand.KIND
 
@@ -57,34 +50,6 @@ export class SetPopupModelCommand extends PopupCommand {
     execute(context: CommandExecutionContext): SModelRoot {
         this.oldRoot = context.root
         this.newRoot = context.modelFactory.createRoot(this.action.newRoot)
-
-        return this.newRoot
-    }
-
-    undo(context: CommandExecutionContext): SModelRoot {
-        return this.oldRoot
-    }
-
-    redo(context: CommandExecutionContext): SModelRoot {
-        return this.newRoot
-    }
-
-}
-
-export class ClearPopupModelCommand extends PopupCommand {
-
-    static readonly KIND = 'clearPopupModel'
-
-    oldRoot: SModelRoot
-    newRoot: SModelRoot
-
-    constructor(public action: ClearPopupModelAction) {
-        super()
-    }
-
-    execute(context: CommandExecutionContext): SModelRoot {
-        this.oldRoot = context.root
-        this.newRoot = EMPTY_ROOT
 
         return this.newRoot
     }
@@ -132,11 +97,11 @@ export class HoverCommand extends Command {
 }
 
 export class HoverListener extends MouseListener {
-    private hoverTimer: number
+    private hoverTimer: number | undefined
     private popupOpen: boolean = false
 
     private startTimer(targetId: string, event: MouseEvent): Promise<Action> {
-        window.clearTimeout(this.hoverTimer)
+        this.stopTimer()
         return new Promise((resolve, reject) => {
             this.hoverTimer = window.setTimeout(() => {
 
@@ -144,18 +109,20 @@ export class HoverListener extends MouseListener {
                     {
                         x: event.clientX - 20,
                         y: event.clientY + 20,
-                        width: 0,
-                        height: 0
-                    })) //TODO from options
+                        width: -1,
+                        height: -1
+                    })) //TODO get offset from options
 
                 this.popupOpen = true
-            }, 700) //TODO get time from options...or something like that
+            }, 700) //TODO get time from options
         })
     }
 
     private stopTimer(): void {
-        this.popupOpen = false
-        window.clearTimeout(this.hoverTimer)
+        if(this.hoverTimer !== undefined) {
+            window.clearTimeout(this.hoverTimer)
+            this.hoverTimer = undefined
+        }
     }
 
     mouseOver(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
@@ -170,8 +137,9 @@ export class HoverListener extends MouseListener {
         const result: (Action | Promise<Action>)[] = []
 
         if (this.popupOpen)
-            result.push(new ClearPopupModelAction(target.id))
+            result.push(new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}))
 
+        this.popupOpen = false
         this.stopTimer()
         if (isHoverable(target))
             result.push(new HoverAction(target.id, false))

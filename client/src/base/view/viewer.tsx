@@ -94,21 +94,18 @@ export class Viewer implements IViewer {
     updatePopup(model: SModelRoot): void {
         this.logger.log(this, 'rendering popup', model)
 
-        let content
+        const content: VNode[] = []
         let clearPopup = model.type === EMPTY_ROOT.type
-        let inlineStyle = {}
-        const position = model.canvasBounds
+        let inlineStyle: Object = {}
 
         if (!clearPopup) {
-            content = this.renderer.renderElement(model)
+            content.push(this.renderer.renderElement(model))
 
+            const position = model.canvasBounds
             inlineStyle = {
                 top: position.y + 'px',
                 left: position.x + 'px'
             }
-        } else {
-            content =  ''
-            inlineStyle = {}
         }
 
         const newVDOM = <div style={inlineStyle} class-hidden={clearPopup} id={this.options.popupDiv}>
