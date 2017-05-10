@@ -10,3 +10,13 @@ export interface Hoverable extends SModelExtension {
 export function isHoverable(element: SModelElement): element is SModelElement & Hoverable {
     return element.hasFeature(hoverFeature)
 }
+
+export const popupFeature = Symbol('popupFeature')
+
+export interface PopupFeature extends SModelExtension {
+
+}
+
+export function hasPopupFeature(element: SModelElement): element is SModelElement & PopupFeature {
+    return element.hasFeature(popupFeature)
+}

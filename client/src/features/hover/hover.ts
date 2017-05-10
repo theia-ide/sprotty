@@ -1,10 +1,12 @@
-import { SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel"
+import { SChildElement, SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel"
 import { MouseListener } from "../../base/view/mouse-tool"
 import { Action } from "../../base/intent/actions"
-import { isHoverable } from "./model"
+import { hasPopupFeature, isHoverable } from "./model"
 import { Command, CommandExecutionContext, CommandResult, PopupCommand } from "../../base/intent/commands"
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { Bounds } from "../../utils/geometry"
+import { SLabel } from "../../graph/model/sgraph"
+import { isNullOrUndefined } from "util"
 
 
 export class HoverAction implements Action {
@@ -99,6 +101,7 @@ export class HoverCommand extends Command {
 export class HoverListener extends MouseListener {
     private hoverTimer: number | undefined
     private popupOpen: boolean = false
+    private previousPopupElement: SModelElement | undefined = undefined
 
     private startTimer(targetId: string, event: MouseEvent): Promise<Action> {
         this.stopTimer()
@@ -119,16 +122,57 @@ export class HoverListener extends MouseListener {
     }
 
     private stopTimer(): void {
-        if(this.hoverTimer !== undefined) {
+        if (this.hoverTimer !== undefined) {
             window.clearTimeout(this.hoverTimer)
             this.hoverTimer = undefined
         }
     }
 
+    protected targetWithFeature(target: SModelElement, checkFeature: (t: SModelElement) => boolean): SModelElement | undefined {
+        let current: SModelElement | undefined = target
+
+        while (current !== undefined) {
+            if (current instanceof SChildElement)
+                if (checkFeature(current))
+                    return current
+                else
+                    current = current.parent
+            else
+                current = undefined
+        }
+
+        return current
+    }
+
     mouseOver(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        const result: (Action | Promise<Action>)[] = [this.startTimer(target.id, event)]
-        if (isHoverable(target))
-            result.push(new HoverAction(target.id, true))
+        const result: (Action | Promise<Action>)[] = []
+
+        const popupTarget = this.targetWithFeature(target, hasPopupFeature)
+        if (popupTarget !== undefined) {
+            if (this.previousPopupElement !== undefined) {
+                if (this.previousPopupElement.id !== popupTarget.id) {
+                    if (this.popupOpen) {
+                        this.popupOpen = false
+                        result.push(new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}))
+                    }
+                    this.previousPopupElement = popupTarget
+                    result.push(this.startTimer(popupTarget.id, event))
+                }
+            } else {
+                this.previousPopupElement = popupTarget
+                result.push(this.startTimer(popupTarget.id, event))
+            }
+        } else {
+            if (this.popupOpen) {
+                this.popupOpen = false
+                result.push(new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}))
+            }
+            this.previousPopupElement = undefined
+        }
+
+        const hoverTarget = this.targetWithFeature(target, isHoverable)
+        if (hoverTarget !== undefined)
+            result.push(new HoverAction(hoverTarget.id, true))
 
         return result
     }
@@ -136,17 +180,17 @@ export class HoverListener extends MouseListener {
     mouseOut(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         const result: (Action | Promise<Action>)[] = []
 
-        if (this.popupOpen)
-            result.push(new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}))
+        if(!this.popupOpen)
+            this.stopTimer()
 
-        this.popupOpen = false
-        this.stopTimer()
         if (isHoverable(target))
             result.push(new HoverAction(target.id, false))
+
         return result
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        return this.popupOpen ? [] : [this.startTimer(target.id, event)]
+        const popupTarget = this.targetWithFeature(target, hasPopupFeature)
+        return this.popupOpen || popupTarget === undefined ? [] : [this.startTimer(popupTarget.id, event)]
     }
 }
