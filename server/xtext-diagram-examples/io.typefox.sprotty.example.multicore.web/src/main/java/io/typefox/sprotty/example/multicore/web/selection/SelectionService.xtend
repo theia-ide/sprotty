@@ -3,6 +3,7 @@ package io.typefox.sprotty.example.multicore.web.selection
 import com.google.inject.Inject
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Program
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Step
+import java.util.List
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.resource.EObjectAtOffsetHelper
 import org.eclipse.xtext.web.server.model.IXtextWebDocument
@@ -14,6 +15,8 @@ import static extension org.eclipse.xtext.nodemodel.util.NodeModelUtils.*
 class SelectionService {
 	
 	@Inject extension EObjectAtOffsetHelper
+	
+	@Inject extension NodeModelExtensions
 	
 	def getOffsetById(XtextWebDocumentAccess access, String modelType, String elementId, int caretOffset) {
 		access.readOnly[ doc, cancelIndicator |
@@ -59,14 +62,26 @@ class SelectionService {
 		]
 	}
 	
-	protected def EObject getCurrentSelection(IXtextWebDocument doc, int caretOffset) {
+	def EObject getCurrentSelection(IXtextWebDocument doc, int caretOffset) {
 		var element = doc.resource.resolveContainedElementAt(caretOffset)
 		var node = element.node
-		while (node !== null && !node.textRegion.contains(caretOffset)) {
+		while (node !== null) {
+			if (node.contains(caretOffset))
+				return element
+			if (element.eContainingFeature.isMany) {
+				val container = element.eContainer
+				val list = container.eGet(element.eContainingFeature) as List<? extends EObject>
+				val index = list.indexOf(element)
+				val previousElement = if (index > 0) list.get(index - 1)
+				if (previousElement.node.contains(caretOffset))
+					return previousElement
+				val nextElement = if (index < list.size - 1) list.get(index + 1)
+				if (nextElement.node.contains(caretOffset))
+					return nextElement
+			}
 			element = element.eContainer
 			node = element.node
 		}
-		return element
 	}
 	
 	protected def EObject getObjectById(Program program, EObject currentSelection, String modelType, String elementId) {
