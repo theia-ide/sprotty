@@ -47,3 +47,8 @@
     font-size: 14pt;
     text-anchor: middle;
 }
+
+.mouseover {
+    stroke: #557744;
+    stroke-width: 5;
+}
