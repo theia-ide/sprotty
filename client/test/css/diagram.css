@@ -1,0 +1,54 @@
+.sprotty-hidden {
+    display: block;
+    position: absolute;
+    width: 0;
+    height: 0;
+}
+
+.node {
+    fill: #cdc;
+    stroke: #152;
+    stroke-width: 3;
+    rx: 4;
+    ry: 4;
+    font-weight: bold;
+    /* properties for vbox */
+    line-height: 10px;
+    padding: 10px;
+    text-align: center;
+}
+
+.comp {
+    line-height: 3px;
+    font-weight: normal;
+    text-align: left;
+}
+
+.graph {
+    font-size: 15pt;
+}
+
+.label {
+    stroke-width: 0;
+    fill: #000;
+    font-weight: inherit;
+}
+
+.edge {
+    fill: none;
+    stroke: #488;
+    stroke-width: 2;
+}
+
+.node.selected {
+    stroke: #dd8;
+    stroke-width: 6;
+}
+
+.missing {
+    stroke-width: 1;
+    stroke: #f00;
+    fill: #f00;
+    font-size: 14pt;
+    text-anchor: middle;
+}

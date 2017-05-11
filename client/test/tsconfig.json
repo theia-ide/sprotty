@@ -1,0 +1,25 @@
+{
+    "compilerOptions": {
+        "target": "es5",
+        "module": "commonjs",
+        "sourceMap": true,
+        "outDir": "./",
+        "lib": ["es6", "dom"],
+        "types": ["node", "reflect-metadata"],
+        "typeRoots": ["node_modules/@types",
+            "typings"
+        ],
+        "strictNullChecks": true,
+        "experimentalDecorators": true,
+        "emitDecoratorMetadata": true,
+        "jsx": "react",
+        "reactNamespace": "JSX"
+    },
+    "exclude": [
+        "node_modules"
+    ],
+    "include": [
+        "test-app.ts",
+        "pages/*.ts"
+    ]
+}
