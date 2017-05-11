@@ -6,6 +6,7 @@ import { Command, CommandExecutionContext, CommandResult, PopupCommand } from ".
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { Bounds } from "../../utils/geometry"
 import { KeyListener } from "../../base/view/key-tool"
+import { findTargetByFeature } from "../../utils/model"
 
 export class HoverFeedbackAction implements Action {
     kind = HoverFeedbackCommand.KIND
@@ -121,24 +122,9 @@ export class HoverListener extends MouseListener {
         }
     }
 
-    protected targetWithFeature(target: SModelElement, checkFeature: (t: SModelElement) => boolean): SModelElement | undefined {
-        let current: SModelElement | undefined = target
-
-        while (current !== undefined) {
-            if (checkFeature(current))
-                return current
-            else if (current instanceof SChildElement)
-                current = current.parent
-            else
-                current = undefined
-        }
-
-        return current
-    }
-
     mouseOver(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         const result: (Action | Promise<Action>)[] = []
-        const popupTarget = this.targetWithFeature(target, hasPopupFeature)
+        const popupTarget = findTargetByFeature(target, hasPopupFeature)
 
         if (popupTarget === undefined ||
             this.previousPopupElement !== undefined && this.previousPopupElement.id !== popupTarget.id) {
@@ -155,7 +141,7 @@ export class HoverListener extends MouseListener {
         this.previousPopupElement = popupTarget
 
 
-        const hoverTarget = this.targetWithFeature(target, isHoverable)
+        const hoverTarget = findTargetByFeature(target, isHoverable)
         if (hoverTarget !== undefined)
             result.push(new HoverFeedbackAction(hoverTarget.id, true))
 
@@ -175,7 +161,7 @@ export class HoverListener extends MouseListener {
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        const popupTarget = this.targetWithFeature(target, hasPopupFeature)
+        const popupTarget = findTargetByFeature(target, hasPopupFeature)
         return this.popupOpen || popupTarget === undefined ? [] : [this.startTimer(popupTarget.id, event)]
     }
 }
