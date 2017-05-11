@@ -98,7 +98,7 @@ export class HoverCommand extends Command {
 export class HoverListener extends MouseListener {
     private hoverTimer: number | undefined
     private popupOpen: boolean = false
-    private previousPopupElement: SModelElement | undefined = undefined
+    private previousPopupElement: SModelElement | undefined
 
     private startTimer(targetId: string, event: MouseEvent): Promise<Action> {
         this.stopTimer()
@@ -129,11 +129,10 @@ export class HoverListener extends MouseListener {
         let current: SModelElement | undefined = target
 
         while (current !== undefined) {
-            if (current instanceof SChildElement)
-                if (checkFeature(current))
-                    return current
-                else
-                    current = current.parent
+            if (checkFeature(current))
+                return current
+            else if (current instanceof SChildElement)
+                current = current.parent
             else
                 current = undefined
         }
@@ -143,29 +142,22 @@ export class HoverListener extends MouseListener {
 
     mouseOver(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         const result: (Action | Promise<Action>)[] = []
-
         const popupTarget = this.targetWithFeature(target, hasPopupFeature)
-        if (popupTarget !== undefined) {
-            if (this.previousPopupElement !== undefined) {
-                if (this.previousPopupElement.id !== popupTarget.id) {
-                    if (this.popupOpen) {
-                        this.popupOpen = false
-                        result.push(new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}))
-                    }
-                    this.previousPopupElement = popupTarget
-                    result.push(this.startTimer(popupTarget.id, event))
-                }
-            } else {
-                this.previousPopupElement = popupTarget
-                result.push(this.startTimer(popupTarget.id, event))
-            }
-        } else {
+
+        if (popupTarget === undefined ||
+            this.previousPopupElement !== undefined && this.previousPopupElement.id !== popupTarget.id) {
             if (this.popupOpen) {
                 this.popupOpen = false
                 result.push(new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}))
             }
-            this.previousPopupElement = undefined
         }
+        if (popupTarget !== undefined &&
+            (this.previousPopupElement === undefined || this.previousPopupElement.id !== popupTarget.id)) {
+            result.push(this.startTimer(popupTarget.id, event))
+        }
+
+        this.previousPopupElement = popupTarget
+
 
         const hoverTarget = this.targetWithFeature(target, isHoverable)
         if (hoverTarget !== undefined)
@@ -177,7 +169,7 @@ export class HoverListener extends MouseListener {
     mouseOut(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         const result: (Action | Promise<Action>)[] = []
 
-        if(!this.popupOpen)
+        if (!this.popupOpen)
             this.stopTimer()
 
         if (isHoverable(target))
@@ -190,4 +182,6 @@ export class HoverListener extends MouseListener {
         const popupTarget = this.targetWithFeature(target, hasPopupFeature)
         return this.popupOpen || popupTarget === undefined ? [] : [this.startTimer(popupTarget.id, event)]
     }
+
+
 }
