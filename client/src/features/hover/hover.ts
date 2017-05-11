@@ -5,6 +5,7 @@ import { hasPopupFeature, isHoverable } from "./model"
 import { Command, CommandExecutionContext, CommandResult, PopupCommand } from "../../base/intent/commands"
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { Bounds } from "../../utils/geometry"
+import { KeyListener } from "../../base/view/key-tool"
 
 export class HoverAction implements Action {
     kind = HoverCommand.KIND
@@ -102,7 +103,7 @@ export class HoverListener extends MouseListener {
 
     private startTimer(targetId: string, event: MouseEvent): Promise<Action> {
         this.stopTimer()
-        return new Promise((resolve, reject) => {
+        return new Promise((resolve) => {
             this.hoverTimer = window.setTimeout(() => {
 
                 resolve(new RequestPopupModelAction(targetId,
@@ -182,6 +183,13 @@ export class HoverListener extends MouseListener {
         const popupTarget = this.targetWithFeature(target, hasPopupFeature)
         return this.popupOpen || popupTarget === undefined ? [] : [this.startTimer(popupTarget.id, event)]
     }
+}
 
-
+export class PopupKeyboardListener extends KeyListener {
+    keyPress(element: SModelElement, event: KeyboardEvent): Action[] {
+        if (event.keyCode == 27) {
+            return [new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id})]
+        }
+        return []
+    }
 }
