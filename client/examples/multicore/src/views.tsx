@@ -51,7 +51,7 @@ export class CoreView implements IView {//extends ThunkView {
                       rx={4}
                       ry={4}
                       fill={fillColor}
-                      class-mouseover={model.mouseover}
+                      class-mouseover={model.hoverFeedback}
                 />
                 {content}
             </g>

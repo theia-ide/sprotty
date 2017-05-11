@@ -1,14 +1,14 @@
 import { SModelElement } from "../../base/model/smodel"
 import { SModelExtension } from "../../base/model/smodel-extension"
 
-export const hoverFeature = Symbol('hoverFeature')
+export const hoverFeedbackFeature = Symbol('hoverFeedbackFeature')
 
 export interface Hoverable extends SModelExtension {
-    mouseover: boolean
+    hoverFeedback: boolean
 }
 
 export function isHoverable(element: SModelElement): element is SModelElement & Hoverable {
-    return element.hasFeature(hoverFeature)
+    return element.hasFeature(hoverFeedbackFeature)
 }
 
 export const popupFeature = Symbol('popupFeature')

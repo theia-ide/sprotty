@@ -11,7 +11,7 @@ import {
     Selectable,
     selectFeature,
     viewportFeature,
-    hoverFeature
+    hoverFeedbackFeature
 } from '../../../src/features';
 import { ViewportRootElement } from "../../../src/features/viewport/viewport-root"
 import { CORE_DISTANCE, CORE_WIDTH } from "./views";
@@ -51,7 +51,7 @@ export interface CoreSchema extends SModelElementSchema {
 }
 
 export class Core extends SShapeElement implements Selectable, Fadeable, Hoverable, Layouting {
-    mouseover: boolean = false
+    hoverFeedback: boolean = false
     column: number = 0
     row: number = 0
     kernelNr: number = -1
@@ -61,7 +61,7 @@ export class Core extends SShapeElement implements Selectable, Fadeable, Hoverab
     resizeContainer: boolean = false
 
     hasFeature(feature: symbol): boolean {
-        return feature === selectFeature || feature === fadeFeature || feature === layoutFeature || feature === hoverFeature
+        return feature === selectFeature || feature === fadeFeature || feature === layoutFeature || feature === hoverFeedbackFeature
     }
 }
 

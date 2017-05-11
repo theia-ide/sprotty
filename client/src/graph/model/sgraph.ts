@@ -5,7 +5,7 @@ import { Selectable, selectFeature } from "../../features/select/model"
 import { Locateable, moveFeature } from "../../features/move/model"
 import { BoundsAware, boundsFeature, layoutFeature, Layouting } from "../../features/bounds/model"
 import { Fadeable, fadeFeature } from "../../features/fade/model"
-import { Hoverable, hoverFeature, popupFeature } from "../../features/hover/model"
+import { Hoverable, hoverFeedbackFeature, popupFeature } from "../../features/hover/model"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
@@ -62,7 +62,7 @@ export interface SNodeSchema extends SShapeElementSchema {
 }
 
 export class SNode extends SShapeElement implements Selectable, Fadeable, Hoverable {
-    mouseover: boolean = false
+    hoverFeedback: boolean = false
     children: SCompartmentElement[]
     layout?: string
     selected: boolean = false
@@ -71,7 +71,7 @@ export class SNode extends SShapeElement implements Selectable, Fadeable, Hovera
 
     hasFeature(feature: symbol): boolean {
         return feature === selectFeature || feature === moveFeature || feature === boundsFeature
-            || feature === layoutFeature || feature === fadeFeature || feature === hoverFeature
+            || feature === layoutFeature || feature === fadeFeature || feature === hoverFeedbackFeature
             || feature === popupFeature
     }
 }
