@@ -87,6 +87,7 @@ require(['webjars/ace/1.2.3/src/ace'], function() {
                         editor.clearSelection();
                     } else {
                         stopExecution();
+                        toggleExecutionButtons();
                     }
                 });
             }
