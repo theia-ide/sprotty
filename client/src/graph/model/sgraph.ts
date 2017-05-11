@@ -116,7 +116,7 @@ export class SLabel extends SShapeElement implements Selectable {
     selected: boolean = false
 
     hasFeature(feature: symbol) {
-        return feature === boundsFeature || feature === selectFeature
+        return feature === boundsFeature
     }
 }
 

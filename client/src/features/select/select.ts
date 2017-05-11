@@ -6,8 +6,9 @@ import { SEdge, SNode } from "../../graph/model/sgraph"
 import { MouseListener } from "../../base/view/mouse-tool"
 import { isCtrlOrCmd } from "../../utils/browser"
 import { KeyListener } from "../../base/view/key-tool"
-import { isSelectable } from "./model"
+import { isSelectable, Selectable } from "./model"
 import { setClass } from "../../base/view/vnode-utils"
+import { findTargetByFeature } from "../../utils/model"
 
 export class SelectAction implements Action {
     kind = SelectCommand.KIND
@@ -153,7 +154,8 @@ export class SelectMouseListener extends MouseListener {
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
         if (event.button == 0) {
-            if (isSelectable(target) || target instanceof SModelRoot) {
+            const selectableTarget = findTargetByFeature(target, isSelectable)
+            if (selectableTarget !== undefined || target instanceof SModelRoot) {
                 this.hasDragged = false
                 let deselectIds: string[] = []
                 // multi-selection?
@@ -164,14 +166,14 @@ export class SelectMouseListener extends MouseListener {
                         .filter(element => isSelectable(element) && element.selected)
                         .map(element => element.id)
                 }
-                if (isSelectable(target)) {
-                    if(!target.selected) {
+                if (selectableTarget !== undefined) {
+                    if(!selectableTarget.selected) {
                         this.wasSelected = false
-                        return [new SelectAction([target.id], deselectIds)]
+                        return [new SelectAction([selectableTarget.id], deselectIds)]
                     } else {
                         if (isCtrlOrCmd(event)) {
                             this.wasSelected = false
-                            return [new SelectAction([], [target.id])]
+                            return [new SelectAction([], [selectableTarget.id])]
                         } else {
                             this.wasSelected = true
                         }
@@ -192,8 +194,9 @@ export class SelectMouseListener extends MouseListener {
     mouseUp(target: SModelElement, event: MouseEvent): Action[] {
         if (event.button == 0) {
             if (!this.hasDragged) {
-                if (isSelectable(target) && this.wasSelected) {
-                    return [new SelectAction([target.id], [])]
+                const selectableTarget = findTargetByFeature(target, isSelectable)
+                if (selectableTarget !== undefined && this.wasSelected) {
+                    return [new SelectAction([selectableTarget.id], [])]
                 }
             }
         }
@@ -202,8 +205,9 @@ export class SelectMouseListener extends MouseListener {
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        if (isSelectable(element))
-            setClass(vnode, 'selected', element.selected)
+        const selectableTarget = findTargetByFeature(element, isSelectable)
+        if (selectableTarget !== undefined)
+            setClass(vnode, 'selected', selectableTarget.selected)
         return vnode
     }
 }
