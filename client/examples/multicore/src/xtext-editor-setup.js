@@ -32,6 +32,13 @@ require(['webjars/ace/1.2.3/src/ace'], function() {
             }
         }
 
+        // Execution button handling
+
+        var toggleExecutionButtons = function(){
+            var playBtn = jQuery("#execution-run span");
+            playBtn.toggleClass('glyphicon-play', !executionState.running);
+            playBtn.toggleClass('glyphicon-pause', executionState.running);
+        }
 
         // Handling example files --------
 
@@ -50,6 +57,7 @@ require(['webjars/ace/1.2.3/src/ace'], function() {
         exampleSelectionEl.change(function(){
             exampleChangeHandler(exampleSelectionEl.val());
             stopExecution();
+            toggleExecutionButtons();
         });
 
         // Load first example initially.
@@ -95,17 +103,21 @@ require(['webjars/ace/1.2.3/src/ace'], function() {
                     executionState.timeoutId = setTimeout(nextStep, 2000);
                 }
                 nextStep();
+            } else {
+                stopExecution();
             }
-        });
-        jQuery('#execution-stop').click(function(event) {
-            stopExecution();
         });
         jQuery('#execution-previous').click(function(event) {
             services.select({ stepType: 'previous' });
+            stopExecution();
         });
         jQuery('#execution-next').click(function(event) {
             services.select({ stepType: 'next' });
+            stopExecution();
         });
+        jQuery('.executionButtons button').click(function(){
+            toggleExecutionButtons();
+        })
     });
 });
 
