@@ -24,11 +24,11 @@ export class FadeAnimation extends Animation {
     tween(t: number, context: CommandExecutionContext): SModelRoot {
         for (const elementFade of this.elementFades) {
             const element = elementFade.element
-            if (elementFade.type == 'in') {
+            if (elementFade.type === 'in') {
                 element.opacity = t
-            } else if (elementFade.type == 'out') {
+            } else if (elementFade.type === 'out') {
                 element.opacity = 1 - t
-                if (t == 1 && this.removeAfterFadeOut && element instanceof SChildElement) {
+                if (t === 1 && this.removeAfterFadeOut && element instanceof SChildElement) {
                     element.parent.remove(element)
                 }
             }

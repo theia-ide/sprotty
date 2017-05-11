@@ -64,7 +64,7 @@ export class UpdateModelCommand extends Command {
     }
 
     protected performUpdate(oldRoot: SModelRoot, newRoot: SModelRoot, context: CommandExecutionContext): CommandResult {
-        if (this.action.animate && oldRoot.id == newRoot.id) {
+        if (this.action.animate && oldRoot.id === newRoot.id) {
             let matchResult: MatchResult
             if (this.action.matches === undefined) {
                 const matcher = new ModelMatcher()
@@ -164,7 +164,7 @@ export class UpdateModelCommand extends Command {
         const animations = this.createAnimations(animationData, newRoot, context)
         if (animations.length >= 2) {
             return new CompoundAnimation(newRoot, context, animations)
-        } else if (animations.length == 1) {
+        } else if (animations.length === 1) {
             return animations[0]
         } else {
             return newRoot

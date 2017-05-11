@@ -89,11 +89,11 @@ export class VBoxLayouter implements ILayout {
                 const textAlign = this.getLayoutProperties(boundsData.vnode).textAlign
                 if (bounds && !isEmpty(bounds)) {
                     let dx = 0
-                    if (textAlign == 'left')
+                    if (textAlign === 'left')
                         dx = 0
-                    else if (textAlign == 'center')
+                    else if (textAlign === 'center')
                         dx = 0.5 * (maxWidth - bounds.width)
-                    else if (textAlign == 'right')
+                    else if (textAlign === 'right')
                         dx = maxWidth - bounds.width
                     boundsData.bounds = {
                         x: properties.paddingLeft + (child as any).bounds.x - bounds.x + dx,

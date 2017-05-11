@@ -69,18 +69,18 @@ export class ChipModelFactory extends SGraphFactory {
     }
 
     isProcessorSchema(schema: SModelElementSchema): schema is ProcessorSchema {
-        return getBasicType(schema) == 'processor'
+        return getBasicType(schema) === 'processor'
     }
 
     isCoreSchema(schema: SModelElementSchema): schema is CoreSchema {
-        return getBasicType(schema) == 'core'
+        return getBasicType(schema) === 'core'
     }
 
     isChannelSchema(schema: SModelElementSchema): schema is ChannelSchema {
-        return getBasicType(schema) == 'channel'
+        return getBasicType(schema) === 'channel'
     }
 
     isCrossbarSchema(schema: SModelElementSchema): schema is CrossbarSchema {
-        return getBasicType(schema) == 'crossbar'
+        return getBasicType(schema) === 'crossbar'
     }
 }

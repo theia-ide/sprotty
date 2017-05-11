@@ -68,7 +68,7 @@ export class SParentElement extends SModelElement {
 
     move(child: SChildElement, newIndex: number) {
         const i = this.children.indexOf(child)
-        if (i == -1) {
+        if (i === -1) {
             throw "No such child " + child
         } else {
             if (newIndex < 0 || newIndex > this.children.length - 1) {

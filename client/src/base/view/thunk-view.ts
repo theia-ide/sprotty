@@ -75,10 +75,10 @@ export abstract class ThunkView implements IView {
                 if(!this.equals(oldArg[i], newArg[i])) 
                     return false
             }
-        } else if(typeof oldArg =='object' && typeof newArg == 'object') {
-            if(Object.keys(oldArg).length !== Object.keys(newArg).length) 
+        } else if (typeof oldArg === 'object' && typeof newArg === 'object') {
+            if( Object.keys(oldArg).length !== Object.keys(newArg).length) 
                 return false
-            for(let key in oldArg) {
+            for (let key in oldArg) {
                 if(key != 'parent' && key != 'root' && (!(key in newArg) || !this.equals(oldArg[key], newArg[key]))) 
                     return false
             }

@@ -77,7 +77,7 @@ export class LocalModelSource extends ModelSource {
                 if (parent !== undefined && parent.children !== undefined) {
                     const i = parent.children.indexOf(match.left)
                     if (i >= 0) {
-                        if (match.right !== undefined && match.leftParentId == match.rightParentId) {
+                        if (match.right !== undefined && match.leftParentId === match.rightParentId) {
                             parent.children.splice(i, 1, match.right)
                             newElementInserted = true
                         } else {

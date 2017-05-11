@@ -23,14 +23,14 @@ export class FlowModelFactory extends SGraphFactory {
     }
 
     isFlowSchema(schema: SModelRootSchema): schema is SGraphSchema {
-        return getBasicType(schema) == 'flow'
+        return getBasicType(schema) === 'flow'
     }
 
     isTaskNodeSchema(schema: SModelElementSchema): schema is TaskNodeSchema {
-        return getBasicType(schema) == 'task'
+        return getBasicType(schema) === 'task'
     }
 
     isBarrierNodeSchema(schema: SModelElementSchema): schema is BarrierNodeSchema {
-        return getBasicType(schema) == 'barrier'
+        return getBasicType(schema) === 'barrier'
     }
 }

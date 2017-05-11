@@ -12,7 +12,7 @@ export class ClassDiagramFactory extends SGraphFactory {
     }
 
     isTextSchema(schema: SModelElementSchema): schema is TextRootSchema {
-        return getBasicType(schema) == 'text'
+        return getBasicType(schema) === 'text'
     }
 
 }

@@ -13,7 +13,7 @@ function compare(expected: SModelElementSchema, actual: SModelElement) {
     for (const p in expected) {
         const expectedProp = (expected as any)[p]
         const actualProp = (actual as any)[p]
-        if (p == 'children') {
+        if (p === 'children') {
             for (const i in expectedProp) {
                 compare(expectedProp[i], actualProp[i])
             }

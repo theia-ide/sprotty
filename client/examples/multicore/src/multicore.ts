@@ -101,7 +101,7 @@ export default function runMulticore() {
     function changeModel() {
         for (let i = 0; i < processor.children!.length; ++i) {
             const child = processor.children![i] 
-            if(child.type == 'core') {
+            if (child.type === 'core') {
                 (child as CoreSchema).kernelNr = Math.round(Math.random() * 11)
             }
         }

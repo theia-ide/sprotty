@@ -13,7 +13,7 @@ export interface Action {
 }
 
 export function isAction(object?: any): object is Action {
-    return object !== undefined && object.hasOwnProperty('kind') && typeof(object['kind']) == 'string'
+    return object !== undefined && object.hasOwnProperty('kind') && typeof(object['kind']) === 'string'
 }
 
 export interface IActionHandler {

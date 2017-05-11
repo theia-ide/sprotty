@@ -61,7 +61,7 @@ export class Core extends SShapeElement implements Selectable, Fadeable, Hoverab
     resizeContainer: boolean = false
 
     hasFeature(feature: symbol): boolean {
-        return feature === selectFeature || feature === fadeFeature || feature == layoutFeature || feature === hoverFeature
+        return feature === selectFeature || feature === fadeFeature || feature === layoutFeature || feature === hoverFeature
     }
 }
 

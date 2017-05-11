@@ -46,7 +46,7 @@ abstract class BoundsAwareViewportCommand extends Command {
                         allBounds.push(this.boundsInViewport(element, element.bounds, model))
                 }
             )
-            if (allBounds.length == 0) {
+            if (allBounds.length === 0) {
                 model.index.all().forEach(
                     element => {
                         if (isSelectable(element) && element.selected && isBoundsAware(element))
@@ -54,7 +54,7 @@ abstract class BoundsAwareViewportCommand extends Command {
                     }
                 )
             }
-            if (allBounds.length == 0) {
+            if (allBounds.length === 0) {
                 model.index.all().forEach(
                     element => {
                         if (isBoundsAware(element))
@@ -101,7 +101,7 @@ abstract class BoundsAwareViewportCommand extends Command {
     }
 
     protected equal(vp1: Viewport, vp2: Viewport): boolean {
-        return vp1.zoom == vp2.zoom && vp1.scroll.x == vp2.scroll.x && vp1.scroll.y == vp2.scroll.y
+        return vp1.zoom === vp2.zoom && vp1.scroll.x === vp2.scroll.x && vp1.scroll.y === vp2.scroll.y
     }
 }
 

@@ -32,23 +32,23 @@ export class SGraphFactory extends SModelFactory {
     }
 
     isGraphSchema(schema: SModelElementSchema): schema is SGraphSchema {
-        return getBasicType(schema) == 'graph'
+        return getBasicType(schema) === 'graph'
     }
 
     isNodeSchema(schema: SModelElementSchema): schema is SNodeSchema {
-        return getBasicType(schema) == 'node'
+        return getBasicType(schema) === 'node'
     }
 
     isEdgeSchema(schema: SModelElementSchema): schema is SEdgeSchema {
-        return getBasicType(schema) == 'edge'
+        return getBasicType(schema) === 'edge'
     }
 
     isLabelSchema(schema: SModelElementSchema): schema is SLabelSchema {
-        return getBasicType(schema) == 'label'
+        return getBasicType(schema) === 'label'
     }
 
     isCompartmentSchema(schema: SModelElementSchema): schema is SLabelSchema {
-        return getBasicType(schema) == 'comp'
+        return getBasicType(schema) === 'comp'
     }
 
 }

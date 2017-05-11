@@ -26,7 +26,7 @@ export abstract class Animation {
                     const t = Math.min(1, dtime / this.context.duration)
                     const current = this.tween(this.ease(t), this.context)
                     this.context.modelChanged.update(current)
-                    if (t == 1) {
+                    if (t === 1) {
                         this.context.logger.log(this, (frames * 1000 / this.context.duration) + ' fps')
                         resolve(current)
                     } else {

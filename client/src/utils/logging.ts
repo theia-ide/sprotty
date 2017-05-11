@@ -51,7 +51,7 @@ export class ConsoleLogger implements ILogger {
 
     protected consoleArguments(thisArg: any, message: string, params: any[]): any[] {
         let caller: any
-        if (typeof thisArg == 'object')
+        if (typeof thisArg === 'object')
             caller = thisArg.constructor.name
         else
             caller = thisArg

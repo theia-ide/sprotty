@@ -71,10 +71,10 @@ export abstract class DiagramServer extends ModelSource {
     handle(action: Action): void | ICommand {
         this.storeNewModel(action)
 
-        if(this.viewerOptions.boundsComputation != 'dynamic' && action.kind == ComputedBoundsAction.KIND) 
+        if(this.viewerOptions.boundsComputation != 'dynamic' && action.kind === ComputedBoundsAction.KIND) 
             return this.handleComputedBounds(action as ComputedBoundsAction)
         
-        if (action.kind == RequestBoundsCommand.KIND) 
+        if (action.kind === RequestBoundsCommand.KIND) 
             return 
 
         const message: ActionMessage = {
@@ -88,9 +88,9 @@ export abstract class DiagramServer extends ModelSource {
     protected abstract sendMessage(message: string): void
 
     protected messageReceived(data: any): void {
-        const object = typeof(data) == 'string' ? JSON.parse(data) : data
+        const object = typeof(data) === 'string' ? JSON.parse(data) : data
         if (isActionMessage(object) && object.action) {
-            if (!object.clientId || object.clientId == this.clientId) {
+            if (!object.clientId || object.clientId === this.clientId) {
                 this.logger.log(this, 'receiving', object)
                 this.actionDispatcher.dispatch(object.action, this.storeNewModel.bind(this))
             }
@@ -100,9 +100,9 @@ export abstract class DiagramServer extends ModelSource {
     }
 
     protected storeNewModel(action: Action): void {
-        if(action.kind == SetModelCommand.KIND 
-            || action.kind == UpdateModelCommand.KIND
-            || action.kind == RequestBoundsCommand.KIND) {
+        if(action.kind === SetModelCommand.KIND 
+            || action.kind === UpdateModelCommand.KIND
+            || action.kind === RequestBoundsCommand.KIND) {
             const newRoot = (action as any)['newRoot']
             if(newRoot) {
                 this.currentRoot = newRoot as SModelRootSchema

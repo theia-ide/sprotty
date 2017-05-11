@@ -19,7 +19,7 @@ function compare(expected: SModelElementSchema, actual: SModelElement) {
     for (const p in expected) {
         const expectedProp = (expected as any)[p]
         const actualProp = (actual as any)[p]
-        if (p == 'children') {
+        if (p === 'children') {
             for (const i in expectedProp) {
                 compare(expectedProp[i], actualProp[i])
             }
@@ -237,9 +237,9 @@ describe('UpdateModelCommand', () => {
         expect(fadeAnimation).to.be.an.instanceOf(FadeAnimation)
         expect(fadeAnimation.elementFades).to.have.lengthOf(2)
         for (const fade of fadeAnimation.elementFades) {
-            if (fade.type == 'in')
+            if (fade.type === 'in')
                 expect(fade.element.id).to.equal('child3')
-            else if (fade.type == 'out')
+            else if (fade.type === 'out')
                 expect(fade.element.id).to.equal('child2')
         }
         const moveAnimation = components[1] as MoveAnimation
