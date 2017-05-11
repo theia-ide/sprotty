@@ -54,3 +54,12 @@
     font-family: SansSerif;
     font-size: 14pt;
 }
+
+.popup-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.popup-body > p {
+    margin-bottom: 2px;
+}

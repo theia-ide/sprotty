@@ -1,5 +1,7 @@
 package io.typefox.sprotty.example.multicore.web.diagram
 
+import com.google.common.collect.BiMap
+import com.google.common.collect.HashBiMap
 import com.google.inject.Singleton
 import io.typefox.sprotty.api.SCompartment
 import io.typefox.sprotty.api.SLabel
@@ -21,19 +23,22 @@ import static extension org.eclipse.xtext.EcoreUtil2.*
 @Singleton
 class MulticoreAllocationDiagramGenerator {
 	
-	def Processor generateProcessorView(Program program, EObject selection, CancelIndicator cancelIndicator) {
+	def BiMap<EObject, SModelElement> generateProcessorView(Program program, EObject selection, CancelIndicator cancelIndicator) {
+		val mapping = HashBiMap.create()
 		if (program !== null) {
 			val taskAllocation = selection.getContainerOfType(TaskAllocation)
 			if (taskAllocation !== null) {
-				return createKernelCentricView(program, taskAllocation)
+				createKernelCentricView(program, taskAllocation, mapping)
 			} else {
-				return createFullView(program, selection)
+				createFullView(program, selection, mapping)
 			}
 		}
-		return createProcessor(0)
+		if (mapping.empty)
+			mapping.put(program, createProcessor(0))
+		return mapping
 	}
 	
-	private def createKernelCentricView(Program program, TaskAllocation allocation) {
+	private def createKernelCentricView(Program program, TaskAllocation allocation, BiMap<EObject, SModelElement> mapping) {
 		val kernel = allocation.task.kernel
 		val kernelIndex = program.declarations.filter(Kernel).toList.indexOf(kernel)
 		val step = allocation.eContainer as Step
@@ -41,17 +46,22 @@ class MulticoreAllocationDiagramGenerator {
 		val core2allocation = allocationsSameKernel.toMap[core]
 		val dim = Math.ceil(Math.sqrt(core2allocation.size)) as int
 		val processor = createProcessor(dim)
+		mapping.put(program, processor)
 		var i = 0
-		for (core: core2allocation.keySet.sort) {
-			processor.children += createCore(core, i/dim, i%dim, kernelIndex, core2allocation.get(core), allocation.core == core)
+		for (entry : core2allocation.entrySet.sortBy[key]) {
+			val index = entry.key
+			val core = createCore(index, i/dim, i%dim, kernelIndex, core2allocation.get(index), allocation.core == index)
+			mapping.put(entry.value, core)
+			processor.children += core
 			i++
 		}
 		return processor
 	}
 	
-	private def Processor createFullView(Program program, EObject selection) {
+	private def Processor createFullView(Program program, EObject selection, BiMap<EObject, SModelElement> mapping) {
 		val dim = Math.ceil(Math.sqrt(program.numberOfCores)) as int
 		val processor = createProcessor(dim) 
+		mapping.put(program, processor)
 		val kernels = program.declarations.filter(Kernel).toList
 		val coreIndex2task = newHashMap 
 		val step = selection.getContainerOfType(Step)
@@ -64,11 +74,14 @@ class MulticoreAllocationDiagramGenerator {
 		    for (var j = 0; j < dim; j++) {
 		    	val coreIndex = dim * i + j + 1
 		    	val taskAllocation = coreIndex2task.get(coreIndex)
-				val kernelIndex = if(taskAllocation !== null) 
+				val kernelIndex = if (taskAllocation !== null) 
 						kernels.indexOf(taskAllocation.task.kernel)
 					else
 						-1
-		        processor.children += createCore(coreIndex, i, j, kernelIndex, taskAllocation, false)
+		        val core = createCore(coreIndex, i, j, kernelIndex, taskAllocation, false)
+		        if (taskAllocation !== null)
+		        	mapping.put(taskAllocation, core)
+		        processor.children += core
 		        processor.children += createChannel(i, j, CoreDirection.up)
 		        processor.children += createChannel(i, j, CoreDirection.down)
 		        processor.children += createChannel(i, j, CoreDirection.left)
@@ -209,50 +222,51 @@ class MulticoreAllocationDiagramGenerator {
 		return crossbar
 	}
 	
-	def Flow generateFlowView(Program program, EObject selection, CancelIndicator cancelIndicator) {
+	def BiMap<EObject, SModelElement> generateFlowView(Program program, EObject selection, CancelIndicator cancelIndicator) {
+		val BiMap<EObject, SModelElement> mapping = HashBiMap.create()
 		val flow = new Flow => [
 			type = 'flow'
 			id = 'flow'
 			children = newArrayList
 		]
+		mapping.put(program, flow)
 		if (program !== null) {
 			val step = selection.getContainerOfType(Step)
 			val allocation = selection.getContainerOfType(TaskAllocation)
-			val nodes = newHashMap
 			val assignedFlowIds = newHashSet
 			// Transform tasks
 			for (declaration : program.declarations.filter(Task)) {
 				val tnode = createTask(declaration, step, allocation)
-				nodes.put(declaration, tnode)
+				mapping.put(declaration, tnode)
 				flow.children += tnode
 			}
 			// Transform barriers
 			for (declaration : program.declarations.filter(Barrier)) {
 				val bnode = createBarrier(declaration)
-				nodes.put(declaration, bnode)
+				mapping.put(declaration, bnode)
 				flow.children += bnode
 				for (triggered : declaration.triggered) {
 					val tnode = createTask(triggered, step, allocation)
-					nodes.put(triggered, tnode)
+					mapping.put(triggered, tnode)
 					flow.children += tnode
 				}
 			}
 			// Transform flows
 			for (declaration : program.declarations.filter(Barrier)) {
 				declaration.joined.forEach[ joined, k |
-					val edge = createFlow(nodes.get(joined)?.id, nodes.get(declaration)?.id, assignedFlowIds)
+					val edge = createFlow(mapping.get(joined)?.id, mapping.get(declaration)?.id, assignedFlowIds)
 					edge.targetIndex = k
 					flow.children += edge
 				]
 				val edgeCount = declaration.joined.size + declaration.triggered.size
 				declaration.triggered.forEach[ triggered, k |
-					val edge = createFlow(nodes.get(declaration)?.id, nodes.get(triggered)?.id, assignedFlowIds)
+					val edge = createFlow(mapping.get(declaration)?.id, mapping.get(triggered)?.id, assignedFlowIds)
 					edge.sourceIndex = edgeCount - k
 					flow.children += edge
 				]
 			}
 		}
-		return flow
+		return mapping
 	}
 	
 	private def createTask(Task declaration, Step step, TaskAllocation taskAllocation) {

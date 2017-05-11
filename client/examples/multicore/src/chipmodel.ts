@@ -11,7 +11,8 @@ import {
     Selectable,
     selectFeature,
     viewportFeature,
-    hoverFeedbackFeature
+    hoverFeedbackFeature,
+    popupFeature
 } from '../../../src/features';
 import { ViewportRootElement } from "../../../src/features/viewport/viewport-root"
 import { CORE_DISTANCE, CORE_WIDTH } from "./views";
@@ -61,7 +62,8 @@ export class Core extends SShapeElement implements Selectable, Fadeable, Hoverab
     resizeContainer: boolean = false
 
     hasFeature(feature: symbol): boolean {
-        return feature === selectFeature || feature === fadeFeature || feature === layoutFeature || feature === hoverFeedbackFeature
+        return feature === selectFeature || feature === fadeFeature || feature === layoutFeature
+            || feature === hoverFeedbackFeature || feature == popupFeature
     }
 }
 

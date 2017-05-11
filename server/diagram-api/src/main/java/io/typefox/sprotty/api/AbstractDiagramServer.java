@@ -30,6 +30,9 @@ public abstract class AbstractDiagramServer implements Consumer<ActionMessage> {
 			case RequestModelAction.KIND:
 				handle((RequestModelAction) action, message);
 				break;
+			case RequestPopupModelAction.KIND:
+				handle((RequestPopupModelAction) action, message);
+				break;
 			case ComputedBoundsAction.KIND:
 				handle((ComputedBoundsAction) action, message);
 				break;
@@ -60,11 +63,7 @@ public abstract class AbstractDiagramServer implements Consumer<ActionMessage> {
 			if(needsClientLayout(newRoot))
 				modelSent(newRoot, oldRoot, clientId);
 		} else if (oldRoot == null) {
-			sendAction(new SetModelAction( action -> {
-				action.setModelType(newRoot.getType());
-				action.setModelId(newRoot.getId());
-				action.setNewRoot(newRoot);
-			}), clientId);
+			sendAction(new SetModelAction(newRoot), clientId);
 			modelSent(newRoot, oldRoot, clientId);
 		} else {
 			sendAction(new UpdateModelAction( action -> {
@@ -77,6 +76,9 @@ public abstract class AbstractDiagramServer implements Consumer<ActionMessage> {
 	}
 	
 	protected void modelSent(SModelRoot newRoot, SModelRoot oldRoot, String clientId) {
+	}
+	
+	protected void handle(RequestPopupModelAction request, ActionMessage message) {
 	}
 	
 	protected void handle(ComputedBoundsAction computedBounds, ActionMessage message) {

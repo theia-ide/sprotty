@@ -2,7 +2,7 @@ import { RenderingContext } from "../../../src/base"
 import { SNode } from "../../../src/graph"
 import { VNode } from "snabbdom/vnode"
 import * as snabbdom from "snabbdom-jsx"
-import { RectangularNodeView } from "../../../src/lib/views"
+import { RectangularNodeView } from "../../../src/lib"
 
 const JSX = {createElement: snabbdom.svg}
 

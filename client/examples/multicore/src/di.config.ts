@@ -7,6 +7,7 @@ import { WebSocketDiagramServer } from "../../../src/remote"
 import { boundsModule, selectModule, viewportModule, moveModule, fadeModule, hoverModule } from "../../../src/features"
 import { ProcessorView, CoreView, CrossbarView, ChannelView } from "./views"
 import { LocalModelSource } from "../../../src/local/local-model-source"
+import { TextRootView } from "../../../src/lib"
 
 const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
@@ -23,6 +24,7 @@ export default (useWebsocket: boolean) => {
         container.bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
     overrideViewerOptions(container, {
         baseDiv: 'sprotty-cores',
+        popupDiv: 'sprotty-popup-cores',
         boundsComputation: 'fixed'
     })
 
@@ -35,5 +37,7 @@ export default (useWebsocket: boolean) => {
     viewRegistry.register('label:heading', SLabelView)
     viewRegistry.register('label:info', SLabelView)
     viewRegistry.register('comp', SCompartmentView)
+    viewRegistry.register('text', TextRootView)
+    
     return container
 }

@@ -3,10 +3,9 @@ package io.typefox.sprotty.api
 import java.util.List
 import java.util.function.Consumer
 import org.eclipse.xtend.lib.annotations.Accessors
-import org.eclipse.xtend.lib.annotations.EqualsHashCode
 import org.eclipse.xtend.lib.annotations.ToString
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 abstract class SModelElement {
 	String type
 	String id
@@ -18,15 +17,17 @@ abstract class SModelElement {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 class SModelRoot extends SModelElement {
+	Bounds canvasBounds
+	
 	new() {}
 	new(Consumer<SModelRoot> initializer) {
 		initializer.accept(this)
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 class SGraph extends SModelRoot implements BoundsAware {
 	Point position
 	Dimension size
@@ -37,7 +38,7 @@ class SGraph extends SModelRoot implements BoundsAware {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 class SNode extends SModelElement implements BoundsAware  {
 	Point position
 	Dimension size
@@ -48,7 +49,7 @@ class SNode extends SModelElement implements BoundsAware  {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 class SEdge extends SModelElement {
 	String sourceId
 	String targetId
@@ -60,7 +61,7 @@ class SEdge extends SModelElement {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 class SCompartment extends SModelElement {
 	String layout
 	Boolean resizeContainer
@@ -71,7 +72,7 @@ class SCompartment extends SModelElement {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 class SLabel extends SModelElement implements BoundsAware  {
 	Point position
 	Dimension size
@@ -79,6 +80,19 @@ class SLabel extends SModelElement implements BoundsAware  {
 	
 	new() {}
 	new(Consumer<SLabel> initializer) {
+		initializer.accept(this)
+	}
+}
+
+@Accessors@ToString
+class TextRoot extends SModelRoot {
+    String title
+    String titleClass
+    List<String> body
+    String bodyClass
+	
+	new() {}
+	new(Consumer<TextRoot> initializer) {
 		initializer.accept(this)
 	}
 }

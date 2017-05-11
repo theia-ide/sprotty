@@ -1,8 +1,11 @@
 package io.typefox.sprotty.example.multicore.web.diagram
 
+import com.google.common.collect.BiMap
 import com.google.inject.Singleton
+import io.typefox.sprotty.api.SModelElement
 import io.typefox.sprotty.api.SModelRoot
 import java.util.Map
+import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtend.lib.annotations.ToString
 import org.eclipse.xtext.web.server.IServiceResult
 
@@ -22,17 +25,13 @@ class ModelProvider implements IServiceResult {
 		}
 	}
 	
-	def boolean isLayoutDone(String resourceId, String modelType) {
+	def BiMap<EObject, SModelElement> getMapping(String resourceId, String modelType) {
 		synchronized (cachedModels) {
-			val entry = cachedModels.get(Pair.of(resourceId, modelType))
-			if (entry !== null)
-				return entry.layoutDone
-			else
-				return false
+			cachedModels.get(Pair.of(resourceId, modelType))?.mapping
 		}
 	}
 	
-	def void putModel(String resourceId, SModelRoot model) {
+	def void putModel(String resourceId, SModelRoot model, BiMap<EObject, SModelElement> mapping) {
 		synchronized (cachedModels) {
 			val key = Pair.of(resourceId, model.type)
 			var entry = cachedModels.get(key)
@@ -41,7 +40,18 @@ class ModelProvider implements IServiceResult {
 				cachedModels.put(key, entry)
 			}
 			entry.root = model
+			entry.mapping = mapping
 			entry.layoutDone = false
+		}
+	}
+	
+	def boolean isLayoutDone(String resourceId, String modelType) {
+		synchronized (cachedModels) {
+			val entry = cachedModels.get(Pair.of(resourceId, modelType))
+			if (entry !== null)
+				return entry.layoutDone
+			else
+				return false
 		}
 	}
 	
@@ -67,6 +77,7 @@ class ModelProvider implements IServiceResult {
 	
 	private static class ModelEntry {
 		SModelRoot root
+		BiMap<EObject, SModelElement> mapping
 		boolean layoutDone
 	}
 	

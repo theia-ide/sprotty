@@ -52,3 +52,12 @@
     stroke: #557744;
     stroke-width: 5;
 }
+
+.popup-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.popup-body > p {
+    margin-bottom: 2px;
+}

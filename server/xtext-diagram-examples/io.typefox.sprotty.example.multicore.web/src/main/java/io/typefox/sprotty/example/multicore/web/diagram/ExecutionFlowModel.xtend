@@ -4,26 +4,25 @@ import io.typefox.sprotty.api.SEdge
 import io.typefox.sprotty.api.SGraph
 import io.typefox.sprotty.api.SNode
 import org.eclipse.xtend.lib.annotations.Accessors
-import org.eclipse.xtend.lib.annotations.EqualsHashCode
 import org.eclipse.xtend.lib.annotations.ToString
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 class Flow extends SGraph {
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 class TaskNode extends SNode {
 	String name
 	String status
 	Boolean selected
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 class BarrierNode extends SNode {
 	String name	
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 class FlowEdge extends SEdge {
 	transient Integer sourceIndex
 	transient Integer targetIndex

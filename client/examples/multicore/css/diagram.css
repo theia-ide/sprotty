@@ -64,3 +64,12 @@
     font-size: 14pt;
     text-anchor: middle;
 }
+
+.popup-title {
+    font-weight: bold;
+    margin-bottom: 10px;
+}
+
+.popup-body > p {
+    margin-bottom: 2px;
+}

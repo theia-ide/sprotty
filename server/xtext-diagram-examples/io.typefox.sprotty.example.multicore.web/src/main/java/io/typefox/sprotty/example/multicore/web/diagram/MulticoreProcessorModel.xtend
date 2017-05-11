@@ -4,16 +4,15 @@ import io.typefox.sprotty.api.SModelElement
 import io.typefox.sprotty.api.SModelRoot
 import java.util.function.Consumer
 import org.eclipse.xtend.lib.annotations.Accessors
-import org.eclipse.xtend.lib.annotations.EqualsHashCode
 import org.eclipse.xtend.lib.annotations.ToString
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 class Processor extends SModelRoot {
 	int rows
 	int columns
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 class Core extends SModelElement {
 	int row
 	int column
@@ -29,12 +28,12 @@ class Core extends SModelElement {
 	
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 class Crossbar extends SModelElement {
 	CoreDirection direction
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors@ToString
 class Channel extends SModelElement {
 	int row
 	int column

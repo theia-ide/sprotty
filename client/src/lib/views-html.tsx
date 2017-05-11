@@ -1,22 +1,32 @@
 import * as snabbdom from "snabbdom-jsx"
-import { IView, RenderingContext } from "../base/view/views"
-import { TextRoot } from "./model"
 import { VNode } from "snabbdom/vnode"
+import { IView, RenderingContext } from "../base/view/views"
+import { setClass } from "../base/view/vnode-utils"
+import { TextRoot } from "./model"
 
 const JSX = {createElement: snabbdom.html}
 
-
 export class TextRootView implements IView {
     render(model: TextRoot, context: RenderingContext): VNode {
-        return <div>
-            <div title-class={true}>
+        const content: VNode[] = []
+        if (model.title.length > 0) {
+            const title = <div>
                 {model.title}
             </div>
-            <div body-class={true}>
-                {model.body}
+            if (model.titleClass !== undefined)
+                setClass(title, model.titleClass, true)
+            content.push(title)
+        }
+        if (model.body.length > 0) {
+            const body = <div>
+                { model.body.map(text => <p>{ text }</p>) }
             </div>
+            if (model.bodyClass !== undefined)
+                setClass(body, model.bodyClass, true)
+            content.push(body)
+        }
+        return <div>
+            { content }
         </div>
-
     }
-
 }

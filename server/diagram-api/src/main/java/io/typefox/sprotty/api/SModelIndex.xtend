@@ -6,9 +6,9 @@ class SModelIndex {
 	
 	val Map<String, SModelElement> index
 
-	new(SGraph graph) {
+	new(SModelElement parent) {
 		index = newHashMap
-		addToIndex(graph)
+		addToIndex(parent)
 	}
 	
 	def SModelElement get(String elementId) {

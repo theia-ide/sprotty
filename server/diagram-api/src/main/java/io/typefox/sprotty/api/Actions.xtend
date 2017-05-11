@@ -74,6 +74,11 @@ class SetModelAction implements Action {
 	new(Consumer<SetModelAction> initializer) {
 		initializer.accept(this)
 	}
+	new(SModelRoot newRoot) {
+		this.newRoot = newRoot
+		modelType = newRoot.type
+		modelId = newRoot.id
+	}
 }
 
 @Accessors@EqualsHashCode@ToString
@@ -144,5 +149,41 @@ class FitToScreenAction implements Action {
 	new() {}
 	new(Consumer<FitToScreenAction> initializer) {
 		initializer.accept(this)
+	}
+}
+
+@Accessors@EqualsHashCode@ToString
+class RequestPopupModelAction implements Action {
+	public static val KIND = 'requestPopupModel'
+	String kind = KIND
+	
+	String modelType
+	String modelId
+	String elementId
+	Bounds bounds
+	
+	new() {}
+	new(Consumer<RequestPopupModelAction> initializer) {
+		initializer.accept(this)
+	}
+}
+
+@Accessors@EqualsHashCode@ToString
+class SetPopupModelAction implements Action {
+	public static val KIND = 'setPopupModel'
+	String kind = KIND
+	
+	String modelType
+	String modelId
+	SModelRoot newRoot
+	
+	new() {}
+	new(Consumer<SetPopupModelAction> initializer) {
+		initializer.accept(this)
+	}
+	new(SModelRoot newRoot) {
+		this.newRoot = newRoot
+		modelType = newRoot.type
+		modelId = newRoot.id
 	}
 }

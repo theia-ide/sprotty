@@ -15,9 +15,11 @@ import io.typefox.sprotty.api.ComputedBoundsAction;
 import io.typefox.sprotty.api.FitToScreenAction;
 import io.typefox.sprotty.api.RequestBoundsAction;
 import io.typefox.sprotty.api.RequestModelAction;
+import io.typefox.sprotty.api.RequestPopupModelAction;
 import io.typefox.sprotty.api.SelectAction;
 import io.typefox.sprotty.api.SetBoundsAction;
 import io.typefox.sprotty.api.SetModelAction;
+import io.typefox.sprotty.api.SetPopupModelAction;
 import io.typefox.sprotty.api.UpdateModelAction;
 
 public class ActionTypeAdapter extends PropertyBasedTypeAdapter<Action> {
@@ -46,6 +48,8 @@ public class ActionTypeAdapter extends PropertyBasedTypeAdapter<Action> {
 			addActionKind(RequestBoundsAction.KIND, RequestBoundsAction.class);
 			addActionKind(ComputedBoundsAction.KIND, ComputedBoundsAction.class);
 			addActionKind(FitToScreenAction.KIND, FitToScreenAction.class);
+			addActionKind(RequestPopupModelAction.KIND, RequestPopupModelAction.class);
+			addActionKind(SetPopupModelAction.KIND, SetPopupModelAction.class);
 		}
 		
 		public void addActionKind(String kind, Class<? extends Action> clazz) {

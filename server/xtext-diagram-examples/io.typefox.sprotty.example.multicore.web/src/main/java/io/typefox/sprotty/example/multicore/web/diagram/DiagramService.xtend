@@ -70,16 +70,18 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 	protected def void doCompute(IXtextWebDocument doc, CancelIndicator cancelIndicator) {
 		val program = doc.resource.contents.head as Program
 		val selection = selectionProvider.getSelection(doc.resourceId)
-		val processorView = diagramGenerator.generateProcessorView(program, selection, cancelIndicator)
+		val processorMapping = diagramGenerator.generateProcessorView(program, selection, cancelIndicator)
+		val processorView = processorMapping.get(program) as Processor
 		val oldProcessorView = modelProvider.getModel(doc.resourceId, processorView.type)
-		modelProvider.putModel(doc.resourceId, processorView)
+		modelProvider.putModel(doc.resourceId, processorView, processorMapping)
 		modelProvider.setLayoutDone(doc.resourceId, processorView.type)
 		cancelIndicator.checkCanceled
-		val flowView = diagramGenerator.generateFlowView(program, selection, cancelIndicator)
+		val flowMapping = diagramGenerator.generateFlowView(program, selection, cancelIndicator)
+		val flowView = flowMapping.get(program) as Flow
 		val oldFlowView = modelProvider.getModel(doc.resourceId, flowView.type) 
 		if (oldFlowView instanceof SGraph)
 			LayoutUtil.copyLayoutData(oldFlowView, flowView)
-		modelProvider.putModel(doc.resourceId, flowView)
+		modelProvider.putModel(doc.resourceId, flowView, flowMapping)
 		cancelIndicator.checkCanceled
 		val filteredServers = synchronized (diagramServers) {
 			diagramServers.filter[resourceId == doc.resourceId].toList

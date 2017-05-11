@@ -63,6 +63,7 @@ export type ModelRendererFactory = (decorators: IVNodeDecorator[]) => ModelRende
 export class Viewer implements IViewer {
     protected renderer: ModelRenderer
     protected hiddenRenderer: ModelRenderer
+    protected popupRenderer: ModelRenderer
     protected readonly patcher: Patcher
     protected lastVDOM: VNode
     protected lastPopupVDOM: VNode
@@ -75,6 +76,7 @@ export class Viewer implements IViewer {
         this.patcher = this.createPatcher()
         this.renderer = modelRendererFactory(decorators)
         this.hiddenRenderer = modelRendererFactory(hiddenDecorators)
+        this.popupRenderer = modelRendererFactory([])
     }
 
     protected createModules(): Module[] {
@@ -106,7 +108,7 @@ export class Viewer implements IViewer {
                 left: position.x + 'px'
             }
             newVDOM = <div id={this.options.popupDiv} style={inlineStyle}>
-                {this.renderer.renderElement(model)}
+                {this.popupRenderer.renderElement(model)}
             </div>
             setClass(newVDOM, this.options.popupClass, true)
         }

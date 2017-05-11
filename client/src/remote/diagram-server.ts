@@ -1,5 +1,5 @@
-import { SetModelAction, SetModelCommand } from "../base/features/model-manipulation"
 import { inject, injectable } from "inversify"
+import { SetModelAction, SetModelCommand } from "../base/features/model-manipulation"
 import { Action, ActionHandlerRegistry } from "../base/intent/actions"
 import { ICommand } from "../base/intent/commands"
 import { IActionDispatcher } from "../base/intent/action-dispatcher"
@@ -14,8 +14,9 @@ import {
     ComputedBoundsAction,
     RequestBoundsAction,
     RequestBoundsCommand
-} from '../features/bounds/bounds-manipulation';
-import { Bounds } from "../utils/geometry";
+} from '../features/bounds/bounds-manipulation'
+import { Bounds } from "../utils/geometry"
+import { RequestPopupModelAction } from "../features/hover/hover"
 
 /**
  * Wrapper for messages when transferring them vie a DiagramServer.
@@ -66,6 +67,7 @@ export abstract class DiagramServer extends ModelSource {
         // Register this model source
         registry.register(ComputedBoundsAction.KIND, this)
         registry.register(RequestBoundsCommand.KIND, this)
+        registry.register(RequestPopupModelAction.KIND, this)
     }
 
     handle(action: Action): void | ICommand {
@@ -100,11 +102,11 @@ export abstract class DiagramServer extends ModelSource {
     }
 
     protected storeNewModel(action: Action): void {
-        if(action.kind === SetModelCommand.KIND 
+        if (action.kind === SetModelCommand.KIND 
             || action.kind === UpdateModelCommand.KIND
             || action.kind === RequestBoundsCommand.KIND) {
-            const newRoot = (action as any)['newRoot']
-            if(newRoot) {
+            const newRoot = (action as any).newRoot
+            if (newRoot) {
                 this.currentRoot = newRoot as SModelRootSchema
                 this.storage.store(this.currentRoot)
             }

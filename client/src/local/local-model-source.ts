@@ -160,7 +160,7 @@ export class LocalModelSource extends ModelSource {
 
     protected handleRequestPopupModel(action: RequestPopupModelAction): void {
         if (this.popupModelProvider !== undefined) {
-            const popupRoot = this.popupModelProvider(action.element)
+            const popupRoot = this.popupModelProvider(action.elementId)
             if (popupRoot !== undefined) {
                 popupRoot.canvasBounds = action.bounds
                 this.actionDispatcher.dispatch(new SetPopupModelAction(popupRoot))

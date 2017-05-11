@@ -9,6 +9,7 @@ import selectModule from "../../../src/features/select/di.config"
 import { SGraphView } from "../../../src/graph"
 import { TaskNodeView, BarrierNodeView, FlowEdgeView } from "./views"
 import { LocalModelSource } from "../../../src/local/local-model-source"
+import { TextRootView } from "../../../src/lib"
 
 const flowModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
@@ -25,6 +26,7 @@ export default (useWebsocket: boolean) => {
         container.bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
     overrideViewerOptions(container, {
         baseDiv: 'sprotty-flow',
+        popupDiv: 'sprotty-popup-flow',
         boundsComputation: 'dynamic'
     })
 
@@ -34,6 +36,7 @@ export default (useWebsocket: boolean) => {
     viewRegistry.register('task', TaskNodeView)
     viewRegistry.register('barrier', BarrierNodeView)
     viewRegistry.register('edge', FlowEdgeView)
+    viewRegistry.register('text', TextRootView)
 
     return container
 }

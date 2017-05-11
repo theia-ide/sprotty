@@ -60,8 +60,14 @@ export default function runClassDiagram() {
             return {
                 type: 'text',
                 id: 'popup',
-                title: 'Hello!',
-                body: 'This is a test text with absolutely no information...'
+                title: 'Class Foo',
+                titleClass: 'popup-title',
+                body: [
+                    'name: string',
+                    '+ foo(): integer',
+                    '# bar(x: string): void'
+                ],
+                bodyClass: 'popup-body'
             }
         }
         return undefined
