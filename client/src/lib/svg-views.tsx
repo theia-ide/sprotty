@@ -1,39 +1,21 @@
-import virtualize from "snabbdom-virtualize/strings"
+import * as snabbdom from 'snabbdom-jsx'
 import { VNode } from "snabbdom/vnode"
 import { IView, RenderingContext } from "../base/view/views"
 import { SNodeView } from "../graph/view/views"
-import { SModelElement } from "../base/model/smodel"
 import { SNode } from "../graph/model/sgraph"
 import { Point } from "../utils/geometry"
-import { setAttr } from "../base/view/vnode-utils"
-import { PreRenderedElement } from "./model"
+import { ViewportRootElement } from "../features/viewport/viewport-root"
 
-export class PreRenderedView implements IView {
-    render(model: PreRenderedElement, context: RenderingContext): VNode {
-        const node = virtualize(model.code)
-        node.key = model.id
-        setAttr(node, 'id', model.id)
-        this.correctNamespace(node)
-        return node
-    }
+const JSX = {createElement: snabbdom.svg}
 
-    protected correctNamespace(node: VNode) {
-        if (node.sel === 'svg' || node.sel === 'g')
-            this.setNamespace(node, 'http://www.w3.org/2000/svg')
-    }
-
-    protected setNamespace(node: VNode, ns: string) {
-        if (node.data === undefined)
-            node.data = {}
-        node.data.ns = ns
-        const children = node.children
-        if (children !== undefined) {
-            for (let i = 0; i < children.length; i++) {
-                const child = children[i]
-                if (typeof child !== 'string')
-                    this.setNamespace(child, ns)
-            }
-        }
+export class SvgViewportView implements IView {
+    render(model: ViewportRootElement, context: RenderingContext): VNode {
+        const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
+        return <svg key={model.id} id={model.id}>
+            <g transform={transform}>
+                {context.renderChildren(model, context)}
+            </g>
+        </svg>
     }
 }
 

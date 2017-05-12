@@ -4,8 +4,7 @@ import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule, hoverModule } from "../../../src/features"
 import { LocalModelSource } from "../../../src/local/local-model-source"
 import { SvgFactory } from "./model-factory"
-import { HtmlRootView, PreRenderedView } from "../../../src/lib"
-import { SvgView } from "./views"
+import { HtmlRootView, PreRenderedView, SvgViewportView } from "../../../src/lib"
 
 const svgModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
@@ -20,7 +19,7 @@ export default () => {
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
-    viewRegistry.register('svg', SvgView)
+    viewRegistry.register('svg', SvgViewportView)
     viewRegistry.register('pre-rendered', PreRenderedView)
 
     return container

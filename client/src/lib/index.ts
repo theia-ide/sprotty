@@ -1,3 +1,4 @@
 export * from "./model"
-export * from "./views-html"
-export * from "./views-svg"
+export * from "./html-views"
+export * from "./svg-views"
+export * from "./generic-views"

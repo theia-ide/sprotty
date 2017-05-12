@@ -20,14 +20,12 @@ export class PreRenderedElement extends SChildElement {
     code: string
 }
 
-export interface ShapedPreRenderedElementSchema extends SModelElementSchema {
-    code: string
+export interface ShapedPreRenderedElementSchema extends PreRenderedElementSchema {
     position?: Point
     size?: Dimension
 }
 
-export class ShapedPreRenderedElement extends SChildElement implements BoundsAware, Locateable, Selectable {
-    code: string
+export class ShapedPreRenderedElement extends PreRenderedElement implements BoundsAware, Locateable, Selectable {
     position: Point = ORIGIN_POINT
     size: Dimension = EMPTY_DIMENSION
     selected: boolean = false
