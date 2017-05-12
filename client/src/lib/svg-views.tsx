@@ -13,7 +13,7 @@ export class SvgViewportView implements IView {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
         return <svg key={model.id} id={model.id}>
             <g transform={transform}>
-                {context.renderChildren(model, context)}
+                {context.renderChildren(model)}
             </g>
         </svg>
     }

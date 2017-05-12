@@ -17,7 +17,7 @@ export class SGraphView implements IView {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
         return <svg key={model.id} id={model.id} class-graph={true}>
             <g transform={transform}>
-                {context.renderChildren(model, context)}
+                {context.renderChildren(model)}
             </g>
         </svg>
     }
@@ -129,7 +129,7 @@ export class SCompartmentView implements IView {
     render(model: SCompartment, context: RenderingContext): VNode {
         const translate = `translate(${model.bounds.x}, ${model.bounds.y})`
         return <g key={model.id} id={model.id} transform={translate} class-comp="{true}">
-            {context.renderChildren(model, context)}
+            {context.renderChildren(model)}
         </g>
     }
 }

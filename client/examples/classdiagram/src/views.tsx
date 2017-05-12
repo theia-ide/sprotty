@@ -15,7 +15,7 @@ export class ClassNodeView extends RectangularNodeView {
             <rect class-node={true} class-selected={node.selected} class-mouseover={node.hoverFeedback}
                   x={0} y={0}
                   width={Math.max(0, node.bounds.width)} height={Math.max(0, node.bounds.height)} />
-            {context.renderChildren(node, context)}
+            {context.renderChildren(node)}
         </g>
     }
 }

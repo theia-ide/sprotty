@@ -16,7 +16,7 @@ export class ProcessorView implements IView {
                     </clipPath>
                 </defs>
                 <g transform={transform}>
-                    {context.renderChildren(model, context)}
+                    {context.renderChildren(model)}
                 </g>
             </svg>
     }
@@ -39,7 +39,7 @@ export class SimpleCoreView extends ThunkView {
         const nodeName = parseInt(model.id.substr(5))
         const fillColor = KernelColor.getSVG(model.kernelNr)
         const content = <g>
-                {context.renderChildren(model, context)}
+                {context.renderChildren(model)}
             </g>
         return <g class-core={true}
                   id={model.id}
@@ -62,7 +62,7 @@ export class CoreView implements IView {
         const nodeName = parseInt(model.id.substr(5))
         const fillColor = KernelColor.getSVG(model.kernelNr)
         const content = <g>
-                {context.renderChildren(model, context)}
+                {context.renderChildren(model)}
             </g>
         setAttr(content, 'clip-path', 'url(#core-clip)')
         return <g class-core={true}

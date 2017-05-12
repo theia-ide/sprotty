@@ -24,9 +24,9 @@ export interface RenderingContext {
 
     decorate(vnode: VNode, element: SModelElement): VNode
 
-    renderElement(element: SModelElement, context: RenderingContext): VNode
+    renderElement(element: SModelElement): VNode
 
-    renderChildren(element: SParentElement, context: RenderingContext): VNode[]
+    renderChildren(element: SParentElement): VNode[]
 }
 
 /**
