@@ -3,6 +3,7 @@ package io.typefox.sprotty.server.examples
 import io.typefox.sprotty.api.AbstractDiagramServer
 import io.typefox.sprotty.api.ActionMessage
 import io.typefox.sprotty.api.ComputedBoundsAction
+import io.typefox.sprotty.api.ModelAction
 import io.typefox.sprotty.api.Point
 import io.typefox.sprotty.api.SEdge
 import io.typefox.sprotty.api.SModelRoot
@@ -14,7 +15,7 @@ class SimpleDiagramServer extends AbstractDiagramServer {
 
 	static val LOG = new Slf4jLog(SimpleServerLauncher.name)
 	
-	override protected getModel(ActionMessage message) {
+	override protected getModel(ModelAction action, String clientId) {
 		new SModelRoot => [
 			type = 'graph'
 			id = 'graph'
