@@ -1,10 +1,11 @@
 import { Point } from "../../utils/geometry"
-import { getParent, SModelElement } from "../../base/model/smodel"
+import { SModelElement } from "../../base/model/smodel"
 import { MouseListener } from "../../base/view/mouse-tool"
 import { Action } from "../../base/intent/actions"
+import { SModelExtension } from "../../base/model/smodel-extension"
+import { findParentByFeature } from "../../utils/model"
 import { ViewportAction } from "./viewport"
 import { isViewport, Viewport } from "./model"
-import { SModelExtension } from "../../base/model/smodel-extension"
 
 export interface Scrollable extends SModelExtension {
     scroll: Point
@@ -20,7 +21,7 @@ export class ScrollMouseListener extends MouseListener {
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
         if (event.button == 2) {
-            const viewport = getParent<Viewport>(target, isViewport)
+            const viewport = findParentByFeature(target, isViewport)
             if (viewport)
                 this.lastScrollPosition = {x: event.clientX, y: event.clientY}
             else
@@ -31,7 +32,7 @@ export class ScrollMouseListener extends MouseListener {
 
     mouseMove(target: SModelElement, event: MouseEvent): Action[] {
         if (this.lastScrollPosition) {
-            const viewport = getParent<Viewport>(target, isViewport)
+            const viewport = findParentByFeature(target, isViewport)
             if (viewport) {
                 const dx = (event.clientX - this.lastScrollPosition.x) / viewport.zoom
                 const dy = (event.clientY - this.lastScrollPosition.y) / viewport.zoom

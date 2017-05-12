@@ -6,7 +6,7 @@ import { Command, CommandExecutionContext, CommandResult, PopupCommand } from ".
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { Bounds } from "../../utils/geometry"
 import { KeyListener } from "../../base/view/key-tool"
-import { findTargetByFeature } from "../../utils/model"
+import { findParentByFeature, findParent } from "../../utils/model"
 
 export class HoverFeedbackAction implements Action {
     kind = HoverFeedbackCommand.KIND
@@ -131,7 +131,7 @@ export class HoverListener extends MouseListener {
 
     mouseOver(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         const result: (Action | Promise<Action>)[] = []
-        const popupTarget = findTargetByFeature(target, hasPopupFeature)
+        const popupTarget = findParent(target, hasPopupFeature)
 
         if (this.popupOpen && (popupTarget === undefined ||
             this.previousPopupElement !== undefined && this.previousPopupElement.id !== popupTarget.id)) {
@@ -145,7 +145,7 @@ export class HoverListener extends MouseListener {
 
         this.previousPopupElement = popupTarget
 
-        const hoverTarget = findTargetByFeature(target, isHoverable)
+        const hoverTarget = findParentByFeature(target, isHoverable)
         if (hoverTarget !== undefined)
             result.push(new HoverFeedbackAction(hoverTarget.id, true))
 
@@ -165,7 +165,7 @@ export class HoverListener extends MouseListener {
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        const popupTarget = findTargetByFeature(target, hasPopupFeature)
+        const popupTarget = findParent(target, hasPopupFeature)
         return this.popupOpen || popupTarget === undefined ? [] : [this.startTimer(popupTarget, event)]
     }
 }

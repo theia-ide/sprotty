@@ -8,7 +8,7 @@ import { isCtrlOrCmd } from "../../utils/browser"
 import { KeyListener } from "../../base/view/key-tool"
 import { isSelectable, Selectable } from "./model"
 import { setClass } from "../../base/view/vnode-utils"
-import { findTargetByFeature } from "../../utils/model"
+import { findParentByFeature } from "../../utils/model"
 
 export class SelectAction implements Action {
     kind = SelectCommand.KIND
@@ -154,7 +154,7 @@ export class SelectMouseListener extends MouseListener {
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
         if (event.button == 0) {
-            const selectableTarget = findTargetByFeature(target, isSelectable)
+            const selectableTarget = findParentByFeature(target, isSelectable)
             if (selectableTarget !== undefined || target instanceof SModelRoot) {
                 this.hasDragged = false
                 let deselectIds: string[] = []
@@ -194,7 +194,7 @@ export class SelectMouseListener extends MouseListener {
     mouseUp(target: SModelElement, event: MouseEvent): Action[] {
         if (event.button == 0) {
             if (!this.hasDragged) {
-                const selectableTarget = findTargetByFeature(target, isSelectable)
+                const selectableTarget = findParentByFeature(target, isSelectable)
                 if (selectableTarget !== undefined && this.wasSelected) {
                     return [new SelectAction([selectableTarget.id], [])]
                 }
@@ -205,7 +205,7 @@ export class SelectMouseListener extends MouseListener {
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        const selectableTarget = findTargetByFeature(element, isSelectable)
+        const selectableTarget = findParentByFeature(element, isSelectable)
         if (selectableTarget !== undefined)
             setClass(vnode, 'selected', selectableTarget.selected)
         return vnode

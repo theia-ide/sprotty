@@ -1,8 +1,9 @@
 import { injectable } from "inversify"
 import { SModelFactory } from "../../base/model/smodel-factory"
 import {
-    getBasicType, SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement
+    SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement
 } from "../../base/model/smodel"
+import { getBasicType } from "../../utils/model"
 import {
     SCompartment,
     SCompartmentElement, SEdge, SEdgeSchema, SGraph, SGraphSchema, SLabel, SLabelSchema, SNode, SNodeSchema

@@ -13,6 +13,6 @@ export function isHoverable(element: SModelElement): element is SModelElement & 
 
 export const popupFeature = Symbol('popupFeature')
 
-export function hasPopupFeature(element: SModelElement): element is SModelElement {
+export function hasPopupFeature(element: SModelElement): boolean {
     return element.hasFeature(popupFeature)
 }

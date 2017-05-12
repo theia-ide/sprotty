@@ -2,7 +2,7 @@ import { SChildElement } from '../../base';
 import * as snabbdom from "snabbdom-jsx"
 import { VNode } from "snabbdom/vnode"
 import { Point } from "../../utils/geometry"
-import { getParent, SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel"
+import { SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel"
 import { Action } from "../../base/intent/actions"
 import { ICommand, CommandExecutionContext, MergeableCommand } from "../../base/intent/commands"
 import { Animation } from "../../base/animations/animation"
@@ -11,6 +11,7 @@ import { isViewport, Viewport } from "../viewport/model"
 import { isSelectable } from "../select/model"
 import { isMoveable, Locateable, isLocateable } from "./model"
 import { setAttr } from "../../base/view/vnode-utils"
+import { findParentByFeature } from "../../utils/model"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -155,7 +156,7 @@ export class MoveMouseListener extends MouseListener {
         if(event.buttons == 0) 
             this.mouseUp(target, event)
         else if (this.lastDragPosition) {
-            const viewport = getParent<Viewport>(target, isViewport)
+            const viewport = findParentByFeature(target, isViewport)
             this.hasDragged = true
             const zoom = viewport ? viewport.zoom : 1
             const dx = (event.clientX - this.lastDragPosition.x) / zoom

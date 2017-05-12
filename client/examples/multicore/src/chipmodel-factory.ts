@@ -1,12 +1,12 @@
-import { SGraphFactory } from '../../../src/graph';
+import { SGraphFactory } from '../../../src/graph'
 import {
-    getBasicType, SChildElement, SModelElement, SModelElementSchema, SModelFactory, SModelRoot, SModelRootSchema,
+    SChildElement, SModelElement, SModelElementSchema, SModelFactory, SModelRoot, SModelRootSchema,
     SParentElement
 } from "../../../src/base"
 import {
     Channel, ChannelSchema, Core, CoreSchema, Crossbar, CrossbarSchema, Processor, ProcessorSchema
 } from "./chipmodel"
-import { Direction } from "../../../src/utils"
+import { Direction, getBasicType } from "../../../src/utils"
 import { CORE_WIDTH, CORE_DISTANCE } from "./views";
 import { HtmlRootSchema, PreRenderedElementSchema, PreRenderedElement, HtmlRoot } from "../../../src/lib"
 

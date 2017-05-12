@@ -1,9 +1,10 @@
-import { getParent, SModelElement } from "../../base/model/smodel"
+import { SModelElement } from "../../base/model/smodel"
 import { MouseListener } from "../../base/view/mouse-tool"
 import { Action } from "../../base/intent/actions"
+import { SModelExtension } from "../../base/model/smodel-extension"
+import { findParentByFeature } from "../../utils/model"
 import { ViewportAction } from "./viewport"
 import { isViewport, Viewport } from "./model"
-import { SModelExtension } from "../../base/model/smodel-extension"
 
 export interface Zoomable extends SModelExtension {
     zoom: number
@@ -16,7 +17,7 @@ export function isZoomable(element: SModelElement | Zoomable): element is Zoomab
 export class ZoomMouseListener extends MouseListener {
 
     wheel(target: SModelElement, event: WheelEvent): Action[] {
-        const viewport = getParent<Viewport>(target, isViewport)
+        const viewport = findParentByFeature(target, isViewport)
         if (viewport) {
             const newZoom = Math.exp(-event.deltaY * 0.005)
             const factor = 1. / (newZoom * viewport.zoom) - 1. / viewport.zoom

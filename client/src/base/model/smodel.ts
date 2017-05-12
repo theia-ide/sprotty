@@ -154,34 +154,3 @@ export class SModelIndex<E extends SModelElementSchema> {
         return all
     }
 }
-
-export function getBasicType(schema: SModelElementSchema): string {
-    if (!schema.type)
-        return ''
-    let colonIndex = schema.type.indexOf(':')
-    if (colonIndex >= 0)
-        return schema.type.substring(0, colonIndex)
-    else
-        return schema.type
-}
-
-export function getSubType(schema: SModelElementSchema): string {
-    if (!schema.type)
-        return ''
-    let colonIndex = schema.type.indexOf(':')
-    if (colonIndex >= 0)
-        return schema.type.substring(colonIndex + 1)
-    else
-        return schema.type
-}
-
-export function getParent<T>(element: SModelElement | T, predicate: (e: SModelElement) => boolean): (SModelElement & T) | undefined {
-    if (predicate.call(undefined, element))
-        return element as (SModelElement & T)
-    else if (element instanceof SChildElement) {
-        const parent = element.parent
-        if (parent)
-            return getParent<T>(parent, predicate)
-    }
-    return undefined
-}

@@ -1,6 +1,7 @@
 import { SGraph, SGraphSchema, SGraphFactory } from "../../../src/graph"
-import { getBasicType, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, SChildElement } from "../../../src/base"
+import { SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, SChildElement } from "../../../src/base"
 import { HtmlRoot, HtmlRootSchema, PreRenderedElement, PreRenderedElementSchema } from "../../../src/lib"
+import { getBasicType } from "../../../src/utils"
 
 export class ClassDiagramFactory extends SGraphFactory {
 
