@@ -25,17 +25,39 @@ export class ProcessorView implements IView {
 export const CORE_WIDTH = 50
 export const CORE_DISTANCE = 10
 
-export class CoreView implements IView {//extends ThunkView {
+export class SimpleCoreView extends ThunkView {
 
-    // watchedArgs(model: Core): any[] {
-    //     return [ model.children, model.position, model.row, model.column, model.opacity, model.mouseover ]
-    // }
+    watchedArgs(model: Core): any[] {
+        return [ model.kernelNr, model.opacity ]
+    }
 
-    // selector(model: Core): string {
-    //     return 'g'
-    // }
+    selector(model: Core): string {
+        return 'g'
+    }
 
-    // doRender(model: Core, context: RenderingContext): VNode {
+    doRender(model: Core, context: RenderingContext): VNode {
+        const nodeName = parseInt(model.id.substr(5))
+        const fillColor = KernelColor.getSVG(model.kernelNr)
+        const content = <g>
+                {context.renderChildren(model, context)}
+            </g>
+        return <g class-core={true}
+                  id={model.id}
+                  key={model.id}>
+                <rect width={model.size.width}
+                      height={model.size.height}
+                      rx={4}
+                      ry={4}
+                      fill={fillColor}
+                      class-mouseover={model.hoverFeedback}
+                />
+                {content}
+            </g>
+    }
+}
+
+export class CoreView implements IView {
+
     render(model: Core, context: RenderingContext): VNode {
         const nodeName = parseInt(model.id.substr(5))
         const fillColor = KernelColor.getSVG(model.kernelNr)

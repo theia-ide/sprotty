@@ -5,7 +5,7 @@ import { ChipModelFactory } from "./chipmodel-factory"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { boundsModule, selectModule, viewportModule, moveModule, fadeModule, hoverModule } from "../../../src/features"
-import { ProcessorView, CoreView, CrossbarView, ChannelView } from "./views"
+import { ProcessorView, CoreView, CrossbarView, ChannelView, SimpleCoreView } from "./views"
 import { LocalModelSource } from "../../../src/local/local-model-source"
 import { HtmlRootView, PreRenderedView } from "../../../src/lib"
 
@@ -32,6 +32,7 @@ export default (useWebsocket: boolean) => {
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
     viewRegistry.register('processor', ProcessorView)
     viewRegistry.register('core', CoreView)
+    viewRegistry.register('simplecore', SimpleCoreView)
     viewRegistry.register('crossbar', CrossbarView)
     viewRegistry.register('channel', ChannelView)
     viewRegistry.register('label:heading', SLabelView)

@@ -24,7 +24,7 @@ export default function runMulticore() {
             const pos = i + '_' + j
             cores.push({
                 id: 'core_' + pos,
-                type: 'core',
+                type: 'simplecore',
                 column: i,
                 row: j,
                 kernelNr: Math.round(Math.random() * 11),
@@ -101,12 +101,12 @@ export default function runMulticore() {
     function changeModel() {
         for (let i = 0; i < processor.children!.length; ++i) {
             const child = processor.children![i] 
-            if (child.type === 'core') {
+            if (child.type === 'simplecore' && Math.random() > 0.7) {
                 (child as CoreSchema).kernelNr = Math.round(Math.random() * 11)
             }
         }
         modelSource.updateModel(processor)
     }
 
-    setInterval(() => changeModel(), 150)
+    setInterval(() => changeModel(), 300)
 }
