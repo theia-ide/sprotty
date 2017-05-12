@@ -10,6 +10,7 @@ export const TYPES = {
     IActionDispatcherProvider: Symbol('IActionDispatcherProvider'),
     ActionHandlerRegistry: Symbol('ActionHandlerRegistry'),
     AnimationFrameSyncer: Symbol('AnimationFrameSyncer'),
+    CommandStackOptions: Symbol('CommandStackOptions'),
     ICommand: Symbol('ICommand'),
     ICommandStack: Symbol('ICommandStack'),
     ICommandStackProvider: Symbol('ICommandStackProvider'),

@@ -11,6 +11,7 @@ import { CanvasBoundsInitializer, InitializeCanvasBoundsCommand } from './featur
 import { LogLevel, NullLogger } from "../utils/logging"
 import { ActionDispatcher, IActionDispatcher } from "./intent/action-dispatcher"
 import { CommandStack, ICommandStack } from "./intent/command-stack"
+import { CommandStackOptions } from "./intent/command-stack-options"
 import { IViewer, Viewer, ModelRenderer } from "./view/viewer"
 import { ViewerOptions } from "./view/options"
 import { MouseTool, PopupMouseTool } from "./view/mouse-tool"
@@ -53,6 +54,10 @@ let defaultContainerModule = new ContainerModule(bind => {
                 resolve(context.container.get<ICommandStack>(TYPES.ICommandStack))
             })
         }
+    })
+    bind<CommandStackOptions>(TYPES.CommandStackOptions).toConstantValue({
+        defaultDuration: 250,
+        undoHistoryLimit: 50
     })
 
     // Viewer ---------------------------------------------

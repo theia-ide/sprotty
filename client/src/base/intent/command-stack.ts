@@ -12,8 +12,10 @@ import {
     CommandExecutionContext,
     CommandResult,
     SystemCommand,
-    MergeableCommand, PopupCommand
+    MergeableCommand, 
+    PopupCommand
 } from './commands'
+import { CommandStackOptions } from './command-stack-options' 
 import { EMPTY_ROOT, IModelFactory } from "../model/smodel-factory"
 import { IViewer, IViewerProvider } from "../view/viewer"
 import { ILogger } from "../../utils/logging"
@@ -96,12 +98,11 @@ export type CommandStackProvider = () => Promise<ICommandStack>
 @injectable()
 export class CommandStack implements ICommandStack {
 
-    defaultDuration = 250
-
     constructor(@inject(TYPES.IModelFactory) protected modelFactory: IModelFactory,
                 @inject(TYPES.IViewerProvider) protected viewerProvider: IViewerProvider,
                 @inject(TYPES.ILogger) protected logger: ILogger,
-                @inject(TYPES.AnimationFrameSyncer) protected syncer: AnimationFrameSyncer) {}
+                @inject(TYPES.AnimationFrameSyncer) protected syncer: AnimationFrameSyncer,
+                @inject(TYPES.CommandStackOptions) protected options: CommandStackOptions) {}
 
     protected currentPromise: Promise<CommandStackState> = Promise.resolve({root: EMPTY_ROOT})
 
@@ -159,7 +160,7 @@ export class CommandStack implements ICommandStack {
         if (command !== undefined) {
             this.logger.log(this, 'Redoing', command)
             this.handleCommand(command, command.redo, (command: ICommand, context: CommandExecutionContext) => {
-                this.undoStack.push(command)
+                this.pushToUndoStack(command)
             })
         }
         this.redoFollowingSystemCommands()
@@ -221,6 +222,12 @@ export class CommandStack implements ICommandStack {
                     })
                 return promise
             })
+    }
+
+    protected pushToUndoStack(command: ICommand) {
+        this.undoStack.push(command)
+        if(this.options.undoHistoryLimit >= 0 && this.undoStack.length > this.options.undoHistoryLimit) 
+            this.undoStack.splice(0, this.undoStack.length - this.options.undoHistoryLimit)
     }
 
     /**
@@ -318,7 +325,7 @@ export class CommandStack implements ICommandStack {
                 if (lastCommand instanceof MergeableCommand && lastCommand.merge(command, context))
                     return
             }
-            this.undoStack.push(command)
+            this.pushToUndoStack(command)
         }
     }
 
@@ -362,7 +369,7 @@ export class CommandStack implements ICommandStack {
             this.redoStack.pop()
             this.logger.log(this, 'Redoing ', command)
             this.handleCommand(command, command.redo, (command: ICommand, context: CommandExecutionContext) => {
-                this.undoStack.push(command)
+                this.pushToUndoStack(command)
             })
             command = this.redoStack[this.redoStack.length - 1]
         }
@@ -376,7 +383,7 @@ export class CommandStack implements ICommandStack {
             root: currentModel,
             modelChanged: this,
             modelFactory: this.modelFactory,
-            duration: this.defaultDuration,
+            duration: this.options.defaultDuration,
             logger: this.logger,
             syncer: this.syncer
         }
