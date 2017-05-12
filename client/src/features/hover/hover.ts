@@ -7,6 +7,10 @@ import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { Bounds } from "../../utils/geometry"
 import { KeyListener } from "../../base/view/key-tool"
 import { findParentByFeature, findParent } from "../../utils/model"
+import { ViewerOptions } from "../../base/view/options"
+import { TYPES } from "../../base/types"
+import { inject } from "inversify"
+import { isViewport, Viewport } from "../viewport/model"
 
 export class HoverFeedbackAction implements Action {
     kind = HoverFeedbackCommand.KIND
@@ -104,21 +108,36 @@ export class HoverListener extends MouseListener {
     protected popupOpen: boolean = false
     protected previousPopupElement: SModelElement | undefined
 
+    constructor(@inject(TYPES.ViewerOptions) protected options: ViewerOptions) {
+        super()
+    }
+
     protected startTimer(target: SModelElement, event: MouseEvent): Promise<Action> {
         this.stopTimer()
         return new Promise((resolve) => {
             this.hoverTimer = window.setTimeout(() => {
+                let x:number = event.clientX - 20
+                let y:number = event.clientY + 20
+
+                const viewport = findParentByFeature<Viewport>(target, isViewport)
+                if(viewport !== undefined) {
+                    x = target.root.canvasBounds.x - viewport.scroll.x
+                    y = target.root.canvasBounds.y
+                }
+
+                console.log("bla", target)
+                console.log("bla", event)
 
                 resolve(new RequestPopupModelAction(target,
                     {
-                        x: event.clientX - 20,
-                        y: event.clientY + 20,
+                        x: x,
+                        y: y,
                         width: -1,
                         height: -1
-                    })) //TODO get offset from options
+                    }))
 
                 this.popupOpen = true
-            }, 700) //TODO get time from options
+            }, this.options.popupDelay)
         })
     }
 

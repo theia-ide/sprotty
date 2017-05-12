@@ -65,7 +65,8 @@ let defaultContainerModule = new ContainerModule(bind => {
         popupDiv: 'sprotty-popup',
         popupClass: 'sprotty-popup',
         popupClosedClass: 'sprotty-popup-closed',
-        boundsComputation: 'fixed'
+        boundsComputation: 'fixed',
+        popupDelay: 700
     })
     bind(TYPES.ModelRendererFactory).toFactory<ModelRenderer>((context: interfaces.Context) => {
         return (decorators: IVNodeDecorator[]) => {
