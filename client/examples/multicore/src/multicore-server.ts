@@ -47,19 +47,6 @@ export function setupMulticore(websocket: WebSocket) {
         }
         run()
     })
-
-    const actionDispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
-    window.addEventListener('resize', () => {
-        const processor = document.getElementById('processor')
-        if(processor !== null) {
-            actionDispatcher.dispatch(new InitializeCanvasBoundsAction({
-                x:processor.clientLeft,
-                y:processor.clientTop,
-                width:processor.clientWidth,
-                height:processor.clientHeight
-            }))
-        }
-    })
 }
 
 export default function runMulticoreServer() {

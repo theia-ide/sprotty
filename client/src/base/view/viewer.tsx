@@ -18,6 +18,8 @@ import { ILogger, LogLevel } from "../../utils/logging"
 import { isThunk } from "./thunk-view"
 import { EMPTY_ROOT } from "../model/smodel-factory"
 import { isUndefined } from "util"
+import { IActionDispatcher } from "../intent/action-dispatcher"
+import { InitializeCanvasBoundsAction } from "../features/initialize-canvas"
 
 const JSX = {createElement: snabbdom.html}  // must be html here, as we're creating a div
 
@@ -72,7 +74,8 @@ export class Viewer implements IViewer {
                 @multiInject(TYPES.IVNodeDecorator) @optional() protected decorators: IVNodeDecorator[],
                 @multiInject(TYPES.HiddenVNodeDecorator) @optional() protected hiddenDecorators: IVNodeDecorator[],
                 @inject(TYPES.ViewerOptions) protected options: ViewerOptions,
-                @inject(TYPES.ILogger) protected logger: ILogger) {
+                @inject(TYPES.ILogger) protected logger: ILogger,
+                @inject(TYPES.IActionDispatcher) protected actiondispatcher: IActionDispatcher) {
         this.patcher = this.createPatcher()
         this.renderer = modelRendererFactory(decorators)
         this.hiddenRenderer = modelRendererFactory(hiddenDecorators)
@@ -91,6 +94,18 @@ export class Viewer implements IViewer {
 
     protected createPatcher() {
         return init(this.createModules())
+    }
+
+    protected onWindowResize = (): void => {
+        const baseDiv = document.getElementById(this.options.baseDiv)
+        if (baseDiv !== null) {
+            this.actiondispatcher.dispatch(new InitializeCanvasBoundsAction({
+                x: baseDiv.clientLeft,
+                y: baseDiv.clientTop,
+                width: baseDiv.clientWidth,
+                height: baseDiv.clientHeight
+            }))
+        }
     }
 
     updatePopup(model: SModelRoot): void {
@@ -135,6 +150,7 @@ export class Viewer implements IViewer {
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
         } else if (typeof document !== 'undefined') {
             const placeholder = document.getElementById(this.options.baseDiv)
+            window.addEventListener('resize', this.onWindowResize)
             this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
         this.renderer.postUpdate()

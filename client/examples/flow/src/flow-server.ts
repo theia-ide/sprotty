@@ -47,19 +47,6 @@ export function setupFlow(websocket: WebSocket) {
         }
         run()
     })
-
-    const actionDispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
-    window.addEventListener('resize', () => {
-        const processor = document.getElementById('flow')
-        if(processor !== null) {
-            actionDispatcher.dispatch(new InitializeCanvasBoundsAction({
-                x:processor.clientLeft,
-                y:processor.clientTop,
-                width:processor.clientWidth,
-                height:processor.clientHeight
-            }))
-        }
-    })
 }
 
 export default function runFlowServer() {
