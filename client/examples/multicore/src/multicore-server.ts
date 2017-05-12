@@ -2,6 +2,8 @@ import { RequestModelAction, TYPES, IActionHandler, ActionHandlerRegistry } from
 import { SelectAction, SelectCommand } from "../../../src/features"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import createContainer from "./di.config"
+import { IActionDispatcher } from "../../../src/base/intent/action-dispatcher"
+import { InitializeCanvasBoundsAction } from "../../../src/base/features/initialize-canvas"
 
 const WebSocket = require("reconnecting-websocket")
 
@@ -44,6 +46,19 @@ export function setupMulticore(websocket: WebSocket) {
                 setTimeout(run, 50)
         }
         run()
+    })
+
+    const actionDispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
+    window.addEventListener('resize', () => {
+        const processor = document.getElementById('processor')
+        if(processor !== null) {
+            actionDispatcher.dispatch(new InitializeCanvasBoundsAction({
+                x:processor.clientLeft,
+                y:processor.clientTop,
+                width:processor.clientWidth,
+                height:processor.clientHeight
+            }))
+        }
     })
 }
 
