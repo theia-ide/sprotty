@@ -1,18 +1,29 @@
-import { SGraphFactory } from "../../../src/graph/model/sgraph-factory"
-import { getBasicType, SModelElementSchema, SModelRoot, SModelRootSchema } from "../../../src/base/model/smodel"
-import { SGraph, SGraphSchema } from "../../../src/graph/model/sgraph"
-import { TextRoot, TextRootSchema } from "../../../src/lib/model"
+import { SGraph, SGraphSchema, SGraphFactory } from "../../../src/graph"
+import { getBasicType, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, SChildElement } from "../../../src/base"
+import { HtmlRoot, HtmlRootSchema, PreRenderedElement, PreRenderedElementSchema } from "../../../src/lib"
 
 export class ClassDiagramFactory extends SGraphFactory {
+
+    createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
+        if (this.isPreRenderedSchema(schema))
+            return this.initializeChild(new PreRenderedElement(), schema, parent)
+        else
+            return super.createElement(schema, parent)
+    }
+
     createRoot(schema: SModelRootSchema): SModelRoot {
-        if (this.isTextSchema(schema))
-            return this.initializeRoot(new TextRoot(), schema)
+        if (this.isHtmlRootSchema(schema))
+            return this.initializeRoot(new HtmlRoot(), schema)
         else
             return super.createRoot(schema)
     }
 
-    isTextSchema(schema: SModelElementSchema): schema is TextRootSchema {
-        return getBasicType(schema) === 'text'
+    isHtmlRootSchema(schema: SModelElementSchema): schema is HtmlRootSchema {
+        return getBasicType(schema) === 'html'
+    }
+
+    isPreRenderedSchema(schema: SModelElementSchema): schema is PreRenderedElementSchema {
+        return getBasicType(schema) === 'pre-rendered'
     }
 
 }

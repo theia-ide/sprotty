@@ -8,6 +8,7 @@ import {
 } from "./chipmodel"
 import { Direction } from "../../../src/utils"
 import { CORE_WIDTH, CORE_DISTANCE } from "./views";
+import { HtmlRootSchema, PreRenderedElementSchema, PreRenderedElement, HtmlRoot } from "../../../src/lib"
 
 
 export class ChipModelFactory extends SGraphFactory {
@@ -27,9 +28,10 @@ export class ChipModelFactory extends SGraphFactory {
             } else if (this.isChannelSchema(schema)) {
                 this.validate(schema, parent)
                 return this.initializeChild(new Channel(), schema, parent)
-            } else if (this.isCrossbarSchema(schema)) {
+            } else if (this.isCrossbarSchema(schema))
                 return this.initializeChild(new Crossbar(), schema, parent)
-            }
+            else if (this.isPreRenderedSchema(schema))
+                return this.initializeChild(new PreRenderedElement(), schema, parent)
         } catch (e) {
             console.error(e.message)
         }
@@ -37,10 +39,10 @@ export class ChipModelFactory extends SGraphFactory {
     }
 
     createRoot(schema: SModelRootSchema): SModelRoot {
-        if (schema instanceof Processor)
-            return schema
-        else if (this.isProcessorSchema(schema))
+        if (this.isProcessorSchema(schema))
             return this.initializeRoot(new Processor(), schema)
+        else if (this.isHtmlRootSchema(schema))
+            return this.initializeRoot(new HtmlRoot(), schema)
         else
             return super.createRoot(schema)
     }
@@ -82,5 +84,13 @@ export class ChipModelFactory extends SGraphFactory {
 
     isCrossbarSchema(schema: SModelElementSchema): schema is CrossbarSchema {
         return getBasicType(schema) === 'crossbar'
+    }
+
+    isHtmlRootSchema(schema: SModelElementSchema): schema is HtmlRootSchema {
+        return getBasicType(schema) === 'html'
+    }
+
+    isPreRenderedSchema(schema: SModelElementSchema): schema is PreRenderedElementSchema {
+        return getBasicType(schema) === 'pre-rendered'
     }
 }

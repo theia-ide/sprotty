@@ -1,6 +1,6 @@
 declare module "snabbdom-jsx" {
 
-    import { VNode } from "snabbdom/vnode"
+    import { VNode } from "snabbdom/vnode";
 
     type Attributes = { [attr: string]: any };
 
@@ -14,8 +14,8 @@ declare module "snabbdom-jsx" {
 
     export function JSX(nsURI: string, defNS: string, modules: any[]): Jsx;
 
-    export const svg: Jsx
-    export const html: Jsx
+    export const svg: Jsx;
+    export const html: Jsx;
 }
 
 declare namespace JSX {

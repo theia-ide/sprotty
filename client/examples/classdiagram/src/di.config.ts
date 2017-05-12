@@ -7,7 +7,7 @@ import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule,
 import { ClassNodeView } from "./views"
 import { LocalModelSource } from "../../../src/local/local-model-source"
 import { ClassDiagramFactory } from "./model-factory"
-import { TextRootView } from "../../../src/lib/views-html"
+import { HtmlRootView, PreRenderedView } from "../../../src/lib"
 
 const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
@@ -34,7 +34,8 @@ export default (useWebsocket: boolean) => {
     viewRegistry.register('label:text', SLabelView)
     viewRegistry.register('comp:comp', SCompartmentView)
     viewRegistry.register('edge:straight', PolylineEdgeView)
-    viewRegistry.register('text', TextRootView)
+    viewRegistry.register('html', HtmlRootView)
+    viewRegistry.register('pre-rendered', PreRenderedView)
 
     return container
 }

@@ -85,14 +85,21 @@ class SLabel extends SModelElement implements BoundsAware  {
 }
 
 @Accessors@ToString
-class TextRoot extends SModelRoot {
-    String title
-    String titleClass
-    List<String> body
-    String bodyClass
+class HtmlRoot extends SModelRoot {
+    List<String> classes
 	
 	new() {}
-	new(Consumer<TextRoot> initializer) {
+	new(Consumer<HtmlRoot> initializer) {
+		initializer.accept(this)
+	}
+}
+
+@Accessors@ToString
+class PreRenderedElement extends SModelElement {
+	String code
+	
+	new() {}
+	new(Consumer<PreRenderedElement> initializer) {
 		initializer.accept(this)
 	}
 }

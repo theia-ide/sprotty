@@ -38,6 +38,7 @@
   "dependencies": {
     "inversify": "^3.1.0",
     "inversify-logger-middleware": "^3.0.0",
-    "snabbdom": "^0.6.4"
+    "snabbdom": "^0.6.4",
+    "snabbdom-virtualize": "^0.6.0"
   }
 }

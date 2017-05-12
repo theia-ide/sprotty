@@ -1,15 +1,17 @@
-import { SModelRoot, SModelRootSchema } from "../base/model/smodel"
+import { SModelRoot, SModelRootSchema, SChildElement, SModelElementSchema } from "../base/model/smodel"
 
-export interface TextRootSchema extends SModelRootSchema {
-    title?: string
-    titleClass?: string
-    body?: string[]
-    bodyClass?: string
+export interface HtmlRootSchema extends SModelRootSchema {
+    classes?: string[]
 }
 
-export class TextRoot extends SModelRoot {
-    title: string = ''
-    titleClass?: string
-    body: string[] = []
-    bodyClass?: string
+export class HtmlRoot extends SModelRoot {
+    classes: string[] = []
+}
+
+export interface PreRenderedElementSchema extends SModelElementSchema {
+    code: string
+}
+
+export class PreRenderedElement extends SChildElement {
+    code: string
 }

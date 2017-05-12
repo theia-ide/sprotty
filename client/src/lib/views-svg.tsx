@@ -1,9 +1,17 @@
-import * as snabbdom from "snabbdom-jsx"
+import virtualize from "snabbdom-virtualize/strings"
+import { VNode } from "snabbdom/vnode"
+import { IView, RenderingContext } from "../base/view/views"
 import { SNodeView } from "../graph/view/views"
+import { SModelElement } from "../base/model/smodel"
 import { SNode } from "../graph/model/sgraph"
 import { Point } from "../utils/geometry"
+import { PreRenderedElement } from "./model"
 
-const JSX = {createElement: snabbdom.svg}
+export class PreRenderedView implements IView {
+    render(model: PreRenderedElement, context: RenderingContext): VNode {
+        return virtualize(model.code)
+    }
+}
 
 export abstract class CircularNodeView extends SNodeView {
     protected abstract getRadius(node: SNode): number

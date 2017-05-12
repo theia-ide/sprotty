@@ -8,6 +8,8 @@ import io.typefox.sprotty.api.ActionMessage
 import io.typefox.sprotty.api.Bounds
 import io.typefox.sprotty.api.ComputedBoundsAction
 import io.typefox.sprotty.api.FitToScreenAction
+import io.typefox.sprotty.api.HtmlRoot
+import io.typefox.sprotty.api.PreRenderedElement
 import io.typefox.sprotty.api.RequestModelAction
 import io.typefox.sprotty.api.RequestPopupModelAction
 import io.typefox.sprotty.api.SGraph
@@ -15,7 +17,6 @@ import io.typefox.sprotty.api.SModelIndex
 import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.api.SelectAction
 import io.typefox.sprotty.api.SetPopupModelAction
-import io.typefox.sprotty.api.TextRoot
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Barrier
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Task
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskAllocation
@@ -194,14 +195,28 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		}
 	}
 	
-	protected def sendPopupInfo(String titleParam, List<String> bodyParam, String clientId, Bounds bounds) {
-		val action = new SetPopupModelAction(new TextRoot [
-			type = 'text'
+	protected def sendPopupInfo(String title, List<String> body, String clientId, Bounds bounds) {
+		val action = new SetPopupModelAction(new HtmlRoot [
+			type = 'html'
 			id = 'popup'
-			title = titleParam
-			titleClass = 'popup-title'
-			body = bodyParam
-			bodyClass = 'popup-body'
+			children = #[
+				new PreRenderedElement[
+					type = 'pre-rendered'
+					id = 'popup-title'
+					code = '''<div class="popup-title">«title»</div>'''
+				],
+				new PreRenderedElement[
+					type = 'pre-rendered'
+					id = 'popup-body'
+					code = '''
+						<div class="popup-body">
+							«FOR text : body»
+								<p>«text»</p>
+							«ENDFOR»
+						</div>
+					'''
+				]
+			]
 			canvasBounds = bounds
 		])
 		sendAction(action, clientId)

@@ -58,16 +58,20 @@ export default function runClassDiagram() {
     modelSource.popupModelProvider = (elementId) => {
         if (elementId === 'node0') {
             return {
-                type: 'text',
+                type: 'html',
                 id: 'popup',
-                title: 'Class Foo',
-                titleClass: 'popup-title',
-                body: [
-                    'name: string',
-                    '+ foo(): integer',
-                    '# bar(x: string): void'
-                ],
-                bodyClass: 'popup-body'
+                children: [
+                    {
+                        type: 'pre-rendered',
+                        id: 'popup-title',
+                        code: '<div class="popup-title">Class Foo</div>'
+                    },
+                    {
+                        type: 'pre-rendered',
+                        id: 'popup-body',
+                        code: '<div class="popup-body"><p>name: string</p><p>+ foo(): integer</p><p># bar(x: string): void</p></div>'
+                    }
+                ]
             }
         }
         return undefined
