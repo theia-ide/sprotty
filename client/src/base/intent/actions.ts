@@ -16,6 +16,14 @@ export function isAction(object?: any): object is Action {
     return object !== undefined && object.hasOwnProperty('kind') && typeof(object['kind']) === 'string'
 }
 
+/**
+ * Actions that implement this interface can be related to a specific model.
+ */
+export interface ModelAction extends Action {
+    modelType?: string
+    modelId?: string
+}
+
 export interface IActionHandler {
     handle(action: Action): ICommand | Action | void
 }

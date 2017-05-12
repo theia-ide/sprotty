@@ -9,14 +9,14 @@ import io.typefox.sprotty.api.Bounds
 import io.typefox.sprotty.api.ComputedBoundsAction
 import io.typefox.sprotty.api.FitToScreenAction
 import io.typefox.sprotty.api.HtmlRoot
+import io.typefox.sprotty.api.ModelAction
 import io.typefox.sprotty.api.PreRenderedElement
 import io.typefox.sprotty.api.RequestModelAction
 import io.typefox.sprotty.api.RequestPopupModelAction
 import io.typefox.sprotty.api.SGraph
-import io.typefox.sprotty.api.SModelIndex
+import io.typefox.sprotty.api.SModelElement
 import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.api.SelectAction
-import io.typefox.sprotty.api.SetPopupModelAction
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Barrier
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Task
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskAllocation
@@ -50,13 +50,16 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 	
 	val Multimap<String, String> type2Clients = HashMultimap.create()
 	
-	override protected getModel(ActionMessage message) {
-		switch action: message.action {
-			RequestModelAction:
-				modelProvider.getModel(resourceId, action.modelType)
-			ComputedBoundsAction:
-				modelProvider.getModel(resourceId, 'flow')
+	def notifyClients(SModelRoot newRoot, SModelRoot oldRoot) {
+		if (remoteEndpoint !== null) {
+			for (client : type2Clients.get(newRoot.type)) {
+				sendModel(newRoot, oldRoot, client)
+			}
 		}
+	}
+	
+	override protected getModel(ModelAction action, String clientId) {
+		modelProvider.getModel(resourceId, action.modelType)
 	}
 	
 	override protected needsServerLayout(SModelRoot root) {
@@ -79,14 +82,6 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		this.resourceId = resourceId
 		this.type2Clients.put(action.modelType, message.clientId)
 		super.handle(action, message)
-	}
-	
-	def notifyClients(SModelRoot newRoot, SModelRoot oldRoot) {
-		if (remoteEndpoint !== null) {
-			for (client : type2Clients.get(newRoot.type)) {
-				sendModel(newRoot, oldRoot, client)
-			}
-		}
 	}
 	
 	override protected modelSent(SModelRoot newRoot, SModelRoot oldRoot, String clientId) {
@@ -134,69 +129,64 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 		}
 	}
 	
-	override handle(RequestPopupModelAction request, ActionMessage message) {
-		val model = modelProvider.getModel(resourceId, request.modelType)
-		val index = new SModelIndex(model)
-		val element = index.get(request.elementId)
-		if (element !== null) {
-			val mapping = modelProvider.getMapping(resourceId, request.modelType)
-			val source = mapping.inverse.get(element)
-			var String title
-			val body = newArrayList
-			if (request.modelType == 'flow') {
-				switch source {
-					Task: {
-						title = '''Task «source.name»'''
-						if (source.kernel !== null) {
-							body += '''Kernel: «source.kernel.name»'''
-							if (source.kernel.duration > 0)
-								body += '''Stack size: «source.kernel.stackSize»'''
-							if (source.kernel.stackBeginAddr !== null)
-								body += '''Stack start address: «source.kernel.stackBeginAddr»'''
-						}
-					}
-					Barrier: {
-						title = '''Barrier «source.name»'''
-						if (!source.joined.empty)
-							body += '''Joins «FOR t : source.joined SEPARATOR ', '»«t.name»«ENDFOR»'''
-						if (!source.triggered.empty)
-							body += '''Triggers «FOR t : source.triggered SEPARATOR ', '»«t.name»«ENDFOR»'''
+	override protected getPopupModel(SModelElement element, SModelRoot model, RequestPopupModelAction request, String clientId) {
+		val mapping = modelProvider.getMapping(resourceId, request.modelType)
+		val source = mapping.inverse.get(element)
+		var String title
+		val body = newArrayList
+		if (request.modelType == 'flow') {
+			switch source {
+				Task: {
+					title = '''Task «source.name»'''
+					if (source.kernel !== null) {
+						body += '''Kernel: «source.kernel.name»'''
+						if (source.kernel.duration > 0)
+							body += '''Stack size: «source.kernel.stackSize»'''
+						if (source.kernel.stackBeginAddr !== null)
+							body += '''Stack start address: «source.kernel.stackBeginAddr»'''
 					}
 				}
-			} else if (request.modelType == 'processor') {
-				if (element instanceof Core) {
-					val processor = model as Processor
-					title = '''Core «processor.columns * element.row + element.column + 1»'''
-					if (source instanceof TaskAllocation) {
-						if (source.task !== null) {
-							body += '''Task: «source.task.name»'''
-							if (source.task.kernel !== null) {
-								body += '''Kernel: «source.task.kernel.name»'''
-								if (source.task.kernel.duration > 0)
-									body += '''Stack size: «source.task.kernel.stackSize»'''
-								if (source.task.kernel.stackBeginAddr !== null)
-									body += '''Stack start address: «source.task.kernel.stackBeginAddr»'''
-							}
-						}
-						if (source.programCounter !== null)
-							body += '''Program counter: «source.programCounter»'''
-						if (source.stackPointer !== null)
-							body += '''Stack pointer: «source.stackPointer»'''
-						if (source.sourceFile !== null)
-							body += '''Source file: «source.sourceFile»'''
-						if (source.stackTrace !== null)
-							body += '''Stack trace: «source.stackTrace»'''
-					}
+				Barrier: {
+					title = '''Barrier «source.name»'''
+					if (!source.joined.empty)
+						body += '''Joins «FOR t : source.joined SEPARATOR ', '»«t.name»«ENDFOR»'''
+					if (!source.triggered.empty)
+						body += '''Triggers «FOR t : source.triggered SEPARATOR ', '»«t.name»«ENDFOR»'''
 				}
 			}
-			if (title !== null) {
-				sendPopupInfo(title, body, message.clientId, request.bounds)
+		} else if (request.modelType == 'processor') {
+			if (element instanceof Core) {
+				val processor = model as Processor
+				title = '''Core «processor.columns * element.row + element.column + 1»'''
+				if (source instanceof TaskAllocation) {
+					if (source.task !== null) {
+						body += '''Task: «source.task.name»'''
+						if (source.task.kernel !== null) {
+							body += '''Kernel: «source.task.kernel.name»'''
+							if (source.task.kernel.duration > 0)
+								body += '''Stack size: «source.task.kernel.stackSize»'''
+							if (source.task.kernel.stackBeginAddr !== null)
+								body += '''Stack start address: «source.task.kernel.stackBeginAddr»'''
+						}
+					}
+					if (source.programCounter !== null)
+						body += '''Program counter: «source.programCounter»'''
+					if (source.stackPointer !== null)
+						body += '''Stack pointer: «source.stackPointer»'''
+					if (source.sourceFile !== null)
+						body += '''Source file: «source.sourceFile»'''
+					if (source.stackTrace !== null)
+						body += '''Stack trace: «source.stackTrace»'''
+				}
 			}
+		}
+		if (title !== null) {
+			return createPopupModel(title, body, request.bounds)
 		}
 	}
 	
-	protected def sendPopupInfo(String title, List<String> body, String clientId, Bounds bounds) {
-		val action = new SetPopupModelAction(new HtmlRoot [
+	protected def createPopupModel(String title, List<String> body, Bounds bounds) {
+		new HtmlRoot [
 			type = 'html'
 			id = 'popup'
 			children = #[
@@ -218,8 +208,7 @@ class MulticoreAllocationDiagramServer extends AbstractDiagramServer {
 				]
 			]
 			canvasBounds = bounds
-		])
-		sendAction(action, clientId)
+		]
 	}
 	
 	protected def initializeLayoutEngine() {

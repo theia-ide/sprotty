@@ -166,8 +166,7 @@ export function toRadians(a: number): number {
 }
 
 /**
- * Returns whether two numbers are almost equal, within a small 
- * margin (0,001)
+ * Returns whether two numbers are almost equal, within a small margin (0.001)
  * @param {number} a - First number
  * @param {number} b - Second number
  * @returns {boolean} True if the two numbers are almost equal

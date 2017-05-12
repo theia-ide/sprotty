@@ -11,6 +11,11 @@ interface Action {
 	def String getKind()
 }
 
+interface ModelAction extends Action {
+	def String getModelType()
+	def String getModelId()
+}
+
 @Accessors@EqualsHashCode@ToString
 class ActionMessage {
 	String clientId
@@ -20,10 +25,14 @@ class ActionMessage {
 	new(Consumer<ActionMessage> initializer) {
 		initializer.accept(this)
 	}
+	new(String clientId, Action action) {
+		this.clientId = clientId
+		this.action = action
+	}
 }
 
 @Accessors@EqualsHashCode@ToString
-class RequestModelAction implements Action {
+class RequestModelAction implements ModelAction {
 	public static val KIND = 'requestModel'
 	String kind = KIND
 	
@@ -62,7 +71,7 @@ class ElementAndBounds {
 }
 
 @Accessors@EqualsHashCode@ToString
-class SetModelAction implements Action {
+class SetModelAction implements ModelAction {
 	public static val KIND = 'setModel'
 	String kind = KIND
 	
@@ -88,6 +97,7 @@ class SelectAction implements Action {
 	
 	List<String> selectedElementsIDs
 	List<String> deselectedElementsIDs
+	Boolean selectAll
 	Boolean deselectAll
 	
 	new() {}
@@ -97,7 +107,7 @@ class SelectAction implements Action {
 }
 
 @Accessors@EqualsHashCode@ToString
-class UpdateModelAction implements Action {
+class UpdateModelAction implements ModelAction {
 	public static val KIND = 'updateModel'
 	String kind = KIND
 	
@@ -108,6 +118,11 @@ class UpdateModelAction implements Action {
 	new() {}
 	new(Consumer<UpdateModelAction> initializer) {
 		initializer.accept(this)
+	}
+	new(SModelRoot newRoot) {
+		this.newRoot = newRoot
+		modelType = newRoot.type
+		modelId = newRoot.id
 	}
 }
 
@@ -122,13 +137,18 @@ class RequestBoundsAction implements Action {
 	new(Consumer<RequestBoundsAction> initializer) {
 		initializer.accept(this)
 	}
+	new(SModelRoot newRoot) {
+		this.newRoot = newRoot
+	}
 }
 
 @Accessors@EqualsHashCode@ToString
-class ComputedBoundsAction implements Action {
+class ComputedBoundsAction implements ModelAction {
 	public static val KIND = 'computedBounds'
 	String kind = KIND
 	
+	String modelType
+	String modelId
 	List<ElementAndBounds> bounds
 	
 	new() {}
@@ -153,7 +173,7 @@ class FitToScreenAction implements Action {
 }
 
 @Accessors@EqualsHashCode@ToString
-class RequestPopupModelAction implements Action {
+class RequestPopupModelAction implements ModelAction {
 	public static val KIND = 'requestPopupModel'
 	String kind = KIND
 	
@@ -169,7 +189,7 @@ class RequestPopupModelAction implements Action {
 }
 
 @Accessors@EqualsHashCode@ToString
-class SetPopupModelAction implements Action {
+class SetPopupModelAction implements ModelAction {
 	public static val KIND = 'setPopupModel'
 	String kind = KIND
 	

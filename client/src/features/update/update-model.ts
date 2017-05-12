@@ -2,7 +2,7 @@ import { injectable } from "inversify"
 import { Animation, CompoundAnimation } from '../../base/animations/animation'
 import { Command, CommandExecutionContext, CommandResult } from '../../base/intent/commands'
 import { FadeAnimation, ResolvedElementFade } from '../fade/fade'
-import { Action } from '../../base/intent/actions'
+import { ModelAction } from '../../base/intent/actions'
 import { SModelRootSchema, SModelRoot, SChildElement, SModelElement, SParentElement } from "../../base/model/smodel"
 import { MoveAnimation, ResolvedElementMove } from "../move/move"
 import { MatchResult, ModelMatcher, Match } from "./model-matching"
@@ -14,7 +14,7 @@ import { isEmpty, Bounds } from "../../utils/geometry"
 import { InitializeCanvasBoundsCommand } from "../../base/features/initialize-canvas"
 import { isSelectable } from "../select/model"
 
-export class UpdateModelAction implements Action {
+export class UpdateModelAction implements ModelAction {
     readonly kind = UpdateModelCommand.KIND
     modelType: string
     modelId: string

@@ -1,6 +1,6 @@
 import { SChildElement, SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel"
 import { MouseListener } from "../../base/view/mouse-tool"
-import { Action } from "../../base/intent/actions"
+import { Action, ModelAction } from "../../base/intent/actions"
 import { hasPopupFeature, isHoverable } from "./model"
 import { Command, CommandExecutionContext, CommandResult, PopupCommand } from "../../base/intent/commands"
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
@@ -45,7 +45,7 @@ export class HoverFeedbackCommand extends Command {
     }
 }
 
-export class RequestPopupModelAction implements Action {
+export class RequestPopupModelAction implements ModelAction {
     static readonly KIND = 'requestPopupModel'
     readonly kind = RequestPopupModelAction.KIND
 
@@ -61,7 +61,7 @@ export class RequestPopupModelAction implements Action {
     }
 }
 
-export class SetPopupModelAction implements Action {
+export class SetPopupModelAction implements ModelAction {
     readonly kind = SetPopupModelCommand.KIND
 
     modelType: string

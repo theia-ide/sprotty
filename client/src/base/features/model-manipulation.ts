@@ -1,11 +1,11 @@
 import { InitializeCanvasBoundsCommand } from './initialize-canvas';
 import { injectable } from "inversify"
-import { Action } from "../intent/actions"
+import { ModelAction } from "../intent/actions"
 import { isEmpty } from "../../utils/geometry"
 import { SModelRoot, SModelRootSchema } from "../model/smodel"
 import { Command, CommandExecutionContext } from "../intent/commands"
 
-export class SetModelAction implements Action {
+export class SetModelAction implements ModelAction {
     readonly kind = SetModelCommand.KIND
     modelType: string
     modelId: string
@@ -52,7 +52,7 @@ export class SetModelCommand extends Command {
     }
 }
 
-export class RequestModelAction implements Action {
+export class RequestModelAction implements ModelAction {
     static readonly KIND = 'requestModel'
     readonly kind = RequestModelAction.KIND
 

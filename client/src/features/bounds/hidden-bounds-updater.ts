@@ -1,7 +1,7 @@
 import { inject, injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { almostEquals } from '../../utils'
-import { SModelElement } from "../../base/model/smodel"
+import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { IVNodeDecorator } from "../../base/view/vnode-decorators"
 import { TYPES } from "../../base/types"
 import { IActionDispatcher } from "../../base/intent/action-dispatcher"
@@ -32,6 +32,7 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
                 @inject(LAYOUT_TYPES.Layouter) protected layouter : Layouter) {}
 
     private readonly element2boundsData: Map<SModelElement, BoundsData> = new Map
+    private root?: SModelRoot
 
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (isSizeable(element) || isLayouting(element)) {
@@ -40,6 +41,8 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
                 bounds: element.bounds,
                 boundsChanged: false
             })
+            if (this.root === undefined)
+                this.root = element.root
         }
         return vnode
     }
@@ -47,17 +50,19 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
     postUpdate() {
         this.getBoundsFromDOM()
         this.layouter.layout(this.element2boundsData)
-        const resizes : ElementAndBounds[] = []
-        this.element2boundsData.forEach(
-            (boundsData, element) => {
-                if(boundsData.boundsChanged && boundsData.bounds !== undefined)
-                    resizes.push({
-                        elementId: element.id,
-                        newBounds: boundsData.bounds
-                    })
-            })
+        if (this.root !== undefined) {
+            const resizes : ElementAndBounds[] = []
+            this.element2boundsData.forEach(
+                (boundsData, element) => {
+                    if(boundsData.boundsChanged && boundsData.bounds !== undefined)
+                        resizes.push({
+                            elementId: element.id,
+                            newBounds: boundsData.bounds
+                        })
+                })
+            this.actionDispatcher.dispatch(new ComputedBoundsAction(resizes, this.root.type, this.root.id))
+        }
         this.element2boundsData.clear()
-        this.actionDispatcher.dispatch(new ComputedBoundsAction(resizes))
     }
 
     protected getBoundsFromDOM() {
