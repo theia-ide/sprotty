@@ -1,6 +1,7 @@
 import "reflect-metadata"
 import runStandalone from "./circlegraph/src/standalone"
 import runClassDiagram from "./classdiagram/src/standalone"
+import runSvgPreRendered from "./svg/src/standalone"
 import runSimpleServer from "./circlegraph/src/simple-server"
 import runFlowServer from "./flow/src/flow-server"
 import runMulticore from "./multicore/src/multicore"
@@ -13,6 +14,8 @@ if (appMode === 'circlegraph')
     runStandalone()
 else if (appMode === 'class-diagram')
     runClassDiagram()
+else if (appMode === 'svg')
+    runSvgPreRendered()
 else if (appMode === 'simple-server')
     runSimpleServer()
 else if (appMode === 'flow-server')

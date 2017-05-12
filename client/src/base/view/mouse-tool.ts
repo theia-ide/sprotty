@@ -26,14 +26,14 @@ export class MouseTool implements IVNodeDecorator {
 
     protected getTargetElement(model: SModelRoot, event: MouseEvent): SModelElement |undefined {
         let target = event.target as Element
-        if (target) {
-            while (target && !target.id) {
-                target = target.parentElement as Element
+        const index = model.index
+        while (target) {
+            if (target.id) {
+                const element = index.getById(target.id)
+                if (element !== undefined)
+                    return element
             }
-            if (target) {
-                const element = model.index.getById(target.id)
-                return element
-            }
+            target = target.parentElement as Element
         }
         return undefined
     }
