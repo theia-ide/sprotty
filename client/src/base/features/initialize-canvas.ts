@@ -1,13 +1,13 @@
-import { Action } from '../intent/actions';
-import { IActionDispatcher } from '../intent/action-dispatcher';
-import { injectable, inject } from "inversify";
-import { TYPES } from "../types";
-import { IVNodeDecorator } from "../view/vnode-decorators";
-import { SModelElement, SModelRoot } from "../model/smodel";
-import { SystemCommand, CommandExecutionContext } from '../intent/commands';
-import { SModelExtension } from "../model/smodel-extension";
-import { almostEquals, Bounds, isValidDimension } from '../../utils/geometry';
-import { VNode } from "snabbdom/vnode";
+import { injectable, inject } from "inversify"
+import { TYPES } from "../types"
+import { Action } from '../intent/actions'
+import { IActionDispatcher } from '../intent/action-dispatcher'
+import { IVNodeDecorator } from "../view/vnode-decorators"
+import { SModelElement, SModelRoot } from "../model/smodel"
+import { SystemCommand, CommandExecutionContext } from '../intent/commands'
+import { SModelExtension } from "../model/smodel-extension"
+import { almostEquals, Bounds, isValidDimension, ORIGIN_POINT } from '../../utils/geometry'
+import { VNode } from "snabbdom/vnode"
 
 /**
  * Grabs the bounds from the root element in page coordinates and fires a 
@@ -29,12 +29,12 @@ export class CanvasBoundsInitializer implements IVNodeDecorator {
     }
 
     postUpdate() {
-        if(this.rootAndVnode !== undefined) {
+        if (this.rootAndVnode !== undefined) {
             const domElement = this.rootAndVnode[1].elm
             const oldBounds = this.rootAndVnode[0].canvasBounds
             if (domElement !== undefined) {
-                const newBounds = this.getBoundsInPage(domElement)
-                if(!(almostEquals(newBounds.x, oldBounds.x)
+                const newBounds = this.getBoundsInPage(domElement as Element)
+                if (!(almostEquals(newBounds.x, oldBounds.x)
                         && almostEquals(newBounds.y, oldBounds.y)
                         && almostEquals(newBounds.width, oldBounds.width)
                         && almostEquals(newBounds.height, oldBounds.width))) 
@@ -45,11 +45,12 @@ export class CanvasBoundsInitializer implements IVNodeDecorator {
         }
     }
 
-    protected getBoundsInPage(elm: any) {
-        const bounds = elm.getBoundingClientRect()
+    protected getBoundsInPage(element: Element) {
+        const bounds = element.getBoundingClientRect()
+        const scroll = typeof window !== 'undefined' ? { x: window.scrollX, y: window.scrollY } : ORIGIN_POINT
         return {
-            x: bounds.left,
-            y: bounds.top,
+            x: bounds.left + scroll.x,
+            y: bounds.top + scroll.y,
             width: bounds.width,
             height: bounds.height
         }

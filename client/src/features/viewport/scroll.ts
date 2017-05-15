@@ -23,7 +23,7 @@ export class ScrollMouseListener extends MouseListener {
         if (event.button == 2) {
             const viewport = findParentByFeature(target, isViewport)
             if (viewport)
-                this.lastScrollPosition = {x: event.clientX, y: event.clientY}
+                this.lastScrollPosition = {x: event.pageX, y: event.pageY}
             else
                 this.lastScrollPosition = undefined
         }
@@ -34,8 +34,8 @@ export class ScrollMouseListener extends MouseListener {
         if (this.lastScrollPosition) {
             const viewport = findParentByFeature(target, isViewport)
             if (viewport) {
-                const dx = (event.clientX - this.lastScrollPosition.x) / viewport.zoom
-                const dy = (event.clientY - this.lastScrollPosition.y) / viewport.zoom
+                const dx = (event.pageX - this.lastScrollPosition.x) / viewport.zoom
+                const dy = (event.pageY - this.lastScrollPosition.y) / viewport.zoom
                 const newViewport: Viewport = {
                     scroll: {
                         x: viewport.scroll.x - dx,
@@ -43,7 +43,7 @@ export class ScrollMouseListener extends MouseListener {
                     },
                     zoom: viewport.zoom
                 }
-                this.lastScrollPosition = {x: event.clientX, y: event.clientY}
+                this.lastScrollPosition = {x: event.pageX, y: event.pageY}
                 return [new ViewportAction(viewport.id, newViewport, false)]
             }
         }

@@ -3,7 +3,7 @@ import { SChildElement } from '../../base';
 import { Action } from "../../base/intent/actions"
 import { Command, CommandExecutionContext } from "../../base/intent/commands"
 import { SModelElement, SModelRoot } from "../../base/model/smodel"
-import { Bounds, center, combine, EMPTY_BOUNDS, isValidDimension } from "../../utils/geometry"
+import { Bounds, center, combine, isValidDimension } from "../../utils/geometry"
 import { KeyListener } from "../../base/view/key-tool"
 import { isCtrlOrCmd } from "../../utils/browser"
 import { isBoundsAware, isSizeable, BoundsAware } from "../bounds/model"
@@ -62,7 +62,7 @@ abstract class BoundsAwareViewportCommand extends Command {
                     }
                 )
             }
-            const bounds = allBounds.reduce((b0, b1) => combine(b0, b1), EMPTY_BOUNDS)
+            const bounds = allBounds.reduce((b0, b1) => b0 === undefined ? b1 : combine(b0, b1), undefined)
             if (isValidDimension(bounds))
                 this.newViewport = this.getNewViewport(bounds, model)
         }

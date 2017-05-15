@@ -20,6 +20,7 @@ import { EMPTY_ROOT } from "../model/smodel-factory"
 import { isUndefined } from "util"
 import { IActionDispatcher } from "../intent/action-dispatcher"
 import { InitializeCanvasBoundsAction } from "../features/initialize-canvas"
+import { ORIGIN_POINT } from "../../utils/geometry"
 
 const JSX = {createElement: snabbdom.html}  // must be html here, as we're creating a div
 
@@ -99,13 +100,19 @@ export class Viewer implements IViewer {
     protected onWindowResize = (vdom: VNode): void => {
         const baseDiv = document.getElementById(this.options.baseDiv)
         if (baseDiv !== null) {
-            const elementBounds = baseDiv.getBoundingClientRect()
-            this.actiondispatcher.dispatch(new InitializeCanvasBoundsAction({
-                x: elementBounds.left,
-                y: elementBounds.top,
-                width: elementBounds.width,
-                height: elementBounds.height
-            }))
+            const newBounds = this.getBoundsInPage(baseDiv as Element)
+            this.actiondispatcher.dispatch(new InitializeCanvasBoundsAction(newBounds))
+        }
+    }
+
+    protected getBoundsInPage(element: Element) {
+        const bounds = element.getBoundingClientRect()
+        const scroll = typeof window !== 'undefined' ? { x: window.scrollX, y: window.scrollY } : ORIGIN_POINT
+        return {
+            x: bounds.left + scroll.x,
+            y: bounds.top + scroll.y,
+            width: bounds.width,
+            height: bounds.height
         }
     }
 

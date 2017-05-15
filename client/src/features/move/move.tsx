@@ -143,7 +143,7 @@ export class MoveMouseListener extends MouseListener {
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
         if (event.button == 0) {
             if (isMoveable(target)) {
-                this.lastDragPosition = {x: event.clientX, y: event.clientY}
+                this.lastDragPosition = {x: event.pageX, y: event.pageY}
             } else {
                 this.lastDragPosition = undefined
             }
@@ -159,8 +159,8 @@ export class MoveMouseListener extends MouseListener {
             const viewport = findParentByFeature(target, isViewport)
             this.hasDragged = true
             const zoom = viewport ? viewport.zoom : 1
-            const dx = (event.clientX - this.lastDragPosition.x) / zoom
-            const dy = (event.clientY - this.lastDragPosition.y) / zoom
+            const dx = (event.pageX - this.lastDragPosition.x) / zoom
+            const dy = (event.pageY - this.lastDragPosition.y) / zoom
             const root = target.root
             const nodeMoves: ElementMove[] = []
             root
@@ -181,7 +181,7 @@ export class MoveMouseListener extends MouseListener {
                             })
                         }
                     })
-            this.lastDragPosition = {x: event.clientX, y: event.clientY}
+            this.lastDragPosition = {x: event.pageX, y: event.pageY}
             if (nodeMoves.length > 0)
                 return [new MoveAction(nodeMoves, false)]
         }

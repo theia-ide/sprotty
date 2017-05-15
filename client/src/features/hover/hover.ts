@@ -137,7 +137,7 @@ export class HoverListener extends MouseListener {
         this.stopTimer()
         return new Promise((resolve) => {
             this.hoverTimer = window.setTimeout(() => {
-                const popupPosition = this.calculatePopupPosition(target, {x: event.clientX, y: event.clientY})
+                const popupPosition = this.calculatePopupPosition(target, {x: event.pageX, y: event.pageY})
                 resolve(new RequestPopupModelAction(target,
                     {
                         x: popupPosition.x,
