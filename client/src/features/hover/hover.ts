@@ -4,13 +4,15 @@ import { Action, ModelAction } from "../../base/intent/actions"
 import { hasPopupFeature, isHoverable } from "./model"
 import { Command, CommandExecutionContext, CommandResult, PopupCommand } from "../../base/intent/commands"
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
-import { Bounds } from "../../utils/geometry"
+import { Bounds, Point } from "../../utils/geometry"
 import { KeyListener } from "../../base/view/key-tool"
 import { findParentByFeature, findParent } from "../../utils/model"
 import { ViewerOptions } from "../../base/view/options"
 import { TYPES } from "../../base/types"
 import { inject } from "inversify"
 import { isViewport, Viewport } from "../viewport/model"
+import { isLocateable, isMoveable } from "../move/model"
+import { isLayouting } from "../bounds/model"
 
 export class HoverFeedbackAction implements Action {
     kind = HoverFeedbackCommand.KIND
@@ -112,26 +114,46 @@ export class HoverListener extends MouseListener {
         super()
     }
 
+    protected calculatePopupPosition(target: SModelElement, mousePosition: Point): Point {
+        const viewport = findParentByFeature(target, isViewport)
+        const layoutTarget = findParentByFeature(target, isLayouting)
+        let offset: Point = {x: 20, y: 20}
+        const maxDist = 150
+
+        if (viewport !== undefined && layoutTarget !== undefined) {
+            const canvasBounds = target.root.canvasBounds
+            const vscroll = viewport.scroll
+            const zoom = viewport.zoom
+            const tbounds = layoutTarget.bounds
+
+            const targetBounds: Bounds =
+                {
+                    x: Math.round(canvasBounds.x - ((vscroll.x - tbounds.x) * zoom)),
+                    y: Math.round(canvasBounds.y - ((vscroll.y - tbounds.y) * zoom)),
+                    width: Math.round(tbounds.width * zoom),
+                    height: Math.round(tbounds.height * zoom)
+                }
+            const distRight = targetBounds.width + targetBounds.x - mousePosition.x
+            const distBottom = targetBounds.height + targetBounds.y - mousePosition.y
+            if (distBottom < distRight && distBottom < maxDist) {
+                offset = {x: 0, y: distBottom + 5}
+            } else if (distRight < distBottom && distRight < maxDist) {
+                offset = {x: distRight + 5, y: 0}
+            }
+        }
+
+        return {x: mousePosition.x + offset.x, y: mousePosition.y + offset.y}
+    }
+
     protected startTimer(target: SModelElement, event: MouseEvent): Promise<Action> {
         this.stopTimer()
         return new Promise((resolve) => {
             this.hoverTimer = window.setTimeout(() => {
-                let x:number = event.clientX - 20
-                let y:number = event.clientY + 20
-
-                const viewport = findParentByFeature<Viewport>(target, isViewport)
-                if(viewport !== undefined) {
-                    x = target.root.canvasBounds.x - viewport.scroll.x
-                    y = target.root.canvasBounds.y
-                }
-
-                console.log("bla", target)
-                console.log("bla", event)
-
+                const popupPosition = this.calculatePopupPosition(target, {x: event.clientX, y: event.clientY})
                 resolve(new RequestPopupModelAction(target,
                     {
-                        x: x,
-                        y: y,
+                        x: popupPosition.x,
+                        y: popupPosition.y,
                         width: -1,
                         height: -1
                     }))

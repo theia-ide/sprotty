@@ -96,14 +96,15 @@ export class Viewer implements IViewer {
         return init(this.createModules())
     }
 
-    protected onWindowResize = (): void => {
+    protected onWindowResize = (vdom: VNode): void => {
         const baseDiv = document.getElementById(this.options.baseDiv)
         if (baseDiv !== null) {
+            const elementBounds = baseDiv.getBoundingClientRect()
             this.actiondispatcher.dispatch(new InitializeCanvasBoundsAction({
-                x: baseDiv.clientLeft,
-                y: baseDiv.clientTop,
-                width: baseDiv.clientWidth,
-                height: baseDiv.clientHeight
+                x: elementBounds.left,
+                y: elementBounds.top,
+                width: elementBounds.width,
+                height: elementBounds.height
             }))
         }
     }
@@ -150,7 +151,9 @@ export class Viewer implements IViewer {
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
         } else if (typeof document !== 'undefined') {
             const placeholder = document.getElementById(this.options.baseDiv)
-            window.addEventListener('resize', this.onWindowResize)
+            window.addEventListener('resize', () => {
+                this.onWindowResize(newVDOM)
+            })
             this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
         this.renderer.postUpdate()
