@@ -12,11 +12,13 @@ import { moveFeature } from "../../../src/features"
 export interface TaskNodeSchema extends SNodeSchema {
     name?: string
     status?: string
+    kernelNr: number
 }
 
 export class TaskNode extends SNode implements TaskNodeSchema {
     name: string = ''
     status?: string
+    kernelNr: number
 
     hasFeature(feature: symbol): boolean {
         if (feature === moveFeature)

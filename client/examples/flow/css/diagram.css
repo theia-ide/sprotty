@@ -3,16 +3,15 @@
     stroke-width: 1;
 }
 
-.task {
-    fill: #c0e0fc;
-}
 
 .running {
-    fill: #ff707e;
+    stroke: #ff0000;
+    stroke-width: 3;
 }
 
 .finished {
-    fill: #60ff7e;
+    stroke: #008000;
+    stroke-width: 3;
 }
 
 .barrier {
@@ -39,13 +38,9 @@
 }
 
 .selected {
-    stroke-width: 3;
+    stroke-width: 5;
 }
 
-.mouseover {
-    stroke: #555;
-    stroke-width: 3;
-}
 
 .missing {
     stroke-width: 1;

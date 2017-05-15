@@ -23,13 +23,12 @@
     font-weight: inherit;
 }
 
-.selected {
+.core.selected {
     stroke-width: 3;
 }
 
 .mouseover {
-    stroke: #888;
-    stroke-width: 3;
+    stroke: #f4daa6;
 }
 
 .heading {
