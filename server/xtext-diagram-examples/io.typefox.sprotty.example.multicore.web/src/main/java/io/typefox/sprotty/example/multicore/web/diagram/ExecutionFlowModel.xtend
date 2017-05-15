@@ -15,6 +15,7 @@ class TaskNode extends SNode {
 	String name
 	String status
 	Boolean selected
+	int kernelNr
 }
 
 @Accessors@ToString
