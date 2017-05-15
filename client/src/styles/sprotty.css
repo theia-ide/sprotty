@@ -10,7 +10,7 @@
 }
 
 .sprotty-popup {
-    position: absolute;
+    position: fixed;
     background: white;
     border-radius: 5px;
     border: 1px solid;
