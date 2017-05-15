@@ -1,7 +1,7 @@
 import { InitializeCanvasBoundsCommand } from './initialize-canvas';
 import { injectable } from "inversify"
 import { ModelAction } from "../intent/actions"
-import { isEmpty } from "../../utils/geometry"
+import { isValidDimension } from "../../utils/geometry"
 import { SModelRoot, SModelRootSchema } from "../model/smodel"
 import { Command, CommandExecutionContext } from "../intent/commands"
 
@@ -30,7 +30,7 @@ export class SetModelCommand extends Command {
     execute(context: CommandExecutionContext): SModelRoot {
         this.oldRoot = context.root
         this.newRoot = context.modelFactory.createRoot(this.action.newRoot)
-        if(!isEmpty(this.oldRoot.canvasBounds)) {
+        if (isValidDimension(this.oldRoot.canvasBounds)) {
            this.newRoot.canvasBounds = this.oldRoot.canvasBounds 
         }
         return this.newRoot

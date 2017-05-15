@@ -1,4 +1,6 @@
-import { SChildElement, SModelElement, SModelElementSchema } from "../base/model/smodel"
+import { SChildElement, SModelElement, SModelElementSchema } from "./smodel"
+import { Bounds, EMPTY_BOUNDS } from "../../utils/geometry"
+import { isBoundsAware } from "../../features/bounds/model"
 
 export function getBasicType(schema: SModelElementSchema): string {
     if (!schema.type)
@@ -44,4 +46,20 @@ export function findParentByFeature<T>(element: SModelElement, predicate: (t: SM
             current = undefined
     }
     return current
+}
+
+export function getAbsoluteBounds(element: SModelElement): Bounds {
+    const boundsAware = findParentByFeature(element, isBoundsAware)
+    if (boundsAware !== undefined) {
+        let bounds = boundsAware.bounds
+        let current: SModelElement = boundsAware
+        while (current instanceof SChildElement) {
+            const parent = current.parent
+            bounds = parent.localToParent(bounds)
+            current = parent
+        }
+        return bounds
+    } else {
+        return EMPTY_BOUNDS
+    }
 }

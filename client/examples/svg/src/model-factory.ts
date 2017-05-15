@@ -1,9 +1,8 @@
 import {
-    SModelElementSchema, SParentElement, SChildElement, SModelFactory, SModelRootSchema, SModelRoot
+    SModelElementSchema, SParentElement, SChildElement, SModelFactory, SModelRootSchema, SModelRoot, getBasicType
 } from "../../../src/base"
 import { ShapedPreRenderedElement, ShapedPreRenderedElementSchema } from "../../../src/lib"
 import { ViewportRootElement } from "../../../src/features"
-import { getBasicType } from "../../../src/utils"
 
 export class SvgFactory extends SModelFactory {
 

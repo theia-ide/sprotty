@@ -30,6 +30,15 @@ export const EMPTY_DIMENSION: Dimension = Object.freeze({
     height: -1
 })
 
+/**
+ * Checks whether the given dimention is valid, i.e. the width and height are non-zero.
+ * @param {Dimension} b - Dimension object
+ * @returns {boolean}
+ */
+export function isValidDimension(d: Dimension): boolean {
+    return d.width >= 0 && d.height >= 0
+}
+
 /** 
  * The bounds are the position (x, y) and dimension (width, height)
  * of an object
@@ -52,24 +61,34 @@ export function isBounds(element: any): element is Bounds {
 }
 
 /**
- * Combines the bounds of two objects into one, so that the new 
- * bounds are the minimum bounds that covers both of the original 
- * bounds 
+ * Combines the bounds of two objects into one, so that the new bounds
+ * are the minimum bounds that covers both of the original bounds.
  * @param {Bounds} b0 - First bounds object
  * @param {Bounds} b1 - Second bounds object
  * @returns {Bounds} The combined bounds
  */
 export function combine(b0: Bounds, b1: Bounds): Bounds {
-    if (isEmpty(b0))
-        return b1
-    if (isEmpty(b1))
-        return b0
     const minX = Math.min(b0.x, b1.x)
     const minY = Math.min(b0.y, b1.y)
-    const maxX = Math.max(b0.x + b0.width, b1.x + b1.width)
-    const maxY = Math.max(b0.y + b0.height, b1.y + b1.height)
+    const maxX = Math.max(b0.x + (b0.width >= 0 ? b0.width : 0), b1.x + (b1.width >= 0 ? b1.width : 0))
+    const maxY = Math.max(b0.y + (b0.height >= 0 ? b0.height : 0), b1.y + (b1.height >= 0 ? b1.height : 0))
     return {
         x: minX, y: minY, width: maxX - minX, height: maxY - minY
+    }
+}
+
+/**
+ * Translates the given bounds.
+ * @param {Bounds} b - Bounds object
+ * @param {Point} p - Vector by which to translate the bounds
+ * @returns {Bounds} The translated bounds
+ */
+export function translate(b: Bounds, p: Point): Bounds {
+    return {
+        x: b.x + p.x,
+        y: b.y + p.y,
+        width: b.width,
+        height: b.height
     }
 }
 
@@ -79,22 +98,10 @@ export function combine(b0: Bounds, b1: Bounds): Bounds {
  * @returns {Point} the center point
  */
 export function center(b: Bounds): Point {
-    if (isEmpty(b))
-        return b
-    else
-        return {
-            x: b.x + 0.5 * b.width,
-            y: b.y + 0.5 * b.height
-        }
-}
-
-/**
- * Checks whether the given bounds are empty, i.e. the width or height is not positive.
- * @param {Bounds} b - Bounds object
- * @returns {boolean} 
- */
-export function isEmpty(b: Bounds): boolean {
-    return b.width <= 0 || b.height <= 0
+    return {
+        x: b.x + (b.width >= 0 ? 0.5 * b.width : 0),
+        y: b.y + (b.height >= 0 ? 0.5 * b.height : 0)
+    }
 }
 
 /**

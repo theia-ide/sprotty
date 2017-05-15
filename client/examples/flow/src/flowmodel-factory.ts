@@ -1,10 +1,9 @@
 import {
-    SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement
+    SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, getBasicType
 } from "../../../src/base"
 import { SGraph, SGraphFactory, SGraphSchema } from "../../../src/graph"
 import { BarrierNode, BarrierNodeSchema, TaskNode, TaskNodeSchema } from "./flowmodel"
 import { HtmlRootSchema, PreRenderedElementSchema, PreRenderedElement, HtmlRoot } from "../../../src/lib"
-import { getBasicType } from "../../../src/utils"
 
 export class FlowModelFactory extends SGraphFactory {
 

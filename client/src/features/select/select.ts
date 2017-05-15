@@ -8,7 +8,7 @@ import { isCtrlOrCmd } from "../../utils/browser"
 import { KeyListener } from "../../base/view/key-tool"
 import { isSelectable, Selectable } from "./model"
 import { setClass } from "../../base/view/vnode-utils"
-import { findParentByFeature } from "../../utils/model"
+import { findParentByFeature } from "../../base/model/smodel-utils"
 
 export class SelectAction implements Action {
     kind = SelectCommand.KIND

@@ -3,7 +3,7 @@ import { SModelElement } from "../../base/model/smodel"
 import { MouseListener } from "../../base/view/mouse-tool"
 import { Action } from "../../base/intent/actions"
 import { SModelExtension } from "../../base/model/smodel-extension"
-import { findParentByFeature } from "../../utils/model"
+import { findParentByFeature } from "../../base/model/smodel-utils"
 import { ViewportAction } from "./viewport"
 import { isViewport, Viewport } from "./model"
 

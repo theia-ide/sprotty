@@ -42,7 +42,7 @@ export class StatefulLayouter {
             })
     }
 
-    getBoundsData(element: SModelElement) {
+    getBoundsData(element: SModelElement): BoundsData {
         let boundsData = this.element2boundsData.get(element)
         let bounds = (element as any).bounds
         if(isLayouting(element) && this.toBeLayouted.indexOf(element) >= 0) {
@@ -58,7 +58,7 @@ export class StatefulLayouter {
         return boundsData
     }
 
-    layout() {
+    layout(): void {
         while(this.toBeLayouted.length > 0) {
             const element = this.toBeLayouted[0]
             this.doLayout(element)
@@ -73,7 +73,7 @@ export class StatefulLayouter {
         if(layout)
             layout.layout(element, this)
         const boundsData = this.element2boundsData.get(element)
-        if(boundsData) {
+        if (boundsData !== undefined && boundsData.bounds !== undefined) {
             return boundsData.bounds
         } else {
             this.log.error(element, 'Layout failed')

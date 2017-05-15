@@ -1,6 +1,5 @@
 import { SModelRoot } from "../../base/model/smodel"
-import { Bounds, EMPTY_BOUNDS, Point, ORIGIN_POINT, Dimension, EMPTY_DIMENSION, isBounds } from "../../utils/geometry"
-import { BoundsAware, boundsFeature, Layouting, layoutFeature } from "../bounds/model"
+import { Bounds, Point, isBounds, isValidDimension } from "../../utils/geometry"
 import { Viewport, viewportFeature } from "./model"
 
 export class ViewportRootElement extends SModelRoot implements Viewport {
@@ -11,19 +10,20 @@ export class ViewportRootElement extends SModelRoot implements Viewport {
         return feature === viewportFeature 
     }
 
-    localToParent(point: Point): Point {
-        if(isBounds(point)) {
-            return {...point, ...{
-                    x: (point.x - this.scroll.x) * this.zoom,
-                    y: (point.y - this.scroll.y) * this.zoom,
-                    width: point.width * this.zoom,
-                    height: point.height * this.zoom
-                }
-            }
-        }
-        return {...point, ...{
+    localToParent(point: Point | Bounds): Bounds {
+        if (isBounds(point) && isValidDimension(point)) {
+            return {
                 x: (point.x - this.scroll.x) * this.zoom,
-                y: (point.y - this.scroll.y) * this.zoom
+                y: (point.y - this.scroll.y) * this.zoom,
+                width: point.width * this.zoom,
+                height: point.height * this.zoom
+            }
+        } else {
+            return {
+                x: (point.x - this.scroll.x) * this.zoom,
+                y: (point.y - this.scroll.y) * this.zoom,
+                width: -1,
+                height: -1
             }
         }
     }

@@ -10,7 +10,7 @@ import { Fadeable, isFadeable } from "../fade/model"
 import { isLocateable } from "../move/model"
 import { isBoundsAware } from "../bounds/model"
 import { ViewportRootElement } from "../viewport/viewport-root"
-import { isEmpty, Bounds } from "../../utils/geometry"
+import { isValidDimension, Bounds } from "../../utils/geometry"
 import { InitializeCanvasBoundsCommand } from "../../base/features/initialize-canvas"
 import { isSelectable } from "../select/model"
 
@@ -187,7 +187,7 @@ export class UpdateModelCommand extends Command {
                 right.position = leftPos
             }
         }
-        if (isBoundsAware(left) && isBoundsAware(right) && isEmpty(right.bounds)) {
+        if (isBoundsAware(left) && isBoundsAware(right) && !isValidDimension(right.bounds)) {
             right.bounds = {
                 x: right.bounds.x,
                 y: right.bounds.y,

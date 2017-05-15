@@ -4,7 +4,7 @@ import { VNode } from "snabbdom/vnode"
 import { RenderingContext, IView } from "../../base/view/views"
 import { SCompartment, SEdge, SGraph, SLabel, SNode } from "../model/sgraph"
 import { center, manhattanDistance, Point } from "../../utils/geometry"
-import { getSubType } from "../../utils/model"
+import { getSubType } from "../../base/model/smodel-utils"
 
 const JSX = {createElement: snabbdom.svg}
 

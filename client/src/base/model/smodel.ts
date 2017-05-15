@@ -1,4 +1,4 @@
-import { Bounds, EMPTY_BOUNDS, Point, ORIGIN_POINT, Dimension, EMPTY_DIMENSION } from "../../utils/geometry"
+import { Bounds, EMPTY_BOUNDS, Point, ORIGIN_POINT, Dimension, EMPTY_DIMENSION, isBounds } from "../../utils/geometry"
 
 export interface SModelElementSchema {
     type: string
@@ -79,8 +79,8 @@ export class SParentElement extends SModelElement {
         }
     }
 
-    localToParent(point: Point): Point {
-        return point
+    localToParent(point: Point | Bounds): Bounds {
+        return isBounds(point) ? point : { x: point.x, y: point.y, width: -1, height: -1 }
     }
 }
 

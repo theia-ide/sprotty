@@ -1,6 +1,7 @@
 export * from "./model/smodel"
 export * from "./model/smodel-factory"
 export * from "./model/smodel-storage"
+export * from "./model/smodel-utils"
 export * from "./types"
 export * from "./intent/actions"
 export * from "./intent/action-dispatcher"

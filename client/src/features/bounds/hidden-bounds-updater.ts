@@ -5,15 +5,15 @@ import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { IVNodeDecorator } from "../../base/view/vnode-decorators"
 import { TYPES } from "../../base/types"
 import { IActionDispatcher } from "../../base/intent/action-dispatcher"
-import { Bounds, isEmpty, EMPTY_BOUNDS } from '../../utils/geometry';
-import { ComputedBoundsAction, ElementAndBounds, SetBoundsAction } from './bounds-manipulation'
+import { Bounds } from '../../utils/geometry';
+import { ComputedBoundsAction, ElementAndBounds } from './bounds-manipulation'
 import { BoundsAware, isSizeable, isLayouting } from "./model"
 import { Layouter } from "./layout"
 import { LAYOUT_TYPES } from "./types"
 
 export class BoundsData {
     vnode?: VNode
-    bounds: Bounds
+    bounds?: Bounds
     boundsChanged: boolean
 }
 

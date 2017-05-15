@@ -3,7 +3,7 @@ import { SChildElement } from '../../base';
 import { SParentElement, SModelElement } from "../../base/model/smodel"
 import { ILayout, StatefulLayouter } from './layout';
 import { BoundsAware, isBoundsAware, isLayouting, Layouting } from './model';
-import { Bounds, isEmpty } from "../../utils/geometry"
+import { Bounds, isValidDimension } from "../../utils/geometry"
 import { BoundsData } from "./hidden-bounds-updater"
 import { VNode } from "snabbdom/vnode"
 
@@ -49,7 +49,7 @@ export class VBoxLayouter implements ILayout {
         container.children.forEach(
             child => {
                 const bounds = layouter.getBoundsData(child).bounds
-                if (bounds && !isEmpty(bounds))
+                if (bounds !== undefined && isValidDimension(bounds))
                     maxWidth = Math.max(maxWidth, bounds.width)
             }
         )
@@ -60,15 +60,15 @@ export class VBoxLayouter implements ILayout {
             container: SModelElement, 
             layouter: StatefulLayouter): Bounds {
         let currentContainer = container 
-        while(true) {
-            if(isBoundsAware(currentContainer)) {
+        while (true) {
+            if (isBoundsAware(currentContainer)) {
                 const bounds = currentContainer.bounds
-                if(isLayouting(currentContainer) && currentContainer.resizeContainer)
+                if (isLayouting(currentContainer) && currentContainer.resizeContainer)
                     layouter.log.error(currentContainer, 'Resizable container found while detecting fixed bounds')
-                if(!isEmpty(bounds))
+                if (isValidDimension(bounds))
                     return bounds
             }
-            if(currentContainer instanceof SChildElement) {
+            if (currentContainer instanceof SChildElement) {
                 currentContainer = currentContainer.parent
             } else {
                 layouter.log.error(currentContainer, 'Cannot detect fixed bounds')
@@ -87,7 +87,7 @@ export class VBoxLayouter implements ILayout {
                 const boundsData = layouter.getBoundsData(child)
                 const bounds = boundsData.bounds
                 const textAlign = this.getLayoutProperties(boundsData.vnode).textAlign
-                if (bounds && !isEmpty(bounds)) {
+                if (bounds !== undefined && isValidDimension(bounds)) {
                     let dx = 0
                     if (textAlign === 'left')
                         dx = 0

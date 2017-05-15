@@ -6,7 +6,7 @@ import { IVNodeDecorator } from "../view/vnode-decorators";
 import { SModelElement, SModelRoot } from "../model/smodel";
 import { SystemCommand, CommandExecutionContext } from '../intent/commands';
 import { SModelExtension } from "../model/smodel-extension";
-import { almostEquals, Bounds, isEmpty } from '../../utils/geometry';
+import { almostEquals, Bounds, isValidDimension } from '../../utils/geometry';
 import { VNode } from "snabbdom/vnode";
 
 /**
@@ -22,7 +22,7 @@ export class CanvasBoundsInitializer implements IVNodeDecorator {
     constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher) {}
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        if (element instanceof SModelRoot && isEmpty(element.canvasBounds)) {
+        if (element instanceof SModelRoot && !isValidDimension(element.canvasBounds)) {
             this.rootAndVnode = [element, vnode]
         }
         return vnode

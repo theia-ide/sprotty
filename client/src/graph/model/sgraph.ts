@@ -1,5 +1,5 @@
 import { SChildElement, SModelElementSchema, SModelRootSchema } from "../../base/model/smodel"
-import { Bounds, EMPTY_BOUNDS, Point, ORIGIN_POINT, Dimension, EMPTY_DIMENSION } from "../../utils/geometry"
+import { Bounds, EMPTY_BOUNDS, Point, ORIGIN_POINT, Dimension, EMPTY_DIMENSION, isBounds } from "../../utils/geometry"
 import { ViewportRootElement } from "../../features/viewport/viewport-root"
 import { Selectable, selectFeature } from "../../features/select/model"
 import { Locateable, moveFeature } from "../../features/move/model"
@@ -47,10 +47,20 @@ export abstract class SShapeElement extends SChildElement implements BoundsAware
         }
     }
 
-    localToParent(point: Point): Point {
-        return {...point, ...{
+    localToParent(point: Point | Bounds): Bounds {
+        if (isBounds(point)) {
+            return {
                 x: point.x + this.position.x,
-                y: point.y + this.position.y
+                y: point.y + this.position.y,
+                width: point.width,
+                height: point.height
+            }
+        } else {
+            return {
+                x: point.x + this.position.x,
+                y: point.y + this.position.y,
+                width: -1,
+                height: -1
             }
         }
     }

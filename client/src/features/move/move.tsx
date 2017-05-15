@@ -11,7 +11,7 @@ import { isViewport, Viewport } from "../viewport/model"
 import { isSelectable } from "../select/model"
 import { isMoveable, Locateable, isLocateable } from "./model"
 import { setAttr } from "../../base/view/vnode-utils"
-import { findParentByFeature } from "../../utils/model"
+import { findParentByFeature } from "../../base/model/smodel-utils"
 
 const JSX = {createElement: snabbdom.svg}
 

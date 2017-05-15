@@ -39,7 +39,7 @@ export class ActionDispatcher implements IActionDispatcher {
     }
 
     dispatch(action: Action, onExecute?: (action: Action)=>void): void {
-        if(action.kind === this.blockUntilActionKind) {
+        if (action.kind === this.blockUntilActionKind) {
             this.blockUntilActionKind = undefined
             this.handleAction(action)
             const actions = this.postponedActions
@@ -49,7 +49,7 @@ export class ActionDispatcher implements IActionDispatcher {
             )
             return
         } 
-        if(this.blockUntilActionKind !== undefined) {
+        if (this.blockUntilActionKind !== undefined) {
             this.logger.log(this, 'waiting for ' + this.blockUntilActionKind + '. postponing', action)
             this.postponedActions.push({
                 action: action,
@@ -57,7 +57,7 @@ export class ActionDispatcher implements IActionDispatcher {
             })
             return
         }
-        if(onExecute !== undefined)
+        if (onExecute !== undefined)
             onExecute.call(null, action) 
         if (action.kind === UndoAction.KIND) {
             this.commandStack.undo()

@@ -3,7 +3,7 @@ import { SModelFactory } from "../../base/model/smodel-factory"
 import {
     SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement
 } from "../../base/model/smodel"
-import { getBasicType } from "../../utils/model"
+import { getBasicType } from "../../base/model/smodel-utils"
 import {
     SCompartment,
     SCompartmentElement, SEdge, SEdgeSchema, SGraph, SGraphSchema, SLabel, SLabelSchema, SNode, SNodeSchema
