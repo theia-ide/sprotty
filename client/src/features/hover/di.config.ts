@@ -1,12 +1,18 @@
 import { ContainerModule } from "inversify"
 import { TYPES } from "../../base/types"
-import { HoverListener, HoverFeedbackCommand, SetPopupModelCommand, PopupKeyboardListener } from "./hover"
+import { HoverMouseListener, PopupHoverMouseListener, HoverFeedbackCommand, SetPopupModelCommand, HoverKeyListener, HoverState } from "./hover"
 
 const hoverModule = new ContainerModule(bind => {
     bind(TYPES.ICommand).toConstructor(HoverFeedbackCommand)
     bind(TYPES.ICommand).toConstructor(SetPopupModelCommand)
-    bind(TYPES.MouseListener).to(HoverListener)
-    bind(TYPES.KeyListener).to(PopupKeyboardListener)
+    bind(TYPES.MouseListener).to(HoverMouseListener)
+    bind(TYPES.PopupMouseListener).to(PopupHoverMouseListener)
+    bind(TYPES.KeyListener).to(HoverKeyListener)
+    bind<HoverState>(TYPES.HoverState).toConstantValue({
+        hoverTimer: undefined,
+        popupOpen: false,
+        previousPopupElement: undefined
+    })
 })
 
 export default hoverModule

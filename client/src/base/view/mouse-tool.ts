@@ -111,6 +111,14 @@ export class MouseTool implements IVNodeDecorator {
 }
 
 @injectable()
+export class PopupMouseTool extends MouseTool {
+    constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
+                @multiInject(TYPES.PopupMouseListener)@optional() protected mouseListeners: MouseListener[] = []) {
+        super(actionDispatcher, mouseListeners)
+    }
+}
+
+@injectable()
 export class MouseListener {
 
     mouseOver(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
