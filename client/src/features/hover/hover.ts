@@ -1,9 +1,9 @@
 import { inject, injectable } from "inversify"
-import { SChildElement, SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel"
+import { SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel"
 import { MouseListener } from "../../base/view/mouse-tool"
 import { Action, ModelAction } from "../../base/intent/actions"
 import { hasPopupFeature, isHoverable } from "./model"
-import { Command, CommandExecutionContext, CommandResult, PopupCommand } from "../../base/intent/commands"
+import { Command, CommandExecutionContext, PopupCommand } from "../../base/intent/commands"
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { Bounds, Point, translate } from "../../utils/geometry"
 import { KeyListener } from "../../base/view/key-tool"
@@ -119,9 +119,6 @@ export class HoverListener extends MouseListener {
         const targetBounds = getAbsoluteBounds(target)
         const canvasBounds = target.root.canvasBounds
         const boundsInWindow = translate(targetBounds, canvasBounds)
-        console.log('mousePosition:', mousePosition)
-        console.log('targetBounds:', targetBounds)
-        console.log('boundsInWindow:', boundsInWindow)
         const distRight = boundsInWindow.x + boundsInWindow.width - mousePosition.x
         const distBottom = boundsInWindow.y + boundsInWindow.height - mousePosition.y
         if (distBottom <= distRight && distBottom < maxDist) {
