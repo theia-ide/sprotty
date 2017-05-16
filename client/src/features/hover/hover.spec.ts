@@ -1,7 +1,7 @@
 import "reflect-metadata"
 import "mocha"
 import { expect } from "chai"
-import { HoverFeedbackAction, HoverListener, SetPopupModelAction } from "./hover"
+import { HoverFeedbackAction, HoverMouseListener, SetPopupModelAction } from "./hover"
 import { SChildElement, SModelElement, SModelRoot, SParentElement } from "../../base/model/smodel"
 import { Container, inject } from "inversify"
 import { TYPES } from "../../base/types"
@@ -11,7 +11,7 @@ import { Hoverable, hoverFeedbackFeature, popupFeature } from "./model"
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 
 describe('hover', () => {
-    class HoverListenerMock extends HoverListener {
+    class HoverListenerMock extends HoverMouseListener {
         protected popupOpen: boolean = false
 
         set popupIsOpen(isOpen: boolean) {
@@ -23,10 +23,10 @@ describe('hover', () => {
         }
 
         set previousPopupElementMock(el: SModelElement) {
-            this.previousPopupElement = el
+            this.state.previousPopupElement = el
         }
 
-        protected startTimer(target: SModelElement, event: MouseEvent): Promise<Action> {
+        protected startMouseOverTimer(target: SModelElement, event: MouseEvent): Promise<Action> {
             this.popupOpen = true
             return new Promise<Action>(() => {
             })

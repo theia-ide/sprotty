@@ -9,7 +9,8 @@ const hoverModule = new ContainerModule(bind => {
     bind(TYPES.PopupMouseListener).to(PopupHoverMouseListener)
     bind(TYPES.KeyListener).to(HoverKeyListener)
     bind<HoverState>(TYPES.HoverState).toConstantValue({
-        hoverTimer: undefined,
+        mouseOverTimer: undefined,
+        mouseOutTimer: undefined,
         popupOpen: false,
         previousPopupElement: undefined
     })

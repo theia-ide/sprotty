@@ -103,19 +103,47 @@ export class SetPopupModelCommand extends PopupCommand {
 }
 
 export interface HoverState {
-    hoverTimer: number | undefined
+    mouseOverTimer: number | undefined
+    mouseOutTimer: number | undefined
     popupOpen: boolean
     previousPopupElement: SModelElement | undefined
 }
 
-@injectable()
-export class HoverMouseListener extends MouseListener {
-
+class HoverPopupMouseListener extends MouseListener {
     constructor(@inject(TYPES.ViewerOptions) protected options: ViewerOptions,
                 @inject(TYPES.HoverState) protected state: HoverState) {
         super()
     }
 
+    protected stopMouseOutTimer(): void {
+        if (this.state.mouseOutTimer !== undefined) {
+            window.clearTimeout(this.state.mouseOutTimer)
+            this.state.mouseOutTimer = undefined
+        }
+    }
+
+    protected startMouseOutTimer(): Promise<Action> {
+        this.stopMouseOutTimer()
+        return new Promise((resolve) => {
+            this.state.mouseOutTimer = window.setTimeout(() => {
+                this.state.popupOpen = false
+                this.state.previousPopupElement = undefined
+                resolve(new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}))
+            }, this.options.popupCloseDelay)
+        })
+    }
+
+    protected stopMouseOverTimer(): void {
+        if (this.state.mouseOverTimer !== undefined) {
+            window.clearTimeout(this.state.mouseOverTimer)
+            this.state.mouseOverTimer = undefined
+        }
+    }
+}
+
+@injectable()
+export class HoverMouseListener extends HoverPopupMouseListener {
+    
     protected calculatePopupPosition(target: SModelElement, mousePosition: Point): Point {
         let offset: Point = { x: -5, y: 20 }
         const maxDist = 150
@@ -134,10 +162,10 @@ export class HoverMouseListener extends MouseListener {
         return { x: mousePosition.x + offset.x, y: mousePosition.y + offset.y }
     }
 
-    protected startTimer(target: SModelElement, event: MouseEvent): Promise<Action> {
-        this.stopTimer()
+    protected startMouseOverTimer(target: SModelElement, event: MouseEvent): Promise<Action> {
+        this.stopMouseOverTimer()
         return new Promise((resolve) => {
-            this.state.hoverTimer = window.setTimeout(() => {
+            this.state.mouseOverTimer = window.setTimeout(() => {
                 const popupPosition = this.calculatePopupPosition(target, {x: event.pageX, y: event.pageY})
                 resolve(new RequestPopupModelAction(target,
                     {
@@ -148,14 +176,26 @@ export class HoverMouseListener extends MouseListener {
                     }))
 
                 this.state.popupOpen = true
-            }, this.options.popupDelay)
+                this.state.previousPopupElement = target
+            }, this.options.popupOpenDelay)
         })
     }
 
-    protected stopTimer(): void {
-        if (this.state.hoverTimer !== undefined) {
-            window.clearTimeout(this.state.hoverTimer)
-            this.state.hoverTimer = undefined
+    protected startMouseOutTimer(): Promise<Action> {
+        this.stopMouseOutTimer()
+        return new Promise((resolve) => {
+            this.state.mouseOutTimer = window.setTimeout(() => {
+                this.state.popupOpen = false
+                this.state.previousPopupElement = undefined
+                resolve(new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}))
+            }, this.options.popupCloseDelay)
+        })
+    }
+
+    protected stopMouseOutTimer(): void {
+        if (this.state.mouseOutTimer !== undefined) {
+            window.clearTimeout(this.state.mouseOutTimer)
+            this.state.mouseOutTimer = undefined
         }
     }
 
@@ -166,15 +206,19 @@ export class HoverMouseListener extends MouseListener {
 
         if (state.popupOpen && (popupTarget === undefined ||
             state.previousPopupElement !== undefined && state.previousPopupElement.id !== popupTarget.id)) {
-            state.popupOpen = false
-            result.push(new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}))
+            result.push(this.startMouseOutTimer())
+            // state.popupOpen = false
+            // result.push(new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}))
+        } else {
+            this.stopMouseOverTimer()
+            this.stopMouseOutTimer()
         }
         if (popupTarget !== undefined &&
             (state.previousPopupElement === undefined || state.previousPopupElement.id !== popupTarget.id)) {
-            result.push(this.startTimer(popupTarget, event))
+            result.push(this.startMouseOverTimer(popupTarget, event))
         }
 
-        state.previousPopupElement = popupTarget
+
 
         const hoverTarget = findParentByFeature(target, isHoverable)
         if (hoverTarget !== undefined)
@@ -187,7 +231,7 @@ export class HoverMouseListener extends MouseListener {
         const result: (Action | Promise<Action>)[] = []
 
         if (!this.state.popupOpen)
-            this.stopTimer()
+            this.stopMouseOverTimer()
 
         if (isHoverable(target))
             result.push(new HoverFeedbackAction(target.id, false))
@@ -197,20 +241,20 @@ export class HoverMouseListener extends MouseListener {
 
     mouseMove(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         const popupTarget = findParent(target, hasPopupFeature)
-        return this.state.popupOpen || popupTarget === undefined ? [] : [this.startTimer(popupTarget, event)]
+        return this.state.popupOpen || popupTarget === undefined ? [] : [this.startMouseOverTimer(popupTarget, event)]
     }
 }
 
-
 @injectable()
-export class PopupHoverMouseListener extends MouseListener {
-
-    constructor(@inject(TYPES.HoverState) protected state: HoverState) {
-        super()
-    }
+export class PopupHoverMouseListener extends HoverPopupMouseListener {
 
     mouseOut(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        console.log("Whoo-hooo!")
+        return [this.startMouseOutTimer()]
+    }
+
+    mouseOver(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
+        this.stopMouseOutTimer()
+        this.stopMouseOverTimer()
         return []
     }
 }
