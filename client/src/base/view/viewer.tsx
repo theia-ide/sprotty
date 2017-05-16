@@ -74,13 +74,14 @@ export class Viewer implements IViewer {
     constructor(@inject(TYPES.ModelRendererFactory) modelRendererFactory: ModelRendererFactory,
                 @multiInject(TYPES.IVNodeDecorator) @optional() protected decorators: IVNodeDecorator[],
                 @multiInject(TYPES.HiddenVNodeDecorator) @optional() protected hiddenDecorators: IVNodeDecorator[],
+                @multiInject(TYPES.PopupVNodeDecorator) @optional() protected popupDecorators: IVNodeDecorator[],
                 @inject(TYPES.ViewerOptions) protected options: ViewerOptions,
                 @inject(TYPES.ILogger) protected logger: ILogger,
                 @inject(TYPES.IActionDispatcher) protected actiondispatcher: IActionDispatcher) {
         this.patcher = this.createPatcher()
         this.renderer = modelRendererFactory(decorators)
         this.hiddenRenderer = modelRendererFactory(hiddenDecorators)
-        this.popupRenderer = modelRendererFactory([])
+        this.popupRenderer = modelRendererFactory(popupDecorators)
     }
 
     protected createModules(): Module[] {

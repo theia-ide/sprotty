@@ -6,6 +6,7 @@ export const TYPES = {
     ICommand: Symbol('ICommand'),
     ICommandStack: Symbol('ICommandStack'),
     ICommandStackProvider: Symbol('ICommandStackProvider'),
+    HoverState: Symbol('HoverState'),
     KeyListener: Symbol('KeyListener'),
     ILogger: Symbol('ILogger'),
     LogLevel: Symbol('LogLevel'),
@@ -14,10 +15,12 @@ export const TYPES = {
     ModelSource: Symbol('ModelSource'),
     SModelStorage: Symbol('SModelStorage'),
     MouseListener: Symbol('MouseListener'),
+    PopupMouseListener: Symbol('PopupMouseListener'),
     IViewer: Symbol('IViewer'),
     ViewerOptions: Symbol('ViewerOptions'),
     IViewerProvider: Symbol('IViewerProvider'),
     ViewRegistry: Symbol('ViewRegistry'),
     IVNodeDecorator: Symbol('IVNodeDecorator'),
     HiddenVNodeDecorator: Symbol('HiddenVNodeDecorator'),
+    PopupVNodeDecorator: Symbol('PopupVNodeDecorator')
 }
