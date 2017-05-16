@@ -39,6 +39,14 @@ describe('hover', () => {
         }
     }
 
+    class HoverableTarget extends SModelElement implements Hoverable {
+        hoverFeedback: boolean = false
+
+        hasFeature(feature: symbol): boolean {
+            return feature === hoverFeedbackFeature
+        }
+    }
+
     const container = new Container()
     container.load(defaultModule)
     container.bind(TYPES.MouseListener).to(HoverListenerMock)
@@ -53,13 +61,6 @@ describe('hover', () => {
             expect(mouseOverResult).to.be.empty
         })
         it('contains HoverFeedbackAction on hovering over an hoverable element', () => {
-            class HoverableTarget extends SModelElement implements Hoverable {
-                hoverFeedback: boolean = false
-
-                hasFeature(feature: symbol): boolean {
-                    return feature === hoverFeedbackFeature
-                }
-            }
             const target = new HoverableTarget()
             const mouseOverResult: (Action | Promise<Action>)[] = hoverListener.mouseOver(target, event)
 
