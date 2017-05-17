@@ -109,7 +109,7 @@ export interface HoverState {
     previousPopupElement: SModelElement | undefined
 }
 
-class HoverPopupMouseListener extends MouseListener {
+abstract class HoverPopupMouseListener extends MouseListener {
     constructor(@inject(TYPES.ViewerOptions) protected options: ViewerOptions,
                 @inject(TYPES.HoverState) protected state: HoverState) {
         super()
@@ -143,7 +143,7 @@ class HoverPopupMouseListener extends MouseListener {
 
 @injectable()
 export class HoverMouseListener extends HoverPopupMouseListener {
-    
+
     protected calculatePopupPosition(target: SModelElement, mousePosition: Point): Point {
         let offset: Point = { x: -5, y: 20 }
         const maxDist = 150
@@ -181,24 +181,6 @@ export class HoverMouseListener extends HoverPopupMouseListener {
         })
     }
 
-    protected startMouseOutTimer(): Promise<Action> {
-        this.stopMouseOutTimer()
-        return new Promise((resolve) => {
-            this.state.mouseOutTimer = window.setTimeout(() => {
-                this.state.popupOpen = false
-                this.state.previousPopupElement = undefined
-                resolve(new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}))
-            }, this.options.popupCloseDelay)
-        })
-    }
-
-    protected stopMouseOutTimer(): void {
-        if (this.state.mouseOutTimer !== undefined) {
-            window.clearTimeout(this.state.mouseOutTimer)
-            this.state.mouseOutTimer = undefined
-        }
-    }
-
     mouseOver(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         const state = this.state
         const result: (Action | Promise<Action>)[] = []
@@ -207,8 +189,6 @@ export class HoverMouseListener extends HoverPopupMouseListener {
         if (state.popupOpen && (popupTarget === undefined ||
             state.previousPopupElement !== undefined && state.previousPopupElement.id !== popupTarget.id)) {
             result.push(this.startMouseOutTimer())
-            // state.popupOpen = false
-            // result.push(new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}))
         } else {
             this.stopMouseOverTimer()
             this.stopMouseOutTimer()
@@ -217,8 +197,6 @@ export class HoverMouseListener extends HoverPopupMouseListener {
             (state.previousPopupElement === undefined || state.previousPopupElement.id !== popupTarget.id)) {
             result.push(this.startMouseOverTimer(popupTarget, event))
         }
-
-
 
         const hoverTarget = findParentByFeature(target, isHoverable)
         if (hoverTarget !== undefined)
