@@ -8,7 +8,7 @@ import { ViewerOptions } from "../../base/view/options"
 @injectable()
 export class PopupPositionUpdater implements IVNodeDecorator {
 
-    constructor(@inject(TYPES.ViewerOptions) protected options: ViewerOptions){
+    constructor(@inject(TYPES.ViewerOptions) protected options: ViewerOptions) {
 
     }
 
@@ -18,22 +18,22 @@ export class PopupPositionUpdater implements IVNodeDecorator {
 
     postUpdate(): void {
         let popupDiv = document.getElementById(this.options.popupDiv)
-        if(popupDiv !== null){
+        if (popupDiv !== null && typeof window !== 'undefined') {
             const boundingClientRect = popupDiv.getBoundingClientRect()
-            if(window.innerHeight < boundingClientRect.height + boundingClientRect.top){
+            if (window.innerHeight < boundingClientRect.height + boundingClientRect.top) {
                 popupDiv.style.top = (window.scrollY + window.innerHeight - boundingClientRect.height - 5) + 'px'
             }
 
-            if(window.innerWidth < boundingClientRect.left + boundingClientRect.width){
+            if (window.innerWidth < boundingClientRect.left + boundingClientRect.width) {
                 popupDiv.style.left = (window.scrollX + window.innerWidth - boundingClientRect.width - 5) + 'px'
             }
 
-            if(boundingClientRect.left < 0){
+            if (boundingClientRect.left < 0) {
                 popupDiv.style.left = '0px'
             }
 
-            if(boundingClientRect.top < 0){
-                popupDiv.style.left = '0px'
+            if (boundingClientRect.top < 0) {
+                popupDiv.style.top = '0px'
             }
         }
     }

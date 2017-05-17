@@ -5,7 +5,7 @@ import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { IVNodeDecorator } from "../../base/view/vnode-decorators"
 import { TYPES } from "../../base/types"
 import { IActionDispatcher } from "../../base/intent/action-dispatcher"
-import { Bounds } from '../../utils/geometry';
+import { Bounds } from '../../utils/geometry'
 import { ComputedBoundsAction, ElementAndBounds } from './bounds-manipulation'
 import { BoundsAware, isSizeable, isLayouting } from "./model"
 import { Layouter } from "./layout"
@@ -23,19 +23,20 @@ export class BoundsData {
  *
  * The actual bounds of an element can usually not be determined from the SModel
  * as they depend on the view implementation and CSS stylings. So the best way is
- * to grab them from a live (but hidden) SVG using getBBox(). 
+ * to grab them from a live (but hidden) SVG using getBBox().
  */
 @injectable()
 export class HiddenBoundsUpdater implements IVNodeDecorator {
 
     constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
-                @inject(LAYOUT_TYPES.Layouter) protected layouter : Layouter) {}
+                @inject(LAYOUT_TYPES.Layouter) protected layouter: Layouter) {
+    }
 
     private readonly element2boundsData: Map<SModelElement, BoundsData> = new Map
     private root?: SModelRoot
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        if (isSizeable(element) || isLayouting(element)) {
+        if (isSizeable(element) || isLayouting(element)) {
             this.element2boundsData.set(element, {
                 vnode: vnode,
                 bounds: element.bounds,
@@ -51,10 +52,10 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
         this.getBoundsFromDOM()
         this.layouter.layout(this.element2boundsData)
         if (this.root !== undefined) {
-            const resizes : ElementAndBounds[] = []
+            const resizes: ElementAndBounds[] = []
             this.element2boundsData.forEach(
                 (boundsData, element) => {
-                    if(boundsData.boundsChanged && boundsData.bounds !== undefined)
+                    if (boundsData.boundsChanged && boundsData.bounds !== undefined)
                         resizes.push({
                             elementId: element.id,
                             newBounds: boundsData.bounds
@@ -68,15 +69,15 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
     protected getBoundsFromDOM() {
         this.element2boundsData.forEach(
             (boundsData, element) => {
-                if(boundsData.bounds && isSizeable(element)) {
+                if (boundsData.bounds && isSizeable(element)) {
                     const vnode = boundsData.vnode
                     if (vnode && vnode.elm) {
                         const newBounds = this.getBounds(vnode.elm, element)
-                        if(!(almostEquals(newBounds.x, element.bounds.x)
-                                && almostEquals(newBounds.y, element.bounds.y)
-                                && almostEquals(newBounds.width, element.bounds.width)
-                                && almostEquals(newBounds.height, element.bounds.height))) {
-                            boundsData.bounds = newBounds  
+                        if (!(almostEquals(newBounds.x, element.bounds.x)
+                            && almostEquals(newBounds.y, element.bounds.y)
+                            && almostEquals(newBounds.width, element.bounds.width)
+                            && almostEquals(newBounds.height, element.bounds.height))) {
+                            boundsData.bounds = newBounds
                             boundsData.boundsChanged = true
                         }
                     }
