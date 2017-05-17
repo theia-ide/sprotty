@@ -9,7 +9,8 @@ export interface ViewerOptions {
     popupClass: string
     popupClosedClass: string
     boundsComputation: 'fixed' | 'dynamic'
-    popupDelay: number
+    popupOpenDelay: number
+    popupCloseDelay: number
 }
 
 export function overrideViewerOptions(container: Container, options: Partial<ViewerOptions>): ViewerOptions {

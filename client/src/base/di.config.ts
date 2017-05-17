@@ -6,7 +6,7 @@ import { ActionDispatcher, IActionDispatcher } from "./intent/action-dispatcher"
 import { CommandStack, ICommandStack } from "./intent/command-stack"
 import { IViewer, Viewer, ModelRenderer } from "./view/viewer"
 import { ViewerOptions } from "./view/options"
-import { MouseTool } from "./view/mouse-tool"
+import { MouseTool, PopupMouseTool } from "./view/mouse-tool"
 import { KeyTool } from "./view/key-tool"
 import { FocusFixDecorator, IVNodeDecorator } from "./view/vnode-decorators"
 import { ActionHandlerRegistry } from "./intent/actions"
@@ -66,7 +66,8 @@ let defaultContainerModule = new ContainerModule(bind => {
         popupClass: 'sprotty-popup',
         popupClosedClass: 'sprotty-popup-closed',
         boundsComputation: 'fixed',
-        popupDelay: 700
+        popupOpenDelay: 700,
+        popupCloseDelay: 300
     })
     bind(TYPES.ModelRendererFactory).toFactory<ModelRenderer>((context: interfaces.Context) => {
         return (decorators: IVNodeDecorator[]) => {
@@ -79,6 +80,7 @@ let defaultContainerModule = new ContainerModule(bind => {
     bind(TYPES.IVNodeDecorator).to(MouseTool).inSingletonScope()
     bind(TYPES.IVNodeDecorator).to(KeyTool).inSingletonScope()
     bind(TYPES.IVNodeDecorator).to(FocusFixDecorator).inSingletonScope()
+    bind(TYPES.PopupVNodeDecorator).to(PopupMouseTool).inSingletonScope()
 
     // Animation Frame Sync ------------------------------------------
     bind(TYPES.AnimationFrameSyncer).to(AnimationFrameSyncer).inSingletonScope()

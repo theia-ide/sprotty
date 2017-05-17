@@ -1,33 +1,40 @@
 import "reflect-metadata"
 import "mocha"
 import { expect } from "chai"
-import { HoverFeedbackAction, HoverListener, SetPopupModelAction } from "./hover"
-import { SChildElement, SModelElement, SModelRoot, SParentElement } from "../../base/model/smodel"
+import { HoverFeedbackAction, HoverMouseListener } from "./hover"
+import { SChildElement, SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Container, inject } from "inversify"
 import { TYPES } from "../../base/types"
 import { defaultModule } from "../../base/index"
 import { Action } from "../../base/intent/actions"
 import { Hoverable, hoverFeedbackFeature, popupFeature } from "./model"
-import { EMPTY_ROOT } from "../../base/model/smodel-factory"
+import hoverModule from "./di.config"
 
 describe('hover', () => {
-    class HoverListenerMock extends HoverListener {
-        protected popupOpen: boolean = false
+    class HoverListenerMock extends HoverMouseListener {
 
         set popupIsOpen(isOpen: boolean) {
-            this.popupOpen = isOpen
+            this.state.popupOpen = isOpen
         }
 
         get popupIsOpen(): boolean {
-            return this.popupOpen
+            return this.state.popupOpen
         }
 
         set previousPopupElementMock(el: SModelElement) {
-            this.previousPopupElement = el
+            this.state.previousPopupElement = el
         }
 
-        protected startTimer(target: SModelElement, event: MouseEvent): Promise<Action> {
-            this.popupOpen = true
+        protected startMouseOverTimer(target: SModelElement, event: MouseEvent): Promise<Action> {
+            this.state.popupOpen = true
+            this.state.previousPopupElement = target
+            return new Promise<Action>(() => {
+            })
+        }
+
+
+        protected startMouseOutTimer(): Promise<Action> {
+            this.state.popupOpen = false
             return new Promise<Action>(() => {
             })
         }
@@ -48,8 +55,8 @@ describe('hover', () => {
     }
 
     const container = new Container()
-    container.load(defaultModule)
-    container.bind(TYPES.MouseListener).to(HoverListenerMock)
+    container.load(defaultModule, hoverModule)
+    container.rebind(TYPES.MouseListener).to(HoverListenerMock)
     const hoverListener = container.get<HoverListenerMock>(TYPES.MouseListener)
 
     const event = {} as MouseEvent
@@ -73,9 +80,7 @@ describe('hover', () => {
             const mouseOverResult: (Action | Promise<Action>)[] = hoverListener.mouseOver(target, event)
 
             expect(mouseOverResult).to.have.lengthOf(1)
-            expect(mouseOverResult[0]).to.be.an.instanceof(SetPopupModelAction)
-            const type = (mouseOverResult[0] as SetPopupModelAction).newRoot.type
-            expect(type).to.equal(EMPTY_ROOT.type)
+            expect(mouseOverResult[0]).to.be.an.instanceof(Promise)
         })
         it('contains SetPopupModelAction and Promise if popup is open and previous target is not the same', () => {
             hoverListener.popupIsOpen = true
@@ -87,9 +92,7 @@ describe('hover', () => {
             const mouseOverResult: (Action | Promise<Action>)[] = hoverListener.mouseOver(target, event)
 
             expect(mouseOverResult).to.have.lengthOf(2)
-            expect(mouseOverResult[0]).to.be.an.instanceof(SetPopupModelAction)
-            const type = (mouseOverResult[0] as SetPopupModelAction).newRoot.type
-            expect(type).to.equal(EMPTY_ROOT.type)
+            expect(mouseOverResult[0]).to.be.an.instanceof(Promise)
             expect(mouseOverResult[1]).to.be.an.instanceof(Promise)
         })
         it('contains nothing if popup is open and previous target is the same', () => {

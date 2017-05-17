@@ -74,13 +74,14 @@ export class Viewer implements IViewer {
     constructor(@inject(TYPES.ModelRendererFactory) modelRendererFactory: ModelRendererFactory,
                 @multiInject(TYPES.IVNodeDecorator) @optional() protected decorators: IVNodeDecorator[],
                 @multiInject(TYPES.HiddenVNodeDecorator) @optional() protected hiddenDecorators: IVNodeDecorator[],
+                @multiInject(TYPES.PopupVNodeDecorator) @optional() protected popupDecorators: IVNodeDecorator[],
                 @inject(TYPES.ViewerOptions) protected options: ViewerOptions,
                 @inject(TYPES.ILogger) protected logger: ILogger,
                 @inject(TYPES.IActionDispatcher) protected actiondispatcher: IActionDispatcher) {
         this.patcher = this.createPatcher()
         this.renderer = modelRendererFactory(decorators)
         this.hiddenRenderer = modelRendererFactory(hiddenDecorators)
-        this.popupRenderer = modelRendererFactory([])
+        this.popupRenderer = modelRendererFactory(popupDecorators)
     }
 
     protected createModules(): Module[] {
@@ -146,6 +147,7 @@ export class Viewer implements IViewer {
             }
             this.lastPopupVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
+        this.popupRenderer.postUpdate()
     }
 
     update(model: SModelRoot): void {
@@ -158,9 +160,10 @@ export class Viewer implements IViewer {
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
         } else if (typeof document !== 'undefined') {
             const placeholder = document.getElementById(this.options.baseDiv)
-            window.addEventListener('resize', () => {
-                this.onWindowResize(newVDOM)
-            })
+            if(typeof window !== 'undefined')
+                window.addEventListener('resize', () => {
+                    this.onWindowResize(newVDOM)
+                })
             this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
         this.renderer.postUpdate()
