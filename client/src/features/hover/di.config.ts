@@ -1,8 +1,10 @@
 import { ContainerModule } from "inversify"
 import { TYPES } from "../../base/types"
 import { HoverMouseListener, PopupHoverMouseListener, HoverFeedbackCommand, SetPopupModelCommand, HoverKeyListener, HoverState } from "./hover"
+import { PopupPositionUpdater } from "./popup-position-updater"
 
 const hoverModule = new ContainerModule(bind => {
+    bind(TYPES.PopupVNodeDecorator).to(PopupPositionUpdater).inSingletonScope()
     bind(TYPES.ICommand).toConstructor(HoverFeedbackCommand)
     bind(TYPES.ICommand).toConstructor(SetPopupModelCommand)
     bind(TYPES.MouseListener).to(HoverMouseListener)

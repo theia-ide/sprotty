@@ -147,6 +147,7 @@ export class Viewer implements IViewer {
             }
             this.lastPopupVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
+        this.popupRenderer.postUpdate()
     }
 
     update(model: SModelRoot): void {
@@ -159,9 +160,10 @@ export class Viewer implements IViewer {
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
         } else if (typeof document !== 'undefined') {
             const placeholder = document.getElementById(this.options.baseDiv)
-            window.addEventListener('resize', () => {
-                this.onWindowResize(newVDOM)
-            })
+            if(typeof window !== 'undefined')
+                window.addEventListener('resize', () => {
+                    this.onWindowResize(newVDOM)
+                })
             this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
         this.renderer.postUpdate()

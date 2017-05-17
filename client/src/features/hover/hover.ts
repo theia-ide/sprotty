@@ -109,7 +109,7 @@ export interface HoverState {
     previousPopupElement: SModelElement | undefined
 }
 
-abstract class HoverPopupMouseListener extends MouseListener {
+abstract class AbstractHoverMouseListener extends MouseListener {
     constructor(@inject(TYPES.ViewerOptions) protected options: ViewerOptions,
                 @inject(TYPES.HoverState) protected state: HoverState) {
         super()
@@ -142,7 +142,7 @@ abstract class HoverPopupMouseListener extends MouseListener {
 }
 
 @injectable()
-export class HoverMouseListener extends HoverPopupMouseListener {
+export class HoverMouseListener extends AbstractHoverMouseListener {
 
     protected calculatePopupPosition(target: SModelElement, mousePosition: Point): Point {
         let offset: Point = {x: -5, y: 20}
@@ -233,7 +233,7 @@ export class HoverMouseListener extends HoverPopupMouseListener {
 }
 
 @injectable()
-export class PopupHoverMouseListener extends HoverPopupMouseListener {
+export class PopupHoverMouseListener extends AbstractHoverMouseListener {
 
     mouseOut(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         return [this.startMouseOutTimer()]
