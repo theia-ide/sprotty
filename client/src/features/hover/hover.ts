@@ -145,7 +145,7 @@ abstract class HoverPopupMouseListener extends MouseListener {
 export class HoverMouseListener extends HoverPopupMouseListener {
 
     protected calculatePopupPosition(target: SModelElement, mousePosition: Point): Point {
-        let offset: Point = { x: -5, y: 20 }
+        let offset: Point = {x: -5, y: 20}
         const maxDist = 150
 
         const targetBounds = getAbsoluteBounds(target)
@@ -154,12 +154,21 @@ export class HoverMouseListener extends HoverPopupMouseListener {
         const distRight = boundsInWindow.x + boundsInWindow.width - mousePosition.x
         const distBottom = boundsInWindow.y + boundsInWindow.height - mousePosition.y
         if (distBottom <= distRight && distBottom < maxDist) {
-            offset = { x: -5, y: Math.round(distBottom + 5) }
+            offset = {x: -5, y: Math.round(distBottom + 5)}
         } else if (distRight <= distBottom && distRight < maxDist) {
-            offset = { x: Math.round(distRight + 5), y: -5 }
+            offset = {x: Math.round(distRight + 5), y: -5}
         }
-
-        return { x: mousePosition.x + offset.x, y: mousePosition.y + offset.y }
+        let leftPopupPosition = mousePosition.x + offset.x
+        const canvasRightBorderPosition = canvasBounds.x + canvasBounds.width
+        if (leftPopupPosition > canvasRightBorderPosition) {
+            leftPopupPosition = canvasRightBorderPosition
+        }
+        let topPopupPosition = mousePosition.y + offset.y
+        const canvasBottomBorderPosition = canvasBounds.y + canvasBounds.height
+        if (topPopupPosition > canvasBottomBorderPosition) {
+            topPopupPosition = canvasBottomBorderPosition
+        }
+        return {x: leftPopupPosition, y: topPopupPosition}
     }
 
     protected startMouseOverTimer(target: SModelElement, event: MouseEvent): Promise<Action> {
