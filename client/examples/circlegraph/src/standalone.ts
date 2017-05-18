@@ -49,7 +49,10 @@ export default function runStandalone() {
     document.getElementById('addNode')!.addEventListener('click', () => {
         const newElements = addNode()
         modelSource.addElements(newElements)
-        document.getElementById('graph')!.focus()
+        const graphElement = document.getElementById('graph')
+        if(graphElement !== null && typeof graphElement.focus === 'function')
+            graphElement.focus()
+
     })
 
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
@@ -68,7 +71,9 @@ export default function runStandalone() {
             }
         })
         dispatcher.dispatch(new MoveAction(nodeMoves, true))
-        document.getElementById('graph')!.focus()
+        const graphElement = document.getElementById('graph')
+        if(graphElement !== null && typeof graphElement.focus === 'function')
+            graphElement.focus()
     })
 
 }

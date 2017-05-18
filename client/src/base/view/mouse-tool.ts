@@ -41,7 +41,7 @@ export class MouseTool implements IVNodeDecorator {
     protected handleEvent<K extends keyof MouseListener>(methodName: K, model: SModelRoot, event: MouseEvent) {
         if (document) {
             const domElement = document.getElementById(model.id)
-            if (domElement)
+            if (domElement !== null && typeof domElement.focus === 'function')
                 domElement.focus()
         }
         const element = this.getTargetElement(model, event)
