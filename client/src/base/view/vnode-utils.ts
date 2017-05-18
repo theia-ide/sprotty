@@ -15,9 +15,10 @@ export function mergeStyle(vnode: VNode, style: any) {
 
 export function on(vnode: VNode, event: string, listener: (model: SModelElement, event: Event) => void, element: SModelElement) {
     const on = getOn(vnode)
-    if (on[event])
+    if (on[event]) {
         throw new Error('EventListener for ' + event + ' already registered on VNode')
-    on[event] = [listener, element]
+    }
+    (on as any)[event] = [listener, element]
 }
 
 function getAttrs(vnode: VNode) {
