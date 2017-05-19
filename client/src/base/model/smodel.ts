@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds, EMPTY_BOUNDS, Point, ORIGIN_POINT, Dimension, EMPTY_DIMENSION, isBounds } from "../../utils/geometry"
+import { Bounds, EMPTY_BOUNDS, Point, isBounds } from "../../utils/geometry"
 
 export interface SModelElementSchema {
     type: string

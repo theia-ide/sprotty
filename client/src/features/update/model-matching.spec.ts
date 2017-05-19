@@ -8,7 +8,7 @@
 import "reflect-metadata"
 import "mocha"
 import { expect } from "chai"
-import { SModelRootSchema, SModelElementSchema } from "../../base/model/smodel"
+import { SModelRootSchema } from "../../base/model/smodel"
 import { ModelMatcher } from "./model-matching"
 
 describe('ModelMatcher', () => {

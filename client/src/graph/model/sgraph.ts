@@ -6,7 +6,7 @@
  */
 
 import { SChildElement, SModelElementSchema, SModelRootSchema } from "../../base/model/smodel"
-import { Bounds, EMPTY_BOUNDS, Point, ORIGIN_POINT, Dimension, EMPTY_DIMENSION, isBounds } from "../../utils/geometry"
+import { Bounds, Point, ORIGIN_POINT, Dimension, EMPTY_DIMENSION, isBounds } from "../../utils/geometry"
 import { ViewportRootElement } from "../../features/viewport/viewport-root"
 import { Selectable, selectFeature } from "../../features/select/model"
 import { Locateable, moveFeature } from "../../features/move/model"

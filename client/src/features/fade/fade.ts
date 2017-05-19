@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { inject, injectable } from "inversify"
+import { injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { Animation } from "../../base/animations/animation"
 import { CommandExecutionContext } from "../../base/intent/commands"

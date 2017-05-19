@@ -7,7 +7,7 @@
 
 import { Container, ContainerModule } from "inversify"
 import { defaultModule, TYPES, ViewRegistry, overrideViewerOptions } from "../../../src/base"
-import { SGraphFactory, SGraphView, SLabelView, SCompartmentView, PolylineEdgeView } from "../../../src/graph"
+import { SGraphView, SLabelView, SCompartmentView, PolylineEdgeView } from "../../../src/graph"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule, hoverModule } from "../../../src/features"

@@ -5,10 +5,9 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { InitializeCanvasBoundsCommand } from '../features/initialize-canvas';
 import { EMPTY_ROOT } from '../model/smodel-factory';
 import { SetModelAction, SetModelCommand } from '../features/model-manipulation';
-import { inject, injectable, optional } from "inversify"
+import { inject, injectable } from "inversify"
 import { ILogger } from "../../utils/logging"
 import { TYPES } from "../types"
 import { RedoAction, UndoAction } from "../../features/undo-redo/undo-redo"
@@ -28,8 +27,8 @@ export interface IActionDispatcher {
 @injectable()
 export class ActionDispatcher implements IActionDispatcher {
 
-    blockUntilActionKind: string | undefined
-    postponedActions: ActionAndHook[]
+    protected blockUntilActionKind: string | undefined
+    protected postponedActions: ActionAndHook[]
 
     constructor(@inject(TYPES.ActionHandlerRegistry) protected actionHandlerRegistry: ActionHandlerRegistry,
                 @inject(TYPES.ICommandStack) protected commandStack: ICommandStack,
@@ -94,7 +93,7 @@ export class ActionDispatcher implements IActionDispatcher {
     }
 }
 
-interface ActionAndHook {
+export interface ActionAndHook {
     action: Action
     onExecute?: (action: Action)=>void
 }

@@ -9,7 +9,6 @@ import "mocha"
 import { expect } from "chai"
 import { SetBoundsAction, SetBoundsCommand } from "../index"
 import { CommandExecutionContext } from "../../base/intent/commands"
-import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { ConsoleLogger } from "../../utils/logging"
 import { AnimationFrameSyncer } from "../../base/animations/animation-frame-syncer"
 import { SGraph, SNode, SNodeSchema } from "../../graph/model/sgraph"
@@ -17,8 +16,6 @@ import { SGraphFactory } from "../../graph/index"
 
 const boundsInitial = { x: 0, y: 0, width: 0, height: 0 }
 const bounds1 = { x: 10, y: 10, width: 10, height: 10 }
-const boundsInPageInitial = { x: 1, y: 1, width: 1, height: 1 }
-const boundsInPage1 = { x: 100, y: 100, width: 100, height: 100 }
 
 const modelFactory = new SGraphFactory()
 const model = modelFactory.createRoot({ id: 'graph', type: 'graph', children: [] }) as SGraph

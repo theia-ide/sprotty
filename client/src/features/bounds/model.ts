@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds, Insets } from "../../utils/geometry"
+import { Bounds } from "../../utils/geometry"
 import { SModelElement, SParentElement } from "../../base/model/smodel"
 import { SModelExtension } from "../../base/model/smodel-extension"
 

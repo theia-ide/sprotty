@@ -39,7 +39,7 @@ export interface ElementAndBounds {
     newBounds: Bounds
 }
 
-interface ResolvedElementAndBounds {
+export interface ResolvedElementAndBounds {
     element: SModelElement & BoundsAware
     oldBounds: Bounds
     newBounds: Bounds

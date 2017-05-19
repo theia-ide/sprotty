@@ -14,7 +14,6 @@ import { InitializeCanvasBoundsAction } from '../features/initialize-canvas';
 import { TYPES } from "../types"
 import { EMPTY_ROOT } from "../model/smodel-factory"
 import { RedoAction, UndoAction } from "../../features/undo-redo/undo-redo"
-import { SetModelAction } from "../features/model-manipulation"
 import { MoveAction, MoveCommand } from "../../features/move/move"
 import { ICommandStack } from "./command-stack"
 import { IActionDispatcher } from "./action-dispatcher"

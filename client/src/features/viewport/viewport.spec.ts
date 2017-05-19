@@ -6,7 +6,7 @@
  */
 
 import 'mocha'
-import { AnimationFrameSyncer, EMPTY_ROOT } from '../../base/index'
+import { AnimationFrameSyncer } from '../../base/index'
 import { CommandExecutionContext } from '../../base/intent/commands'
 import { SGraphFactory } from '../../graph/index'
 import { almostEquals, ConsoleLogger } from '../../utils/index'

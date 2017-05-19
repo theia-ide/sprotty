@@ -11,7 +11,7 @@ import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule, hoverModule } from "../../../src/features"
 import { LocalModelSource } from "../../../src/local/local-model-source"
 import { SvgFactory } from "./model-factory"
-import { HtmlRootView, PreRenderedView, SvgViewportView } from "../../../src/lib"
+import { PreRenderedView, SvgViewportView } from "../../../src/lib"
 
 const svgModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()

@@ -17,8 +17,7 @@ import { Fadeable, isFadeable } from "../fade/model"
 import { isLocateable } from "../move/model"
 import { isBoundsAware } from "../bounds/model"
 import { ViewportRootElement } from "../viewport/viewport-root"
-import { isValidDimension, Bounds } from "../../utils/geometry"
-import { InitializeCanvasBoundsCommand } from "../../base/features/initialize-canvas"
+import { isValidDimension } from "../../utils/geometry"
 import { isSelectable } from "../select/model"
 
 export class UpdateModelAction implements ModelAction {

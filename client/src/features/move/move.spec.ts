@@ -5,13 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { DH_UNABLE_TO_CHECK_GENERATOR } from 'constants';
 import "mocha"
 import { expect } from "chai"
 import { SGraphFactory } from "../../graph/model/sgraph-factory"
 import { CommandExecutionContext } from "../../base/intent/commands"
 import { SModelRoot } from "../../base/model/smodel"
-import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { Point } from "../../utils/geometry"
 import { SNode } from "../../graph/model/sgraph"
 import { ElementMove, MoveAction, MoveCommand } from "./move"

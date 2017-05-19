@@ -116,7 +116,7 @@ export interface HoverState {
     previousPopupElement: SModelElement | undefined
 }
 
-abstract class AbstractHoverMouseListener extends MouseListener {
+export abstract class AbstractHoverMouseListener extends MouseListener {
     constructor(@inject(TYPES.ViewerOptions) protected options: ViewerOptions,
                 @inject(TYPES.HoverState) protected state: HoverState) {
         super()

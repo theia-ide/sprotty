@@ -12,8 +12,7 @@ import {
 } from "../../base/model/smodel"
 import { getBasicType } from "../../base/model/smodel-utils"
 import {
-    SCompartment,
-    SCompartmentElement, SEdge, SEdgeSchema, SGraph, SGraphSchema, SLabel, SLabelSchema, SNode, SNodeSchema
+    SCompartment, SEdge, SEdgeSchema, SGraph, SGraphSchema, SLabel, SLabelSchema, SNode, SNodeSchema
 } from "./sgraph"
 
 @injectable()

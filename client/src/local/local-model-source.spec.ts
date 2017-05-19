@@ -16,7 +16,6 @@ import { Action } from "../base/intent/actions"
 import { TYPES } from "../base/types"
 import { overrideViewerOptions } from "../base/view/options"
 import { SModelRootSchema } from "../base/model/smodel"
-import { SetModelAction } from "../base/features/model-manipulation"
 import { UpdateModelAction } from "../features/update/update-model"
 import defaultContainerModule from "../base/di.config"
 

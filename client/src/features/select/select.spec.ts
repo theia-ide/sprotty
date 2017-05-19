@@ -82,11 +82,6 @@ describe('select', () => {
         context.root = newModel
         newModel = cmd.undo(context);
 
-        // check result
-        const nodes = <SNode[]>newModel.index.all().filter(
-            element => (element instanceof SNode)
-        )
-
         // confirm selection is as expected
         expect(true).to.equal(isNodeSelected('node0', newModel))
         expect(false).to.equal(isNodeSelected('node1', newModel))

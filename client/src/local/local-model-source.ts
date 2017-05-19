@@ -6,20 +6,15 @@
  */
 
 import { injectable } from "inversify"
-import {
-    ComputedBoundsAction,
-    RequestBoundsAction,
-    RequestBoundsCommand
-} from '../features/bounds/bounds-manipulation';
+import { ComputedBoundsAction, RequestBoundsAction } from '../features/bounds/bounds-manipulation';
 import { Bounds } from "../utils/geometry"
 import { Match } from "../features/update/model-matching"
 import { UpdateModelAction, UpdateModelCommand } from "../features/update/update-model"
 import { Action, ActionHandlerRegistry } from "../base/intent/actions"
-import { RequestModelAction, SetModelAction } from "../base/features/model-manipulation"
+import { RequestModelAction } from "../base/features/model-manipulation"
 import { SModelElementSchema, SModelIndex, SModelRootSchema } from "../base/model/smodel"
 import { ModelSource } from "../base/model/model-source"
 import { RequestPopupModelAction, SetPopupModelAction } from "../features/hover/hover"
-import { isLocateable } from "../features/move/model"
 
 /**
  * A model source that handles actions for bounds calculation and model 

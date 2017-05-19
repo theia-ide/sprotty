@@ -5,7 +5,6 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import * as snabbdom from "snabbdom-jsx"
 import { inject, injectable, multiInject, optional } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { IActionDispatcher } from "../intent/action-dispatcher"

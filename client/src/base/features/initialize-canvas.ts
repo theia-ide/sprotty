@@ -12,7 +12,6 @@ import { IActionDispatcher } from '../intent/action-dispatcher'
 import { IVNodeDecorator } from "../view/vnode-decorators"
 import { SModelElement, SModelRoot } from "../model/smodel"
 import { SystemCommand, CommandExecutionContext } from '../intent/commands'
-import { SModelExtension } from "../model/smodel-extension"
 import { almostEquals, Bounds, isValidDimension, ORIGIN_POINT } from '../../utils/geometry'
 import { VNode } from "snabbdom/vnode"
 

@@ -5,18 +5,18 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { IVNodeDecorator } from '../../base/view/vnode-decorators';
 import "reflect-metadata"
 import "mocha"
 import { expect } from "chai"
 import * as snabbdom from "snabbdom-jsx"
 import { Container } from "inversify"
 import { VNode } from "snabbdom/vnode"
+import { TYPES } from "../../base/types"
+import { IVNodeDecorator } from '../../base/view/vnode-decorators'
 import { CircularNodeView } from "../../lib/svg-views"
 import { SEdge, SGraph, SNode } from "../model/sgraph"
 import { RenderingContext, ViewRegistry } from "../../base/view/views"
-import { Viewer, ModelRendererFactory } from "../../base/view/viewer"
-import { TYPES } from "../../base/types"
+import { ModelRendererFactory } from "../../base/view/viewer"
 import { SGraphFactory } from "../model/sgraph-factory"
 import { SGraphView, PolylineEdgeView } from "./views"
 import defaultModule from "../../base/di.config"
@@ -42,7 +42,6 @@ describe('graph views', () => {
     const container = new Container()
     container.load(defaultModule, selectModule, moveModule)
 
-    const viewer = container.getNamed<Viewer>(TYPES.IViewer, 'delegate')
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
     viewRegistry.register('graph', SGraphView)
     viewRegistry.register('node:circle', CircleNodeView)

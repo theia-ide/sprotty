@@ -6,7 +6,7 @@
  */
 
 import { TYPES, IActionDispatcher, SModelElementSchema } from "../../../src/base"
-import { SEdgeSchema, SNode, SNodeSchema, SGraphSchema, SGraphFactory } from "../../../src/graph"
+import { SEdgeSchema, SNodeSchema, SGraphSchema, SGraphFactory } from "../../../src/graph"
 import { ElementMove, MoveAction } from "../../../src/features"
 import createContainer from "./di.config"
 import { LocalModelSource } from "../../../src/local"

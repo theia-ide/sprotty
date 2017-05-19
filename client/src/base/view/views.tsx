@@ -12,7 +12,6 @@ import { SModelElement, SModelRoot, SParentElement } from "../model/smodel"
 import { EMPTY_ROOT } from "../model/smodel-factory"
 import { ProviderRegistry } from "../../utils/registry"
 import { Point, ORIGIN_POINT } from "../../utils/geometry"
-import { Viewer } from "./viewer"
 
 const JSX = {createElement: snabbdom.svg}
 

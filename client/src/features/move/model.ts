@@ -6,7 +6,7 @@
  */
 
 import { Point } from "../../utils/geometry"
-import { SModelElement, SModelElementSchema } from "../../base/model/smodel"
+import { SModelElement } from "../../base/model/smodel"
 import { SModelExtension } from "../../base/model/smodel-extension"
 
 export const moveFeature = Symbol('moveFeature')

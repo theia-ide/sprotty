@@ -7,13 +7,7 @@
 
 import { Direction } from "../../../src/utils"
 import {
-    Channel,
-    ChannelSchema,
-    Core,
-    CoreSchema,
-    Crossbar,
-    CrossbarSchema,
-    ProcessorSchema
+    ChannelSchema, CoreSchema, CrossbarSchema, ProcessorSchema
 } from './chipmodel';
 import createContainer from "./di.config"
 import { LocalModelSource } from "../../../src/local"

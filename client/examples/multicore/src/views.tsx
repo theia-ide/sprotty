@@ -6,10 +6,10 @@
  */
 
 import * as snabbdom from 'snabbdom-jsx'
-import { IView, RenderingContext, setAttr, SModelElement, ThunkView } from '../../../src/base'
+import { IView, RenderingContext, setAttr, ThunkView } from '../../../src/base'
 import { VNode } from "snabbdom/vnode"
 import { Channel, Core, Crossbar, Processor } from './chipmodel'
-import { Direction, ColorMap, RGBColor, toSVG, rgb } from "../../../src/utils"
+import { Direction, RGBColor, toSVG, rgb } from "../../../src/utils"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -43,7 +43,6 @@ export class SimpleCoreView extends ThunkView {
     }
 
     doRender(model: Core, context: RenderingContext): VNode {
-        const nodeName = parseInt(model.id.substr(5))
         const fillColor = KernelColor.getSVG(model.kernelNr)
         const content = <g>
                 {context.renderChildren(model)}
@@ -66,7 +65,6 @@ export class SimpleCoreView extends ThunkView {
 export class CoreView implements IView {
 
     render(model: Core, context: RenderingContext): VNode {
-        const nodeName = parseInt(model.id.substr(5))
         const fillColor = KernelColor.getSVG(model.kernelNr)
         const content = <g>
                 {context.renderChildren(model)}

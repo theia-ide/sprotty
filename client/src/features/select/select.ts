@@ -13,7 +13,7 @@ import { SEdge, SNode } from "../../graph/model/sgraph"
 import { MouseListener } from "../../base/view/mouse-tool"
 import { isCtrlOrCmd } from "../../utils/browser"
 import { KeyListener } from "../../base/view/key-tool"
-import { isSelectable, Selectable } from "./model"
+import { isSelectable } from "./model"
 import { setClass } from "../../base/view/vnode-utils"
 import { findParentByFeature } from "../../base/model/smodel-utils"
 
@@ -26,7 +26,7 @@ export class SelectAction implements Action {
     }
 }
 
-type ElementSelection = {
+export type ElementSelection = {
     element: SChildElement
     index: number
 }
@@ -34,8 +34,8 @@ type ElementSelection = {
 export class SelectCommand extends Command {
     static readonly KIND = 'elementSelected'
 
-    selected: ElementSelection[] = []
-    deselected: ElementSelection[] = []
+    protected selected: ElementSelection[] = []
+    protected deselected: ElementSelection[] = []
 
     constructor(public action: SelectAction) {
         super()

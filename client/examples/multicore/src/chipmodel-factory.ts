@@ -7,8 +7,7 @@
 
 import { SGraphFactory } from '../../../src/graph'
 import {
-    SChildElement, SModelElement, SModelElementSchema, SModelFactory, SModelRoot, SModelRootSchema,
-    SParentElement, getBasicType
+    SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, getBasicType
 } from "../../../src/base"
 import {
     Channel, ChannelSchema, Core, CoreSchema, Crossbar, CrossbarSchema, Processor, ProcessorSchema

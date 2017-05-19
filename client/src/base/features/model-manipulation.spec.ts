@@ -54,12 +54,6 @@ describe('SetModelCommand', () => {
         children: []
     }
 
-    const modelBogus = graphFactory.createRoot({
-        id: 'bogus',
-        type: 'graph',
-        children: []
-    })
-
     // create the action
     const mySetModelAction = new SetModelAction(model2 /* the new model */)
 

@@ -6,7 +6,6 @@
  */
 
 import { SChildElement } from '../../base';
-import * as snabbdom from "snabbdom-jsx"
 import { VNode } from "snabbdom/vnode"
 import { Point } from "../../utils/geometry"
 import { SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel"
@@ -14,13 +13,11 @@ import { Action } from "../../base/intent/actions"
 import { ICommand, CommandExecutionContext, MergeableCommand } from "../../base/intent/commands"
 import { Animation } from "../../base/animations/animation"
 import { MouseListener } from "../../base/view/mouse-tool"
-import { isViewport, Viewport } from "../viewport/model"
+import { isViewport } from "../viewport/model"
 import { isSelectable } from "../select/model"
 import { isMoveable, Locateable, isLocateable } from "./model"
 import { setAttr } from "../../base/view/vnode-utils"
 import { findParentByFeature } from "../../base/model/smodel-utils"
-
-const JSX = {createElement: snabbdom.svg}
 
 export class MoveAction implements Action {
     kind = MoveCommand.KIND

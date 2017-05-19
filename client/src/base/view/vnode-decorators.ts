@@ -8,7 +8,7 @@
 import { injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { SModelElement } from "../model/smodel"
-import { mergeStyle, setAttr } from "./vnode-utils"
+import { setAttr } from "./vnode-utils"
 
 /**
  * Manipulates a created VNode after it has been created.

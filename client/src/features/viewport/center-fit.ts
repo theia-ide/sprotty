@@ -5,15 +5,14 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { ViewportRootElement } from './viewport-root';
-import { SChildElement } from '../../base';
+import { SChildElement } from '../../base'
 import { Action } from "../../base/intent/actions"
 import { Command, CommandExecutionContext } from "../../base/intent/commands"
 import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Bounds, center, combine, isValidDimension } from "../../utils/geometry"
 import { KeyListener } from "../../base/view/key-tool"
 import { isCtrlOrCmd } from "../../utils/browser"
-import { isBoundsAware, isSizeable, BoundsAware } from "../bounds/model"
+import { isBoundsAware } from "../bounds/model"
 import { isSelectable } from "../select/model"
 import { ViewportAnimation } from "./viewport"
 import { isViewport, Viewport } from "./model"
@@ -34,7 +33,7 @@ export class FitToScreenAction implements Action {
     }
 }
 
-abstract class BoundsAwareViewportCommand extends Command {
+export abstract class BoundsAwareViewportCommand extends Command {
 
     oldViewport: Viewport
     newViewport: Viewport

@@ -9,8 +9,6 @@ import { TYPES, RequestModelAction, IActionHandler, ActionHandlerRegistry } from
 import { SelectAction, SelectCommand } from "../../../src/features"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import createContainer from "./di.config"
-import { IActionDispatcher } from "../../../src/base/intent/action-dispatcher"
-import { InitializeCanvasBoundsAction } from "../../../src/base/features/initialize-canvas"
 
 const WebSocket = require("reconnecting-websocket")
 

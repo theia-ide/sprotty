@@ -179,7 +179,6 @@ export class CommandStack implements ICommandStack {
                             beforeResolve: (command: ICommand, context: CommandExecutionContext) => void) {
         this.currentPromise = this.currentPromise.then(
             state => {
-                let newHiddenRoot: SModelRoot | undefined = undefined
                 const promise = new Promise(
                     (resolve: (result: CommandStackState) => void, reject: (result: CommandStackState) => void) => {
                         const context = this.createContext(state.root)
@@ -389,7 +388,7 @@ export class CommandStack implements ICommandStack {
  * Internal type to pass the results between the <code>Promises</code> in the
  * <code>ICommandStack</code>.
  */
-interface CommandStackState {
+export interface CommandStackState {
     root: SModelRoot
     hiddenRoot: SModelRoot | undefined
     popupRoot: SModelRoot | undefined

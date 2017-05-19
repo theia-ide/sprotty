@@ -11,13 +11,12 @@ import { SParentElement, SModelElement } from "../../base/model/smodel"
 import { ILayout, StatefulLayouter } from './layout';
 import { BoundsAware, isBoundsAware, isLayouting, Layouting } from './model';
 import { Bounds, isValidDimension } from "../../utils/geometry"
-import { BoundsData } from "./hidden-bounds-updater"
 import { VNode } from "snabbdom/vnode"
 
 /**
  * CSS properties understood by the VBoxLayouter
  */
-interface VBoxProperties {
+export interface VBoxProperties {
     lineHeight: number
     paddingTop: number
     paddingBottom: number

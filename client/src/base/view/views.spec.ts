@@ -10,7 +10,7 @@ import { expect } from "chai"
 import { EMPTY_ROOT } from "../model/smodel-factory"
 import { SNode } from "../../graph/model/sgraph"
 import { EmptyView, MissingView } from "./views"
-import { Viewer, ModelRenderer } from "./viewer"
+import { ModelRenderer } from "./viewer"
 
 const toHTML = require('snabbdom-to-html')
 

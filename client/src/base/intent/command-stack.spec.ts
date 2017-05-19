@@ -10,15 +10,8 @@ import "mocha"
 import { expect } from "chai"
 import { Container } from "inversify"
 import {
-    Command,
-    HiddenCommand,
-    SystemCommand,
-    ICommand,
-    CommandExecutionContext,
-    CommandResult,
-    MergeableCommand, PopupCommand
+    Command, HiddenCommand, SystemCommand, CommandExecutionContext, CommandResult, MergeableCommand, PopupCommand
 } from './commands'
-import { SModelRoot } from "../model/smodel"
 import { TYPES } from "../types"
 import { defaultModule } from "../index"
 import { IViewer } from "../view/viewer"

@@ -7,19 +7,10 @@
 
 import { SCompartmentElementSchema, SShapeElement } from '../../../src/graph';
 import { SChildElement, SModelElementSchema, SModelRootSchema } from "../../../src/base"
-import { Bounds, Direction, EMPTY_BOUNDS } from "../../../src/utils"
+import { Bounds, Direction } from "../../../src/utils"
 import {
-    BoundsAware,
-    boundsFeature,
-    Fadeable,
-    fadeFeature,
-    layoutFeature,
-    Layouting,
-    Selectable,
-    selectFeature,
-    viewportFeature,
-    hoverFeedbackFeature,
-    popupFeature
+    BoundsAware, boundsFeature, Fadeable, fadeFeature, layoutFeature, Layouting, Selectable,
+    selectFeature, viewportFeature, hoverFeedbackFeature, popupFeature
 } from '../../../src/features';
 import { ViewportRootElement } from "../../../src/features/viewport/viewport-root"
 import { CORE_DISTANCE, CORE_WIDTH } from "./views";

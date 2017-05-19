@@ -54,10 +54,10 @@ export abstract class ThunkView implements IView {
         thunk.elm = vnode.elm;
         (vnode.data as VNodeData).fn = (thunk.data as VNodeData).fn;
         (vnode.data as VNodeData).args = (thunk.data as VNodeData).args;
-        thunk.data = vnode.data;
-        thunk.children = vnode.children;
-        thunk.text = vnode.text;
-        thunk.elm = vnode.elm;
+        thunk.data = vnode.data
+        thunk.children = vnode.children
+        thunk.text = vnode.text
+        thunk.elm = vnode.elm
     }
 
     protected init(thunk: VNode): void {
@@ -67,9 +67,9 @@ export abstract class ThunkView implements IView {
     }
     
     protected prepatch(oldVnode: VNode, thunk: VNode): void {
-        let i: number, old = oldVnode.data as VNodeData, cur = thunk.data as VNodeData;
+        let old = oldVnode.data as VNodeData, cur = thunk.data as VNodeData
         if(!this.equals(old.args as any[], cur.args as any[])) 
-            this.copyToThunk((cur.fn as any).apply(undefined, cur.args), thunk);
+            this.copyToThunk((cur.fn as any).apply(undefined, cur.args), thunk)
         else
             this.copyToThunk(oldVnode, thunk);
     }

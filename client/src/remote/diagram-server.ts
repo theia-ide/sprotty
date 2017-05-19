@@ -6,7 +6,7 @@
  */
 
 import { inject, injectable } from "inversify"
-import { SetModelAction, SetModelCommand } from "../base/features/model-manipulation"
+import { SetModelCommand } from "../base/features/model-manipulation"
 import { Action, ActionHandlerRegistry } from "../base/intent/actions"
 import { ICommand } from "../base/intent/commands"
 import { IActionDispatcher } from "../base/intent/action-dispatcher"
@@ -17,11 +17,7 @@ import { SModelStorage } from "../base/model/smodel-storage"
 import { SModelRootSchema, SModelIndex, SModelElementSchema } from "../base/model/smodel"
 import { ModelSource } from "../base/model/model-source"
 import { UpdateModelCommand, UpdateModelAction } from "../features/update/update-model"
-import {
-    ComputedBoundsAction,
-    RequestBoundsAction,
-    RequestBoundsCommand
-} from '../features/bounds/bounds-manipulation'
+import { ComputedBoundsAction, RequestBoundsCommand } from '../features/bounds/bounds-manipulation'
 import { Bounds } from "../utils/geometry"
 import { RequestPopupModelAction } from "../features/hover/hover"
 

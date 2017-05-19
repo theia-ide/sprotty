@@ -5,9 +5,8 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { inject, injectable, multiInject, optional } from "inversify"
+import { injectable, multiInject, optional } from "inversify"
 import { MultiInstanceRegistry } from "../../utils/registry"
-import { ILogger } from "../../utils/logging"
 import { TYPES } from "../types"
 import { ICommand, CommandActionHandler, ICommandFactory } from "./commands"
 

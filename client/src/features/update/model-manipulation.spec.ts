@@ -19,7 +19,6 @@ import { FadeAnimation } from "../../features/fade/fade"
 import { MoveAnimation } from "../../features/move/move"
 import { CompoundAnimation } from "../../base/animations/animation"
 import { UpdateModelCommand } from "./update-model"
-import { SetModelAction, SetModelCommand } from "../../base/features/model-manipulation"
 import { ModelMatcher } from "./model-matching"
 
 function compare(expected: SModelElementSchema, actual: SModelElement) {
