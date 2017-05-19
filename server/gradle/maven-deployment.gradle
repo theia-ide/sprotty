@@ -1,0 +1,61 @@
+/*
+ * Copyright (C) 2017 TypeFox and others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ */
+
+def configurePom = { pom ->
+	pom.project {
+		if (project.hasProperty('title')) {
+			name = project.title
+			description = project.description
+		}
+		packaging 'jar'
+		url 'https://github.com/TypeFox/sprotty'
+		licenses {
+			license {
+				name 'Apache License 2.0'
+				url 'http://www.apache.org/licenses/LICENSE-2.0'
+			}
+		}
+		developers {
+			developer {
+				name 'Jan Köhnlein'
+				email 'jan.koehnlein@typefox.io'
+				organizationUrl 'http://typefox.io'
+			}
+			developer {
+				name 'Miro Spönemann'
+				email 'miro.spoenemann@typefox.io'
+				organizationUrl 'http://typefox.io'
+			}
+			developer {
+				name 'Jan Bicker'
+				email 'jan.bicker@typefox.io'
+				organizationUrl 'http://typefox.io'
+			}
+		}
+		scm {
+			connection 'scm:git:git@github.com:TypeFox/sprotty.git'
+			developerConnection 'scm:git:git@github.com:TypeFox/sprotty.git'
+			url 'git@github.com:TypeFox/sprotty.git'
+		}
+	}
+}
+
+// We need to wait until the project's own build file has been executed
+// so we can use the title and description settings for setting up Maven publishing.
+afterEvaluate {
+	
+	task createLocalMavenRepo(type: Upload) {
+		group = 'Upload'
+		description = 'Create or update the local Maven repository'
+		configuration = configurations.archives
+		repositories.mavenDeployer {
+			repository(url: "file:" + file("../build/maven-repository"))
+			configurePom(pom)
+		}
+	}
+
+}

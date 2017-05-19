@@ -1,3 +1,10 @@
+/*
+ * Copyright (C) 2017 TypeFox and others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ */
+
 buildscript {
 	repositories.jcenter()
 	dependencies {
@@ -5,20 +12,7 @@ buildscript {
 	}
 }
 
-ext.versions = [
-    guice: '3.0',
-    xtext: '2.11.0',
-    gson: '2.8.0',
-    websocket: '1.0',
-    elk: '0.3.0-SNAPSHOT',
-    slf4j: '1.7.24',
-    log4j: '1.2.16',
-    jetty: '9.4.2.v20170220',
-    requirejs: '2.3.2',
-    jquery: '2.2.4',
-    ace: '1.2.3',
-    bootstrap: '3.3.7'
-]
+apply from: "${rootDir}/gradle/versions.gradle"
 
 configure(subprojects.findAll {it.file('src').exists()}) {
 	repositories {
@@ -29,13 +23,20 @@ configure(subprojects.findAll {it.file('src').exists()}) {
 		}
 	}
 	
+	group = 'io.typefox.sprotty'
+	version = rootProject.version
+	
 	apply plugin: 'java'
 	apply plugin: 'org.xtext.xtend'
 	apply plugin: 'eclipse'
 	apply plugin: 'idea'
 	
-	group = 'io.typefox.sprotty'
-	version = '0.1.0-SNAPSHOT'
+	apply from: "${rootDir}/gradle/java-compiler-settings.gradle"
 	
-	sourceCompatibility = '1.8'
+	if (name.contains('example')) {
+		javadocJar.enabled = false
+	} else {
+		apply plugin: 'maven'
+		apply from: "${rootDir}/gradle/maven-deployment.gradle"
+	}
 }
