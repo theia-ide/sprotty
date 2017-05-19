@@ -1,21 +1,23 @@
 {
   "name": "sprotty",
   "version": "0.1.0",
-  "description": "A next-gen graphics framework",
+  "description": "A next-gen framework for graphical views",
+  "author": "TypeFox",
+  "license": "Apache-2.0",
   "repository": {
     "type": "git",
     "url": "https://github.com/TypeFox/sprotty"
   },
-  "main": "index.js",
-  "scripts": {
-    "prepublish": "typings install --overwrite --save",
-    "build": "webpack --progress",
-    "watch": "webpack --progress --watch",
-    "test": "mocha --opts ./mocha.opts"
+  "files": [
+    "lib",
+    "src"
+  ],
+  "dependencies": {
+    "inversify": "^3.1.0",
+    "snabbdom": "^0.6.4",
+    "snabbdom-jsx": "^0.3.1",
+    "snabbdom-virtualize": "^0.6.0"
   },
-  "keywords": [],
-  "author": "TypeFox",
-  "license": "ISC",
   "devDependencies": {
     "@types/chai": "^3.4.35",
     "@types/mocha": "^2.2.40",
@@ -27,18 +29,23 @@
     "mocha": "^3.2.0",
     "reconnecting-websocket": "^3.0.3",
     "reflect-metadata": "^0.1.10",
-    "snabbdom-jsx": "^0.3.1",
+    "rimraf": "^2.6.1",
     "snabbdom-to-html": "^3.1.1",
     "ts-loader": "^2.0.0",
     "ts-node": "^2.1.0",
+    "tsc-watch": "^1.0.5",
     "typescript": "^2.2.2",
     "typings": "^2.1.0",
     "webpack": "^2.2.1"
   },
-  "dependencies": {
-    "inversify": "^3.1.0",
-    "inversify-logger-middleware": "^3.0.0",
-    "snabbdom": "^0.6.4",
-    "snabbdom-virtualize": "^0.6.0"
+  "scripts": {
+    "clean": "rimraf lib",
+    "build": "tsc",
+    "watch": "tsc-watch",
+    "test": "mocha --opts ./mocha.opts",
+    "prepare": "npm run clean && npm run build",
+    "prepublishOnly": "npm run test",
+    "examples:build": "webpack --progress",
+    "examples:watch": "webpack --progress --watch"
   }
 }

@@ -2,23 +2,29 @@
   "compilerOptions": {
     "target": "es5",
     "module": "commonjs",
+    "outDir": "lib",
+    "lib": [
+      "es6", "dom"
+    ],
+    "types": [
+      "node", "reflect-metadata"
+    ],
+    "typeRoots": [
+      "node_modules/@types", "typings"
+    ],
     "sourceMap": true,
-    "outDir": "build",
-    "lib": ["es6", "dom"],
-    "types": ["node", "reflect-metadata"],
+    "declaration": true,
+    "noImplicitAny": true,
     "noImplicitThis": true,
     "noImplicitReturns": true,
-    "noImplicitAny": true,
-    "typeRoots": ["node_modules/@types",
-      "typings"
-    ],
+    "noUnusedLocals": true,
     "strictNullChecks": true,
     "experimentalDecorators": true,
     "emitDecoratorMetadata": true,
     "jsx": "react",
     "reactNamespace": "JSX"
   },
-  "exclude": [
-    "node_modules"
+  "include": [
+    "src", "typings"
   ]
 }
