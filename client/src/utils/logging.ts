@@ -34,26 +34,35 @@ export class NullLogger implements ILogger {
 export class ConsoleLogger implements ILogger {
 
     constructor(@inject(TYPES.LogLevel) public logLevel: LogLevel = LogLevel.log,
-                @inject(TYPES.ViewerOptions) protected viewOptions: ViewerOptions = { baseDiv: '' } as ViewerOptions) {}
+                @inject(TYPES.ViewerOptions) protected viewOptions: ViewerOptions = { baseDiv: '' } as ViewerOptions) {
+    }
 
     error(thisArg: any, message: string, ...params: any[]): void {
         if (this.logLevel >= LogLevel.error)
-            console.error.apply(thisArg, this.consoleArguments(thisArg, message, params))
+            try {
+                console.error.apply(thisArg, this.consoleArguments(thisArg, message, params))
+            } catch (error) {}
     }
 
     warn(thisArg: any, message: string, ...params: any[]): void {
         if (this.logLevel >= LogLevel.warn)
-            console.warn.apply(thisArg, this.consoleArguments(thisArg, message, params))
+            try {
+                console.warn.apply(thisArg, this.consoleArguments(thisArg, message, params))
+            } catch (error) {}
     }
 
     info(thisArg: any, message: string, ...params: any[]): void {
         if (this.logLevel >= LogLevel.info)
-            console.info.apply(thisArg, this.consoleArguments(thisArg, message, params))
+            try {
+                console.info.apply(thisArg, this.consoleArguments(thisArg, message, params))
+            } catch (error) {}
     }
 
     log(thisArg: any, message: string, ...params: any[]): void {
         if (this.logLevel >= LogLevel.log)
-            console.log.apply(thisArg, this.consoleArguments(thisArg, message, params))
+            try {
+                console.log.apply(thisArg, this.consoleArguments(thisArg, message, params))
+            } catch (error) {}
     }
 
     protected consoleArguments(thisArg: any, message: string, params: any[]): any[] {
