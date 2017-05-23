@@ -12,10 +12,12 @@
     "lib",
     "src"
   ],
+
   "dependencies": {
     "inversify": "^3.1.0",
     "snabbdom": "^0.6.4",
     "snabbdom-jsx": "^0.3.1",
+    "nyc": "^10.3.2",
     "snabbdom-virtualize": "^0.6.0"
   },
   "devDependencies": {
@@ -37,11 +39,27 @@
     "typings": "^2.1.0",
     "webpack": "^2.2.1"
   },
+  "nyc": {
+    "include": [
+      "src/**/*.ts"
+    ],
+    "exclude": [
+      "typings",
+      "src/**/*.spec.ts"
+    ],
+    "reporter": [
+      "html"
+    ],
+    "extension": [
+      ".ts"
+    ]
+  },
   "scripts": {
     "clean": "rimraf lib",
     "build": "tsc",
     "watch": "tsc --watch",
     "test": "mocha --opts ./mocha.opts",
+    "coverage": "nyc mocha --require reflect-metadata/Reflect --compilers ts:ts-node/register src/**/*.spec.ts",
     "prepare": "npm run clean && npm run build",
     "prepublishOnly": "npm run test",
     "examples:build": "webpack --progress",
