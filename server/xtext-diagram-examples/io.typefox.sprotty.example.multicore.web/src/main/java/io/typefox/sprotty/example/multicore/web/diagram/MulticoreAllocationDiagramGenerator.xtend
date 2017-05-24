@@ -229,6 +229,8 @@ class MulticoreAllocationDiagramGenerator {
 	}
 	
 	def BiMap<EObject, SModelElement> generateFlowView(Program program, EObject selection, CancelIndicator cancelIndicator) {
+		val kernels = program.declarations.filter(Kernel).toList
+		
 		val BiMap<EObject, SModelElement> mapping = HashBiMap.create()
 		val flow = new Flow => [
 			type = 'flow'
@@ -242,7 +244,8 @@ class MulticoreAllocationDiagramGenerator {
 			val assignedFlowIds = newHashSet
 			// Transform tasks
 			for (declaration : program.declarations.filter(Task)) {
-				val tnode = createTask(declaration, step, allocation)
+				var kernelIndex = kernels.toList.indexOf(declaration.kernel)
+				val tnode = createTask(declaration, step, allocation, kernelIndex)
 				mapping.put(declaration, tnode)
 				flow.children += tnode
 			}
@@ -252,7 +255,8 @@ class MulticoreAllocationDiagramGenerator {
 				mapping.put(declaration, bnode)
 				flow.children += bnode
 				for (triggered : declaration.triggered) {
-					val tnode = createTask(triggered, step, allocation)
+					var kernelIndex = kernels.toList.indexOf(triggered.kernel)
+					val tnode = createTask(triggered, step, allocation, kernelIndex)
 					mapping.put(triggered, tnode)
 					flow.children += tnode
 				}
@@ -275,11 +279,12 @@ class MulticoreAllocationDiagramGenerator {
 		return mapping
 	}
 	
-	private def createTask(Task declaration, Step step, TaskAllocation taskAllocation) {
+	private def createTask(Task declaration, Step step, TaskAllocation taskAllocation, int kernelIndex) {
 		val tnode = new TaskNode
 		tnode.type = 'task'
 		tnode.id = 'task_' + declaration.name
 		tnode.name = declaration.name
+		tnode.kernelNr = kernelIndex
 		if (step !== null) {
 			if (step.allocations.filter(TaskRunning).exists[task == declaration])
 				tnode.status = 'running'
