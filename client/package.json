@@ -59,7 +59,7 @@
     "build": "tsc",
     "watch": "tsc --watch",
     "test": "mocha --opts ./mocha.opts",
-    "coverage": "nyc mocha --require reflect-metadata/Reflect --compilers ts:ts-node/register src/**/*.spec.ts",
+    "coverage": "nyc mocha --opts ./mocha.opts",
     "prepare": "npm run clean && npm run build",
     "prepublishOnly": "npm run test",
     "examples:build": "webpack --progress",
