@@ -66,7 +66,7 @@ export class MouseTool implements IVNodeDecorator {
         }
     }
 
-    private focusOnMouseEvent<K extends keyof MouseListener>(methodName: K, model: SModelRoot) {
+    protected focusOnMouseEvent<K extends keyof MouseListener>(methodName: K, model: SModelRoot) {
         if (document) {
             const domElement = document.getElementById(model.id)
             if (methodName === 'mouseDown' && domElement !== null && typeof domElement.focus === 'function')
