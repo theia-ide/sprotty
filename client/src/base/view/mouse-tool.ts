@@ -45,11 +45,7 @@ export class MouseTool implements IVNodeDecorator {
     }
 
     protected handleEvent<K extends keyof MouseListener>(methodName: K, model: SModelRoot, event: MouseEvent) {
-        if (document) {
-            const domElement = document.getElementById(model.id)
-            if (domElement !== null && typeof domElement.focus === 'function')
-                domElement.focus()
-        }
+        this.focusOnMouseEvent(methodName, model)
         const element = this.getTargetElement(model, event)
         if (!element)
             return
@@ -67,6 +63,14 @@ export class MouseTool implements IVNodeDecorator {
                     })
                 }
             }
+        }
+    }
+
+    private focusOnMouseEvent<K extends keyof MouseListener>(methodName: K, model: SModelRoot) {
+        if (document) {
+            const domElement = document.getElementById(model.id)
+            if (methodName === 'mouseDown' && domElement !== null && typeof domElement.focus === 'function')
+                domElement.focus()
         }
     }
 
