@@ -41,6 +41,9 @@
     stroke-width: 5;
 }
 
+.mouseover {
+    stroke: #f4daa6;
+}
 
 .missing {
     stroke-width: 1;
