@@ -70,11 +70,15 @@ export type ModelRendererFactory = (decorators: IVNodeDecorator[]) => ModelRende
  */
 @injectable()
 export class Viewer implements IViewer {
+
     protected renderer: ModelRenderer
     protected hiddenRenderer: ModelRenderer
     protected popupRenderer: ModelRenderer
+
     protected readonly patcher: Patcher
+    
     protected lastVDOM: VNode
+    protected lastHiddenVDOM: VNode
     protected lastPopupVDOM: VNode
 
     constructor(@inject(TYPES.ModelRendererFactory) modelRendererFactory: ModelRendererFactory,
@@ -123,6 +127,54 @@ export class Viewer implements IViewer {
         }
     }
 
+    update(model: SModelRoot): void {
+        this.logger.log(this, 'rendering', model)
+        const newVDOM = <div id={this.options.baseDiv}>
+            {this.renderer.renderElement(model)}
+        </div>
+        setClass(newVDOM, this.options.baseClass, true)
+        if (this.lastVDOM !== undefined) {
+            this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
+        } else if (typeof document !== 'undefined') {
+            const placeholder = document.getElementById(this.options.baseDiv)
+            if(typeof window !== 'undefined')
+                window.addEventListener('resize', () => {
+                    this.onWindowResize(newVDOM)
+                })
+            this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
+        }
+        this.renderer.postUpdate()
+    }
+
+    updateHidden(hiddenModel: SModelRoot): void {
+        this.logger.log(this, 'rendering hidden')
+
+        let newVDOM: VNode
+        if (hiddenModel.type === EMPTY_ROOT.type) {
+             newVDOM = <div id={this.options.hiddenDiv}></div>
+        } else {
+            const hiddenVNode = this.hiddenRenderer.renderElement(hiddenModel)
+            setAttr(hiddenVNode, 'opacity', 0)
+            setClass(hiddenVNode, this.options.hiddenClass, true)
+            newVDOM = <div id={this.options.hiddenDiv}>
+                {hiddenVNode}        
+            </div>
+            setClass(newVDOM, this.options.baseDiv, true)
+        }
+
+        if(this.lastHiddenVDOM !== undefined) {
+            this.lastHiddenVDOM = this.patcher.call(this, this.lastHiddenVDOM, newVDOM)
+        } else {
+            let placeholder = document.getElementById(this.options.hiddenDiv)
+            if (placeholder === null) {
+                placeholder = document.createElement("div")
+                document.body.appendChild(placeholder)
+            }
+            this.lastHiddenVDOM = this.patcher.call(this, placeholder, newVDOM)
+        }
+        this.hiddenRenderer.postUpdate()
+    }
+
     updatePopup(model: SModelRoot): void {
         this.logger.log(this, 'rendering popup', model)
 
@@ -154,42 +206,6 @@ export class Viewer implements IViewer {
             this.lastPopupVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
         this.popupRenderer.postUpdate()
-    }
-
-    update(model: SModelRoot): void {
-        this.logger.log(this, 'rendering', model)
-        const newVDOM = <div id={this.options.baseDiv}>
-            {this.renderer.renderElement(model)}
-        </div>
-        setClass(newVDOM, this.options.baseClass, true)
-        if (this.lastVDOM !== undefined) {
-            this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
-        } else if (typeof document !== 'undefined') {
-            const placeholder = document.getElementById(this.options.baseDiv)
-            if(typeof window !== 'undefined')
-                window.addEventListener('resize', () => {
-                    this.onWindowResize(newVDOM)
-                })
-            this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
-        }
-        this.renderer.postUpdate()
-    }
-
-    updateHidden(hiddenModel: SModelRoot): void {
-        if (this.lastVDOM === undefined) {
-            this.update(EMPTY_ROOT)
-        }
-        this.logger.log(this, 'rendering hidden')
-        const hiddenVNode = this.hiddenRenderer.renderElement(hiddenModel)
-        setAttr(hiddenVNode, 'opacity', 0)
-        setClass(hiddenVNode, this.options.hiddenClass, true)
-        const newVDOM = <div id={this.options.baseDiv}>
-            {this.lastVDOM.children![0]}
-            {hiddenVNode}
-        </div>
-        setClass(newVDOM, this.options.baseDiv, true)
-        this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
-        this.hiddenRenderer.postUpdate()
     }
 }
 

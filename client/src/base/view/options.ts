@@ -11,6 +11,7 @@ import { TYPES } from "../types"
 export interface ViewerOptions {
     baseDiv: string
     baseClass: string
+    hiddenDiv: string
     hiddenClass: string
     popupDiv: string
     popupClass: string

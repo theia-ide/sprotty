@@ -73,6 +73,7 @@ let defaultContainerModule = new ContainerModule(bind => {
     bind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
         baseDiv: 'sprotty',
         baseClass: 'sprotty',
+        hiddenDiv: 'sprotty-hidden',
         hiddenClass: 'sprotty-hidden',
         popupDiv: 'sprotty-popup',
         popupClass: 'sprotty-popup',
