@@ -1,4 +1,4 @@
-program ExampleFlow2 for 16 cores
+program ExampleFlow3 for 16 cores
 
 kernel k1 {
     stackSize = 100
@@ -64,7 +64,7 @@ then task t33: execute k3
 barrier b5: join t24
 then task t34: execute k3
 
-barrier 6: join t31, t32
+barrier b6: join t31, t32
 then task t41: execute k4
 barrier b7: join t33, t34
 then task t42: execute k4
