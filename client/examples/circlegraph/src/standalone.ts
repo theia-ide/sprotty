@@ -44,7 +44,7 @@ export default function runStandalone() {
     for (let i = 0; i < 200; ++i) {
         const newElements = addNode()
         for (const e of newElements) {
-            graph.children.push(e)
+            graph.children.splice(0, 0, e)
         }
     }
 

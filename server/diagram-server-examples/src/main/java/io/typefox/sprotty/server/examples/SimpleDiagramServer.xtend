@@ -16,6 +16,7 @@ import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.api.SNode
 import io.typefox.sprotty.api.SelectAction
 import org.eclipse.jetty.util.log.Slf4jLog
+import io.typefox.sprotty.api.Dimension
 
 class SimpleDiagramServer extends AbstractDiagramServer {
 
@@ -30,11 +31,13 @@ class SimpleDiagramServer extends AbstractDiagramServer {
 					type = 'node:circle'
 					id = 'node0'
 					position = new Point(100.0, 100.0)
+					size = new Dimension(80.0, 80.0)
 				],
 				new SNode => [
 					type = 'node:circle'
 					id = 'node1'
 					position = new Point(300.0, 150.0)
+					size = new Dimension(80.0, 80.0)
 				],
 				new SEdge => [
 					type = 'edge:straight'
