@@ -17,7 +17,7 @@ export default function runMulticore() {
     const container = createContainer(false)
 
     // Initialize model
-    const dim = 64
+    const dim = 32
     const cores: CoreSchema[] = []
     const channels: ChannelSchema[] = []
     for (let i = 0; i < dim; ++i) {
