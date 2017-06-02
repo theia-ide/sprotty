@@ -36,7 +36,11 @@ export class SModelStorage {
     }
 
     protected isLocalStorageAvailable(): boolean {
-        return typeof localStorage === 'object' && localStorage != null
+        try {
+            return typeof localStorage === 'object' && localStorage !== null
+        } catch (e) {
+            return false
+        }
     }
 
     protected get key(): string {
