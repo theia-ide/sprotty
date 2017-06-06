@@ -63,8 +63,6 @@ export class LocalModelSource extends ModelSource {
     applyMatches(matches: Match[]): void {
         this.applyToModel(matches, this.currentRoot)
         const update = new UpdateModelAction()
-        update.modelType = this.currentRoot.type
-        update.modelId = this.currentRoot.id
         update.matches = matches
         this.actionDispatcher.dispatch(update)
     }

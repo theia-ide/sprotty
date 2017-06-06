@@ -17,11 +17,6 @@ interface Action {
 	def String getKind()
 }
 
-interface ModelAction extends Action {
-	def String getModelType()
-	def String getModelId()
-}
-
 @Accessors@EqualsHashCode@ToString
 class ActionMessage {
 	String clientId
@@ -38,12 +33,10 @@ class ActionMessage {
 }
 
 @Accessors@EqualsHashCode@ToString
-class RequestModelAction implements ModelAction {
+class RequestModelAction implements Action {
 	public static val KIND = 'requestModel'
 	String kind = KIND
 	
-	String modelType
-	String modelId
 	Map<String, String> options
 	
 	new() {}
@@ -77,12 +70,10 @@ class ElementAndBounds {
 }
 
 @Accessors@EqualsHashCode@ToString
-class SetModelAction implements ModelAction {
+class SetModelAction implements Action {
 	public static val KIND = 'setModel'
 	String kind = KIND
 	
-	String modelType
-	String modelId
 	SModelRoot newRoot
 	
 	new() {}
@@ -91,8 +82,6 @@ class SetModelAction implements ModelAction {
 	}
 	new(SModelRoot newRoot) {
 		this.newRoot = newRoot
-		modelType = newRoot.type
-		modelId = newRoot.id
 	}
 }
 
@@ -113,12 +102,10 @@ class SelectAction implements Action {
 }
 
 @Accessors@EqualsHashCode@ToString
-class UpdateModelAction implements ModelAction {
+class UpdateModelAction implements Action {
 	public static val KIND = 'updateModel'
 	String kind = KIND
 	
-	String modelType
-	String modelId
 	SModelRoot newRoot
 	
 	new() {}
@@ -127,8 +114,6 @@ class UpdateModelAction implements ModelAction {
 	}
 	new(SModelRoot newRoot) {
 		this.newRoot = newRoot
-		modelType = newRoot.type
-		modelId = newRoot.id
 	}
 }
 
@@ -149,12 +134,10 @@ class RequestBoundsAction implements Action {
 }
 
 @Accessors@EqualsHashCode@ToString
-class ComputedBoundsAction implements ModelAction {
+class ComputedBoundsAction implements Action {
 	public static val KIND = 'computedBounds'
 	String kind = KIND
 	
-	String modelType
-	String modelId
 	List<ElementAndBounds> bounds
 	
 	new() {}
@@ -179,12 +162,10 @@ class FitToScreenAction implements Action {
 }
 
 @Accessors@EqualsHashCode@ToString
-class RequestPopupModelAction implements ModelAction {
+class RequestPopupModelAction implements Action {
 	public static val KIND = 'requestPopupModel'
 	String kind = KIND
 	
-	String modelType
-	String modelId
 	String elementId
 	Bounds bounds
 	
@@ -195,12 +176,10 @@ class RequestPopupModelAction implements ModelAction {
 }
 
 @Accessors@EqualsHashCode@ToString
-class SetPopupModelAction implements ModelAction {
+class SetPopupModelAction implements Action {
 	public static val KIND = 'setPopupModel'
 	String kind = KIND
 	
-	String modelType
-	String modelId
 	SModelRoot newRoot
 	
 	new() {}
@@ -209,7 +188,5 @@ class SetPopupModelAction implements ModelAction {
 	}
 	new(SModelRoot newRoot) {
 		this.newRoot = newRoot
-		modelType = newRoot.type
-		modelId = newRoot.id
 	}
 }

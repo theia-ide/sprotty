@@ -60,8 +60,6 @@ describe('UpdateModelCommand', () => {
 
     const command1 = new UpdateModelCommand({
         kind: UpdateModelCommand.KIND,
-        modelType: 'graph2',
-        modelId: 'model',
         newRoot: model2,
         animate: false
     })
@@ -98,8 +96,6 @@ describe('UpdateModelCommand', () => {
     it('fades in new elements', () => {
         const command2 = new TestUpdateModelCommand({
             kind: UpdateModelCommand.KIND,
-            modelType: 'graph',
-            modelId: 'model1',
             newRoot: {
                 type: 'graph',
                 id: 'model',
@@ -143,8 +139,6 @@ describe('UpdateModelCommand', () => {
         })
         const command2 = new TestUpdateModelCommand({
             kind: UpdateModelCommand.KIND,
-            modelType: 'graph',
-            modelId: 'model',
             newRoot: {
                 type: 'graph',
                 id: 'model',
@@ -176,8 +170,6 @@ describe('UpdateModelCommand', () => {
         })
         const command2 = new TestUpdateModelCommand({
             kind: UpdateModelCommand.KIND,
-            modelType: 'graph',
-            modelId: 'model',
             newRoot: {
                 type: 'graph',
                 id: 'model',
@@ -217,8 +209,6 @@ describe('UpdateModelCommand', () => {
         })
         const command2 = new TestUpdateModelCommand({
             kind: UpdateModelCommand.KIND,
-            modelType: 'graph',
-            modelId: 'model',
             newRoot: {
                 type: 'graph',
                 id: 'model',
@@ -274,8 +264,6 @@ describe('UpdateModelCommand', () => {
         })
         const command2 = new TestUpdateModelCommand({
             kind: UpdateModelCommand.KIND,
-            modelType: 'graph',
-            modelId: 'model',
             animate: false,
             matches: [
                 {

@@ -8,7 +8,7 @@
 import { inject, injectable } from "inversify"
 import { SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel"
 import { MouseListener } from "../../base/view/mouse-tool"
-import { Action, ModelAction } from "../../base/intent/actions"
+import { Action } from "../../base/intent/actions"
 import { hasPopupFeature, isHoverable } from "./model"
 import { Command, CommandExecutionContext, PopupCommand } from "../../base/intent/commands"
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
@@ -55,31 +55,18 @@ export class HoverFeedbackCommand extends Command {
     }
 }
 
-export class RequestPopupModelAction implements ModelAction {
+export class RequestPopupModelAction implements Action {
     static readonly KIND = 'requestPopupModel'
     readonly kind = RequestPopupModelAction.KIND
 
-    modelType: string
-    modelId: string
-    elementId: string
-
-    constructor(element: SModelElement, public bounds: Bounds) {
-        const root = element.root
-        this.modelType = root.type
-        this.modelId = root.id
-        this.elementId = element.id
+    constructor(public elementId: string, public bounds: Bounds) {
     }
 }
 
-export class SetPopupModelAction implements ModelAction {
+export class SetPopupModelAction implements Action {
     readonly kind = SetPopupModelCommand.KIND
 
-    modelType: string
-    modelId: string
-
     constructor(public newRoot: SModelRootSchema) {
-        this.modelType = newRoot.type
-        this.modelId = newRoot.id
     }
 }
 
@@ -183,7 +170,7 @@ export class HoverMouseListener extends AbstractHoverMouseListener {
         return new Promise((resolve) => {
             this.state.mouseOverTimer = window.setTimeout(() => {
                 const popupPosition = this.calculatePopupPosition(target, {x: event.pageX, y: event.pageY})
-                resolve(new RequestPopupModelAction(target,
+                resolve(new RequestPopupModelAction(target.id,
                     {
                         x: popupPosition.x,
                         y: popupPosition.y,

@@ -104,7 +104,7 @@ describe('LocalModelSource', () => {
                     height: 20
                 }
             }
-        ], root1.type, root1.id))
+        ]))
         const root2: SModelRootSchema = {
             type: 'root',
             id: 'root',

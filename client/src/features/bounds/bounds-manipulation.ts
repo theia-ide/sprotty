@@ -8,7 +8,7 @@
 import { BoundsAware, isBoundsAware } from './model';
 import { Bounds } from "../../utils/geometry"
 import { SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel"
-import { Action, ModelAction } from "../../base/intent/actions"
+import { Action } from "../../base/intent/actions"
 import { CommandExecutionContext, HiddenCommand, SystemCommand } from "../../base/intent/commands"
 
 export class SetBoundsAction implements Action {
@@ -25,12 +25,12 @@ export class RequestBoundsAction implements Action {
     }
 }
 
-export class ComputedBoundsAction implements ModelAction {
+export class ComputedBoundsAction implements Action {
     static readonly KIND = 'computedBounds'
     
     readonly kind = ComputedBoundsAction.KIND
 
-    constructor(public bounds: ElementAndBounds[], public modelType: string, public modelId: string) {
+    constructor(public bounds: ElementAndBounds[]) {
     }
 }
 

@@ -9,7 +9,7 @@ import { injectable } from "inversify"
 import { Animation, CompoundAnimation } from '../../base/animations/animation'
 import { Command, CommandExecutionContext, CommandResult } from '../../base/intent/commands'
 import { FadeAnimation, ResolvedElementFade } from '../fade/fade'
-import { ModelAction } from '../../base/intent/actions'
+import { Action } from '../../base/intent/actions'
 import { SModelRootSchema, SModelRoot, SChildElement, SModelElement, SParentElement } from "../../base/model/smodel"
 import { MoveAnimation, ResolvedElementMove } from "../move/move"
 import { MatchResult, ModelMatcher, Match } from "./model-matching"
@@ -20,20 +20,12 @@ import { ViewportRootElement } from "../viewport/viewport-root"
 import { isValidDimension } from "../../utils/geometry"
 import { isSelectable } from "../select/model"
 
-export class UpdateModelAction implements ModelAction {
+export class UpdateModelAction implements Action {
     readonly kind = UpdateModelCommand.KIND
-    modelType: string
-    modelId: string
-    newRoot?: SModelRootSchema
     matches?: Match[]
     animate?: boolean = true
 
-    constructor(newRoot?: SModelRootSchema) {
-        if (newRoot !== undefined) {
-            this.modelType = newRoot.type
-            this.modelId = newRoot.id
-            this.newRoot = newRoot
-        }
+    constructor(public newRoot?: SModelRootSchema) {
     }
 }
 

@@ -7,19 +7,15 @@
 
 import { InitializeCanvasBoundsCommand } from './initialize-canvas';
 import { injectable } from "inversify"
-import { ModelAction } from "../intent/actions"
+import { Action } from "../intent/actions"
 import { isValidDimension } from "../../utils/geometry"
 import { SModelRoot, SModelRootSchema } from "../model/smodel"
 import { Command, CommandExecutionContext } from "../intent/commands"
 
-export class SetModelAction implements ModelAction {
+export class SetModelAction implements Action {
     readonly kind = SetModelCommand.KIND
-    modelType: string
-    modelId: string
 
     constructor(public newRoot: SModelRootSchema, public isInitial: boolean = false) {
-        this.modelType = newRoot.type
-        this.modelId = newRoot.id
     }
 }
 
@@ -59,12 +55,10 @@ export class SetModelCommand extends Command {
     }
 }
 
-export class RequestModelAction implements ModelAction {
+export class RequestModelAction implements Action {
     static readonly KIND = 'requestModel'
     readonly kind = RequestModelAction.KIND
 
-    constructor(public modelType?: string, public modelId?: string,
-        public readonly options?: any) {
+    constructor(public readonly options?: any) {
     }
 }
-

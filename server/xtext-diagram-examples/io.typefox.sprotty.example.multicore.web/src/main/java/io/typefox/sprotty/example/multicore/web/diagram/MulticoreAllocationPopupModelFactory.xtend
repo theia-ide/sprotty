@@ -24,7 +24,7 @@ class MulticoreAllocationPopupModelFactory implements IPopupModelFactory {
 		val source = if (server instanceof MulticoreAllocationDiagramServer) server.modelMapping.inverse.get(element)
 		var String title
 		val body = newArrayList
-		if (request.modelType == 'flow') {
+		if (server.model.type == 'flow') {
 			switch source {
 				Task: {
 					title = '''Task «source.name»'''
@@ -44,7 +44,7 @@ class MulticoreAllocationPopupModelFactory implements IPopupModelFactory {
 						body += '''Triggers «FOR t : source.triggered SEPARATOR ', '»«t.name»«ENDFOR»'''
 				}
 			}
-		} else if (request.modelType == 'processor') {
+		} else if (server.model.type == 'processor') {
 			if (element instanceof Core) {
 				val processor = server.model as Processor
 				title = '''Core «processor.columns * element.row + element.column + 1»'''
