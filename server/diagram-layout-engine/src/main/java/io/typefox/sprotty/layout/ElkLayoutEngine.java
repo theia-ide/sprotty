@@ -29,10 +29,12 @@ import org.eclipse.elk.graph.util.ElkGraphUtil;
 import com.google.common.collect.Maps;
 
 import io.typefox.sprotty.api.Dimension;
+import io.typefox.sprotty.api.ILayoutEngine;
 import io.typefox.sprotty.api.Point;
 import io.typefox.sprotty.api.SEdge;
 import io.typefox.sprotty.api.SGraph;
 import io.typefox.sprotty.api.SModelElement;
+import io.typefox.sprotty.api.SModelRoot;
 import io.typefox.sprotty.api.SNode;
 
 public class ElkLayoutEngine implements ILayoutEngine {
@@ -50,11 +52,12 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	protected final ElkGraphFactory factory = ElkGraphFactory.eINSTANCE;
 	
 	@Override
-	public void layout(SGraph sgraph) {
-		layout(sgraph, null);
+	public void layout(SModelRoot root) {
+		if (root instanceof SGraph) {
+			layout((SGraph) root, null);
+		}
 	}
 
-	@Override
 	public void layout(SGraph sgraph, SprottyLayoutConfigurator configurator) {
 		LayoutContext context = transformGraph(sgraph);
 		if (configurator != null) {

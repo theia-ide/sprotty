@@ -6,6 +6,16 @@
  */
 package io.typefox.sprotty.example.multicore.web
 
+import io.typefox.sprotty.api.IDiagramSelectionListener
+import io.typefox.sprotty.api.IDiagramServer
+import io.typefox.sprotty.api.ILayoutEngine
+import io.typefox.sprotty.api.IModelUpdateListener
+import io.typefox.sprotty.api.IPopupModelFactory
+import io.typefox.sprotty.example.multicore.web.diagram.DiagramService
+import io.typefox.sprotty.example.multicore.web.diagram.MulticoreAllocationDiagramServer
+import io.typefox.sprotty.example.multicore.web.diagram.MulticoreAllocationLayoutEngine
+import io.typefox.sprotty.example.multicore.web.diagram.MulticoreAllocationPopupModelFactory
+import io.typefox.sprotty.example.multicore.web.diagram.MulticoreAllocationUpdateListener
 import io.typefox.sprotty.example.multicore.web.selection.MulticoreOccurrencesService
 import org.eclipse.xtext.web.server.XtextServiceDispatcher
 import org.eclipse.xtext.web.server.model.IWebDocumentProvider
@@ -26,6 +36,30 @@ class MulticoreAllocationWebModule extends AbstractMulticoreAllocationWebModule 
 	
 	def Class<? extends OccurrencesService> bindOccurrencesService() {
 		MulticoreOccurrencesService
+	}
+	
+	def Class<? extends IDiagramServer.Provider> bindIDiagramServerProvider() {
+		DiagramService
+	}
+	
+	def Class<? extends IDiagramServer> bindIDiagramServer() {
+		MulticoreAllocationDiagramServer
+	}
+	
+	def Class<? extends IModelUpdateListener> bindIModelUpdateListener() {
+		MulticoreAllocationUpdateListener
+	}
+	
+	def Class<? extends ILayoutEngine> bindILayoutEngine() {
+		MulticoreAllocationLayoutEngine
+	}
+	
+	def Class<? extends IPopupModelFactory> bindIPopupModelFactory() {
+		MulticoreAllocationPopupModelFactory
+	}
+	
+	def Class<? extends IDiagramSelectionListener> bindIDiagramSelectionListener() {
+		IDiagramSelectionListener.NullImpl
 	}
 	
 }

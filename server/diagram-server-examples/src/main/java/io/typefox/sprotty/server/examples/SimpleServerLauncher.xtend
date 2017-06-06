@@ -7,6 +7,13 @@
 package io.typefox.sprotty.server.examples
 
 import io.typefox.sprotty.api.ActionMessage
+import io.typefox.sprotty.api.DefaultDiagramServer
+import io.typefox.sprotty.api.Dimension
+import io.typefox.sprotty.api.IDiagramServer
+import io.typefox.sprotty.api.Point
+import io.typefox.sprotty.api.SEdge
+import io.typefox.sprotty.api.SModelRoot
+import io.typefox.sprotty.api.SNode
 import io.typefox.sprotty.server.websocket.DiagramServerEndpoint
 import java.net.InetSocketAddress
 import javax.websocket.EndpointConfig
@@ -40,7 +47,15 @@ class SimpleServerLauncher {
 	}
 	
 	def static void main(String[] args) {
-		val diagramServer = new SimpleDiagramServer
+		new SimpleServerLauncher().launch()
+	}
+	
+	def void launch() {
+		val IDiagramServer.Provider diagramServerProvider = [ clientId |
+			new DefaultDiagramServer(clientId) => [
+				model = createModel()
+			]
+		]
 		
 		val server = new Server(new InetSocketAddress('localhost', 62000))
 		val context =  new ServletContextHandler => [
@@ -54,9 +69,8 @@ class SimpleServerLauncher {
 			override <T> getEndpointInstance(Class<T> endpointClass) throws InstantiationException {
 				super.getEndpointInstance(endpointClass) => [ instance |
 					val endpoint = instance as DiagramServerEndpoint
-					diagramServer.remoteEndpoint = endpoint
-					endpoint.addActionListener(diagramServer)
-					endpoint.addErrorListener[e | LOG.warn(e)]
+					endpoint.diagramServerProvider = diagramServerProvider
+					endpoint.exceptionHandler = [e | LOG.warn(e)]
 				]
 			}
 		})
@@ -76,6 +90,33 @@ class SimpleServerLauncher {
 			LOG.warn('Shutting down due to exception', exception)
 			System.exit(1)
 		}
+	}
+	
+	protected def createModel() {
+		new SModelRoot => [
+			type = 'graph'
+			id = 'graph'
+			children = #[
+				new SNode => [
+					type = 'node:circle'
+					id = 'node0'
+					position = new Point(100.0, 100.0)
+					size = new Dimension(80.0, 80.0)
+				],
+				new SNode => [
+					type = 'node:circle'
+					id = 'node1'
+					position = new Point(300.0, 150.0)
+					size = new Dimension(80.0, 80.0)
+				],
+				new SEdge => [
+					type = 'edge:straight'
+					id = 'edge0'
+					sourceId = 'node0'
+					targetId = 'node1'
+				]
+			]
+		]
 	}
 
 }

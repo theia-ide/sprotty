@@ -6,8 +6,6 @@
  */
 package io.typefox.sprotty.server.websocket;
 
-import java.util.ArrayList;
-import java.util.List;
 import java.util.function.Consumer;
 
 import javax.websocket.Endpoint;
@@ -16,19 +14,24 @@ import javax.websocket.MessageHandler;
 import javax.websocket.Session;
 
 import com.google.gson.Gson;
+import com.google.gson.GsonBuilder;
 
 import io.typefox.sprotty.api.ActionMessage;
+import io.typefox.sprotty.api.IDiagramServer;
 import io.typefox.sprotty.server.json.ActionTypeAdapter;
 
+/**
+ * A websocket endpoint to connect a diagram server with a Sprotty client.
+ */
 public class DiagramServerEndpoint extends Endpoint implements Consumer<ActionMessage> {
 	
 	private Session session;
 	
 	private Gson gson;
 	
-	private final List<Consumer<ActionMessage>> actionListeners = new ArrayList<>();
+	private IDiagramServer.Provider diagramServerProvider;
 	
-	private final List<Consumer<Exception>> errorListeners = new ArrayList<>();
+	private Consumer<Exception> exceptionHandler;
 	
 	protected Session getSession() {
 		return session;
@@ -38,62 +41,39 @@ public class DiagramServerEndpoint extends Endpoint implements Consumer<ActionMe
 		this.gson = gson;
 	}
 	
+	public void setDiagramServerProvider(IDiagramServer.Provider diagramServerProvider) {
+		this.diagramServerProvider = diagramServerProvider;
+	}
+	
+	public void setExceptionHandler(Consumer<Exception> exceptionHandler) {
+		this.exceptionHandler = exceptionHandler;
+	}
+	
 	@Override
 	public void onOpen(Session session, EndpointConfig config) {
 		this.session = session;
 		session.addMessageHandler(new ActionMessageHandler());
 	}
 	
-	public void addActionListener(Consumer<ActionMessage> listener) {
-		synchronized (actionListeners) {
-			this.actionListeners.add(listener);
-		}
-	}
-	
-	public void removeActionListener(Consumer<ActionMessage> listener) {
-		synchronized (actionListeners) {
-			this.actionListeners.remove(listener);
-		}
-	}
-	
-	public void addErrorListener(Consumer<Exception> listener) {
-		synchronized (errorListeners) {
-			this.errorListeners.add(listener);
-		}
-	}
-	
-	public void removeErrorListener(Consumer<Exception> listener) {
-		synchronized (errorListeners) {
-			this.errorListeners.remove(listener);
-		}
-	}
-	
-	@SuppressWarnings("unchecked")
 	protected void fireMessageReceived(ActionMessage message) {
-		WebsocketActionMessage wrapperMessage = new WebsocketActionMessage(message, session);
-		Consumer<ActionMessage>[] listenerArray;
-		synchronized (actionListeners) {
-			listenerArray = actionListeners.toArray(new Consumer[actionListeners.size()]);
-		}
-		for (Consumer<ActionMessage> listener : listenerArray) {
-			listener.accept(wrapperMessage);
+		IDiagramServer diagramServer = diagramServerProvider.getDiagramServer(message.getClientId());
+		if (diagramServer != null) {
+			if (!this.equals(diagramServer.getRemoteEndpoint())) {
+				diagramServer.setRemoteEndpoint(this);
+			}
+			diagramServer.accept(message);
 		}
 	}
 	
-	@SuppressWarnings("unchecked")
 	protected void fireError(Exception message) {
-		Consumer<Exception>[] listenerArray;
-		synchronized (errorListeners) {
-			listenerArray = errorListeners.toArray(new Consumer[errorListeners.size()]);
-		}
-		for (Consumer<Exception> listener : listenerArray) {
-			listener.accept(message);
-		}
+		exceptionHandler.accept(message);
 	}
 	
 	protected void initializeGson() {
 		if (gson == null) {
-			gson = ActionTypeAdapter.createDefaultGson();
+			GsonBuilder builder = new GsonBuilder();
+			ActionTypeAdapter.configureGson(builder);
+			gson = builder.create();
 		}
 	}
 	
@@ -112,7 +92,8 @@ public class DiagramServerEndpoint extends Endpoint implements Consumer<ActionMe
 				ActionMessage actionMessage = gson.fromJson(message, ActionMessage.class);
 				if (actionMessage.getAction() == null)
 					fireError(new IllegalArgumentException("Property 'action' must be set."));
-				fireMessageReceived(actionMessage);
+				else
+					fireMessageReceived(actionMessage);
 			} catch (Exception exception) {
 				fireError(exception);
 			}

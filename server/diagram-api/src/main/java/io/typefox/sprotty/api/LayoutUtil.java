@@ -4,7 +4,7 @@
  * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
-package io.typefox.sprotty.layout;
+package io.typefox.sprotty.api;
 
 import java.util.ArrayList;
 
@@ -15,16 +15,16 @@ import io.typefox.sprotty.api.Dimension;
 import io.typefox.sprotty.api.ElementAndBounds;
 import io.typefox.sprotty.api.Point;
 import io.typefox.sprotty.api.SEdge;
-import io.typefox.sprotty.api.SGraph;
 import io.typefox.sprotty.api.SModelElement;
 import io.typefox.sprotty.api.SModelIndex;
+import io.typefox.sprotty.api.SModelRoot;
 
 public final class LayoutUtil {
 	
 	private LayoutUtil() {}
 	
-	public static void applyBounds(SGraph graph, ComputedBoundsAction action) {
-		SModelIndex index = new SModelIndex(graph);
+	public static void applyBounds(SModelRoot root, ComputedBoundsAction action) {
+		SModelIndex index = new SModelIndex(root);
 		for (ElementAndBounds b : action.getBounds()) {
 			SModelElement element = index.get(b.getElementId());
 			if (element instanceof BoundsAware) {
@@ -36,9 +36,9 @@ public final class LayoutUtil {
 		}
 	}
 
-	public static void copyLayoutData(SGraph oldGraph, SGraph newGraph) {
-		SModelIndex oldIndex = new SModelIndex(oldGraph);
-		copyLayoutDataRecursively(newGraph, oldIndex);
+	public static void copyLayoutData(SModelRoot fromRoot, SModelRoot toRoot) {
+		SModelIndex oldIndex = new SModelIndex(fromRoot);
+		copyLayoutDataRecursively(toRoot, oldIndex);
 	}
 	
 	protected static void copyLayoutDataRecursively(SModelElement element, SModelIndex oldIndex) {

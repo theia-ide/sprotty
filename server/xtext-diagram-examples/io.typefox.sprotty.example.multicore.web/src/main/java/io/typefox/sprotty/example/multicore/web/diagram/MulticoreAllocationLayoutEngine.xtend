@@ -7,12 +7,22 @@
 package io.typefox.sprotty.example.multicore.web.diagram
 
 import io.typefox.sprotty.api.SEdge
+import io.typefox.sprotty.api.SGraph
+import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.layout.ElkLayoutEngine
+import io.typefox.sprotty.layout.SprottyLayoutConfigurator
 import java.io.ByteArrayOutputStream
 import java.util.Map
 import org.apache.log4j.Logger
+import org.eclipse.elk.alg.layered.options.LayeredOptions
+import org.eclipse.elk.alg.layered.options.NodeFlexibility
+import org.eclipse.elk.alg.layered.options.NodePlacementStrategy
+import org.eclipse.elk.core.math.KVector
 import org.eclipse.elk.core.options.CoreOptions
+import org.eclipse.elk.core.options.Direction
+import org.eclipse.elk.core.options.PortConstraints
 import org.eclipse.elk.core.options.PortSide
+import org.eclipse.elk.core.options.SizeConstraint
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.util.ElkGraphUtil
@@ -22,6 +32,28 @@ import org.eclipse.emf.ecore.resource.impl.ResourceSetImpl
 class MulticoreAllocationLayoutEngine extends ElkLayoutEngine {
 	
 	static val LOG = Logger.getLogger(MulticoreAllocationLayoutEngine)
+	
+	override layout(SModelRoot root) {
+		if (root instanceof SGraph) {
+			val configurator = new SprottyLayoutConfigurator
+			configurator.configureByType('flow')
+				.setProperty(CoreOptions.DIRECTION, Direction.DOWN)
+				.setProperty(CoreOptions.SPACING_NODE_NODE, 40.0)
+				.setProperty(CoreOptions.SPACING_EDGE_NODE, 25.0)
+				.setProperty(LayeredOptions.SPACING_EDGE_NODE_BETWEEN_LAYERS, 20.0)
+				.setProperty(LayeredOptions.SPACING_NODE_NODE_BETWEEN_LAYERS, 30.0)
+				.setProperty(LayeredOptions.NODE_PLACEMENT_STRATEGY, NodePlacementStrategy.NETWORK_SIMPLEX)
+			configurator.configureByType('task')
+				.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.minimumSize())
+				.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(40, 40))
+			configurator.configureByType('barrier')
+				.setProperty(CoreOptions.NODE_SIZE_CONSTRAINTS, SizeConstraint.free())
+				.setProperty(CoreOptions.NODE_SIZE_MINIMUM, new KVector(50, 20))
+				.setProperty(CoreOptions.PORT_CONSTRAINTS, PortConstraints.FIXED_ORDER)
+				.setProperty(LayeredOptions.NODE_PLACEMENT_NETWORK_SIMPLEX_NODE_FLEXIBILITY, NodeFlexibility.NODE_SIZE)
+			layout(root, configurator)
+		}
+	}
 	
 	override protected resolveReferences(ElkEdge elkEdge, SEdge sedge, Map<String, ElkNode> id2NodeMap, LayoutContext context) {
 		val source = id2NodeMap.get(sedge.sourceId)

@@ -7,21 +7,23 @@
 package io.typefox.sprotty.example.multicore.web.diagram
 
 import com.google.inject.Inject
+import com.google.inject.Provider
 import com.google.inject.Singleton
-import io.typefox.sprotty.api.SGraph
+import io.typefox.sprotty.api.IDiagramServer
+import io.typefox.sprotty.api.LayoutUtil
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Program
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Step
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskAllocation
-import io.typefox.sprotty.layout.LayoutUtil
 import java.util.Enumeration
 import java.util.Iterator
-import java.util.List
+import java.util.Map
 import javax.servlet.http.HttpSessionEvent
 import javax.servlet.http.HttpSessionListener
 import org.apache.log4j.Logger
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.service.OperationCanceledManager
 import org.eclipse.xtext.util.CancelIndicator
+import org.eclipse.xtext.web.server.IServiceResult
 import org.eclipse.xtext.web.server.model.AbstractCachedService
 import org.eclipse.xtext.web.server.model.IXtextWebDocument
 import org.eclipse.xtext.web.server.model.XtextWebDocument
@@ -31,15 +33,11 @@ import org.eclipse.xtext.web.server.validation.ValidationService
 import static extension org.eclipse.xtext.EcoreUtil2.*
 
 @Singleton
-class DiagramService extends AbstractCachedService<ModelProvider> implements HttpSessionListener {
+class DiagramService extends AbstractCachedService<VoidResult> implements IDiagramServer.Provider, HttpSessionListener {
 	
 	static val LOG = Logger.getLogger(DiagramService)
 	
 	static val SESSION_DOCUMENT_PREFIX = (XtextWebDocument -> '').toString
-	
-	@Inject ModelProvider modelProvider
-	
-	@Inject SelectionProvider selectionProvider
 	
 	@Inject MulticoreAllocationDiagramGenerator diagramGenerator
 	
@@ -47,17 +45,19 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 	
 	@Inject extension OperationCanceledManager
 	
-	val List<MulticoreAllocationDiagramServer> diagramServers = newArrayList
+	@Inject Provider<MulticoreAllocationDiagramServer> diagramServerProvider
 	
-	def void addServer(MulticoreAllocationDiagramServer server) {
-		synchronized (diagramServers) {
-			diagramServers.add(server)
-		}
-	}
+	val Map<String, MulticoreAllocationDiagramServer> diagramServers = newHashMap
 	
-	def void removeServer(MulticoreAllocationDiagramServer server) {
+	override MulticoreAllocationDiagramServer getDiagramServer(String clientId) {
 		synchronized (diagramServers) {
-			diagramServers.remove(server)
+			var result = diagramServers.get(clientId)
+			if (result === null) {
+				result = diagramServerProvider.get
+				result.clientId = clientId
+				diagramServers.put(clientId, result)
+			}
+			return result
 		}
 	}
 	
@@ -65,61 +65,59 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 		if (doc instanceof XtextWebDocument) {
 			val validationResult = doc.getCachedServiceResult(validationService, cancelIndicator, false)
 			if (!validationResult.issues.exists[severity == 'error']) {
+				getDiagramServer(doc.resourceId + '_processor').selection = null
+				getDiagramServer(doc.resourceId + '_flow').selection = null
 				doCompute(doc, cancelIndicator)
 			}
 		} else {
 			LOG.warn('Direct document access is required for generating diagrams.')
 		}
-		return modelProvider
+		return new VoidResult
 	}
 	
 	protected def void doCompute(IXtextWebDocument doc, CancelIndicator cancelIndicator) {
 		val program = doc.resource.contents.head as Program
-		val selection = selectionProvider.getSelection(doc.resourceId)
-		val processorMapping = diagramGenerator.generateProcessorView(program, selection, cancelIndicator)
+		
+		val processorServer = getDiagramServer(doc.resourceId + '_processor')
+		val processorMapping = diagramGenerator.generateProcessorView(program, processorServer.selection, cancelIndicator)
+		processorServer.modelMapping = processorMapping
 		val processorView = processorMapping.get(program) as Processor
-		val oldProcessorView = modelProvider.getModel(doc.resourceId, processorView.type)
-		modelProvider.putModel(doc.resourceId, processorView, processorMapping)
-		modelProvider.setLayoutDone(doc.resourceId, processorView.type)
+		processorServer.updateModel(processorView)
 		cancelIndicator.checkCanceled
-		val flowMapping = diagramGenerator.generateFlowView(program, selection, cancelIndicator)
+		
+		val flowServer = getDiagramServer(doc.resourceId + '_flow')
+		val flowMapping = diagramGenerator.generateFlowView(program, flowServer.selection, cancelIndicator)
+		flowServer.modelMapping = flowMapping
 		val flowView = flowMapping.get(program) as Flow
-		val oldFlowView = modelProvider.getModel(doc.resourceId, flowView.type) 
-		if (oldFlowView instanceof SGraph)
-			LayoutUtil.copyLayoutData(oldFlowView, flowView)
-		modelProvider.putModel(doc.resourceId, flowView, flowMapping)
-		cancelIndicator.checkCanceled
-		val filteredServers = synchronized (diagramServers) {
-			diagramServers.filter[resourceId == doc.resourceId].toList
-		}
-		for (diagramServer : filteredServers) {
-			diagramServer.notifyClients(processorView, oldProcessorView)
-			diagramServer.notifyClients(flowView, oldFlowView)
-		}
+		if (flowServer.model !== null)
+			LayoutUtil.copyLayoutData(flowServer.model, flowView)
+		flowServer.updateModel(flowView)
 	}
 	
-	def void setSelection(XtextWebDocumentAccess document, String resourceId, EObject selectedElement) {
-		val previousElement = selectionProvider.getSelection(resourceId)
-		val previousStep = previousElement.getContainerOfType(Step)
-		val previousTaskAllocation = previousElement.getContainerOfType(TaskAllocation)
-		val selectedStep = selectedElement.getContainerOfType(Step)
-		val selectedTaskAllocation = selectedElement.getContainerOfType(TaskAllocation)
-		if (previousStep != selectedStep || previousTaskAllocation != selectedTaskAllocation) {
-			val validationResult = validationService.getResult(document)
-			if (!validationResult.issues.exists[severity == 'error']) {
-				if (selectedTaskAllocation !== null && previousStep != selectedStep) {
-					selectionProvider.setSelection(resourceId, previousElement.getContainerOfType(Step) ?: selectedStep)
-					document.readOnly[ it, cancelIndicator |
-						doCompute(CancelIndicator.NullImpl)
-						return null
-					]
+	def void setSelection(XtextWebDocumentAccess access, String resourceId, EObject selectedElement) {
+		val validationResult = validationService.getResult(access)
+		if (!validationResult.issues.exists[severity == 'error']) {
+			access.readOnly[ doc, cancelIndicator |
+				val processorServer = getDiagramServer(doc.resourceId + '_processor')
+				val flowServer = getDiagramServer(doc.resourceId + '_flow')
+				val previousElement = processorServer.selection
+				val previousStep = previousElement.getContainerOfType(Step)
+				val previousTaskAllocation = previousElement.getContainerOfType(TaskAllocation)
+				val selectedStep = selectedElement.getContainerOfType(Step)
+				val selectedTaskAllocation = selectedElement.getContainerOfType(TaskAllocation)
+				if (previousStep != selectedStep || previousTaskAllocation != selectedTaskAllocation) {
+					if (selectedTaskAllocation !== null && previousStep != selectedStep) {
+						val intermediateElement = previousElement.getContainerOfType(Step) ?: selectedStep
+						processorServer.selection = intermediateElement
+						flowServer.selection = intermediateElement
+						doCompute(doc, CancelIndicator.NullImpl)
+					}
+					processorServer.selection = selectedElement
+					flowServer.selection = selectedElement
+					doCompute(doc, CancelIndicator.NullImpl)
 				}
-				selectionProvider.setSelection(resourceId, selectedElement)
-				document.readOnly[ it, cancelIndicator |
-					doCompute(CancelIndicator.NullImpl)
-					return null
-				]
-			}
+				return null
+			]
 		}
 	}
 	
@@ -131,7 +129,10 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 			if (attr.startsWith(SESSION_DOCUMENT_PREFIX)) {
 				val resourceId = attr.substring(SESSION_DOCUMENT_PREFIX.length)
 				LOG.info('Session destroyed: ' + resourceId)
-				modelProvider.clear(resourceId)
+				synchronized (diagramServers) {
+					diagramServers.remove(resourceId + '_processor')
+					diagramServers.remove(resourceId + '_flow')
+				}
 			}
 		}
 	}
@@ -154,4 +155,7 @@ class DiagramService extends AbstractCachedService<ModelProvider> implements Htt
 		]
 	}
 	
+}
+
+class VoidResult implements IServiceResult {
 }
