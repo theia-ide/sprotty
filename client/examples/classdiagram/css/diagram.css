@@ -1,9 +1,7 @@
 .node {
     fill: #cdc;
     stroke: #152;
-    stroke-width: 3;
-    rx: 4;
-    ry: 4;
+    stroke-width: 0;
     font-weight: bold;
 
     /* properties for vbox */
@@ -36,8 +34,8 @@
 }
 
 .node.selected {
-    stroke: #dd8;
-    stroke-width: 6;
+    stroke: #152;
+    stroke-width: 5;
 }
 
 .missing {
@@ -49,8 +47,8 @@
 }
 
 .mouseover {
-    stroke: #557744;
-    stroke-width: 5;
+    stroke: #152;
+    stroke-width: 3;
 }
 
 .popup-title {

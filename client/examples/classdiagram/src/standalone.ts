@@ -6,7 +6,7 @@
  */
 
 import { TYPES } from "../../../src/base"
-import { SGraphSchema } from "../../../src/graph"
+import { SEdge, SGraphSchema } from '../../../src/graph';
 import createContainer from "./di.config"
 import { LocalModelSource } from "../../../src/local"
 
@@ -58,7 +58,53 @@ export default function runClassDiagram() {
             }
         ]
     }
-    const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0] }
+    const node1 = {
+        id: 'node1',
+        type: 'node:class',
+        position: {
+            x: 300,
+            y: 100
+        },
+        layout: 'vbox',
+        children: [
+            {
+                id: 'node1_classname',
+                type: 'label:heading',
+                text: 'Bar'
+            },
+            {
+                id: 'node1_attrs',
+                type: 'comp:comp',
+                layout: 'vbox',
+                children: [
+                    {
+                        id: 'node1_op2',
+                        type: 'label:text',
+                        text: 'name: string'
+                    }
+                ],
+            },
+            {
+                id: 'node1_ops',
+                type: 'comp:comp',
+                layout: 'vbox',
+                children: [
+                    {
+                        id: 'node1_op0',
+                        type: 'label:text',
+                        text: '+ foo(): Foo'
+                    }
+                ],
+            }
+        ]
+    }
+    const edge = {
+        id: 'edge',
+        type: 'edge:straight',
+        sourceId: node0.id,
+        targetId: node1.id
+    } as SEdge
+    const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0, node1, edge] }
 
     // Run
     const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
