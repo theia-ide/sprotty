@@ -43,6 +43,8 @@ export function isActionMessage(object: any): object is ActionMessage {
 @injectable()
 export abstract class DiagramServer extends ModelSource {
 
+    clientId: string
+
     currentRoot: SModelRootSchema = {
         type: 'NONE',
         id: 'ROOT'
@@ -54,11 +56,7 @@ export abstract class DiagramServer extends ModelSource {
                 @inject(TYPES.SModelStorage) protected storage: SModelStorage,
                 @inject(TYPES.ILogger) protected logger: ILogger) {
         super(actionDispatcher, actionHandlerRegistry, viewerOptions)
-        //actionDispatcher.dispatch(new SetModelAction(storage.load()))
-    }
-
-    protected get clientId(): string {
-        return this.viewerOptions.baseDiv
+        this.clientId = this.viewerOptions.baseDiv
     }
 
     initialize(registry: ActionHandlerRegistry): void {
@@ -76,11 +74,11 @@ export abstract class DiagramServer extends ModelSource {
     handle(action: Action): void | ICommand {
         this.storeNewModel(action)
 
-        if(this.viewerOptions.boundsComputation != 'dynamic' && action.kind === ComputedBoundsAction.KIND) 
+        if (action.kind === ComputedBoundsAction.KIND && this.viewerOptions.boundsComputation !== 'dynamic') 
             return this.handleComputedBounds(action as ComputedBoundsAction)
         
         if (action.kind === RequestBoundsCommand.KIND) 
-            return 
+            return
 
         const message: ActionMessage = {
             clientId: this.clientId,

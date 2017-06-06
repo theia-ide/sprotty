@@ -26,8 +26,22 @@ export class SvgViewportView implements IView {
     }
 }
 
-export abstract class CircularNodeView extends SNodeView {
-    protected abstract getRadius(node: SNode): number
+export class CircularNodeView extends SNodeView {
+    render(node: SNode, context: RenderingContext): VNode {
+        const radius = this.getRadius(node)
+        return <g key={node.id} id={node.id} >
+            <circle class-node={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
+                    r={radius} cx={radius} cy={radius}></circle>
+        </g>
+    }
+
+    protected getRadius(node: SNode): number {
+        const d = Math.min(node.size.width, node.size.height)
+        if (d > 0)
+            return d / 2
+        else
+            return 0
+    }
 
     getAnchor(node: SNode, refPoint: Point) {
         const radius = this.getRadius(node)
@@ -45,7 +59,14 @@ export abstract class CircularNodeView extends SNodeView {
     }
 }
 
-export abstract class RectangularNodeView extends SNodeView {
+export class RectangularNodeView extends SNodeView {
+    render(node: SNode, context: RenderingContext): VNode {
+        return <g key={node.id} id={node.id} >
+            <rect class-node={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
+                  x="0" y="0" width={node.size.width} height={node.size.height}></rect>
+        </g>
+    }
+
     getAnchor(node: SNode, refPoint: Point) {
         const bounds = node.bounds
         let x = refPoint.x

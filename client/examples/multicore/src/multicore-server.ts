@@ -43,12 +43,13 @@ export function setupMulticore(websocket: WebSocket) {
         // Run
         function run() {
             const xtextServices = getXtextServices()
-            if (xtextServices !== undefined)
-                diagramServer.handle(new RequestModelAction('processor', undefined, {
-                    resourceId: xtextServices.options.resourceId
-                }))
-            else
+            if (xtextServices !== undefined) {
+                const resourceId = xtextServices.options.resourceId
+                diagramServer.clientId = resourceId + '_processor'
+                diagramServer.handle(new RequestModelAction('processor', undefined, { resourceId }))
+            } else {
                 setTimeout(run, 50)
+            }
         }
         run()
     })

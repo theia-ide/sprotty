@@ -31,10 +31,6 @@ export class TaskNodeView extends CircularNodeView {
                 <text x={radius} y={radius + 5} class-text={true}>{node.name}</text>
             </g>
     }
-
-    protected getRadius(node: TaskNode) {
-        return 20
-    }
 }
 
 export class BarrierNodeView extends RectangularNodeView {

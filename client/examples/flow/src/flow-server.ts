@@ -43,12 +43,13 @@ export function setupFlow(websocket: WebSocket) {
         // Run
         function run() {
             const xtextServices = getXtextServices()
-            if (xtextServices !== undefined)
-                diagramServer.handle(new RequestModelAction('flow', undefined, {
-                    resourceId: xtextServices.options.resourceId
-                }))
-            else
+            if (xtextServices !== undefined) {
+                const resourceId = xtextServices.options.resourceId
+                diagramServer.clientId = resourceId + '_flow'
+                diagramServer.handle(new RequestModelAction('flow', undefined, { resourceId }))
+            } else {
                 setTimeout(run, 50)
+            }
         }
         run()
     })

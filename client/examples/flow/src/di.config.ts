@@ -35,7 +35,7 @@ export default (useWebsocket: boolean) => {
         baseDiv: 'sprotty-flow',
         hiddenDiv: 'sprotty-hidden-flow',
         popupDiv: 'sprotty-popup-flow',
-        boundsComputation: 'dynamic'
+        boundsComputation: 'fixed'
     })
 
     // Register views
