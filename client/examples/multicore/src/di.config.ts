@@ -33,7 +33,8 @@ export default (useWebsocket: boolean) => {
         baseDiv: 'sprotty-cores',
         hiddenDiv: 'sprotty-hidden-cores',
         popupDiv: 'sprotty-popup-cores',
-        boundsComputation: 'fixed'
+        needsClientLayout: true,
+        needsServerLayout: false
     })
 
     // Register views

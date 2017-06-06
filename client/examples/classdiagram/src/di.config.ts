@@ -30,7 +30,7 @@ export default (useWebsocket: boolean) => {
     else
         container.bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
     overrideViewerOptions(container, {
-        boundsComputation: 'dynamic'
+        needsClientLayout: true
     })
 
     // Register views

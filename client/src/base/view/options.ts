@@ -16,7 +16,8 @@ export interface ViewerOptions {
     popupDiv: string
     popupClass: string
     popupClosedClass: string
-    boundsComputation: 'fixed' | 'dynamic'
+    needsClientLayout: boolean
+    needsServerLayout: boolean
     popupOpenDelay: number
     popupCloseDelay: number
 }

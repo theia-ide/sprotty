@@ -74,10 +74,10 @@ export abstract class DiagramServer extends ModelSource {
     handle(action: Action): void | ICommand {
         this.storeNewModel(action)
 
-        if (action.kind === ComputedBoundsAction.KIND && this.viewerOptions.boundsComputation !== 'dynamic') 
+        if (action.kind === ComputedBoundsAction.KIND && !this.viewerOptions.needsServerLayout) 
             return this.handleComputedBounds(action as ComputedBoundsAction)
         
-        if (action.kind === RequestBoundsCommand.KIND) 
+        if (action.kind === RequestBoundsCommand.KIND)
             return
 
         const message: ActionMessage = {

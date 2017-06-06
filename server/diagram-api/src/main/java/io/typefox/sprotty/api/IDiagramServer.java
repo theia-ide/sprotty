@@ -41,8 +41,16 @@ public interface IDiagramServer extends Consumer<ActionMessage> {
 	 */
 	SModelRoot getModel();
 	
+	/**
+	 * Set the current model and send it to the client, if a remote endpoint has been configured.
+	 */
 	void setModel(SModelRoot root);
 	
+	/**
+	 * Set the current model and send an update to the client, if a remote endpoint has been configured.
+	 * The main difference to {@link #setModel(SModelRoot)} is that with this method the change will be
+	 * animated in the client.
+	 */
 	void updateModel(SModelRoot root);
 	
 	/**

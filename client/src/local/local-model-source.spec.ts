@@ -14,7 +14,7 @@ import { ComputedBoundsAction, RequestBoundsAction } from "../features/bounds/bo
 import { IActionDispatcher } from "../base/intent/action-dispatcher"
 import { Action } from "../base/intent/actions"
 import { TYPES } from "../base/types"
-import { overrideViewerOptions } from "../base/view/options"
+import { ViewerOptions, overrideViewerOptions } from "../base/view/options"
 import { SModelRootSchema } from "../base/model/smodel"
 import { UpdateModelAction } from "../features/update/update-model"
 import defaultContainerModule from "../base/di.config"
@@ -36,19 +36,17 @@ describe('LocalModelSource', () => {
         }
     }
 
-    function setup(boundsComputation: 'fixed' | 'dynamic') {
+    function setup(options: Partial<ViewerOptions>) {
         const container = new Container()
         container.load(defaultContainerModule)
         container.bind(TYPES.ModelSource).to(LocalModelSource)
         container.rebind(TYPES.IActionDispatcher).to(MockActionDispatcher).inSingletonScope()
-        overrideViewerOptions(container, {
-            boundsComputation: boundsComputation
-        })
+        overrideViewerOptions(container, options)
         return container
     }
 
     it('sets the model in fixed mode', () => {
-        const container = setup('fixed')
+        const container = setup({ needsClientLayout: false })
         const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
         const dispatcher = container.get<MockActionDispatcher>(TYPES.IActionDispatcher)
 
@@ -79,7 +77,7 @@ describe('LocalModelSource', () => {
     })
 
     it('requests bounds in dynamic mode', () => {
-        const container = setup('dynamic')
+        const container = setup({ needsClientLayout: true })
         const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
         const dispatcher = container.get<MockActionDispatcher>(TYPES.IActionDispatcher)
 
@@ -141,7 +139,7 @@ describe('LocalModelSource', () => {
     })
 
     it('adds and removes elements', () => {
-        const container = setup('dynamic')
+        const container = setup({ needsClientLayout: true })
         const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
         const dispatcher = container.get<MockActionDispatcher>(TYPES.IActionDispatcher)
 

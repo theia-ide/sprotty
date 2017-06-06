@@ -78,7 +78,8 @@ let defaultContainerModule = new ContainerModule(bind => {
         popupDiv: 'sprotty-popup',
         popupClass: 'sprotty-popup',
         popupClosedClass: 'sprotty-popup-closed',
-        boundsComputation: 'fixed',
+        needsClientLayout: true,
+        needsServerLayout: false,
         popupOpenDelay: 700,
         popupCloseDelay: 300
     })
