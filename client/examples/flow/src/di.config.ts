@@ -33,6 +33,7 @@ export default (useWebsocket: boolean) => {
         container.bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
     overrideViewerOptions(container, {
         baseDiv: 'sprotty-flow',
+        hiddenDiv: 'sprotty-hidden-flow',
         popupDiv: 'sprotty-popup-flow',
         boundsComputation: 'dynamic'
     })
