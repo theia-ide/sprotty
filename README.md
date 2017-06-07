@@ -1,12 +1,12 @@
 # sprotty
-A next-gen, open-source, web-based graphics framework.
+sprotty is a next-generation, open-source, web-based diagramming framework. Some selected features:
 
-Sprotty features
-* fast, scalable SVG rendering that is compatible with many browsers and stylable with CSS
-* animations built into the core
-* support for a client/server separation
-* a fast, reactive client architecure implemented in TypeScript
-* configuration via dependency injection
+* fast, scalable SVG rendering that is compatible with many browsers and stylable with CSS,
+* animations built into the core,
+* support for a distributed runtime with a diagram client and a model server,
+* a fast, reactive client architecure implemented in TypeScript,
+* a Java-based server architecture,
+* configuration via dependency injection,
 * integration with [Xtext, the Language Server Protocol and Theia](https://github.com/TypeFox/theia-sprotty-example).
 
 [![sprotty demo](https://raw.githubusercontent.com/wiki/TypeFox/sprotty/sprotty_demo_screenshot.png?token=AAXDmPP3Y9TbeMv3_DGb6f_BSZ8uwsgBks5ZQYZ1wA%3D%3D)](http://www.youtube.com/watch?v=IydM4l7WFKk "sprotty demo Title")
