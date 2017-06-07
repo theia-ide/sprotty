@@ -32,5 +32,6 @@ export const TYPES = {
     ViewRegistry: Symbol('ViewRegistry'),
     IVNodeDecorator: Symbol('IVNodeDecorator'),
     HiddenVNodeDecorator: Symbol('HiddenVNodeDecorator'),
-    PopupVNodeDecorator: Symbol('PopupVNodeDecorator')
+    PopupVNodeDecorator: Symbol('PopupVNodeDecorator'),
+    DOMHelper: Symbol('DOMHelper')
 }

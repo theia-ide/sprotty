@@ -23,6 +23,7 @@ import { SModelFactory } from "./model/smodel-factory"
 import { ViewerCache } from "./view/viewer-cache"
 import { AnimationFrameSyncer } from "./animations/animation-frame-syncer"
 import { TYPES } from "./types"
+import { DOMHelper } from "./view/dom-helper"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
@@ -83,10 +84,12 @@ let defaultContainerModule = new ContainerModule(bind => {
         popupOpenDelay: 700,
         popupCloseDelay: 300
     })
+    bind(TYPES.DOMHelper).to(DOMHelper).inSingletonScope()
     bind(TYPES.ModelRendererFactory).toFactory<ModelRenderer>((context: interfaces.Context) => {
         return (decorators: IVNodeDecorator[]) => {
             const viewRegistry = context.container.get<ViewRegistry>(TYPES.ViewRegistry)
-            return new ModelRenderer(viewRegistry, decorators)
+            const domHelper = context.container.get<DOMHelper>(TYPES.DOMHelper)
+            return new ModelRenderer(viewRegistry, domHelper, decorators)
         }
     })
 
@@ -102,7 +105,8 @@ let defaultContainerModule = new ContainerModule(bind => {
     // Canvas Initialization ---------------------------------------------
     bind(TYPES.ICommand).toConstructor(InitializeCanvasBoundsCommand)
     bind(TYPES.IVNodeDecorator).to(CanvasBoundsInitializer).inSingletonScope()
-    bind(TYPES.SModelStorage).to(SModelStorage).inSingletonScope
+    bind(TYPES.SModelStorage).to(SModelStorage).inSingletonScope()
+
 })
 
 export default defaultContainerModule

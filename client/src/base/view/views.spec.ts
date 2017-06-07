@@ -16,8 +16,8 @@ const toHTML = require('snabbdom-to-html')
 
 describe('base views', () => {
 
-    const context = new ModelRenderer(undefined!, [])
     const emptyRoot = new SModelFactory().createRoot(EMPTY_ROOT)
+    const context = new ModelRenderer(undefined!, undefined!, [])
 
     it('empty view', () => {
         const emptyView = new EmptyView()

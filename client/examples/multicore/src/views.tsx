@@ -16,7 +16,7 @@ const JSX = {createElement: snabbdom.svg}
 export class ProcessorView implements IView {
     render(model: Processor, context: RenderingContext): VNode {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
-        return <svg key={model.id} id={model.id}>
+        return <svg key={model.id} id={context.createUniqueDOMElementId(model)}>
                 <defs>
                     <clipPath id="core-clip">
                         <rect width={CORE_WIDTH} height={CORE_WIDTH} rx={4} ry={4}/>
@@ -48,7 +48,7 @@ export class SimpleCoreView extends ThunkView {
                 {context.renderChildren(model)}
             </g>
         return <g class-core={true}
-                  id={model.id}
+                  id={context.createUniqueDOMElementId(model)}
                   key={model.id}>
                 <rect width={model.size.width}
                       height={model.size.height}
@@ -71,7 +71,7 @@ export class CoreView implements IView {
             </g>
         setAttr(content, 'clip-path', 'url(#core-clip)')
         return <g class-core={true}
-                  id={model.id}
+                  id={context.createUniqueDOMElementId(model)}
                   key={model.id}>
                 <rect width={model.size.width}
                       height={model.size.height}
@@ -121,7 +121,7 @@ export class CrossbarView implements IView {
                 break;
         }
         return <rect class-crossbar={true}
-                     id={model.id}
+                     id={context.createUniqueDOMElementId(model)}
                      key={model.id}
                      width={width}
                      height={height}
@@ -163,7 +163,7 @@ export class ChannelView extends ThunkView {
 
     doRender(model: Channel, context: RenderingContext): VNode {
         if (!this.isVisible(model))
-            return <g id={model.id} key={model.id} />
+            return <g id={context.createUniqueDOMElementId(model)} key={model.id} />
         let points: number[]
         switch (model.direction) {
             case Direction.up:

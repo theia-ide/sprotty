@@ -18,7 +18,7 @@ const JSX = {createElement: snabbdom.svg}
 export class SvgViewportView implements IView {
     render(model: ViewportRootElement, context: RenderingContext): VNode {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
-        return <svg key={model.id} id={model.id}>
+        return <svg key={model.id} id={context.createUniqueDOMElementId(model)}>
             <g transform={transform}>
                 {context.renderChildren(model)}
             </g>
@@ -29,7 +29,7 @@ export class SvgViewportView implements IView {
 export class CircularNodeView extends SNodeView {
     render(node: SNode, context: RenderingContext): VNode {
         const radius = this.getRadius(node)
-        return <g key={node.id} id={node.id} >
+        return <g key={node.id} id={context.createUniqueDOMElementId(node)} >
             <circle class-node={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
                     r={radius} cx={radius} cy={radius}></circle>
         </g>
@@ -61,7 +61,7 @@ export class CircularNodeView extends SNodeView {
 
 export class RectangularNodeView extends SNodeView {
     render(node: SNode, context: RenderingContext): VNode {
-        return <g key={node.id} id={node.id} >
+        return <g key={node.id} id={context.createUniqueDOMElementId(node)} >
             <rect class-node={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
                   x="0" y="0" width={node.size.width} height={node.size.height}></rect>
         </g>

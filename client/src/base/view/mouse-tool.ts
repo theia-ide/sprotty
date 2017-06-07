@@ -13,11 +13,13 @@ import { SModelElement, SModelRoot } from "../model/smodel"
 import { Action, isAction } from "../intent/actions"
 import { IVNodeDecorator } from "./vnode-decorators"
 import { on } from "./vnode-utils"
+import { DOMHelper } from "./dom-helper"
 
 @injectable()
 export class MouseTool implements IVNodeDecorator {
 
     constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
+                @inject(TYPES.DOMHelper) protected domHelper: DOMHelper,
                 @multiInject(TYPES.MouseListener)@optional() protected mouseListeners: MouseListener[] = []) {}
 
     register(mouseListener: MouseListener) {
@@ -35,7 +37,7 @@ export class MouseTool implements IVNodeDecorator {
         const index = model.index
         while (target) {
             if (target.id) {
-                const element = index.getById(target.id)
+                const element = index.getById(this.domHelper.findSModelIdByDOMElement(target))
                 if (element !== undefined)
                     return element
             }
@@ -68,7 +70,7 @@ export class MouseTool implements IVNodeDecorator {
 
     protected focusOnMouseEvent<K extends keyof MouseListener>(methodName: K, model: SModelRoot) {
         if (document) {
-            const domElement = document.getElementById(model.id)
+            const domElement = document.getElementById(this.domHelper.createUniqueDOMElementId(model))
             if (methodName === 'mouseDown' && domElement !== null && typeof domElement.focus === 'function')
                 domElement.focus()
         }
@@ -123,8 +125,9 @@ export class MouseTool implements IVNodeDecorator {
 @injectable()
 export class PopupMouseTool extends MouseTool {
     constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
+                @inject(TYPES.DOMHelper) protected domHelper: DOMHelper,
                 @multiInject(TYPES.PopupMouseListener)@optional() protected mouseListeners: MouseListener[] = []) {
-        super(actionDispatcher, mouseListeners)
+        super(actionDispatcher, domHelper, mouseListeners)
     }
 }
 

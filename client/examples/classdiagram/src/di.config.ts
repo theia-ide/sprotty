@@ -24,7 +24,7 @@ const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) =
     bind(TYPES.PopupModelFactory).toConstantValue(popupModelFactory)
 })
 
-export default (useWebsocket: boolean) => {
+export default (useWebsocket: boolean, containerId: string) => {
     const container = new Container()
     container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, hoverModule, classDiagramModule)
     if (useWebsocket)
@@ -32,7 +32,8 @@ export default (useWebsocket: boolean) => {
     else
         container.bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
     overrideViewerOptions(container, {
-        needsClientLayout: true
+        needsClientLayout: true,
+        baseDiv: containerId
     })
 
     // Register views

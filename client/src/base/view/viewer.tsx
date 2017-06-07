@@ -27,6 +27,7 @@ import { EMPTY_ROOT } from "../model/smodel-factory"
 import { IActionDispatcher } from "../intent/action-dispatcher"
 import { InitializeCanvasBoundsAction } from "../features/initialize-canvas"
 import { ORIGIN_POINT } from "../../utils/geometry"
+import { DOMHelper } from "./dom-helper"
 
 const JSX = {createElement: snabbdom.html}  // must be html here, as we're creating a div
 
@@ -37,7 +38,10 @@ export interface IViewer {
 }
 
 export class ModelRenderer implements RenderingContext {
-    constructor(public viewRegistry: ViewRegistry, private decorators: IVNodeDecorator[]) {
+
+    constructor(public viewRegistry: ViewRegistry,
+                private domHelper: DOMHelper,
+                private decorators: IVNodeDecorator[]) {
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
@@ -59,6 +63,10 @@ export class ModelRenderer implements RenderingContext {
 
     postUpdate() {
         this.decorators.forEach(decorator => decorator.postUpdate())
+    }
+
+    createUniqueDOMElementId(element: SModelElement): string {
+        return this.domHelper.createUniqueDOMElementId(element)
     }
 }
 
@@ -118,7 +126,7 @@ export class Viewer implements IViewer {
 
     protected getBoundsInPage(element: Element) {
         const bounds = element.getBoundingClientRect()
-        const scroll = typeof window !== 'undefined' ? { x: window.scrollX, y: window.scrollY } : ORIGIN_POINT
+        const scroll = typeof window !== 'undefined' ? {x: window.scrollX, y: window.scrollY} : ORIGIN_POINT
         return {
             x: bounds.left + scroll.x,
             y: bounds.top + scroll.y,
@@ -175,7 +183,7 @@ export class Viewer implements IViewer {
 
         let newVDOM: VNode
         if (hiddenModel.type === EMPTY_ROOT.type) {
-             newVDOM = <div id={this.options.hiddenDiv}></div>
+            newVDOM = <div id={this.options.hiddenDiv}></div>
         } else {
             const hiddenVNode = this.hiddenRenderer.renderElement(hiddenModel)
             setAttr(hiddenVNode, 'opacity', 0)

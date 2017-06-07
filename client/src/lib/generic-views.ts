@@ -15,7 +15,7 @@ export class PreRenderedView implements IView {
     render(model: PreRenderedElement, context: RenderingContext): VNode {
         const node = virtualize(model.code)
         node.key = model.id
-        setAttr(node, 'id', model.id)
+        setAttr(node, 'id', context.createUniqueDOMElementId(model))
         this.correctNamespace(node)
         return node
     }

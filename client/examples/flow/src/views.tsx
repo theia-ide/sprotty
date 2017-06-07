@@ -21,7 +21,7 @@ export class TaskNodeView extends CircularNodeView {
     render(node: TaskNode, context: RenderingContext): VNode {
         const radius = this.getRadius(node)
         const fillColor = KernelColor.getSVG(node.kernelNr)
-        return <g key={node.id} id={node.id} >
+        return <g key={node.id} id={context.createUniqueDOMElementId(node)} >
                 <circle class-node={true} 
                 fill={fillColor}
                 class-task={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
@@ -35,7 +35,7 @@ export class TaskNodeView extends CircularNodeView {
 
 export class BarrierNodeView extends RectangularNodeView {
     render(node: BarrierNode, context: RenderingContext): VNode {
-        return <g key={node.id} id={node.id} >
+        return <g key={node.id} id={context.createUniqueDOMElementId(node)} >
                 <rect class-node={true} class-barrier={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
                       x="0" y="0" width={node.bounds.width} height={node.bounds.height}></rect>
                 <text x={node.bounds.width/2} y={node.bounds.height/2 + 5} class-text={true}>{node.name}</text>
@@ -49,8 +49,8 @@ export class FlowEdgeView extends PolylineEdgeView {
         const p1 = segments[segments.length - 2]
         const p2 = segments[segments.length - 1]
         return [
-            <path key={edge.id} id={edge.id} class-edge={true} class-arrow={true} d="M 0,0 L 10,-4 L 10,4 Z"
-                transform={`rotate(${toDegrees(angle(p2, p1))} ${p2.x} ${p2.y}) translate(${p2.x} ${p2.y})`}/>
+            <path key={edge.id} id={context.createUniqueDOMElementId(edge)} class-edge={true} class-arrow={true} d="M 0,0 L 10,-4 L 10,4 Z"
+                  transform={`rotate(${toDegrees(angle(p2, p1))} ${p2.x} ${p2.y}) translate(${p2.x} ${p2.y})`}/>
         ]
     }
 }
