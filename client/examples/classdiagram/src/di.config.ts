@@ -11,15 +11,17 @@ import { SGraphView, SLabelView, SCompartmentView, PolylineEdgeView } from "../.
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule, hoverModule } from "../../../src/features"
-import { ClassNodeView } from "./views"
 import { LocalModelSource } from "../../../src/local"
-import { ClassDiagramFactory } from "./model-factory"
 import { HtmlRootView, PreRenderedView } from "../../../src/lib"
+import { ClassNodeView } from "./views"
+import { ClassDiagramFactory } from "./model-factory"
+import { popupModelFactory } from "./popup"
 
 const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
     rebind(TYPES.IModelFactory).to(ClassDiagramFactory).inSingletonScope()
+    bind(TYPES.PopupModelFactory).toConstantValue(popupModelFactory)
 })
 
 export default (useWebsocket: boolean) => {

@@ -34,16 +34,13 @@ import { ICommand } from "../intent/commands"
 @injectable()
 export abstract class ModelSource implements IActionHandler {
 
-    protected actionDispatcher: IActionDispatcher
-
-    constructor(@inject(TYPES.IActionDispatcher) actionDispatcher: IActionDispatcher,
+    constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
                 @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
                 @inject(TYPES.ViewerOptions) protected viewerOptions: ViewerOptions) {
         this.initialize(actionHandlerRegistry)
-        this.actionDispatcher = actionDispatcher
     }
 
-    initialize(registry: ActionHandlerRegistry): void {
+    protected initialize(registry: ActionHandlerRegistry): void {
         // Register model manipulation commands
         registry.registerCommand(SetModelCommand)
 

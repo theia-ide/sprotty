@@ -27,6 +27,19 @@ export function getSubType(schema: SModelElementSchema): string {
         return schema.type
 }
 
+export function findElement(parent: SModelElementSchema, elementId: string): SModelElementSchema | undefined {
+    if (parent.id === elementId)
+        return parent
+    if (parent.children !== undefined) {
+        for (const child of parent.children) {
+            const result = findElement(child, elementId)
+            if (result !== undefined)
+                return result
+        }
+    }
+    return undefined
+}
+
 export function findParent(element: SModelElement, predicate: (e: SModelElement) => boolean): SModelElement | undefined {
     let current: SModelElement | undefined = element
     while (current !== undefined) {

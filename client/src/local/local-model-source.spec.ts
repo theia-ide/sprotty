@@ -13,6 +13,7 @@ import { LocalModelSource } from "./local-model-source"
 import { ComputedBoundsAction, RequestBoundsAction } from "../features/bounds/bounds-manipulation"
 import { IActionDispatcher } from "../base/intent/action-dispatcher"
 import { Action } from "../base/intent/actions"
+import { SetModelAction } from "../base/features/model-manipulation"
 import { TYPES } from "../base/types"
 import { ViewerOptions, overrideViewerOptions } from "../base/view/options"
 import { SModelRootSchema } from "../base/model/smodel"
@@ -68,8 +69,8 @@ describe('LocalModelSource', () => {
         modelSource.updateModel(root2)
 
         expect(dispatcher.actions).to.have.lengthOf(2)
-        const action0 = dispatcher.actions[0] as RequestBoundsAction
-        expect(action0).to.be.instanceOf(RequestBoundsAction)
+        const action0 = dispatcher.actions[0] as SetModelAction
+        expect(action0).to.be.instanceOf(SetModelAction)
         expect(action0.newRoot).to.equal(root1)
         const action1 = dispatcher.actions[1] as UpdateModelAction
         expect(action1).to.be.instanceOf(UpdateModelAction)
@@ -133,13 +134,13 @@ describe('LocalModelSource', () => {
                 }
             ]
         })
-        const action2 = dispatcher.actions[2] as UpdateModelAction
-        expect(action2).to.be.instanceOf(UpdateModelAction)
+        const action2 = dispatcher.actions[2] as RequestBoundsAction
+        expect(action2).to.be.instanceOf(RequestBoundsAction)
         expect(action2.newRoot).to.equal(root2)
     })
 
     it('adds and removes elements', () => {
-        const container = setup({ needsClientLayout: true })
+        const container = setup({ needsClientLayout: false })
         const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
         const dispatcher = container.get<MockActionDispatcher>(TYPES.IActionDispatcher)
 

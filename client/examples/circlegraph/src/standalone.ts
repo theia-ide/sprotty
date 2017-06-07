@@ -57,9 +57,8 @@ export default function runStandalone() {
         const newElements = addNode()
         modelSource.addElements(newElements)
         const graphElement = document.getElementById('graph')
-        if(graphElement !== null && typeof graphElement.focus === 'function')
+        if (graphElement !== null && typeof graphElement.focus === 'function')
             graphElement.focus()
-
     })
 
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
@@ -79,7 +78,7 @@ export default function runStandalone() {
         })
         dispatcher.dispatch(new MoveAction(nodeMoves, true))
         const graphElement = document.getElementById('graph')
-        if(graphElement !== null && typeof graphElement.focus === 'function')
+        if (graphElement !== null && typeof graphElement.focus === 'function')
             graphElement.focus()
     })
 

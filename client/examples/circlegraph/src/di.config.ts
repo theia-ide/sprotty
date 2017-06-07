@@ -6,7 +6,7 @@
  */
 
 import { Container, ContainerModule } from "inversify"
-import { defaultModule, TYPES, ViewRegistry } from "../../../src/base"
+import { defaultModule, TYPES, ViewRegistry, overrideViewerOptions } from "../../../src/base"
 import { SGraphFactory, SGraphView, PolylineEdgeView } from "../../../src/graph"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
@@ -27,6 +27,10 @@ export default (useWebsocket: boolean) => {
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else
         container.bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
+    overrideViewerOptions(container, {
+        needsClientLayout: false
+    })
+
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
     viewRegistry.register('graph', SGraphView)

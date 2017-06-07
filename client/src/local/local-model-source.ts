@@ -5,16 +5,25 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { injectable } from "inversify"
+import { injectable, inject, optional } from "inversify"
 import { ComputedBoundsAction, RequestBoundsAction } from '../features/bounds/bounds-manipulation'
 import { Bounds } from "../utils/geometry"
-import { Match } from "../features/update/model-matching"
+import { Match, applyMatches } from "../features/update/model-matching"
 import { UpdateModelAction, UpdateModelCommand } from "../features/update/update-model"
 import { Action, ActionHandlerRegistry } from "../base/intent/actions"
-import { RequestModelAction } from "../base/features/model-manipulation"
+import { IActionDispatcher } from "../base/intent/action-dispatcher"
+import { RequestModelAction, SetModelAction } from "../base/features/model-manipulation"
 import { SModelElementSchema, SModelIndex, SModelRootSchema } from "../base/model/smodel"
 import { ModelSource } from "../base/model/model-source"
+import { findElement } from "../base/model/smodel-utils"
 import { RequestPopupModelAction, SetPopupModelAction } from "../features/hover/hover"
+import { ViewerOptions } from "../base/view/options"
+import { TYPES } from "../base/types"
+
+export type LayoutEngine = (root: SModelRootSchema) => void
+
+export type PopupModelFactory = (request: RequestPopupModelAction, element?: SModelElementSchema)
+    => SModelRootSchema | undefined
 
 /**
  * A model source that handles actions for bounds calculation and model
@@ -22,8 +31,6 @@ import { RequestPopupModelAction, SetPopupModelAction } from "../features/hover/
  */
 @injectable()
 export class LocalModelSource extends ModelSource {
-
-    popupModelProvider: (elementId: string) => (SModelRootSchema | undefined)
 
     protected currentRoot: SModelRootSchema = {
         type: 'NONE',
@@ -38,7 +45,17 @@ export class LocalModelSource extends ModelSource {
         this.setModel(root)
     }
 
-    initialize(registry: ActionHandlerRegistry): void {
+    protected onModelSubmitted: (newRoot: SModelRootSchema) => void
+
+    constructor(@inject(TYPES.IActionDispatcher) actionDispatcher: IActionDispatcher,
+                @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
+                @inject(TYPES.ViewerOptions) viewerOptions: ViewerOptions,
+                @inject(TYPES.LayoutEngine)@optional() protected layoutEngine?: LayoutEngine,
+                @inject(TYPES.PopupModelFactory)@optional() protected popupModelFactory?: PopupModelFactory) {
+        super(actionDispatcher, actionHandlerRegistry, viewerOptions)
+    }
+
+    protected initialize(registry: ActionHandlerRegistry): void {
         super.initialize(registry)
 
         // Register model manipulation commands
@@ -49,51 +66,52 @@ export class LocalModelSource extends ModelSource {
         registry.register(RequestPopupModelAction.KIND, this)
     }
 
-    setModel(root: SModelRootSchema): void {
-        this.currentRoot = root
-        this.actionDispatcher.dispatch(new RequestBoundsAction(root))
+    setModel(newRoot: SModelRootSchema): void {
+        this.currentRoot = newRoot
+        this.submitModel(newRoot, false)
     }
 
     updateModel(newRoot?: SModelRootSchema): void {
-        if (newRoot !== undefined)
+        if (newRoot === undefined) {
+            this.submitModel(this.currentRoot, true)
+        } else {
             this.currentRoot = newRoot
-        this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
+            this.submitModel(newRoot, true)
+        }
+    }
+
+    protected submitModel(newRoot: SModelRootSchema, update: boolean): void {
+        if (this.viewerOptions.needsClientLayout) {
+            this.actionDispatcher.dispatch(new RequestBoundsAction(newRoot))
+        } else {
+            if (this.layoutEngine !== undefined) {
+                this.layoutEngine(newRoot)
+            }
+            if (update) {
+                this.actionDispatcher.dispatch(new UpdateModelAction(newRoot))
+            } else {
+                this.actionDispatcher.dispatch(new SetModelAction(newRoot))
+            }
+            if (this.onModelSubmitted !== undefined) {
+                this.onModelSubmitted(newRoot)
+            }
+        }
     }
 
     applyMatches(matches: Match[]): void {
-        this.applyToModel(matches, this.currentRoot)
-        const update = new UpdateModelAction()
-        update.matches = matches
-        this.actionDispatcher.dispatch(update)
-    }
-
-    protected applyToModel(matches: Match[], root: SModelRootSchema): void {
-        const index = new SModelIndex()
-        index.add(root)
-        for (const match of matches) {
-            let newElementInserted = false
-            if (match.left !== undefined && match.leftParentId !== undefined) {
-                const parent = index.getById(match.leftParentId)
-                if (parent !== undefined && parent.children !== undefined) {
-                    const i = parent.children.indexOf(match.left)
-                    if (i >= 0) {
-                        if (match.right !== undefined && match.leftParentId === match.rightParentId) {
-                            parent.children.splice(i, 1, match.right)
-                            newElementInserted = true
-                        } else {
-                            parent.children.splice(i, 1)
-                        }
-                    }
-                    index.remove(match.left)
-                }
+        const root = this.currentRoot
+        applyMatches(root, matches)
+        if (this.viewerOptions.needsClientLayout) {
+            this.actionDispatcher.dispatch(new RequestBoundsAction(root))
+        } else {
+            if (this.layoutEngine !== undefined) {
+                this.layoutEngine(root)
             }
-            if (!newElementInserted && match.right !== undefined && match.rightParentId !== undefined) {
-                const parent = index.getById(match.rightParentId)
-                if (parent !== undefined) {
-                    if (parent.children === undefined)
-                        parent.children = []
-                    parent.children.push(match.right)
-                }
+            const update = new UpdateModelAction()
+            update.matches = matches
+            this.actionDispatcher.dispatch(update)
+            if (this.onModelSubmitted !== undefined) {
+                this.onModelSubmitted(root)
             }
         }
     }
@@ -158,34 +176,42 @@ export class LocalModelSource extends ModelSource {
         }
     }
 
-    protected handleRequestPopupModel(action: RequestPopupModelAction): void {
-        if (this.popupModelProvider !== undefined) {
-            const popupRoot = this.popupModelProvider(action.elementId)
-            if (popupRoot !== undefined) {
-                popupRoot.canvasBounds = action.bounds
-                this.actionDispatcher.dispatch(new SetPopupModelAction(popupRoot))
-            }
-        }
-    }
-
     protected handleRequestModel(action: RequestModelAction): void {
-        this.setModel(this.currentRoot)
+        this.submitModel(this.currentRoot, false)
     }
 
     protected handleComputedBounds(action: ComputedBoundsAction): void {
+        const root = this.currentRoot
         const index = new SModelIndex()
-        index.add(this.currentRoot)
+        index.add(root)
         for (const b of action.bounds) {
             const element = index.getById(b.elementId)
             if (element !== undefined)
                 this.applyBounds(element, b.newBounds)
         }
-        this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
+        if (this.layoutEngine !== undefined) {
+            this.layoutEngine(root)
+        }
+        this.actionDispatcher.dispatch(new UpdateModelAction(root))
+        if (this.onModelSubmitted !== undefined) {
+            this.onModelSubmitted(root)
+        }
     }
 
     protected applyBounds(element: SModelElementSchema, newBounds: Bounds) {
         const e = element as any
         e.position = { x: newBounds.x, y: newBounds.y }
         e.size = { width: newBounds.width, height: newBounds.height }
+    }
+
+    protected handleRequestPopupModel(action: RequestPopupModelAction): void {
+        if (this.popupModelFactory !== undefined) {
+            const element = findElement(this.currentRoot, action.elementId)
+            const popupRoot = this.popupModelFactory(action, element)
+            if (popupRoot !== undefined) {
+                popupRoot.canvasBounds = action.bounds
+                this.actionDispatcher.dispatch(new SetPopupModelAction(popupRoot))
+            }
+        }
     }
 }

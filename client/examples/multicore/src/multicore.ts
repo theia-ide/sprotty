@@ -12,6 +12,8 @@ import {
 import createContainer from "./di.config"
 import { LocalModelSource } from "../../../src/local"
 import { TYPES } from "../../../src/base"
+import { UpdateModelAction } from "../../../src/features"
+import { IActionDispatcher } from "../../../src/base"
 
 export default function runMulticore() {
     const container = createContainer(false)
@@ -99,6 +101,7 @@ export default function runMulticore() {
     const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
     modelSource.setModel(processor)
 
+    const actionDispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
     function changeModel() {
         for (let i = 0; i < processor.children!.length; ++i) {
             const child = processor.children![i] 
@@ -106,7 +109,8 @@ export default function runMulticore() {
                 (child as CoreSchema).kernelNr = Math.round(Math.random() * 11)
             }
         }
-        modelSource.updateModel(processor)
+        // modelSource.update() would trigger hidden bounds computation, which is not necessary here
+        actionDispatcher.dispatch(new UpdateModelAction(processor))
     }
 
     setInterval(() => changeModel(), 300)

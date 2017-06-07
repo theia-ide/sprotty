@@ -12,16 +12,16 @@ package io.typefox.sprotty.api;
 public interface IModelUpdateListener {
 	
 	/**
-	 * Called whenever a new model has been sent to the client.
+	 * Called whenever a new model has been submitted to the client.
 	 */
-	void modelSent(SModelRoot newRoot, SModelRoot oldRoot, IDiagramServer server);
+	void modelSubmitted(SModelRoot newRoot, IDiagramServer server);
 	
 	/**
 	 * An implementation that does nothing.
 	 */
 	public static class NullImpl implements IModelUpdateListener {
 		@Override
-		public void modelSent(SModelRoot newRoot, SModelRoot oldRoot, IDiagramServer server) {
+		public void modelSubmitted(SModelRoot newRoot, IDiagramServer server) {
 		}
 	}
 

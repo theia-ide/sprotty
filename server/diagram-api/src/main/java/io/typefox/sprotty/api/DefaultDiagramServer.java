@@ -31,6 +31,9 @@ public class DefaultDiagramServer implements IDiagramServer {
 	private IDiagramSelectionListener diagramSelectionListener;
 	
 	public DefaultDiagramServer() {
+		currentRoot = new SModelRoot();
+		currentRoot.setType("NONE");
+		currentRoot.setId("ROOT");
 	}
 	
 	public DefaultDiagramServer(String clientId) {
@@ -106,18 +109,19 @@ public class DefaultDiagramServer implements IDiagramServer {
 	
 	@Override
 	public void setModel(SModelRoot newRoot) {
+		if (newRoot == null)
+			throw new NullPointerException();
 		this.currentRoot = newRoot;
-		if (newRoot != null) {
-			sendModel(newRoot, null);
-		}
+		submitModel(newRoot, false);
 	}
 	
 	@Override
 	public void updateModel(SModelRoot newRoot) {
-		SModelRoot oldRoot = this.currentRoot;
-		this.currentRoot = newRoot;
-		if (newRoot != null) {
-			sendModel(newRoot, oldRoot);
+		if (newRoot == null) {
+			submitModel(this.currentRoot, true);
+		} else {
+			this.currentRoot = newRoot;
+			submitModel(newRoot, true);
 		}
 	}
 	
@@ -138,17 +142,17 @@ public class DefaultDiagramServer implements IDiagramServer {
 	}
 	
 	/**
-	 * Send a new or updated model to the client. If client layout is required, a {@code RequestBoundsAction}
+	 * Submit a new or updated model to the client. If client layout is required, a {@code RequestBoundsAction}
 	 * is sent, otherwise either a {@code SetModelAction} or an {@code UpdateModelAction} is sent depending on
 	 * whether {@code oldRoot} is {@code null} or not.
 	 */
-	protected void sendModel(SModelRoot newRoot, SModelRoot oldRoot) {
+	protected void submitModel(SModelRoot newRoot, boolean update) {
 		IModelUpdateListener listener = getModelUpdateListener();
 		if (needsClientLayout(newRoot)) {
 			dispatch(new RequestBoundsAction(newRoot));
 			if (!needsServerLayout(newRoot) && listener != null) {
 				// In this case the client is expected to apply the computed bounds, so we trigger the listener immediately
-				listener.modelSent(newRoot, oldRoot, this);
+				listener.modelSubmitted(newRoot, this);
 			}
 		} else {
 			if (needsServerLayout(newRoot)) {
@@ -157,13 +161,13 @@ public class DefaultDiagramServer implements IDiagramServer {
 					layoutEngine.layout(newRoot);
 				}
 			}
-			if (oldRoot == null) {
-				dispatch(new SetModelAction(newRoot));
-			} else {
+			if (update) {
 				dispatch(new UpdateModelAction(newRoot));
+			} else {
+				dispatch(new SetModelAction(newRoot));
 			}
 			if (listener != null) {
-				listener.modelSent(newRoot, oldRoot, this);
+				listener.modelSubmitted(newRoot, this);
 			}
 		}
 	}
@@ -195,7 +199,7 @@ public class DefaultDiagramServer implements IDiagramServer {
 	protected void handle(RequestModelAction request) {
 		SModelRoot model = getModel();
 		if (model != null) {
-			sendModel(model, null);
+			submitModel(model, false);
 		}
 	}
 	
@@ -215,7 +219,7 @@ public class DefaultDiagramServer implements IDiagramServer {
 			dispatch(new UpdateModelAction(model));
 			IModelUpdateListener listener = getModelUpdateListener();
 			if (listener != null) {
-				listener.modelSent(model, null, this);
+				listener.modelSubmitted(model, this);
 			}
 		}
 	}

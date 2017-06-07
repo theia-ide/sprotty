@@ -14,7 +14,9 @@ import io.typefox.sprotty.api.SelectAction
 
 class MulticoreAllocationUpdateListener implements IModelUpdateListener {
 	
-	override modelSent(SModelRoot newRoot, SModelRoot oldRoot, IDiagramServer server) {
+	SModelRoot oldRoot
+	
+	override modelSubmitted(SModelRoot newRoot, IDiagramServer server) {
 		if (newRoot instanceof Flow) {
 			val taskNodes = newRoot.children.filter(TaskNode)
 			val selectedNodes = taskNodes.filter[selected !== null && selected].toList
@@ -57,6 +59,7 @@ class MulticoreAllocationUpdateListener implements IModelUpdateListener {
 				])
 			}
 		}
+		oldRoot = newRoot
 	}
 	
 }

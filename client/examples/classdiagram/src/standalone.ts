@@ -108,26 +108,5 @@ export default function runClassDiagram() {
 
     // Run
     const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
-    modelSource.popupModelProvider = (elementId) => {
-        if (elementId === 'node0') {
-            return {
-                type: 'html',
-                id: 'popup',
-                children: [
-                    {
-                        type: 'pre-rendered',
-                        id: 'popup-title',
-                        code: '<div class="popup-title">Class Foo</div>'
-                    },
-                    {
-                        type: 'pre-rendered',
-                        id: 'popup-body',
-                        code: '<div class="popup-body"><p>name: string</p><p>+ foo(): integer</p><p># bar(x: string): void</p></div>'
-                    }
-                ]
-            }
-        }
-        return undefined
-    }
     modelSource.setModel(graph)
 }

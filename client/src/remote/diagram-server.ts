@@ -59,7 +59,7 @@ export abstract class DiagramServer extends ModelSource {
         this.clientId = this.viewerOptions.baseDiv
     }
 
-    initialize(registry: ActionHandlerRegistry): void {
+    protected initialize(registry: ActionHandlerRegistry): void {
         super.initialize(registry)
 
         // Register model manipulation commands

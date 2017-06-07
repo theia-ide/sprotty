@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SModelRootSchema, SModelElementSchema } from "../../base/model/smodel"
+import { SModelRootSchema, SModelElementSchema, SModelRoot, SModelIndex } from "../../base/model/smodel"
 
 export interface Match {
     left?: SModelElementSchema
@@ -60,6 +60,42 @@ export class ModelMatcher {
         if (element.children !== undefined) {
             for (const child of element.children) {
                 this.matchRight(child, result, element.id)
+            }
+        }
+    }
+}
+
+export function applyMatches(root: SModelRootSchema, matches: Match[]): void {
+    let index: SModelIndex<SModelElementSchema>
+    if (root instanceof SModelRoot) {
+        index = root.index
+    } else {
+        index = new SModelIndex()
+        index.add(root)
+    }
+    for (const match of matches) {
+        let newElementInserted = false
+        if (match.left !== undefined && match.leftParentId !== undefined) {
+            const parent = index.getById(match.leftParentId)
+            if (parent !== undefined && parent.children !== undefined) {
+                const i = parent.children.indexOf(match.left)
+                if (i >= 0) {
+                    if (match.right !== undefined && match.leftParentId === match.rightParentId) {
+                        parent.children.splice(i, 1, match.right)
+                        newElementInserted = true
+                    } else {
+                        parent.children.splice(i, 1)
+                    }
+                }
+                index.remove(match.left)
+            }
+        }
+        if (!newElementInserted && match.right !== undefined && match.rightParentId !== undefined) {
+            const parent = index.getById(match.rightParentId)
+            if (parent !== undefined) {
+                if (parent.children === undefined)
+                    parent.children = []
+                parent.children.push(match.right)
             }
         }
     }
