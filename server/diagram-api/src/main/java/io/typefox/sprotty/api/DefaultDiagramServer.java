@@ -245,7 +245,7 @@ public class DefaultDiagramServer implements IDiagramServer {
 	protected void handle(SelectAction action) {
 		IDiagramSelectionListener selectionListener = getSelectionListener();
 		if (selectionListener != null) {
-			selectionListener.selectionChanged(action);
+			selectionListener.selectionChanged(action, this);
 		}
 	}
 	
