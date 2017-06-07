@@ -5,8 +5,8 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import "reflect-metadata"
-import "mocha"
+import 'reflect-metadata';
+import 'mocha';
 import { expect } from "chai"
 import { Container } from "inversify"
 import { EMPTY_BOUNDS } from '../../utils/geometry';
@@ -14,10 +14,10 @@ import { InitializeCanvasBoundsAction } from '../features/initialize-canvas';
 import { TYPES } from "../types"
 import { EMPTY_ROOT } from "../model/smodel-factory"
 import { RedoAction, UndoAction } from "../../features/undo-redo/undo-redo"
-import { MoveAction, MoveCommand } from "../../features/move/move"
 import { ICommandStack } from "./command-stack"
 import { IActionDispatcher } from "./action-dispatcher"
-import { ActionHandlerRegistry } from "./actions"
+import { ActionHandlerRegistry, Action } from "./actions"
+import { Command, CommandExecutionContext, CommandResult } from './commands';
 import defaultModule from "../di.config"
 
 describe('ActionDispatcher', () => {
@@ -40,6 +40,26 @@ describe('ActionDispatcher', () => {
     container.rebind(TYPES.ICommandStack).toConstantValue(mockCommandStack)
 
     const actionDispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
+
+    class MockCommand extends Command {
+        static KIND = 'mock'
+
+        execute(context: CommandExecutionContext): CommandResult {
+            return context.root
+        }
+        
+        undo(context: CommandExecutionContext): CommandResult {
+            return context.root
+        }
+        
+        redo(context: CommandExecutionContext): CommandResult {
+            return context.root
+        }
+    }
+
+    class MockAction implements Action {
+        kind = MockCommand.KIND
+    }
 
     it('undo/redo/execute', () => {
         // an initial SetModelAction is fired automatically
@@ -70,15 +90,15 @@ describe('ActionDispatcher', () => {
         expect(redoCount).to.be.equal(1)
 
         // MoveAction is not registered by default
-        actionDispatcher.dispatch(new MoveAction([], false))
+        actionDispatcher.dispatch(new MockAction())
         expect(execCount).to.be.equal(2)
         expect(undoCount).to.be.equal(1)
         expect(redoCount).to.be.equal(1)
 
         const registry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
-        registry.registerCommand(MoveCommand)
+        registry.registerCommand(MockCommand)
     
-        actionDispatcher.dispatch(new MoveAction([], false))
+        actionDispatcher.dispatch(new MockAction())
         expect(execCount).to.be.equal(3)
         expect(undoCount).to.be.equal(1)
         expect(redoCount).to.be.equal(1)

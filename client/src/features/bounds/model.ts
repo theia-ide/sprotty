@@ -5,9 +5,10 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds } from "../../utils/geometry"
-import { SModelElement, SParentElement } from "../../base/model/smodel"
+import { Bounds, EMPTY_BOUNDS } from "../../utils/geometry"
+import { SModelElement, SParentElement, SChildElement } from "../../base/model/smodel"
 import { SModelExtension } from "../../base/model/smodel-extension"
+import { findParentByFeature } from '../../base/model/smodel-utils'
 
 export const boundsFeature = Symbol('boundsFeature')
 export const layoutFeature = Symbol('layoutFeature')
@@ -36,3 +37,18 @@ export function isSizeable(element: SModelElement): element is SModelElement & B
     return element.hasFeature(boundsFeature) && isBoundsAware(element)
 }
 
+export function getAbsoluteBounds(element: SModelElement): Bounds {
+    const boundsAware = findParentByFeature(element, isBoundsAware)
+    if (boundsAware !== undefined) {
+        let bounds = boundsAware.bounds
+        let current: SModelElement = boundsAware
+        while (current instanceof SChildElement) {
+            const parent = current.parent
+            bounds = parent.localToParent(bounds)
+            current = parent
+        }
+        return bounds
+    } else {
+        return EMPTY_BOUNDS
+    }
+}

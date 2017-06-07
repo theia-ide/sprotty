@@ -14,9 +14,10 @@ import { Command, CommandExecutionContext, PopupCommand } from "../../base/inten
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { Bounds, Point, translate } from "../../utils/geometry"
 import { KeyListener } from "../../base/view/key-tool"
-import { findParentByFeature, findParent, getAbsoluteBounds } from "../../base/model/smodel-utils"
+import { findParentByFeature, findParent } from "../../base/model/smodel-utils"
 import { ViewerOptions } from "../../base/view/options"
 import { TYPES } from "../../base/types"
+import { getAbsoluteBounds } from '../bounds/model'
 
 export class HoverFeedbackAction implements Action {
     kind = HoverFeedbackCommand.KIND
