@@ -134,7 +134,9 @@ export class Viewer implements IViewer {
         </div>
         setClass(newVDOM, this.options.baseClass, true)
         if (this.lastVDOM !== undefined) {
+            const hadFocus = this.hasFocus()
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
+            this.restoreFocus(hadFocus)
         } else if (typeof document !== 'undefined') {
             const placeholder = document.getElementById(this.options.baseDiv)
             if (typeof window !== 'undefined')
@@ -144,6 +146,28 @@ export class Viewer implements IViewer {
             this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
         this.renderer.postUpdate()
+    }
+
+    protected hasFocus(): boolean {
+        if(typeof document !== 'undefined' && document.activeElement && this.lastVDOM.children && this.lastVDOM.children.length > 0) {
+            const lastRootVNode = this.lastVDOM.children[0]
+            if(typeof lastRootVNode === 'object') {
+                const lastElement = (lastRootVNode as VNode).elm
+                return document.activeElement === lastElement
+            }
+        }
+        return false
+    }
+
+    protected restoreFocus(focus: boolean) {
+        if (focus && this.lastVDOM.children && this.lastVDOM.children.length > 0) {
+            const lastRootVNode = this.lastVDOM.children[0]
+            if(typeof lastRootVNode === 'object') {
+                const lastElement = (lastRootVNode as VNode).elm
+                if (lastElement)
+                    (lastElement as any).focus()
+            }
+        }
     }
 
     updateHidden(hiddenModel: SModelRoot): void {

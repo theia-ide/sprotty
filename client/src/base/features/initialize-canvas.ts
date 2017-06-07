@@ -83,16 +83,15 @@ export class InitializeCanvasBoundsCommand extends SystemCommand {
     execute(context: CommandExecutionContext) {
         this.oldCanvasBounds = context.root.canvasBounds
         this.newCanvasBounds = this.action.newCanvasBounds
-        return this.redo(context)
+        context.root.canvasBounds = this.newCanvasBounds
+        return context.root
     }
 
     undo(context: CommandExecutionContext) {
-        context.root.canvasBounds = this.oldCanvasBounds
         return context.root
     }
 
     redo(context: CommandExecutionContext) {
-        context.root.canvasBounds = this.newCanvasBounds
         return context.root
     }
 }
