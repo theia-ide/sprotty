@@ -149,9 +149,9 @@ export class Viewer implements IViewer {
     }
 
     protected hasFocus(): boolean {
-        if(typeof document !== 'undefined' && document.activeElement && this.lastVDOM.children && this.lastVDOM.children.length > 0) {
+        if (typeof document !== 'undefined' && document.activeElement && this.lastVDOM.children && this.lastVDOM.children.length > 0) {
             const lastRootVNode = this.lastVDOM.children[0]
-            if(typeof lastRootVNode === 'object') {
+            if (typeof lastRootVNode === 'object') {
                 const lastElement = (lastRootVNode as VNode).elm
                 return document.activeElement === lastElement
             }
@@ -162,7 +162,7 @@ export class Viewer implements IViewer {
     protected restoreFocus(focus: boolean) {
         if (focus && this.lastVDOM.children && this.lastVDOM.children.length > 0) {
             const lastRootVNode = this.lastVDOM.children[0]
-            if(typeof lastRootVNode === 'object') {
+            if (typeof lastRootVNode === 'object') {
                 const lastElement = (lastRootVNode as VNode).elm
                 if (lastElement)
                     (lastElement as any).focus()
