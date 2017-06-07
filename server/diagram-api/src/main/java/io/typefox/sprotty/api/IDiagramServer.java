@@ -9,16 +9,16 @@ package io.typefox.sprotty.api;
 import java.util.function.Consumer;
 
 /**
- * A diagram server can be connected to the action stream of a Sprotty view.
+ * A diagram server can be connected to the action stream of a sprotty view.
  * This is the Java representation of the backend accessed via the TypeScript class {@code DiagramServer}
- * in the client. An instance of this interface is always bound to one Sprotty client, which is
+ * in the client. An instance of this interface is always bound to one sprotty client, which is
  * identified with its {@code clientId} string. In most cases a diagram server is stateful, since it
  * remembers the current model, and possibly further information required for building that model.
  */
 public interface IDiagramServer extends Consumer<ActionMessage> {
 	
 	/**
-	 * A string used to uniquely identify the Sprotty view and its corresponding server instance.
+	 * A string used to uniquely identify the sprotty view and its corresponding server instance.
 	 */
 	String getClientId();
 	

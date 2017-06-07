@@ -6,7 +6,7 @@
  */
 
 ext.title = "Sprotty Diagram Server"
-description = "JSON and Websocket implementations for connecting a diagram server to a Sprotty client"
+description = "JSON and Websocket implementations for connecting a diagram server to a sprotty client"
 
 dependencies {
     compile project(':diagram-api')

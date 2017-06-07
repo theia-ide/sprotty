@@ -6,7 +6,7 @@
  */
 
 ext.title = "Sprotty Diagram API"
-description = "Server API for providing Sprotty diagrams"
+description = "Server API for providing sprotty diagrams"
 
 dependencies {
 	compile "javax.inject:javax.inject:1"

@@ -21,7 +21,7 @@ import io.typefox.sprotty.api.IDiagramServer;
 import io.typefox.sprotty.server.json.ActionTypeAdapter;
 
 /**
- * A websocket endpoint to connect a diagram server with a Sprotty client.
+ * A websocket endpoint to connect a diagram server with a sprotty client.
  */
 public class DiagramServerEndpoint extends Endpoint implements Consumer<ActionMessage> {
 	
