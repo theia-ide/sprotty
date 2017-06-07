@@ -137,7 +137,7 @@ export class Viewer implements IViewer {
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
         } else if (typeof document !== 'undefined') {
             const placeholder = document.getElementById(this.options.baseDiv)
-            if(typeof window !== 'undefined')
+            if (typeof window !== 'undefined')
                 window.addEventListener('resize', () => {
                     this.onWindowResize(newVDOM)
                 })
@@ -162,7 +162,7 @@ export class Viewer implements IViewer {
             setClass(newVDOM, this.options.baseDiv, true)
         }
 
-        if(this.lastHiddenVDOM !== undefined) {
+        if (this.lastHiddenVDOM !== undefined) {
             this.lastHiddenVDOM = this.patcher.call(this, this.lastHiddenVDOM, newVDOM)
         } else {
             let placeholder = document.getElementById(this.options.hiddenDiv)

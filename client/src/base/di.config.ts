@@ -6,8 +6,8 @@
  */
 
 import { ContainerModule, interfaces } from "inversify"
-import { SModelStorage } from './model/smodel-storage';
-import { CanvasBoundsInitializer, InitializeCanvasBoundsCommand } from './features/initialize-canvas';
+import { SModelStorage } from './model/smodel-storage'
+import { CanvasBoundsInitializer, InitializeCanvasBoundsCommand } from './features/initialize-canvas'
 import { LogLevel, NullLogger } from "../utils/logging"
 import { ActionDispatcher, IActionDispatcher } from "./intent/action-dispatcher"
 import { CommandStack, ICommandStack } from "./intent/command-stack"

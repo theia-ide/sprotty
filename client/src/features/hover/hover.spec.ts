@@ -49,7 +49,7 @@ describe('hover', () => {
 
     class PopupTarget extends SChildElement {
         hasFeature(feature: symbol): boolean {
-            return feature == popupFeature
+            return feature === popupFeature
         }
     }
 

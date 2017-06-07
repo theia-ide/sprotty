@@ -5,11 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { EMPTY_BOUNDS } from '../../utils';
-import { SChildElement } from '../../base';
+import { EMPTY_BOUNDS } from '../../utils'
+import { SChildElement } from '../../base'
 import { SParentElement, SModelElement } from "../../base/model/smodel"
-import { ILayout, StatefulLayouter } from './layout';
-import { BoundsAware, isBoundsAware, isLayouting, Layouting } from './model';
+import { ILayout, StatefulLayouter } from './layout'
+import { BoundsAware, isBoundsAware, isLayouting, Layouting } from './model'
 import { Bounds, isValidDimension } from "../../utils/geometry"
 import { VNode } from "snabbdom/vnode"
 
@@ -37,7 +37,7 @@ export class VBoxLayouter implements ILayout {
             : Math.max(0, this.getFixedContainerBounds(container, layouter).width) - properties.paddingLeft - properties.paddingRight
         if (maxWidth > 0) {
             let y = this.layoutChildren(container, layouter, properties, maxWidth)
-            if(container.resizeContainer) {
+            if (container.resizeContainer) {
                 boundsData.bounds = {
                     x: container.bounds.x,
                     y: container.bounds.y,

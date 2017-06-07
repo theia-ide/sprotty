@@ -33,6 +33,8 @@
     "reflect-metadata": "^0.1.10",
     "rimraf": "^2.6.1",
     "snabbdom-to-html": "^3.1.1",
+    "tslint": "^4.5.1",
+    "tslint-loader": "^3.4.3",
     "ts-loader": "^2.0.0",
     "ts-node": "^2.1.0",
     "typescript": "^2.2.2",
@@ -56,7 +58,8 @@
   },
   "scripts": {
     "clean": "rimraf lib",
-    "build": "tsc",
+    "build": "tsc && npm run lint",
+    "lint": "tslint -c ./tslint.json --project ./tsconfig.json",
     "watch": "tsc --watch",
     "test": "mocha --opts ./mocha.opts",
     "coverage": "nyc mocha --opts ./mocha.opts",

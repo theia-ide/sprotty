@@ -5,8 +5,8 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { EMPTY_ROOT } from '../model/smodel-factory';
-import { SetModelAction, SetModelCommand } from '../features/model-manipulation';
+import { EMPTY_ROOT } from '../model/smodel-factory'
+import { SetModelAction, SetModelCommand } from '../features/model-manipulation'
 import { inject, injectable } from "inversify"
 import { ILogger } from "../../utils/logging"
 import { TYPES } from "../types"
@@ -16,7 +16,7 @@ import { ICommandStack } from "./command-stack"
 import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
 
 export interface IActionDispatcher {
-    dispatch(action: Action, onExecute?: (action: Action)=>void): void
+    dispatch(action: Action, onExecute?: (action: Action) => void): void
     dispatchAll(actions: Action[]): void
 }
 
@@ -44,7 +44,7 @@ export class ActionDispatcher implements IActionDispatcher {
         actions.forEach(action => this.dispatch(action))
     }
 
-    dispatch(action: Action, onExecute?: (action: Action)=>void): void {
+    dispatch(action: Action, onExecute?: (action: Action) => void): void {
         if (action.kind === this.blockUntilActionKind) {
             this.blockUntilActionKind = undefined
             this.handleAction(action)
@@ -95,5 +95,5 @@ export class ActionDispatcher implements IActionDispatcher {
 
 export interface ActionAndHook {
     action: Action
-    onExecute?: (action: Action)=>void
+    onExecute?: (action: Action) => void
 }

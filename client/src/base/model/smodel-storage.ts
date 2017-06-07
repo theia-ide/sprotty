@@ -19,7 +19,7 @@ export class SModelStorage {
     protected localCache: Map<string, string> = new Map
 
     store(root: SModelRootSchema) {
-        if(this.isLocalStorageAvailable()) 
+        if (this.isLocalStorageAvailable()) 
             localStorage.setItem(this.key, JSON.stringify(root))
         else
             this.localCache.set(this.key, JSON.stringify(root))
@@ -29,7 +29,7 @@ export class SModelStorage {
         const schema = (this.isLocalStorageAvailable()) 
             ? localStorage.getItem(this.key)
             : this.localCache.get(this.key)
-        if(schema)
+        if (schema)
             return JSON.parse(schema) as SModelRootSchema
         else
             return EMPTY_ROOT

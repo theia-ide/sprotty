@@ -21,8 +21,10 @@ export abstract class Animation {
     start(): Promise<SModelRoot> {
         return new Promise<SModelRoot>(
             (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
+                let start: number | undefined = undefined
+                let frames = 0
                 const lambda = (time: number) => {
-                    frames++;
+                    frames++
                     let dtime: number
                     if (start === undefined) {
                         start = time
@@ -40,8 +42,6 @@ export abstract class Animation {
                         this.context.syncer.onNextFrame(lambda)
                     }
                 }
-                let start: number | undefined = undefined
-                let frames = 0
                 if (this.context.syncer.isAvailable()) {
                     this.context.syncer.onNextFrame(lambda)
                 } else {

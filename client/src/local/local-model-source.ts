@@ -6,7 +6,7 @@
  */
 
 import { injectable } from "inversify"
-import { ComputedBoundsAction, RequestBoundsAction } from '../features/bounds/bounds-manipulation';
+import { ComputedBoundsAction, RequestBoundsAction } from '../features/bounds/bounds-manipulation'
 import { Bounds } from "../utils/geometry"
 import { Match } from "../features/update/model-matching"
 import { UpdateModelAction, UpdateModelCommand } from "../features/update/update-model"

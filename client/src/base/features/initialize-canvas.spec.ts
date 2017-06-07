@@ -9,9 +9,9 @@ import "reflect-metadata"
 import "mocha"
 import { expect } from "chai"
 import { SModelRoot } from "../model/smodel"
-import { Bounds, EMPTY_BOUNDS } from '../../utils/geometry';
-import { CommandExecutionContext } from '../intent/commands';
-import { InitializeCanvasBoundsAction, InitializeCanvasBoundsCommand } from './initialize-canvas';
+import { Bounds, EMPTY_BOUNDS } from '../../utils/geometry'
+import { CommandExecutionContext } from '../intent/commands'
+import { InitializeCanvasBoundsAction, InitializeCanvasBoundsCommand } from './initialize-canvas'
 
 describe('InitializeCanvasBoundsCommand', () => {
 

@@ -17,5 +17,5 @@ export function isCtrlOrCmd(event: KeyboardEvent | MouseEvent) {
 }
 
 export function isMac(): boolean {
-    return window.navigator.userAgent.indexOf("Mac") != -1
+    return window.navigator.userAgent.indexOf("Mac") !== -1
 }

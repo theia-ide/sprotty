@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SChildElement } from '../../base';
+import { SChildElement } from '../../base'
 import { VNode } from "snabbdom/vnode"
 import { Point } from "../../utils/geometry"
 import { SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel"
@@ -145,7 +145,7 @@ export class MoveMouseListener extends MouseListener {
     lastDragPosition: Point | undefined
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
-        if (event.button == 0) {
+        if (event.button === 0) {
             if (isMoveable(target)) {
                 this.lastDragPosition = {x: event.pageX, y: event.pageY}
             } else {
@@ -157,7 +157,7 @@ export class MoveMouseListener extends MouseListener {
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): Action[] {
-        if(event.buttons == 0) 
+        if (event.buttons === 0) 
             this.mouseUp(target, event)
         else if (this.lastDragPosition) {
             const viewport = findParentByFeature(target, isViewport)

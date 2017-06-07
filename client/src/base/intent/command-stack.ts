@@ -226,7 +226,7 @@ export class CommandStack implements ICommandStack {
 
     protected pushToUndoStack(command: ICommand) {
         this.undoStack.push(command)
-        if(this.options.undoHistoryLimit >= 0 && this.undoStack.length > this.options.undoHistoryLimit) 
+        if (this.options.undoHistoryLimit >= 0 && this.undoStack.length > this.options.undoHistoryLimit) 
             this.undoStack.splice(0, this.undoStack.length - this.options.undoHistoryLimit)
     }
 

@@ -160,7 +160,7 @@ export class SelectMouseListener extends MouseListener {
     hasDragged = false
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
-        if (event.button == 0) {
+        if (event.button === 0) {
             const selectableTarget = findParentByFeature(target, isSelectable)
             if (selectableTarget !== undefined || target instanceof SModelRoot) {
                 this.hasDragged = false
@@ -174,7 +174,7 @@ export class SelectMouseListener extends MouseListener {
                         .map(element => element.id)
                 }
                 if (selectableTarget !== undefined) {
-                    if(!selectableTarget.selected) {
+                    if (!selectableTarget.selected) {
                         this.wasSelected = false
                         return [new SelectAction([selectableTarget.id], deselectIds)]
                     } else {
@@ -199,7 +199,7 @@ export class SelectMouseListener extends MouseListener {
     }
 
     mouseUp(target: SModelElement, event: MouseEvent): Action[] {
-        if (event.button == 0) {
+        if (event.button === 0) {
             if (!this.hasDragged) {
                 const selectableTarget = findParentByFeature(target, isSelectable)
                 if (selectableTarget !== undefined && this.wasSelected) {
@@ -221,7 +221,7 @@ export class SelectMouseListener extends MouseListener {
 
 export class SelectKeyboardListener extends KeyListener {
     keyPress(element: SModelElement, event: KeyboardEvent): Action[] {
-        if (isCtrlOrCmd(event) && event.keyCode == 65) {
+        if (isCtrlOrCmd(event) && event.keyCode === 65) {
             return [new SelectAction(
                 element.root.index.all().filter(e => isSelectable(e)).map(e => e.id), [])]
         }

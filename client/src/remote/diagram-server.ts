@@ -104,8 +104,8 @@ export abstract class DiagramServer extends ModelSource {
 
     protected storeNewModel(action: Action): void {
         if (action.kind === SetModelCommand.KIND 
-            || action.kind === UpdateModelCommand.KIND
-            || action.kind === RequestBoundsCommand.KIND) {
+            || action.kind === UpdateModelCommand.KIND
+            || action.kind === RequestBoundsCommand.KIND) {
             const newRoot = (action as any).newRoot
             if (newRoot) {
                 this.currentRoot = newRoot as SModelRootSchema

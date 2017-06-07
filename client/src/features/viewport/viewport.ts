@@ -60,7 +60,7 @@ export class ViewportCommand extends MergeableCommand {
     }
 
     merge(command: ICommand, context: CommandExecutionContext) {
-        if (!this.action.animate && command instanceof ViewportCommand && this.element == command.element) {
+        if (!this.action.animate && command instanceof ViewportCommand && this.element === command.element) {
             this.newViewport = command.newViewport
             return true
         }

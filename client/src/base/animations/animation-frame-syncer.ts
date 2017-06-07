@@ -10,31 +10,31 @@ import { injectable } from "inversify"
 @injectable()
 export class AnimationFrameSyncer {
 
-    tasks: ((x?: number)=>void) [] = []
-    endTasks: ((x?: number)=>void) [] = []
+    tasks: ((x?: number) => void) [] = []
+    endTasks: ((x?: number) => void) [] = []
     triggered: boolean = false
 
     isAvailable(): boolean {
         return typeof requestAnimationFrame === "function"
     }
 
-    onNextFrame(task: (x?: number)=>void) {
+    onNextFrame(task: (x?: number) => void) {
         this.tasks.push(task)
         this.trigger()
     }
 
-    onEndOfNextFrame(task: (x?: number)=>void) {
+    onEndOfNextFrame(task: (x?: number) => void) {
         this.endTasks.push(task)
         this.trigger()
     }
 
     protected trigger() {
-        if(!this.triggered) {
+        if (!this.triggered) {
             this.triggered = true
-            if(this.isAvailable())
+            if (this.isAvailable())
                 requestAnimationFrame((time: number) => this.run(time))
             else
-                setTimeout((time: number)=>this.run(time))
+                setTimeout((time: number) => this.run(time))
         }
     }
 

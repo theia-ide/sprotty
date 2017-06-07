@@ -64,9 +64,9 @@ describe('graph views', () => {
     })
 
     const node0 = {id: 'node0', type: 'node:circle', position: { x: 100, y: 100 } }
-    const node1 = {id: 'node1', type: 'node:circle', position: { x: 200, y: 150 }, selected: true};
-    const edge0 = {id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1'};
-    const graph = factory.createRoot({id: 'graph', type: 'graph', children: [node0, node1, edge0]}) as SGraph;
+    const node1 = {id: 'node1', type: 'node:circle', position: { x: 200, y: 150 }, selected: true}
+    const edge0 = {id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1'}
+    const graph = factory.createRoot({id: 'graph', type: 'graph', children: [node0, node1, edge0]}) as SGraph
 
     it('render a straight edge', () => {
         const view = new PolylineEdgeView()

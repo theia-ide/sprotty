@@ -34,7 +34,7 @@ export class SModelFactory implements IModelFactory {
         for (let key in element) {
              if (!this.isReserved(element, key)) {
                 const value: any = (element as any)[key]
-                if (typeof value != 'function')
+                if (typeof value !== 'function')
                     (schema as any)[key] = value
             }
         }
@@ -47,7 +47,7 @@ export class SModelFactory implements IModelFactory {
         for (let key in schema) {
             if (!this.isReserved(element, key)) {
                 const value: any = (schema as any)[key]
-                if (typeof value != 'function')
+                if (typeof value !== 'function')
                     (element as any)[key] = value
             }
         }

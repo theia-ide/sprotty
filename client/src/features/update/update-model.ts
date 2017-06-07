@@ -173,7 +173,7 @@ export class UpdateModelCommand extends Command {
         if (isLocateable(left) && isLocateable(right)) {
             const leftPos = left.position
             const rightPos = right.position
-            if (leftPos.x != rightPos.x || leftPos.y != rightPos.y) {
+            if (leftPos.x !== rightPos.x || leftPos.y !== rightPos.y) {
                 if (animationData.moves === undefined)
                     animationData.moves = []
                 animationData.moves.push({
