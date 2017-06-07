@@ -1,19 +1,29 @@
 # sprotty
-A next-gen web-based graphics framework.
+A next-gen, open-source, web-based graphics framework.
+
+Sprotty features
+* fast, scalable SVG rendering that is compatible with many browsers and stylable with CSS
+* animations built into the core
+* support for a client/server separation
+* a fast, reactive client architecure implemented in TypeScript
+* configuration via dependency injection
+* integration with [Xtext, the Language Server Protocol and Theia](https://github.com/TypeFox/theia-sprotty-example).
 
 [![sprotty demo](https://raw.githubusercontent.com/wiki/TypeFox/sprotty/sprotty_demo_screenshot.png?token=AAXDmPP3Y9TbeMv3_DGb6f_BSZ8uwsgBks5ZQYZ1wA%3D%3D)](http://www.youtube.com/watch?v=IydM4l7WFKk "sprotty demo Title")
 
-## Server development
+## Getting started
 
-- Eclipse with Xtend and Buildship (version >=2) is required
-- Import server projects using _Import > Gradle_
-- Run server: On _MulticoreServerLauncher.xtend_ choose _Run as > Java Application_
+```
+# clone the repo
+git clone git@github.com:TypeFox/sprotty.git
+# build sprotty client and examples
+cd sprotty/client
+npm install
+npm run build
+# build and run the sprotty server
+cd ../server
+./gradlew jettyRun 
+# point your web browser to localhost:8080
+```
 
-
-## Client development
-
-- Use _webstorm_ or _VS Code_
-- On the command line do `npm install`
-- To build and run do `npm run watch`
-- Point your browser to the `localhost:8080`. 
-- To debug from _webstorm_, choose _Debug index.html_ from its context menu.
+For further information please consult the [wiki](https://github.com/TypeFox/sprotty/wiki).
