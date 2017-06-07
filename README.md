@@ -13,16 +13,19 @@ sprotty is a next-generation, open-source, web-based diagramming framework. Some
 
 ## Getting started
 
-```
+```bash
 # clone the repo
 git clone git@github.com:TypeFox/sprotty.git
+
 # build sprotty client and examples
 cd sprotty/client
 npm install
 npm run build
+
 # build and run the sprotty server
 cd ../server
 ./gradlew jettyRun 
+
 # point your web browser to localhost:8080
 ```
 
