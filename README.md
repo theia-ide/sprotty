@@ -1,6 +1,7 @@
 # sprotty
 A next-gen web-based graphics framework.
 
+[![sprotty demo](http://img.youtube.com/vi/IydM4l7WFKk/0.jpg)](http://www.youtube.com/watch?v=IydM4l7WFKk "sprotty demo Title")
 
 ## Server development
 
