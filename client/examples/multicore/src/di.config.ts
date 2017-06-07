@@ -13,7 +13,7 @@ import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { boundsModule, selectModule, viewportModule, moveModule, fadeModule, hoverModule } from "../../../src/features"
 import { ProcessorView, CoreView, CrossbarView, ChannelView, SimpleCoreView } from "./views"
-import { LocalModelSource } from "../../../src/local/local-model-source"
+import { LocalModelSource } from "../../../src/local"
 import { HtmlRootView, PreRenderedView } from "../../../src/lib"
 
 const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {

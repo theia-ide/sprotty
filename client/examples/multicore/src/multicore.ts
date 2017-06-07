@@ -11,7 +11,7 @@ import {
 } from './chipmodel';
 import createContainer from "./di.config"
 import { LocalModelSource } from "../../../src/local"
-import { TYPES } from "../../../src/base/types"
+import { TYPES } from "../../../src/base"
 
 export default function runMulticore() {
     const container = createContainer(false)

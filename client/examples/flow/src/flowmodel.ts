@@ -6,7 +6,7 @@
  */
 
 import { SNode, SNodeSchema } from "../../../src/graph"
-import { Bounds } from "../../../src/utils/geometry"
+import { Bounds } from "../../../src/utils"
 import { moveFeature } from "../../../src/features"
 
 export interface TaskNodeSchema extends SNodeSchema {

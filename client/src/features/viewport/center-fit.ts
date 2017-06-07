@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SChildElement } from '../../base'
+import { SChildElement } from '../../base/model/smodel'
 import { Action } from "../../base/intent/actions"
 import { Command, CommandExecutionContext } from "../../base/intent/commands"
 import { SModelElement, SModelRoot } from "../../base/model/smodel"

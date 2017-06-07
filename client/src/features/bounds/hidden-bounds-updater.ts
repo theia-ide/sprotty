@@ -7,7 +7,7 @@
 
 import { inject, injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
-import { almostEquals } from '../../utils'
+import { almostEquals } from '../../utils/geometry'
 import { SModelElement } from "../../base/model/smodel"
 import { IVNodeDecorator } from "../../base/view/vnode-decorators"
 import { TYPES } from "../../base/types"

@@ -9,7 +9,7 @@ import { Container, ContainerModule } from "inversify"
 import { defaultModule, TYPES, ViewRegistry } from "../../../src/base"
 import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule, hoverModule } from "../../../src/features"
-import { LocalModelSource } from "../../../src/local/local-model-source"
+import { LocalModelSource } from "../../../src/local"
 import { SvgFactory } from "./model-factory"
 import { PreRenderedView, SvgViewportView } from "../../../src/lib"
 

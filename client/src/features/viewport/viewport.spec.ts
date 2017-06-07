@@ -6,11 +6,13 @@
  */
 
 import 'mocha'
-import { AnimationFrameSyncer } from '../../base/index'
+import { AnimationFrameSyncer } from '../../base/animations/animation-frame-syncer'
 import { CommandExecutionContext } from '../../base/intent/commands'
-import { SGraphFactory } from '../../graph/index'
-import { almostEquals, ConsoleLogger } from '../../utils/index'
-import { Viewport, ViewportAction, ViewportCommand } from '../index'
+import { SGraphFactory } from '../../graph/model/sgraph-factory'
+import { almostEquals } from '../../utils/geometry'
+import { ConsoleLogger } from '../../utils/logging'
+import { ViewportAction, ViewportCommand } from './viewport'
+import { Viewport } from './model'
 import { ViewportRootElement } from './viewport-root'
 import { expect } from 'chai'
 

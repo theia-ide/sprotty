@@ -10,11 +10,10 @@ import { SChildElement, SModelElementSchema, SModelRootSchema } from "../../../s
 import { Bounds, Direction } from "../../../src/utils"
 import {
     BoundsAware, boundsFeature, Fadeable, fadeFeature, layoutFeature, Layouting, Selectable,
-    selectFeature, viewportFeature, hoverFeedbackFeature, popupFeature
+    selectFeature, viewportFeature, ViewportRootElement, hoverFeedbackFeature, Hoverable,
+    popupFeature
 } from '../../../src/features';
-import { ViewportRootElement } from "../../../src/features/viewport/viewport-root"
 import { CORE_DISTANCE, CORE_WIDTH } from "./views";
-import {Hoverable} from "../../../src/features/hover/model";
 
 export interface ProcessorSchema extends SModelRootSchema {
     rows: number

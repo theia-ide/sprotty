@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { setAttr } from '../../base'
+import { setAttr } from '../../base/view/vnode-utils'
 import * as snabbdom from "snabbdom-jsx"
 import { VNode } from "snabbdom/vnode"
 import { RenderingContext, IView } from "../../base/view/views"

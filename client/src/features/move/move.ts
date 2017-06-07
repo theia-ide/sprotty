@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SChildElement } from '../../base'
+import { SChildElement } from '../../base/model/smodel'
 import { VNode } from "snabbdom/vnode"
 import { Point } from "../../utils/geometry"
 import { SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel"

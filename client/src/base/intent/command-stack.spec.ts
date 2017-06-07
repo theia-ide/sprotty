@@ -13,7 +13,7 @@ import {
     Command, HiddenCommand, SystemCommand, CommandExecutionContext, CommandResult, MergeableCommand, PopupCommand
 } from './commands'
 import { TYPES } from "../types"
-import { defaultModule } from "../index"
+import defaultModule from "../di.config"
 import { IViewer } from "../view/viewer"
 import { ICommandStack } from "./command-stack"
 

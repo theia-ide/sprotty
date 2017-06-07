@@ -12,7 +12,7 @@ import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule, hoverModule } from "../../../src/features"
 import { ClassNodeView } from "./views"
-import { LocalModelSource } from "../../../src/local/local-model-source"
+import { LocalModelSource } from "../../../src/local"
 import { ClassDiagramFactory } from "./model-factory"
 import { HtmlRootView, PreRenderedView } from "../../../src/lib"
 

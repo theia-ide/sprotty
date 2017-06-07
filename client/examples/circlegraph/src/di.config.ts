@@ -12,7 +12,7 @@ import { ConsoleLogger, LogLevel } from "../../../src/utils"
 import { WebSocketDiagramServer } from "../../../src/remote"
 import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule } from "../../../src/features"
 import { CircleNodeView } from "./views"
-import { LocalModelSource } from "../../../src/local/local-model-source"
+import { LocalModelSource } from "../../../src/local"
 
 const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
