@@ -157,7 +157,7 @@ export class MoveMouseListener extends MouseListener {
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): Action[] {
-        if (event.buttons === 0) 
+        if (event.buttons === 0)
             this.mouseUp(target, event)
         else if (this.lastDragPosition) {
             const viewport = findParentByFeature(target, isViewport)

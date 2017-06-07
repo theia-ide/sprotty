@@ -35,7 +35,7 @@ export class Layouter {
 }
 
 export class StatefulLayouter {
-    
+
     private toBeLayouted: (SParentElement & Layouting)[]
 
     constructor(private readonly element2boundsData: Map<SModelElement​​ , BoundsData>,
@@ -90,7 +90,7 @@ export class StatefulLayouter {
 }
 
 export interface ILayout {
-    layout(container: Layouting & SParentElement, 
+    layout(container: Layouting & SParentElement,
            layouter: StatefulLayouter): void
 }
 

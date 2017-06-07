@@ -34,7 +34,7 @@ export class SetModelCommand extends Command {
         this.oldRoot = context.root
         this.newRoot = context.modelFactory.createRoot(this.action.newRoot)
         if (isValidDimension(this.oldRoot.canvasBounds)) {
-           this.newRoot.canvasBounds = this.oldRoot.canvasBounds 
+           this.newRoot.canvasBounds = this.oldRoot.canvasBounds
         }
         return this.newRoot
     }
@@ -48,9 +48,9 @@ export class SetModelCommand extends Command {
     }
 
     get blockUntilActionKind() {
-        if (this.action.isInitial) 
+        if (this.action.isInitial)
             return InitializeCanvasBoundsCommand.KIND
-        else 
+        else
             return undefined
     }
 }

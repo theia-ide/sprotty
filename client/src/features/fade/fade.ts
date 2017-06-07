@@ -54,7 +54,7 @@ export class ElementFader implements IVNodeDecorator {
         }
         return vnode
     }
-    
+
     postUpdate(): void {
     }
 }

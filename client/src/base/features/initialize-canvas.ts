@@ -16,8 +16,8 @@ import { almostEquals, Bounds, isValidDimension, ORIGIN_POINT } from '../../util
 import { VNode } from "snabbdom/vnode"
 
 /**
- * Grabs the bounds from the root element in page coordinates and fires a 
- * InitializeCanvasBoundsAction. This size is needed for other actions such 
+ * Grabs the bounds from the root element in page coordinates and fires a
+ * InitializeCanvasBoundsAction. This size is needed for other actions such
  * as FitToScreenAction.
  */
 @injectable()
@@ -43,9 +43,9 @@ export class CanvasBoundsInitializer implements IVNodeDecorator {
                 if (!(almostEquals(newBounds.x, oldBounds.x)
                         && almostEquals(newBounds.y, oldBounds.y)
                         && almostEquals(newBounds.width, oldBounds.width)
-                        && almostEquals(newBounds.height, oldBounds.width))) 
+                        && almostEquals(newBounds.height, oldBounds.width)))
                     this.actionDispatcher.dispatch(new InitializeCanvasBoundsAction(newBounds))
-                
+
             }
             this.rootAndVnode = undefined
         }

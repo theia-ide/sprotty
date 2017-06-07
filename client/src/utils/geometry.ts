@@ -21,7 +21,7 @@ export const ORIGIN_POINT: Point = Object.freeze({
     y: 0
 })
 
-/**  
+/**
  * The Dimension of an object is composed of its width and height
  */
 export interface Dimension {
@@ -46,7 +46,7 @@ export function isValidDimension(d: Dimension): boolean {
     return d.width >= 0 && d.height >= 0
 }
 
-/** 
+/**
  * The bounds are the position (x, y) and dimension (width, height)
  * of an object
  */
@@ -62,8 +62,8 @@ export const EMPTY_BOUNDS: Bounds = Object.freeze({
 
 export function isBounds(element: any): element is Bounds {
     return 'x' in element
-        && 'y' in element 
-        && 'width' in element 
+        && 'y' in element
+        && 'width' in element
         && 'height' in element
 }
 
@@ -146,7 +146,7 @@ export function euclideanDistance(a: Point, b: Point): number {
 }
 
 /**
- * Returns the distance between two points in a grid, using a 
+ * Returns the distance between two points in a grid, using a
  * strictly vertical and/or horizontal path (versus straight line)
  * @param {Point} a - First point
  * @param {Point} b - Second point

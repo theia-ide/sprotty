@@ -12,10 +12,10 @@ import {
     CommandExecutionContext,
     CommandResult,
     SystemCommand,
-    MergeableCommand, 
+    MergeableCommand,
     PopupCommand
 } from './commands'
-import { CommandStackOptions } from './command-stack-options' 
+import { CommandStackOptions } from './command-stack-options'
 import { EMPTY_ROOT, IModelFactory } from "../model/smodel-factory"
 import { IViewer, IViewerProvider } from "../view/viewer"
 import { ILogger } from "../../utils/logging"
@@ -24,39 +24,39 @@ import { SModelRoot } from "../model/smodel"
 import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
 
 /**
- * The component that holds the current model and applies the commands 
+ * The component that holds the current model and applies the commands
  * to change it.
- * 
- * The command stack is called by the ActionDispatcher and forwards the 
+ *
+ * The command stack is called by the ActionDispatcher and forwards the
  * changed model to the Viewer that renders it.
  */
 export interface ICommandStack {
     /**
-     * Executes the given command on the current model and returns a 
-     * Promise for the new result. 
-     * 
+     * Executes the given command on the current model and returns a
+     * Promise for the new result.
+     *
      * Unless it is a special command, it is pushed to the undo stack
-     * such that it can be rolled back later and the redo stack is 
+     * such that it can be rolled back later and the redo stack is
      * cleared.
      */
     execute(command: ICommand): Promise<SModelRoot>
 
     /**
-     * Executes all of the given commands. As opposed to calling 
+     * Executes all of the given commands. As opposed to calling
      * execute() multiple times, the Viewer is only updated once after
      * the last command has been executed.
      */
     executeAll(commands: ICommand[]): Promise<SModelRoot>
 
     /**
-     * Takes the topmost command from the undo stack, undoes its 
+     * Takes the topmost command from the undo stack, undoes its
      * changes and pushes it ot the redo stack. Returns a Promise for
      * the changed model.
      */
     undo(): Promise<SModelRoot>
 
     /**
-     * Takes the topmost command from the redo stack, redoes its 
+     * Takes the topmost command from the redo stack, redoes its
      * changes and pushes it ot the undo stack. Returns a Promise for
      * the changed model.
      */
@@ -64,35 +64,35 @@ export interface ICommandStack {
 }
 
 /**
- * As part of the event cylce, the ICommandStack should be injected 
+ * As part of the event cylce, the ICommandStack should be injected
  * using a provider to avoid cyclic injection dependencies.
  */
 export type CommandStackProvider = () => Promise<ICommandStack>
 
 /**
- * The implementation of the ICommandStack. Clients should not use this 
+ * The implementation of the ICommandStack. Clients should not use this
  * class directly.
- * 
- * The command stack holds the current model as the result of the current 
- * promise. When a new command is executed/undone/redone, its execution is 
- * chained using <code>Promise#then()</code> to the current Promise. This 
- * way we can handle long running commands without blocking the current 
+ *
+ * The command stack holds the current model as the result of the current
+ * promise. When a new command is executed/undone/redone, its execution is
+ * chained using <code>Promise#then()</code> to the current Promise. This
+ * way we can handle long running commands without blocking the current
  * thread.
- * 
+ *
  * The command stack also does the special handling for special commands:
- * 
- * System commands should be transparent to the user and as such be 
- * automatically undone/redone with the next plain command. Additional care 
- * must be taken that system commands that are executed after undo don't 
- * break the correspondence between the topmost commands on the undo and 
+ *
+ * System commands should be transparent to the user and as such be
+ * automatically undone/redone with the next plain command. Additional care
+ * must be taken that system commands that are executed after undo don't
+ * break the correspondence between the topmost commands on the undo and
  * redo stacks.
- * 
+ *
  * Hidden commands only tell the viewer to render a hidden model such that
  * its bounds can be extracted from the DOM and forwarded as separate actions.
  * Hidden commands should not leave any trace on the undo/redo/off stacks.
- * 
- * Mergeable commands should be merged with their predecessor if possible, 
- * such that e.g. multiple subsequent moves of the smae element can be undone 
+ *
+ * Mergeable commands should be merged with their predecessor if possible,
+ * such that e.g. multiple subsequent moves of the smae element can be undone
  * in one single step.
  */
 @injectable()
@@ -112,15 +112,15 @@ export class CommandStack implements ICommandStack {
     protected redoStack: ICommand[] = []
 
     /**
-     * System commands should be transparent to the user in undo/redo 
-     * operations. When a system command is executed when the redo 
-     * stack is not empty, it is pushed to offStack instead. 
-     * 
-     * On redo, all commands form this stack are undone such that the 
-     * redo operation gets the exact same model as when it was executed 
+     * System commands should be transparent to the user in undo/redo
+     * operations. When a system command is executed when the redo
+     * stack is not empty, it is pushed to offStack instead.
+     *
+     * On redo, all commands form this stack are undone such that the
+     * redo operation gets the exact same model as when it was executed
      * first.
-     * 
-     * On undo, all commands form this stack are undone as well as 
+     *
+     * On undo, all commands form this stack are undone as well as
      * system ommands should be transparent to the user.
      */
     protected offStack: SystemCommand[] = []
@@ -170,9 +170,9 @@ export class CommandStack implements ICommandStack {
     /**
      * Chains the current promise with another Promise that performs the
      * given operation on the given command.
-     * 
-     * @param beforeResolve a function that is called directly before 
-     * resolving the Promise to return the new model. Usually puts the 
+     *
+     * @param beforeResolve a function that is called directly before
+     * resolving the Promise to return the new model. Usually puts the
      * command on the appropriate stack.
      */
     protected handleCommand(command: ICommand,
@@ -226,7 +226,7 @@ export class CommandStack implements ICommandStack {
 
     protected pushToUndoStack(command: ICommand) {
         this.undoStack.push(command)
-        if (this.options.undoHistoryLimit >= 0 && this.undoStack.length > this.options.undoHistoryLimit) 
+        if (this.options.undoHistoryLimit >= 0 && this.undoStack.length > this.options.undoHistoryLimit)
             this.undoStack.splice(0, this.undoStack.length - this.options.undoHistoryLimit)
     }
 

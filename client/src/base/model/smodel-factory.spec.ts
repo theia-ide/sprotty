@@ -49,7 +49,7 @@ describe('model factory', () => {
         expect(element3.id).to.equal('element3')
         expect(element3.parent.id).to.equal('element2')
     })
-    
+
     it('detects duplicate ids and throws an error', () => {
         const factory = new SModelFactory()
         const test = () => factory.createRoot({
@@ -68,7 +68,7 @@ describe('model factory', () => {
         })
         expect(test).to.throw(Error)
     })
-    
+
     it('does not overwrite reserved properties', () => {
         const factory = new SModelFactory()
         const root = factory.createRoot({

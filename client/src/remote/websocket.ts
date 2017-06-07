@@ -10,7 +10,7 @@ import { DiagramServer } from "./diagram-server"
 
 /**
  * An external ModelSource that connects to the model provider using a
- * websocket. 
+ * websocket.
  */
 @injectable()
 export class WebSocketDiagramServer extends DiagramServer {

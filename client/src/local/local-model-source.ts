@@ -17,7 +17,7 @@ import { ModelSource } from "../base/model/model-source"
 import { RequestPopupModelAction, SetPopupModelAction } from "../features/hover/hover"
 
 /**
- * A model source that handles actions for bounds calculation and model 
+ * A model source that handles actions for bounds calculation and model
  * updates.
  */
 @injectable()
@@ -40,10 +40,10 @@ export class LocalModelSource extends ModelSource {
 
     initialize(registry: ActionHandlerRegistry): void {
         super.initialize(registry)
-        
+
         // Register model manipulation commands
         registry.registerCommand(UpdateModelCommand)
-        
+
         // Register this model source
         registry.register(ComputedBoundsAction.KIND, this)
         registry.register(RequestPopupModelAction.KIND, this)

@@ -38,7 +38,7 @@ describe('select', () => {
     // create the select command
     const cmd = new SelectCommand(mySelectAction)
 
-    // global so we can carry-over the model, as it's updated, 
+    // global so we can carry-over the model, as it's updated,
     // from test case to test case (i,e, select, undo, redo, merge)
     let newModel: SModelRoot
 
@@ -107,7 +107,7 @@ describe('select', () => {
     })
 
     // "merge" is N/A for selection
-/*    
+/*
     it('merge() works as expected (N/A)', () => {
         // test "merge"
         const result = cmd.merge(cmd, context)

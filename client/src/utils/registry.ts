@@ -28,7 +28,7 @@ export class ProviderRegistry<T, U> {
     hasKey(key: string): boolean {
         return this.elements.has(key)
     }
-    
+
     get(key: string, arg: U): T {
         const existingCstr = this.elements.get(key)
         if (existingCstr)
@@ -98,7 +98,7 @@ export class MultiInstanceRegistry<T> {
     }
 
     get(key: string): T[] {
-        const existingInstances = this.elements.get(key) 
+        const existingInstances = this.elements.get(key)
         if (existingInstances !== undefined)
             return existingInstances
         else

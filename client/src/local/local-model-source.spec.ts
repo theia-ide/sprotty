@@ -114,7 +114,7 @@ describe('LocalModelSource', () => {
             ]
         }
         modelSource.updateModel(root2)
-        
+
         expect(dispatcher.actions).to.have.lengthOf(3)
         const action0 = dispatcher.actions[0] as RequestBoundsAction
         expect(action0).to.be.instanceOf(RequestBoundsAction)

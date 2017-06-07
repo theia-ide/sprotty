@@ -60,7 +60,7 @@ class TestSystemCommand extends SystemCommand {
     redo(context: CommandExecutionContext): CommandResult {
         operations.push('redo ' + this.name)
         return context.root
-    }    
+    }
 }
 
 class TestMergeableCommand extends MergeableCommand {
@@ -81,12 +81,12 @@ class TestMergeableCommand extends MergeableCommand {
     redo(context: CommandExecutionContext): CommandResult {
         operations.push('redo ' + this.name)
         return context.root
-    }   
+    }
 
     merge(other: TestCommand, context: CommandExecutionContext) {
         if (other instanceof TestMergeableCommand) {
             this.name = this.name + '/' + other.name
-            return true 
+            return true
         }
         return false
     }
@@ -96,7 +96,7 @@ class TestHiddenCommand extends HiddenCommand {
       constructor(public name: string) {
         super()
     }
-    
+
     execute(context: CommandExecutionContext) {
         operations.push('exec ' + this.name)
         return context.root
@@ -181,7 +181,7 @@ describe('CommandStack', () => {
         await commandStack.redo()
 
         expect(operations).to.be.eql(
-            ['exec Foo', 'exec Bar', 'exec Popup', 'undo Bar', 'redo Bar', 'undo Bar', 
+            ['exec Foo', 'exec Bar', 'exec Popup', 'undo Bar', 'redo Bar', 'undo Bar',
              'undo Foo', 'redo Foo'])
         expect(6).to.be.equal(viewerUpdates)
         expect(0).to.be.equal(hiddenViewerUpdates)
@@ -201,7 +201,7 @@ describe('CommandStack', () => {
         expect(['exec Foo', 'exec Bar', 'exec System', 'undo System', 'undo Bar', 'exec System']).to.be.eql(operations)
         await commandStack.redo()
         expect(4).to.be.equal(viewerUpdates)
-        expect(['exec Foo', 'exec Bar', 'exec System', 'undo System', 'undo Bar', 'exec System', 
+        expect(['exec Foo', 'exec Bar', 'exec System', 'undo System', 'undo Bar', 'exec System',
                 'undo System', 'redo Bar', 'redo System']).to.be.eql(operations)
         expect(0).to.be.equal(hiddenViewerUpdates)
     })
@@ -220,21 +220,21 @@ describe('CommandStack', () => {
         expect(['exec Foo', 'exec Bar', 'undo Bar', 'exec System']).to.be.eql(operations)
         await commandStack.undo()
         expect(4).to.be.equal(viewerUpdates)
-        expect(['exec Foo', 'exec Bar', 'undo Bar', 'exec System', 'undo System', 
+        expect(['exec Foo', 'exec Bar', 'undo Bar', 'exec System', 'undo System',
                 'undo Foo']).to.be.eql(operations)
         await commandStack.executeAll([system, system])
         expect(5).to.be.equal(viewerUpdates)
-        expect(['exec Foo', 'exec Bar', 'undo Bar', 'exec System', 'undo System', 
+        expect(['exec Foo', 'exec Bar', 'undo Bar', 'exec System', 'undo System',
                 'undo Foo', 'exec System', 'exec System']).to.be.eql(operations)
         await commandStack.redo()
         expect(6).to.be.equal(viewerUpdates)
-        expect(['exec Foo', 'exec Bar', 'undo Bar', 'exec System', 'undo System', 
-                'undo Foo', 'exec System', 'exec System', 'undo System', 'undo System', 
+        expect(['exec Foo', 'exec Bar', 'undo Bar', 'exec System', 'undo System',
+                'undo Foo', 'exec System', 'exec System', 'undo System', 'undo System',
                 'redo Foo']).to.be.eql(operations)
         await commandStack.redo()
         expect(7).to.be.equal(viewerUpdates)
-        expect(['exec Foo', 'exec Bar', 'undo Bar', 'exec System', 'undo System', 
-                'undo Foo', 'exec System', 'exec System', 'undo System', 'undo System', 
+        expect(['exec Foo', 'exec Bar', 'undo Bar', 'exec System', 'undo System',
+                'undo Foo', 'exec System', 'exec System', 'undo System', 'undo System',
                 'redo Foo', 'redo Bar']).to.be.eql(operations)
         expect(0).to.be.equal(hiddenViewerUpdates)
     })
@@ -250,11 +250,11 @@ describe('CommandStack', () => {
         expect(['exec Mergable', 'exec Mergable', 'undo Mergable/Mergable']).to.be.eql(operations)
         await commandStack.redo()
         expect(3).to.be.equal(viewerUpdates)
-        expect(['exec Mergable', 'exec Mergable', 'undo Mergable/Mergable', 
+        expect(['exec Mergable', 'exec Mergable', 'undo Mergable/Mergable',
                 'redo Mergable/Mergable']).to.be.eql(operations)
         await commandStack.execute(foo)
         expect(4).to.be.equal(viewerUpdates)
-        expect(['exec Mergable', 'exec Mergable', 'undo Mergable/Mergable', 
+        expect(['exec Mergable', 'exec Mergable', 'undo Mergable/Mergable',
                 'redo Mergable/Mergable', 'exec Foo']).to.be.eql(operations)
         expect(0).to.be.equal(hiddenViewerUpdates)
     })

@@ -55,9 +55,9 @@ export class PolylineEdgeView implements IView {
         const targetView = context.viewRegistry.get(target.type, target)
         if (!(targetView instanceof SNodeView))
             return this.renderDanglingEdge("expected target view type: SNodeView", edge, context)
-        
+
         const segments = this.computeSegments(edge, source, sourceView, target, targetView)
-        
+
         return <g key={edge.id} id={edge.id}>
             {this.renderLine(edge, segments, context)}
             {this.renderAdditionals(edge, segments, context)}

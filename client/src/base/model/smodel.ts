@@ -100,7 +100,7 @@ export class SChildElement extends SParentElement {
  */
 export class SModelRoot extends SParentElement {
     readonly index: SModelIndex<SModelElement>
-    
+
     canvasBounds: Bounds = EMPTY_BOUNDS
 
     constructor() {

@@ -15,18 +15,18 @@ import { ViewerOptions } from "../view/options"
 export class SModelStorage {
 
     @inject(TYPES.ViewerOptions) protected viewerOptions: ViewerOptions
-    
+
     protected localCache: Map<string, string> = new Map
 
     store(root: SModelRootSchema) {
-        if (this.isLocalStorageAvailable()) 
+        if (this.isLocalStorageAvailable())
             localStorage.setItem(this.key, JSON.stringify(root))
         else
             this.localCache.set(this.key, JSON.stringify(root))
     }
 
     load(): SModelRootSchema  {
-        const schema = (this.isLocalStorageAvailable()) 
+        const schema = (this.isLocalStorageAvailable())
             ? localStorage.getItem(this.key)
             : this.localCache.get(this.key)
         if (schema)

@@ -63,9 +63,9 @@ export class VBoxLayouter implements ILayout {
     }
 
     protected getFixedContainerBounds(
-            container: SModelElement, 
+            container: SModelElement,
             layouter: StatefulLayouter): Bounds {
-        let currentContainer = container 
+        let currentContainer = container
         while (true) {
             if (isBoundsAware(currentContainer)) {
                 const bounds = currentContainer.bounds

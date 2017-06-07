@@ -14,7 +14,7 @@ export class ViewportRootElement extends SModelRoot implements Viewport {
     zoom: number = 1
 
     hasFeature(feature: symbol) {
-        return feature === viewportFeature 
+        return feature === viewportFeature
     }
 
     localToParent(point: Point | Bounds): Bounds {

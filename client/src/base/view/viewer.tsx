@@ -76,7 +76,7 @@ export class Viewer implements IViewer {
     protected popupRenderer: ModelRenderer
 
     protected readonly patcher: Patcher
-    
+
     protected lastVDOM: VNode
     protected lastHiddenVDOM: VNode
     protected lastPopupVDOM: VNode
@@ -157,7 +157,7 @@ export class Viewer implements IViewer {
             setAttr(hiddenVNode, 'opacity', 0)
             setClass(hiddenVNode, this.options.hiddenClass, true)
             newVDOM = <div id={this.options.hiddenDiv}>
-                {hiddenVNode}        
+                {hiddenVNode}
             </div>
             setClass(newVDOM, this.options.baseDiv, true)
         }

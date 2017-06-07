@@ -85,7 +85,7 @@ describe('move', () => {
         syncer: new AnimationFrameSyncer()
     }
 
-    // global so we can carry-over the model, as it's updated, 
+    // global so we can carry-over the model, as it's updated,
     // from test case to test case (i,e, select, undo, redo, merge)
     let newModel: SModelRoot
 
@@ -112,9 +112,9 @@ describe('move', () => {
     // TODO: undo, redo, merge
 
     // note: not sure how to deal with promise returned by undo()
-    // and redo()... 
-    // Should undo()/redo() check whether the move action wants 
-    // animation, and if not just return an updated model? 
+    // and redo()...
+    // Should undo()/redo() check whether the move action wants
+    // animation, and if not just return an updated model?
 
     let undoneModel: SModelRoot
 
@@ -122,7 +122,7 @@ describe('move', () => {
         // test "undo"
         context.root = newModel
         undoneModel = await cmd.undo(context)
-        
+
         // confirm that each node is back at original
         // coordinates
         // node0, node1 and node2 => pointNW
@@ -135,7 +135,7 @@ describe('move', () => {
     })
 
     it('redo() works as expected', async () => {
-        // test "redo": 
+        // test "redo":
         context.root = undoneModel
         const redoneModel = await cmd.redo(context)
 

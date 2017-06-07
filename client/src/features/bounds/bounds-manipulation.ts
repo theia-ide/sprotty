@@ -27,7 +27,7 @@ export class RequestBoundsAction implements Action {
 
 export class ComputedBoundsAction implements Action {
     static readonly KIND = 'computedBounds'
-    
+
     readonly kind = ComputedBoundsAction.KIND
 
     constructor(public bounds: ElementAndBounds[]) {
@@ -49,7 +49,7 @@ export class SetBoundsCommand extends SystemCommand {
     static readonly KIND: string  = 'setBounds'
 
     protected bounds: ResolvedElementAndBounds[] = []
-    
+
     constructor(protected action: SetBoundsAction) {
         super()
     }
@@ -87,7 +87,7 @@ export class SetBoundsCommand extends SystemCommand {
 
 export class RequestBoundsCommand extends HiddenCommand {
     static readonly KIND: string  = 'requestBounds'
-    
+
     constructor(protected action: RequestBoundsAction) {
         super()
     }

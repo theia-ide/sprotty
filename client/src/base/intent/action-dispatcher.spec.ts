@@ -29,19 +29,19 @@ describe('ActionDispatcher', () => {
     const promise = Promise.resolve(EMPTY_ROOT)
 
     const mockCommandStack: ICommandStack = {
-        execute() { 
+        execute() {
             ++execCount
             return promise
         },
-        executeAll() { 
+        executeAll() {
             ++execCount
             return promise
         },
-        undo() { 
+        undo() {
             ++undoCount
-            return promise 
+            return promise
         },
-        redo() { 
+        redo() {
             ++redoCount
             return promise
         }
@@ -59,11 +59,11 @@ describe('ActionDispatcher', () => {
         execute(context: CommandExecutionContext): CommandResult {
             return context.root
         }
-        
+
         undo(context: CommandExecutionContext): CommandResult {
             return context.root
         }
-        
+
         redo(context: CommandExecutionContext): CommandResult {
             return context.root
         }
@@ -84,18 +84,18 @@ describe('ActionDispatcher', () => {
         expect(execCount).to.be.equal(1)
         expect(undoCount).to.be.equal(0)
         expect(redoCount).to.be.equal(0)
-    
+
         actionDispatcher.dispatch(new InitializeCanvasBoundsAction(EMPTY_BOUNDS))
         // postponed actions are fired as well
         expect(execCount).to.be.equal(2)
         expect(undoCount).to.be.equal(1)
         expect(redoCount).to.be.equal(0)
-    
+
         actionDispatcher.dispatch(new RedoAction)
         expect(execCount).to.be.equal(2)
         expect(undoCount).to.be.equal(1)
         expect(redoCount).to.be.equal(1)
-    
+
         actionDispatcher.dispatch({kind: 'unknown'})
         expect(execCount).to.be.equal(2)
         expect(undoCount).to.be.equal(1)
@@ -109,7 +109,7 @@ describe('ActionDispatcher', () => {
 
         const registry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
         registry.registerCommand(MockCommand)
-    
+
         actionDispatcher.dispatch(new MockAction())
         expect(execCount).to.be.equal(3)
         expect(undoCount).to.be.equal(1)

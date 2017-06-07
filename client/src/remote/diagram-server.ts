@@ -36,7 +36,7 @@ export function isActionMessage(object: any): object is ActionMessage {
 /**
  * A ModelSource that communicates with an external model provider, e.g.
  * a model editor.
- * 
+ *
  * This class defines which actions are sent to and received from the
  * external model source.
  */
@@ -74,9 +74,9 @@ export abstract class DiagramServer extends ModelSource {
     handle(action: Action): void | ICommand {
         this.storeNewModel(action)
 
-        if (action.kind === ComputedBoundsAction.KIND && !this.viewerOptions.needsServerLayout) 
+        if (action.kind === ComputedBoundsAction.KIND && !this.viewerOptions.needsServerLayout)
             return this.handleComputedBounds(action as ComputedBoundsAction)
-        
+
         if (action.kind === RequestBoundsCommand.KIND)
             return
 
@@ -103,7 +103,7 @@ export abstract class DiagramServer extends ModelSource {
     }
 
     protected storeNewModel(action: Action): void {
-        if (action.kind === SetModelCommand.KIND 
+        if (action.kind === SetModelCommand.KIND
             || action.kind === UpdateModelCommand.KIND
             || action.kind === RequestBoundsCommand.KIND) {
             const newRoot = (action as any).newRoot

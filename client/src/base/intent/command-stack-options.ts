@@ -19,9 +19,9 @@ export interface CommandStackOptions {
 
     /**
      * The maximum number of commands that can be undone. Once the undo stack
-     * reaches this number, any additional command that is pushed will remove 
+     * reaches this number, any additional command that is pushed will remove
      * one from the bottom of the stack.
-     * 
+     *
      * If negative, there is no limit, which results in a memory leak.
      */
     undoHistoryLimit: number

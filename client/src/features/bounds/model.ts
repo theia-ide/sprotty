@@ -27,9 +27,9 @@ export function isBoundsAware(element: SModelElement): element is SModelElement 
 }
 
 export function isLayouting(element: SModelElement): element is SParentElement & Layouting & BoundsAware {
-    return 'layout' in element 
-        && 'resizeContainer' in element 
-        && isBoundsAware(element) 
+    return 'layout' in element
+        && 'resizeContainer' in element
+        && isBoundsAware(element)
         && element.hasFeature(layoutFeature)
 }
 

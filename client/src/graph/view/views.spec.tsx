@@ -93,7 +93,7 @@ describe('graph views', () => {
             +   '<g id="node0" transform="translate(100, 100)"><circle class="node" r="40" cx="40" cy="40" /></g>'
             +   '<g id="node1" class="selected" transform="translate(200, 150)"><circle class="node selected" r="40" cx="40" cy="40" /></g>'
             +   '<g id="edge0"><path class="edge" d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" /></g>'
-            + '</g>' 
+            + '</g>'
             + '</svg>')
     })
 })

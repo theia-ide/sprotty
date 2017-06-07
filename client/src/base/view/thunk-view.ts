@@ -65,10 +65,10 @@ export abstract class ThunkView implements IView {
         const vnode = (cur.fn as any).apply(undefined, cur.args)
         this.copyToThunk(vnode, thunk)
     }
-    
+
     protected prepatch(oldVnode: VNode, thunk: VNode): void {
         let old = oldVnode.data as VNodeData, cur = thunk.data as VNodeData
-        if (!this.equals(old.args as any[], cur.args as any[])) 
+        if (!this.equals(old.args as any[], cur.args as any[]))
             this.copyToThunk((cur.fn as any).apply(undefined, cur.args), thunk)
         else
             this.copyToThunk(oldVnode, thunk)
@@ -76,22 +76,22 @@ export abstract class ThunkView implements IView {
 
     protected equals(oldArg: any, newArg: any) {
         if (Array.isArray(oldArg) && Array.isArray(newArg)) {
-            if (oldArg.length !== newArg.length) 
+            if (oldArg.length !== newArg.length)
                 return false
             for (let i = 0; i < newArg.length; ++i) {
-                if (!this.equals(oldArg[i], newArg[i])) 
+                if (!this.equals(oldArg[i], newArg[i]))
                     return false
             }
         } else if (typeof oldArg === 'object' && typeof newArg === 'object') {
-            if (Object.keys(oldArg).length !== Object.keys(newArg).length) 
+            if (Object.keys(oldArg).length !== Object.keys(newArg).length)
                 return false
             for (let key in oldArg) {
-                if (key !== 'parent' && key !== 'root' && (!(key in newArg) || !this.equals(oldArg[key], newArg[key]))) 
+                if (key !== 'parent' && key !== 'root' && (!(key in newArg) || !this.equals(oldArg[key], newArg[key])))
                     return false
             }
         } else if (oldArg !== newArg) {
             return false
-        }   
+        }
         return true
     }
 }
