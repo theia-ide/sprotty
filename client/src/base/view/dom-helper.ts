@@ -13,7 +13,7 @@ import { SModelElement } from "../model/smodel"
 @injectable()
 export class DOMHelper {
 
-    constructor(@inject(TYPES.ViewerOptions) private viewerOptions: ViewerOptions){
+    constructor(@inject(TYPES.ViewerOptions) private viewerOptions: ViewerOptions) {
 
     }
 
