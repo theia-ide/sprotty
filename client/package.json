@@ -2,22 +2,53 @@
   "name": "sprotty",
   "version": "0.1.0",
   "description": "A next-gen framework for graphical views",
-  "author": "TypeFox",
   "license": "Apache-2.0",
+  "keywords": [ "graphics", "modeling", "visualization", "svg" ],
+  "homepage": "https://github.com/TypeFox/sprotty",
+  "bugs": "https://github.com/TypeFox/sprotty/issues",
+  "author": {
+    "name": "TypeFox"
+  },
+  "contributors": [
+    {
+      "name": "Jan Köhnlein",
+      "email": "jan.koehnlein@typefox.io",
+      "url": "http://typefox.io"
+    },
+    {
+      "name": "Miro Spönemann",
+      "email": "miro.spoenemann@typefox.io",
+      "url": "http://typefox.io"
+    },
+    {
+      "name": "Jan Bicker",
+      "email": "jan.bicker@typefox.io",
+      "url": "http://typefox.io"
+    },
+    {
+      "name": "Marc Dumais",
+      "email": "marc.dumais@ericsson.com",
+      "url": "https://www.ericsson.com/"
+    },
+    {
+      "name": "Patrick Pollo Guilbert",
+      "email": "patrick.pollo.guilbert@ericsson.com",
+      "url": "https://www.ericsson.com/"
+    }
+  ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/TypeFox/sprotty"
+    "url": "https://github.com/TypeFox/sprotty.git"
   },
+
   "files": [
     "lib",
     "src"
   ],
-
   "dependencies": {
     "inversify": "^3.1.0",
     "snabbdom": "^0.6.4",
     "snabbdom-jsx": "^0.3.1",
-    "nyc": "^10.3.2",
     "snabbdom-virtualize": "^0.6.0"
   },
   "devDependencies": {
@@ -29,6 +60,7 @@
     "jsdom": "9.12.0",
     "jsdom-global": "2.1.1",
     "mocha": "^3.2.0",
+    "nyc": "^10.3.2",
     "reconnecting-websocket": "^3.0.3",
     "reflect-metadata": "^0.1.10",
     "rimraf": "^2.6.1",
