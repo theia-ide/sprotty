@@ -85,7 +85,7 @@ describe('graph views', () => {
 
     it('render a whole graph', () => {
         const vnode = context.renderElement(graph)
-        const html:string  = toHTML(vnode)
+        const html: string = toHTML(vnode)
         const expectation = '<svg id="sprotty_graph" class="graph" tabindex="1002">'
             + '<g transform="scale(1) translate(0,0)">'
             +   '<g id="sprotty_node0" transform="translate(100, 100)">'
@@ -93,7 +93,7 @@ describe('graph views', () => {
             +   '</g>'
             +   '<g id="sprotty_node1" class="selected" transform="translate(200, 150)">'
             +     '<circle class="node selected" r="40" cx="40" cy="40" />'
-            +   '</g>' 
+            +   '</g>'
             +   '<g id="sprotty_edge0">'
             +     '<path class="edge" d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" />'
             +   '</g>'
