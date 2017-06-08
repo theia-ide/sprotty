@@ -12,6 +12,7 @@ import { IView, RenderingContext } from "../base/views/view"
 import { SNodeView } from "../graph/views"
 import { SNode } from "../graph/sgraph"
 import { ViewportRootElement } from "../features/viewport/viewport-root"
+import { center } from "../utils/geometry"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -60,6 +61,7 @@ export class CircularNodeView extends SNodeView {
 }
 
 export class RectangularNodeView extends SNodeView {
+
     render(node: SNode, context: RenderingContext): VNode {
         return <g>
             <rect class-node={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
@@ -69,16 +71,62 @@ export class RectangularNodeView extends SNodeView {
 
     getAnchor(node: SNode, refPoint: Point) {
         const bounds = node.bounds
-        let x = refPoint.x
-        if (x < bounds.x)
-            x = bounds.x
-        else if (x > bounds.x + bounds.width)
-            x = bounds.x + bounds.width
-        let y = refPoint.y
-        if (y < bounds.y)
-            y = bounds.y
-        else if (y > bounds.y + bounds.height)
-            y = bounds.y + bounds.height
-        return { x, y }
+        const c = center(bounds)
+        const finder = new NearestPointFinder(c, refPoint)
+        const EPSILON = 1e-9
+        if (Math.abs(c.y - refPoint.y) > EPSILON) {
+			const xTop = this.getXIntersection(bounds.y, c, refPoint)
+			if(xTop >= bounds.x && xTop <= bounds.x + bounds.width)
+				finder.addCandidate(xTop, bounds.y)
+			const xBottom = this.getXIntersection(bounds.y + bounds.height, c, refPoint)
+			if(xBottom >= bounds.x && xBottom <= bounds.x + bounds.width)
+				finder.addCandidate(xBottom, bounds.y + bounds.height)
+		}
+		if (Math.abs(c.x - refPoint.x) > EPSILON) {
+			const yLeft = this.getYIntersection(bounds.x, c, refPoint)
+			if(yLeft >= bounds.y  && yLeft <= bounds.y + bounds.height)
+				finder.addCandidate(bounds.x, yLeft)
+			const yRight = this.getYIntersection(bounds.x + bounds.width, c, refPoint)
+			if(yRight >= bounds.y  && yRight <= bounds.y + bounds.height)
+				finder.addCandidate(bounds.x + bounds.width, yRight)
+		}
+        return finder.best
+    }
+
+    protected getXIntersection(yIntersection: number, center: Point, point: Point) {
+		const t = (yIntersection - center.y) / (point.y - center.y)
+		return (point.x - center.x) * t + center.x
+	}
+
+	protected getYIntersection(xIntersection: number, center: Point, point: Point) {
+		const t = (xIntersection - center.x) / (point.x - center.x)
+		return (point.y - center.y) * t + center.y
+	}
+}
+
+class NearestPointFinder {
+    protected currentBest: Point | undefined
+    protected currentDist: number = -1
+
+    constructor(protected center: Point, protected refPoint: Point) {}
+
+    addCandidate(x: number, y: number) {
+        const dx = this.refPoint.x - x
+        const dy = this.refPoint.y - y
+        const dist = dx * dx + dy * dy
+        if(this.currentDist < 0 || dist < this.currentDist) {
+            this.currentBest = {
+                x: x, 
+                y: y
+            }
+            this.currentDist = dist
+        }
+    }
+
+    get best(): Point {
+        if(this.currentBest === undefined)
+            return this.center
+        else 
+            return this.currentBest
     }
 }
