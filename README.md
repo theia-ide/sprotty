@@ -20,7 +20,7 @@ git clone git@github.com:TypeFox/sprotty.git
 # build sprotty client and examples
 cd sprotty/client
 npm install
-npm run build
+npm run examples:build
 
 # build and run the sprotty server
 cd ../server
