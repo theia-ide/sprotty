@@ -11,7 +11,7 @@ import createContainer from "./di.config"
 import { LocalModelSource } from "../../../src/local"
 
 export default function runClassDiagram() {
-    const container = createContainer(false)
+    const container = createContainer(false, 'sprotty')
 
     // Initialize model
     const node0 = {
@@ -94,6 +94,7 @@ export default function runClassDiagram() {
                         type: 'label:text',
                         text: '+ foo(): Foo'
                     }
+
                 ],
             }
         ]
@@ -105,7 +106,6 @@ export default function runClassDiagram() {
         targetId: node1.id
     } as SEdge
     const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0, node1, edge] }
-
     // Run
     const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
     modelSource.setModel(graph)

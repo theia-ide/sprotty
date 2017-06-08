@@ -23,6 +23,8 @@ import { SModelFactory } from "./model/smodel-factory"
 import { ViewerCache } from "./view/viewer-cache"
 import { AnimationFrameSyncer } from "./animations/animation-frame-syncer"
 import { TYPES } from "./types"
+import { DOMHelper } from "./view/dom-helper"
+import { IdDecorator } from "./view/id-decorator"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
@@ -83,6 +85,7 @@ let defaultContainerModule = new ContainerModule(bind => {
         popupOpenDelay: 700,
         popupCloseDelay: 300
     })
+    bind(TYPES.DOMHelper).to(DOMHelper).inSingletonScope()
     bind(TYPES.ModelRendererFactory).toFactory<ModelRenderer>((context: interfaces.Context) => {
         return (decorators: IVNodeDecorator[]) => {
             const viewRegistry = context.container.get<ViewRegistry>(TYPES.ViewRegistry)
@@ -91,10 +94,13 @@ let defaultContainerModule = new ContainerModule(bind => {
     })
 
     // Tools & Decorators --------------------------------------
+    bind(TYPES.IVNodeDecorator).to(IdDecorator).inSingletonScope()
     bind(TYPES.IVNodeDecorator).to(MouseTool).inSingletonScope()
     bind(TYPES.IVNodeDecorator).to(KeyTool).inSingletonScope()
     bind(TYPES.IVNodeDecorator).to(FocusFixDecorator).inSingletonScope()
+    bind(TYPES.PopupVNodeDecorator).to(IdDecorator).inSingletonScope()
     bind(TYPES.PopupVNodeDecorator).to(PopupMouseTool).inSingletonScope()
+    bind(TYPES.HiddenVNodeDecorator).to(IdDecorator).inSingletonScope()
 
     // Animation Frame Sync ------------------------------------------
     bind(TYPES.AnimationFrameSyncer).to(AnimationFrameSyncer).inSingletonScope()
@@ -102,7 +108,8 @@ let defaultContainerModule = new ContainerModule(bind => {
     // Canvas Initialization ---------------------------------------------
     bind(TYPES.ICommand).toConstructor(InitializeCanvasBoundsCommand)
     bind(TYPES.IVNodeDecorator).to(CanvasBoundsInitializer).inSingletonScope()
-    bind(TYPES.SModelStorage).to(SModelStorage).inSingletonScope
+    bind(TYPES.SModelStorage).to(SModelStorage).inSingletonScope()
+
 })
 
 export default defaultContainerModule

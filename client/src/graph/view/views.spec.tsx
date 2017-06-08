@@ -30,7 +30,7 @@ describe('graph views', () => {
     class CircleNodeView extends CircularNodeView {
         render(node: SNode, context: RenderingContext): VNode {
             const radius = this.getRadius(node)
-            return <g key={node.id} id={node.id} >
+            return <g>
                     <circle class-node={true} class-selected={node.selected} r={radius} cx={radius} cy={radius} />
                 </g>
         }

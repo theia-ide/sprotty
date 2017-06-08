@@ -15,6 +15,7 @@ import { Point, ORIGIN_POINT } from "../../utils/geometry"
 
 const JSX = {createElement: snabbdom.svg}
 
+
 /**
  * Base interface for the components that turn GModelElements into virtual DOM elements.
  */
@@ -56,13 +57,13 @@ export class ViewRegistry extends ProviderRegistry<IView, SModelElement> {
 
 export class EmptyView implements IView {
     render(model: SModelRoot, context: RenderingContext): VNode {
-        return <svg key={model.id} id={model.id} class-empty={true} />
+        return <svg class-empty={true} />
     }
 }
 
 export class MissingView implements IView {
     render(model: SModelElement, context: RenderingContext): VNode {
         const position: Point = (model as any).position || ORIGIN_POINT
-        return <text class-missing={true} id={model.id} x={position.x} y={position.y}>?{model.id}?</text>
+        return <text class-missing={true} x={position.x} y={position.y}>?{model.id}?</text>
     }
 }

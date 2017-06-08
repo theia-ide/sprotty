@@ -37,7 +37,9 @@ export interface IViewer {
 }
 
 export class ModelRenderer implements RenderingContext {
-    constructor(public viewRegistry: ViewRegistry, private decorators: IVNodeDecorator[]) {
+
+    constructor(public viewRegistry: ViewRegistry,
+                private decorators: IVNodeDecorator[]) {
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
@@ -118,7 +120,7 @@ export class Viewer implements IViewer {
 
     protected getBoundsInPage(element: Element) {
         const bounds = element.getBoundingClientRect()
-        const scroll = typeof window !== 'undefined' ? { x: window.scrollX, y: window.scrollY } : ORIGIN_POINT
+        const scroll = typeof window !== 'undefined' ? {x: window.scrollX, y: window.scrollY} : ORIGIN_POINT
         return {
             x: bounds.left + scroll.x,
             y: bounds.top + scroll.y,
@@ -175,7 +177,7 @@ export class Viewer implements IViewer {
 
         let newVDOM: VNode
         if (hiddenModel.type === EMPTY_ROOT.type) {
-             newVDOM = <div id={this.options.hiddenDiv}></div>
+            newVDOM = <div id={this.options.hiddenDiv}></div>
         } else {
             const hiddenVNode = this.hiddenRenderer.renderElement(hiddenModel)
             setAttr(hiddenVNode, 'opacity', 0)

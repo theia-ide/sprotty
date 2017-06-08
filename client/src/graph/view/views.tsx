@@ -22,7 +22,7 @@ export class SGraphView implements IView {
 
     render(model: SGraph, context: RenderingContext): VNode {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
-        return <svg key={model.id} id={model.id} class-graph={true}>
+        return <svg class-graph={true}>
             <g transform={transform}>
                 {context.renderChildren(model)}
             </g>
@@ -58,7 +58,7 @@ export class PolylineEdgeView implements IView {
 
         const segments = this.computeSegments(edge, source, sourceView, target, targetView)
 
-        return <g key={edge.id} id={edge.id}>
+        return <g>
             {this.renderLine(edge, segments, context)}
             {this.renderAdditionals(edge, segments, context)}
         </g>
@@ -120,13 +120,13 @@ export class PolylineEdgeView implements IView {
 
 
     protected renderDanglingEdge(message: string, edge: SEdge, context: RenderingContext) {
-        return <text key={edge.id} id={edge.id} class-dangling-edge={true} title={message}>?</text>
+        return <text class-dangling-edge={true} title={message}>?</text>
     }
 }
 
 export class SLabelView implements IView {
     render(label: SLabel, context: RenderingContext): VNode {
-        const vnode = <text key={label.id} id={label.id} class-label={true}>{label.text}</text>
+        const vnode = <text class-label={true}>{label.text}</text>
         setAttr(vnode, 'class', getSubType(label))
         return vnode
     }
@@ -135,7 +135,7 @@ export class SLabelView implements IView {
 export class SCompartmentView implements IView {
     render(model: SCompartment, context: RenderingContext): VNode {
         const translate = `translate(${model.bounds.x}, ${model.bounds.y})`
-        return <g key={model.id} id={model.id} transform={translate} class-comp="{true}">
+        return <g transform={translate} class-comp="{true}">
             {context.renderChildren(model)}
         </g>
     }
