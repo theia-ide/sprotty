@@ -1,11 +1,17 @@
 {
   "rules": {
     "class-name": true,
-    "comment-format": [true, "check-space"],
+    "comment-format": [ true, "check-space" ],
     "curly": false,
     "forin": false,
-    "indent": [true, "spaces"],
-    "max-line-length": [true, 180],
+    "import-blacklist": [ true,
+      "..",
+      "../index",
+      "../..",
+      "../../index"
+    ],
+    "indent": [ true, "spaces" ],
+    "max-line-length": [ true, 180 ],
     "no-trailing-whitespace": true,
     "no-unused-expression": true,
     "no-use-before-declare": true,
@@ -17,17 +23,17 @@
       "check-whitespace"
     ],
     "radix": true,
-    "trailing-comma": [false],
-    "triple-equals": [true, "allow-null-check"],
-    "typedef-whitespace": [true, {
+    "trailing-comma": [ false ],
+    "triple-equals": [ true, "allow-null-check" ],
+    "typedef-whitespace": [ true, {
       "call-signature": "nospace",
       "index-signature": "nospace",
       "parameter": "nospace",
       "property-declaration": "nospace",
       "variable-declaration": "nospace"
-    }],
+    } ],
     "variable-name": false,
-    "whitespace": [true,
+    "whitespace": [ true,
       "check-branch",
       "check-decl",
       "check-operator",
