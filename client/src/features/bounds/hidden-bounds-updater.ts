@@ -7,16 +7,14 @@
 
 import { inject, injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
-import { almostEquals } from '../../utils/geometry'
-import { SModelElement } from "../../base/model/smodel"
-import { IVNodeDecorator } from "../../base/view/vnode-decorators"
 import { TYPES } from "../../base/types"
-import { IActionDispatcher } from "../../base/intent/action-dispatcher"
-import { Bounds } from '../../utils/geometry'
+import { almostEquals, Bounds } from '../../utils/geometry'
+import { SModelElement } from "../../base/model/smodel"
+import { IVNodeDecorator } from "../../base/views/vnode-decorators"
+import { IActionDispatcher } from "../../base/actions/action-dispatcher"
 import { ComputedBoundsAction, ElementAndBounds } from './bounds-manipulation'
 import { BoundsAware, isSizeable, isLayouting } from "./model"
-import { Layouter } from "./layout"
-import { LAYOUT_TYPES } from "./types"
+import { Layouter } from "./micro-layout"
 
 export class BoundsData {
     vnode?: VNode
@@ -36,7 +34,7 @@ export class BoundsData {
 export class HiddenBoundsUpdater implements IVNodeDecorator {
 
     constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
-                @inject(LAYOUT_TYPES.Layouter) protected layouter: Layouter) {
+                @inject(TYPES.Layouter) protected layouter: Layouter) {
     }
 
     private readonly element2boundsData: Map<SModelElement, BoundsData> = new Map

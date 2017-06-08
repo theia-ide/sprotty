@@ -5,11 +5,9 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { RenderingContext } from "../../../src/base"
-import { SNode } from "../../../src/graph"
-import { CircularNodeView } from "../../../src/lib"
 import { VNode } from "snabbdom/vnode"
 import * as snabbdom from "snabbdom-jsx"
+import { RenderingContext, SNode, CircularNodeView } from "../../../src"
 
 const JSX = {createElement: snabbdom.svg}
 

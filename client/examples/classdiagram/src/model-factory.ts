@@ -5,9 +5,10 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SGraphFactory } from "../../../src/graph"
-import { SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, SChildElement, getBasicType } from "../../../src/base"
-import { HtmlRoot, HtmlRootSchema, PreRenderedElement, PreRenderedElementSchema } from "../../../src/lib"
+import {
+    SGraphFactory, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, SChildElement,
+    getBasicType, HtmlRoot, HtmlRootSchema, PreRenderedElement, PreRenderedElementSchema
+} from "../../../src"
 
 export class ClassDiagramFactory extends SGraphFactory {
 

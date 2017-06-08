@@ -6,14 +6,14 @@
  */
 
 import { injectable, inject } from "inversify"
-import { TYPES } from "../types"
-import { Action } from '../intent/actions'
-import { IActionDispatcher } from '../intent/action-dispatcher'
-import { IVNodeDecorator } from "../view/vnode-decorators"
-import { SModelElement, SModelRoot } from "../model/smodel"
-import { SystemCommand, CommandExecutionContext } from '../intent/commands'
-import { almostEquals, Bounds, isValidDimension, ORIGIN_POINT } from '../../utils/geometry'
 import { VNode } from "snabbdom/vnode"
+import { TYPES } from "../types"
+import { almostEquals, Bounds, isValidDimension, ORIGIN_POINT } from '../../utils/geometry'
+import { Action } from '../actions/action'
+import { IActionDispatcher } from '../actions/action-dispatcher'
+import { IVNodeDecorator } from "../views/vnode-decorators"
+import { SModelElement, SModelRoot } from "../model/smodel"
+import { SystemCommand, CommandExecutionContext } from '../commands/command'
 
 /**
  * Grabs the bounds from the root element in page coordinates and fires a

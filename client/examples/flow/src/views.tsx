@@ -6,14 +6,12 @@
  */
 
 import { VNode } from "snabbdom/vnode"
-import { RenderingContext } from "../../../src/base"
-import { SEdge } from "../../../src/graph"
-import { PolylineEdgeView } from "../../../src/graph"
-import { CircularNodeView, RectangularNodeView } from "../../../src/lib"
-import { angle, Point, toDegrees } from "../../../src/utils"
+import {
+    RenderingContext, SEdge, PolylineEdgeView, CircularNodeView, RectangularNodeView, angle, Point, toDegrees,
+    RGBColor, toSVG, rgb
+} from "../../../src"
 import * as snabbdom from "snabbdom-jsx"
 import { BarrierNode, TaskNode } from "./flowmodel"
-import { RGBColor, toSVG, rgb } from "../../../src/utils"
 
 const JSX = {createElement: snabbdom.svg}
 

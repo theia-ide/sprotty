@@ -7,9 +7,9 @@
 
 import { inject, injectable } from "inversify"
 import { TYPES } from '../types'
-import { SModelRootSchema } from '../model/smodel'
-import { EMPTY_ROOT } from '../model/smodel-factory'
-import { ViewerOptions } from "../view/options"
+import { ViewerOptions } from "../views/viewer-options"
+import { SModelRootSchema } from './smodel'
+import { EMPTY_ROOT } from './smodel-factory'
 
 @injectable()
 export class SModelStorage {

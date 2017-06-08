@@ -5,9 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SModelElementSchema, SModelRootSchema } from "../../../src/base/index"
-import { RequestPopupModelAction } from "../../../src/features/index"
-import { PreRenderedElementSchema } from "../../../src/lib/index"
+import { SModelElementSchema, SModelRootSchema, RequestPopupModelAction, PreRenderedElementSchema } from "../../../src"
 
 export function popupModelFactory(request: RequestPopupModelAction, element?: SModelElementSchema): SModelRootSchema | undefined {
     if (element !== undefined && element.type === 'node:class') {

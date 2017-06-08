@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { CommandExecutionContext } from "../intent/commands"
+import { CommandExecutionContext } from "../commands/command"
 import { SModelRoot } from "../model/smodel"
 import { easeInOut } from "./easing"
 

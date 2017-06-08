@@ -6,11 +6,10 @@
  */
 
 import {
-    SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, getBasicType
-} from "../../../src/base"
-import { SGraph, SGraphFactory, SGraphSchema } from "../../../src/graph"
+    SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, getBasicType,
+    SGraph, SGraphFactory, SGraphSchema, HtmlRootSchema, PreRenderedElementSchema, PreRenderedElement, HtmlRoot
+} from "../../../src"
 import { BarrierNode, BarrierNodeSchema, TaskNode, TaskNodeSchema } from "./flowmodel"
-import { HtmlRootSchema, PreRenderedElementSchema, PreRenderedElement, HtmlRoot } from "../../../src/lib"
 
 export class FlowModelFactory extends SGraphFactory {
 

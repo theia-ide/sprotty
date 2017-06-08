@@ -6,11 +6,11 @@
  */
 
 import { inject, injectable } from "inversify"
-import { IVNodeDecorator } from "../../base/view/vnode-decorators"
 import { VNode } from "snabbdom/vnode"
-import { SModelElement } from "../../base/model/smodel"
 import { TYPES } from "../../base/types"
-import { ViewerOptions } from "../../base/view/options"
+import { IVNodeDecorator } from "../../base/views/vnode-decorators"
+import { ViewerOptions } from "../../base/views/viewer-options"
+import { SModelElement } from "../../base/model/smodel"
 
 @injectable()
 export class PopupPositionUpdater implements IVNodeDecorator {

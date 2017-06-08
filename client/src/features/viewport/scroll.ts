@@ -7,8 +7,8 @@
 
 import { Point } from "../../utils/geometry"
 import { SModelElement } from "../../base/model/smodel"
-import { MouseListener } from "../../base/view/mouse-tool"
-import { Action } from "../../base/intent/actions"
+import { MouseListener } from "../../base/views/mouse-tool"
+import { Action } from "../../base/actions/action"
 import { SModelExtension } from "../../base/model/smodel-extension"
 import { findParentByFeature } from "../../base/model/smodel-utils"
 import { ViewportAction } from "./viewport"

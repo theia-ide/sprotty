@@ -6,12 +6,11 @@
  */
 
 import { Container, ContainerModule } from "inversify"
-import { defaultModule, TYPES, ViewRegistry } from "../../../src/base"
-import { ConsoleLogger, LogLevel } from "../../../src/utils"
-import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule, hoverModule } from "../../../src/features"
-import { LocalModelSource } from "../../../src/local"
+import {
+    defaultModule, TYPES, ViewRegistry, ConsoleLogger, LogLevel, boundsModule, moveModule, selectModule,
+    undoRedoModule, viewportModule, hoverModule, LocalModelSource, PreRenderedView, SvgViewportView
+} from "../../../src"
 import { SvgFactory } from "./model-factory"
-import { PreRenderedView, SvgViewportView } from "../../../src/lib"
 
 const svgModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()

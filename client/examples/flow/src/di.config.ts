@@ -6,17 +6,13 @@
  */
 
 import { Container, ContainerModule } from "inversify"
-import { defaultModule, TYPES, ViewRegistry, overrideViewerOptions } from "../../../src/base"
-import { ConsoleLogger, LogLevel } from "../../../src/utils"
-import { WebSocketDiagramServer } from "../../../src/remote"
-import { boundsModule, moveModule, fadeModule, hoverModule } from "../../../src/features"
+import {
+    defaultModule, TYPES, ViewRegistry, overrideViewerOptions, ConsoleLogger, LogLevel, WebSocketDiagramServer,
+    boundsModule, moveModule, fadeModule, hoverModule, viewportModule, selectModule, SGraphView, LocalModelSource,
+    HtmlRootView, PreRenderedView
+} from "../../../src"
 import { FlowModelFactory } from "./flowmodel-factory"
-import { viewportModule } from "../../../src/features"
-import { selectModule } from "../../../src/features"
-import { SGraphView } from "../../../src/graph"
 import { TaskNodeView, BarrierNodeView, FlowEdgeView } from "./views"
-import { LocalModelSource } from "../../../src/local/local-model-source"
-import { HtmlRootView, PreRenderedView } from "../../../src/lib"
 
 const flowModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()

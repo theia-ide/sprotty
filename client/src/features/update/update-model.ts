@@ -6,19 +6,19 @@
  */
 
 import { injectable } from "inversify"
+import { isValidDimension } from "../../utils/geometry"
 import { Animation, CompoundAnimation } from '../../base/animations/animation'
-import { Command, CommandExecutionContext, CommandResult } from '../../base/intent/commands'
+import { Command, CommandExecutionContext, CommandResult } from '../../base/commands/command'
 import { FadeAnimation, ResolvedElementFade } from '../fade/fade'
-import { Action } from '../../base/intent/actions'
+import { Action } from '../../base/actions/action'
 import { SModelRootSchema, SModelRoot, SChildElement, SModelElement, SParentElement } from "../../base/model/smodel"
 import { MoveAnimation, ResolvedElementMove } from "../move/move"
-import { MatchResult, ModelMatcher, Match } from "./model-matching"
 import { Fadeable, isFadeable } from "../fade/model"
 import { isLocateable } from "../move/model"
 import { isBoundsAware } from "../bounds/model"
 import { ViewportRootElement } from "../viewport/viewport-root"
-import { isValidDimension } from "../../utils/geometry"
 import { isSelectable } from "../select/model"
+import { MatchResult, ModelMatcher, Match } from "./model-matching"
 
 export class UpdateModelAction implements Action {
     readonly kind = UpdateModelCommand.KIND

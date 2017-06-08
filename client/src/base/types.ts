@@ -16,6 +16,8 @@ export const TYPES = {
     ICommandStackProvider: Symbol('ICommandStackProvider'),
     HoverState: Symbol('HoverState'),
     KeyListener: Symbol('KeyListener'),
+    Layouter: Symbol('Layouter'),
+    LayoutRegistry: Symbol('LayoutRegistry'),
     LayoutEngine: Symbol('LayoutEngine'),
     ILogger: Symbol('ILogger'),
     LogLevel: Symbol('LogLevel'),

@@ -5,10 +5,8 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { TYPES } from "../../../src/base"
-import { SEdge, SGraphSchema } from '../../../src/graph';
+import { TYPES, SEdge, SGraphSchema, LocalModelSource } from "../../../src"
 import createContainer from "./di.config"
-import { LocalModelSource } from "../../../src/local"
 
 export default function runClassDiagram() {
     const container = createContainer(false, 'sprotty')

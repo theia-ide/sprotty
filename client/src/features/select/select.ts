@@ -6,16 +6,16 @@
  */
 
 import { VNode } from "snabbdom/vnode"
-import { SChildElement, SModelElement, SModelRoot, SParentElement } from "../../base/model/smodel"
-import { Action } from "../../base/intent/actions"
-import { Command, CommandExecutionContext } from "../../base/intent/commands"
-import { SEdge, SNode } from "../../graph/model/sgraph"
-import { MouseListener } from "../../base/view/mouse-tool"
 import { isCtrlOrCmd } from "../../utils/browser"
-import { KeyListener } from "../../base/view/key-tool"
-import { isSelectable } from "./model"
-import { setClass } from "../../base/view/vnode-utils"
+import { SChildElement, SModelElement, SModelRoot, SParentElement } from "../../base/model/smodel"
 import { findParentByFeature } from "../../base/model/smodel-utils"
+import { Action } from "../../base/actions/action"
+import { Command, CommandExecutionContext } from "../../base/commands/command"
+import { SEdge, SNode } from "../../graph/sgraph"
+import { MouseListener } from "../../base/views/mouse-tool"
+import { KeyListener } from "../../base/views/key-tool"
+import { setClass } from "../../base/views/vnode-utils"
+import { isSelectable } from "./model"
 
 export class SelectAction implements Action {
     kind = SelectCommand.KIND

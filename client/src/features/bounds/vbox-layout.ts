@@ -5,13 +5,12 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { EMPTY_BOUNDS } from '../../utils/geometry'
+import { VNode } from "snabbdom/vnode"
+import { EMPTY_BOUNDS, Bounds, isValidDimension } from '../../utils/geometry'
 import { SChildElement } from '../../base/model/smodel'
 import { SParentElement, SModelElement } from "../../base/model/smodel"
-import { ILayout, StatefulLayouter } from './layout'
+import { ILayout, StatefulLayouter } from './micro-layout'
 import { BoundsAware, isBoundsAware, isLayouting, Layouting } from './model'
-import { Bounds, isValidDimension } from "../../utils/geometry"
-import { VNode } from "snabbdom/vnode"
 
 /**
  * CSS properties understood by the VBoxLayouter

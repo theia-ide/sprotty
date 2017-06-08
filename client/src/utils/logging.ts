@@ -7,7 +7,7 @@
 
 import { inject, injectable } from "inversify"
 import { TYPES } from "../base/types"
-import { ViewerOptions } from "../base/view/options"
+import { ViewerOptions } from "../base/views/viewer-options"
 
 export interface ILogger {
     logLevel: LogLevel

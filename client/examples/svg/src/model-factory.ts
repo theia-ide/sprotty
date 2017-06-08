@@ -6,10 +6,9 @@
  */
 
 import {
-    SModelElementSchema, SParentElement, SChildElement, SModelFactory, SModelRootSchema, SModelRoot, getBasicType
-} from "../../../src/base"
-import { ShapedPreRenderedElement, ShapedPreRenderedElementSchema } from "../../../src/lib"
-import { ViewportRootElement } from "../../../src/features"
+    SModelElementSchema, SParentElement, SChildElement, SModelFactory, SModelRootSchema, SModelRoot, getBasicType,
+    ShapedPreRenderedElement, ShapedPreRenderedElementSchema, ViewportRootElement
+} from "../../../src"
 
 export class SvgFactory extends SModelFactory {
 

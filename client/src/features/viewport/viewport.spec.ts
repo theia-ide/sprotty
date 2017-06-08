@@ -6,15 +6,15 @@
  */
 
 import 'mocha'
-import { AnimationFrameSyncer } from '../../base/animations/animation-frame-syncer'
-import { CommandExecutionContext } from '../../base/intent/commands'
-import { SGraphFactory } from '../../graph/model/sgraph-factory'
+import { expect } from 'chai'
 import { almostEquals } from '../../utils/geometry'
 import { ConsoleLogger } from '../../utils/logging'
+import { AnimationFrameSyncer } from '../../base/animations/animation-frame-syncer'
+import { CommandExecutionContext } from '../../base/commands/command'
+import { SGraphFactory } from '../../graph/sgraph-factory'
 import { ViewportAction, ViewportCommand } from './viewport'
 import { Viewport } from './model'
 import { ViewportRootElement } from './viewport-root'
-import { expect } from 'chai'
 
 const viewportData: Viewport = { scroll: { x: 0, y: 0 }, zoom: 1 }
 

@@ -7,24 +7,24 @@
 
 import { ContainerModule, interfaces } from "inversify"
 import { SModelStorage } from './model/smodel-storage'
+import { TYPES } from "./types"
 import { CanvasBoundsInitializer, InitializeCanvasBoundsCommand } from './features/initialize-canvas'
 import { LogLevel, NullLogger } from "../utils/logging"
-import { ActionDispatcher, IActionDispatcher } from "./intent/action-dispatcher"
-import { CommandStack, ICommandStack } from "./intent/command-stack"
-import { CommandStackOptions } from "./intent/command-stack-options"
-import { IViewer, Viewer, ModelRenderer } from "./view/viewer"
-import { ViewerOptions } from "./view/options"
-import { MouseTool, PopupMouseTool } from "./view/mouse-tool"
-import { KeyTool } from "./view/key-tool"
-import { FocusFixDecorator, IVNodeDecorator } from "./view/vnode-decorators"
-import { ActionHandlerRegistry } from "./intent/actions"
-import { ViewRegistry } from "./view/views"
+import { ActionDispatcher, IActionDispatcher } from "./actions/action-dispatcher"
+import { ActionHandlerRegistry } from "./actions/action-handler"
+import { CommandStack, ICommandStack } from "./commands/command-stack"
+import { CommandStackOptions } from "./commands/command-stack-options"
 import { SModelFactory } from "./model/smodel-factory"
-import { ViewerCache } from "./view/viewer-cache"
 import { AnimationFrameSyncer } from "./animations/animation-frame-syncer"
-import { TYPES } from "./types"
-import { DOMHelper } from "./view/dom-helper"
-import { IdDecorator } from "./view/id-decorator"
+import { IViewer, Viewer, ModelRenderer } from "./views/viewer"
+import { ViewerOptions } from "./views/viewer-options"
+import { MouseTool, PopupMouseTool } from "./views/mouse-tool"
+import { KeyTool } from "./views/key-tool"
+import { FocusFixDecorator, IVNodeDecorator } from "./views/vnode-decorators"
+import { ViewRegistry } from "./views/view"
+import { ViewerCache } from "./views/viewer-cache"
+import { DOMHelper } from "./views/dom-helper"
+import { IdDecorator } from "./views/id-decorator"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------

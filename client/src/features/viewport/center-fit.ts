@@ -5,13 +5,13 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SChildElement } from '../../base/model/smodel'
-import { Action } from "../../base/intent/actions"
-import { Command, CommandExecutionContext } from "../../base/intent/commands"
-import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { Bounds, center, combine, isValidDimension } from "../../utils/geometry"
-import { KeyListener } from "../../base/view/key-tool"
 import { isCtrlOrCmd } from "../../utils/browser"
+import { SChildElement } from '../../base/model/smodel'
+import { Action } from "../../base/actions/action"
+import { Command, CommandExecutionContext } from "../../base/commands/command"
+import { SModelElement, SModelRoot } from "../../base/model/smodel"
+import { KeyListener } from "../../base/views/key-tool"
 import { isBoundsAware } from "../bounds/model"
 import { isSelectable } from "../select/model"
 import { ViewportAnimation } from "./viewport"

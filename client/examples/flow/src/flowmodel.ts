@@ -5,9 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SNode, SNodeSchema } from "../../../src/graph"
-import { Bounds } from "../../../src/utils"
-import { moveFeature } from "../../../src/features"
+import { SNode, SNodeSchema, Bounds, moveFeature } from "../../../src"
 
 export interface TaskNodeSchema extends SNodeSchema {
     name?: string

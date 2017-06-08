@@ -6,8 +6,8 @@
  */
 
 import { SModelElement, SModelRoot } from "../../base/model/smodel"
-import { Action } from "../../base/intent/actions"
-import { MergeableCommand, ICommand, CommandExecutionContext } from "../../base/intent/commands"
+import { Action } from "../../base/actions/action"
+import { MergeableCommand, ICommand, CommandExecutionContext } from "../../base/commands/command"
 import { Animation } from "../../base/animations/animation"
 import { isViewport, Viewport } from "./model"
 

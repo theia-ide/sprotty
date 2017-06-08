@@ -7,10 +7,10 @@
 
 import * as snabbdom from 'snabbdom-jsx'
 import { VNode } from "snabbdom/vnode"
-import { IView, RenderingContext } from "../base/view/views"
-import { SNodeView } from "../graph/view/views"
-import { SNode } from "../graph/model/sgraph"
 import { Point } from "../utils/geometry"
+import { IView, RenderingContext } from "../base/views/view"
+import { SNodeView } from "../graph/views"
+import { SNode } from "../graph/sgraph"
 import { ViewportRootElement } from "../features/viewport/viewport-root"
 
 const JSX = {createElement: snabbdom.svg}

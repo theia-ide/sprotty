@@ -5,15 +5,12 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SCompartmentElementSchema, SShapeElement } from '../../../src/graph';
-import { SChildElement, SModelElementSchema, SModelRootSchema } from "../../../src/base"
-import { Bounds, Direction } from "../../../src/utils"
 import {
-    BoundsAware, boundsFeature, Fadeable, fadeFeature, layoutFeature, Layouting, Selectable,
-    selectFeature, viewportFeature, ViewportRootElement, hoverFeedbackFeature, Hoverable,
-    popupFeature
-} from '../../../src/features';
-import { CORE_DISTANCE, CORE_WIDTH } from "./views";
+    SCompartmentElementSchema, SShapeElement, SChildElement, SModelElementSchema, SModelRootSchema,
+    Bounds, Direction, BoundsAware, boundsFeature, Fadeable, fadeFeature, layoutFeature, Layouting, Selectable,
+    selectFeature, viewportFeature, ViewportRootElement, hoverFeedbackFeature, Hoverable, popupFeature
+} from '../../../src'
+import { CORE_DISTANCE, CORE_WIDTH } from "./views"
 
 export interface ProcessorSchema extends SModelRootSchema {
     rows: number

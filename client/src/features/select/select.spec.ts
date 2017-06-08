@@ -7,14 +7,14 @@
 
 import "mocha"
 import { expect } from "chai"
+import { ConsoleLogger } from "../../utils/logging"
 import { SModelRoot } from "../../base/model/smodel"
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
-import { SGraphFactory } from "../../graph/model/sgraph-factory"
-import { CommandExecutionContext } from "../../base/intent/commands"
-import { SNode } from "../../graph/model/sgraph"
-import { SelectAction, SelectCommand } from "./select"
-import { ConsoleLogger } from "../../utils/logging"
+import { CommandExecutionContext } from "../../base/commands/command"
 import { AnimationFrameSyncer } from "../../base/animations/animation-frame-syncer"
+import { SGraphFactory } from "../../graph/sgraph-factory"
+import { SNode } from "../../graph/sgraph"
+import { SelectAction, SelectCommand } from "./select"
 
 describe('select', () => {
     // setup the GModel

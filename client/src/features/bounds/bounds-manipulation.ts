@@ -5,11 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { BoundsAware, isBoundsAware } from './model'
 import { Bounds } from "../../utils/geometry"
 import { SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel"
-import { Action } from "../../base/intent/actions"
-import { CommandExecutionContext, HiddenCommand, SystemCommand } from "../../base/intent/commands"
+import { Action } from "../../base/actions/action"
+import { CommandExecutionContext, HiddenCommand, SystemCommand } from "../../base/commands/command"
+import { BoundsAware, isBoundsAware } from './model'
 
 export class SetBoundsAction implements Action {
     readonly kind = SetBoundsCommand.KIND

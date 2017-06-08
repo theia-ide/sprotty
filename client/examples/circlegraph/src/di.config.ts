@@ -6,13 +6,12 @@
  */
 
 import { Container, ContainerModule } from "inversify"
-import { defaultModule, TYPES, ViewRegistry, overrideViewerOptions } from "../../../src/base"
-import { SGraphFactory, SGraphView, PolylineEdgeView } from "../../../src/graph"
-import { ConsoleLogger, LogLevel } from "../../../src/utils"
-import { WebSocketDiagramServer } from "../../../src/remote"
-import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule } from "../../../src/features"
+import {
+    defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphFactory, SGraphView, PolylineEdgeView,
+    ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule, undoRedoModule,
+    viewportModule, LocalModelSource
+} from "../../../src"
 import { CircleNodeView } from "./views"
-import { LocalModelSource } from "../../../src/local"
 
 const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()

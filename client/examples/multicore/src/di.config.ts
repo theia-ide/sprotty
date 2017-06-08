@@ -5,16 +5,14 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SCompartmentView, SLabelView } from '../../../src/graph';
 import { Container, ContainerModule } from "inversify"
-import { defaultModule, TYPES, ViewRegistry, overrideViewerOptions } from "../../../src/base"
+import {
+    SCompartmentView, SLabelView, defaultModule, TYPES, ViewRegistry, overrideViewerOptions,
+    ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, selectModule, viewportModule,
+    moveModule, fadeModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView
+} from '../../../src'
 import { ChipModelFactory } from "./chipmodel-factory"
-import { ConsoleLogger, LogLevel } from "../../../src/utils"
-import { WebSocketDiagramServer } from "../../../src/remote"
-import { boundsModule, selectModule, viewportModule, moveModule, fadeModule, hoverModule } from "../../../src/features"
 import { ProcessorView, CoreView, CrossbarView, ChannelView, SimpleCoreView } from "./views"
-import { LocalModelSource } from "../../../src/local"
-import { HtmlRootView, PreRenderedView } from "../../../src/lib"
 
 const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()

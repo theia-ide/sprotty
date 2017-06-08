@@ -7,12 +7,12 @@
 
 import "mocha"
 import { expect } from "chai"
-import { SetBoundsAction, SetBoundsCommand } from "../bounds/bounds-manipulation"
-import { CommandExecutionContext } from "../../base/intent/commands"
 import { ConsoleLogger } from "../../utils/logging"
+import { SetBoundsAction, SetBoundsCommand } from "../bounds/bounds-manipulation"
+import { CommandExecutionContext } from "../../base/commands/command"
 import { AnimationFrameSyncer } from "../../base/animations/animation-frame-syncer"
-import { SGraph, SNode, SNodeSchema } from "../../graph/model/sgraph"
-import { SGraphFactory } from "../../graph/model/sgraph-factory"
+import { SGraph, SNode, SNodeSchema } from "../../graph/sgraph"
+import { SGraphFactory } from "../../graph/sgraph-factory"
 
 const boundsInitial = { x: 0, y: 0, width: 0, height: 0 }
 const bounds1 = { x: 10, y: 10, width: 10, height: 10 }

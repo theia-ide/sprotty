@@ -8,10 +8,10 @@
 import { injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { Animation } from "../../base/animations/animation"
-import { CommandExecutionContext } from "../../base/intent/commands"
+import { CommandExecutionContext } from "../../base/commands/command"
 import { SModelRoot, SModelElement, SChildElement } from "../../base/model/smodel"
-import { IVNodeDecorator } from "../../base/view/vnode-decorators"
-import { setAttr } from "../../base/view/vnode-utils"
+import { IVNodeDecorator } from "../../base/views/vnode-decorators"
+import { setAttr } from "../../base/views/vnode-utils"
 import { Fadeable, isFadeable } from "./model"
 
 export interface ResolvedElementFade {

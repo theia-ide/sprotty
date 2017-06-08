@@ -6,18 +6,18 @@
  */
 
 import { inject, injectable } from "inversify"
+import { TYPES } from "../../base/types"
 import { SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel"
-import { MouseListener } from "../../base/view/mouse-tool"
-import { Action } from "../../base/intent/actions"
-import { hasPopupFeature, isHoverable } from "./model"
-import { Command, CommandExecutionContext, PopupCommand } from "../../base/intent/commands"
+import { MouseListener } from "../../base/views/mouse-tool"
+import { Action } from "../../base/actions/action"
+import { Command, CommandExecutionContext, PopupCommand } from "../../base/commands/command"
 import { EMPTY_ROOT } from "../../base/model/smodel-factory"
 import { Bounds, Point, translate } from "../../utils/geometry"
-import { KeyListener } from "../../base/view/key-tool"
+import { KeyListener } from "../../base/views/key-tool"
 import { findParentByFeature, findParent } from "../../base/model/smodel-utils"
-import { ViewerOptions } from "../../base/view/options"
-import { TYPES } from "../../base/types"
+import { ViewerOptions } from "../../base/views/viewer-options"
 import { getAbsoluteBounds } from '../bounds/model'
+import { hasPopupFeature, isHoverable } from "./model"
 
 export class HoverFeedbackAction implements Action {
     kind = HoverFeedbackCommand.KIND

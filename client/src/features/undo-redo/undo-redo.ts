@@ -5,10 +5,10 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Action } from "../../base/intent/actions"
-import { KeyListener } from "../../base/view/key-tool"
-import { SModelElement } from "../../base/model/smodel"
 import { isCtrlOrCmd } from "../../utils/browser"
+import { Action } from "../../base/actions/action"
+import { KeyListener } from "../../base/views/key-tool"
+import { SModelElement } from "../../base/model/smodel"
 
 export class UndoAction implements Action {
     static readonly KIND = 'undo'

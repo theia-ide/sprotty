@@ -6,13 +6,11 @@
  */
 
 import { Container, ContainerModule } from "inversify"
-import { defaultModule, TYPES, ViewRegistry, overrideViewerOptions } from "../../../src/base"
-import { SGraphView, SLabelView, SCompartmentView, PolylineEdgeView } from "../../../src/graph"
-import { ConsoleLogger, LogLevel } from "../../../src/utils"
-import { WebSocketDiagramServer } from "../../../src/remote"
-import { boundsModule, moveModule, selectModule, undoRedoModule, viewportModule, hoverModule } from "../../../src/features"
-import { LocalModelSource } from "../../../src/local"
-import { HtmlRootView, PreRenderedView } from "../../../src/lib"
+import {
+    defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphView, SLabelView, SCompartmentView,
+    PolylineEdgeView, ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule,
+    undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView
+} from "../../../src"
 import { ClassNodeView } from "./views"
 import { ClassDiagramFactory } from "./model-factory"
 import { popupModelFactory } from "./popup"

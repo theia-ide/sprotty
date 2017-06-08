@@ -9,15 +9,15 @@ import { SChildElement } from '../../base/model/smodel'
 import { VNode } from "snabbdom/vnode"
 import { Point } from "../../utils/geometry"
 import { SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel"
-import { Action } from "../../base/intent/actions"
-import { ICommand, CommandExecutionContext, MergeableCommand } from "../../base/intent/commands"
+import { findParentByFeature } from "../../base/model/smodel-utils"
+import { Action } from "../../base/actions/action"
+import { ICommand, CommandExecutionContext, MergeableCommand } from "../../base/commands/command"
 import { Animation } from "../../base/animations/animation"
-import { MouseListener } from "../../base/view/mouse-tool"
+import { MouseListener } from "../../base/views/mouse-tool"
+import { setAttr } from "../../base/views/vnode-utils"
 import { isViewport } from "../viewport/model"
 import { isSelectable } from "../select/model"
 import { isMoveable, Locateable, isLocateable } from "./model"
-import { setAttr } from "../../base/view/vnode-utils"
-import { findParentByFeature } from "../../base/model/smodel-utils"
 
 export class MoveAction implements Action {
     kind = MoveCommand.KIND

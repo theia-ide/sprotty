@@ -5,8 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { TYPES, RequestModelAction } from "../../../src/base"
-import { WebSocketDiagramServer } from "../../../src/remote"
+import { TYPES, RequestModelAction, WebSocketDiagramServer } from "../../../src"
 import createContainer from "./di.config"
 
 const WebSocket = require("reconnecting-websocket")

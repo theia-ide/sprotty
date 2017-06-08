@@ -6,10 +6,9 @@
  */
 
 import * as snabbdom from 'snabbdom-jsx'
-import { IView, RenderingContext, setAttr, ThunkView } from '../../../src/base'
 import { VNode } from "snabbdom/vnode"
+import { IView, RenderingContext, setAttr, ThunkView, Direction, RGBColor, toSVG, rgb } from '../../../src'
 import { Channel, Core, Crossbar, Processor } from './chipmodel'
-import { Direction, RGBColor, toSVG, rgb } from "../../../src/utils"
 
 const JSX = {createElement: snabbdom.svg}
 

@@ -7,14 +7,14 @@
 
 import "mocha"
 import { expect } from "chai"
-import { SGraphFactory } from "../../graph/model/sgraph-factory"
-import { CommandExecutionContext } from "../../base/intent/commands"
-import { SModelRoot } from "../../base/model/smodel"
 import { Point } from "../../utils/geometry"
-import { SNode } from "../../graph/model/sgraph"
-import { ElementMove, MoveAction, MoveCommand } from "./move"
 import { ConsoleLogger } from "../../utils/logging"
+import { CommandExecutionContext } from "../../base/commands/command"
+import { SModelRoot } from "../../base/model/smodel"
+import { SGraphFactory } from "../../graph/sgraph-factory"
+import { SNode } from "../../graph/sgraph"
 import { AnimationFrameSyncer } from "../../base/animations/animation-frame-syncer"
+import { ElementMove, MoveAction, MoveCommand } from "./move"
 
 describe('move', () => {
 

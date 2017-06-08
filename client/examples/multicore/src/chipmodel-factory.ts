@@ -5,16 +5,14 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SGraphFactory } from '../../../src/graph'
 import {
-    SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, getBasicType
-} from "../../../src/base"
+    SGraphFactory, SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, getBasicType,
+    Direction, HtmlRootSchema, PreRenderedElementSchema, PreRenderedElement, HtmlRoot
+} from '../../../src'
 import {
     Channel, ChannelSchema, Core, CoreSchema, Crossbar, CrossbarSchema, Processor, ProcessorSchema
 } from "./chipmodel"
-import { Direction } from "../../../src/utils"
-import { CORE_WIDTH, CORE_DISTANCE } from "./views";
-import { HtmlRootSchema, PreRenderedElementSchema, PreRenderedElement, HtmlRoot } from "../../../src/lib"
+import { CORE_WIDTH, CORE_DISTANCE } from "./views"
 
 
 export class ChipModelFactory extends SGraphFactory {

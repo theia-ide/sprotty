@@ -7,8 +7,8 @@
 
 import * as snabbdom from "snabbdom-jsx"
 import { VNode } from "snabbdom/vnode"
-import { IView, RenderingContext } from "../base/view/views"
-import { setClass } from "../base/view/vnode-utils"
+import { IView, RenderingContext } from "../base/views/view"
+import { setClass } from "../base/views/vnode-utils"
 import { HtmlRoot } from "./model"
 
 const JSX = {createElement: snabbdom.html}

@@ -5,11 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { TYPES, IActionDispatcher, SModelElementSchema } from "../../../src/base"
-import { SEdgeSchema, SNodeSchema, SGraphSchema, SGraphFactory } from "../../../src/graph"
-import { ElementMove, MoveAction } from "../../../src/features"
+import {
+    TYPES, IActionDispatcher, SModelElementSchema, SEdgeSchema, SNodeSchema, SGraphSchema, SGraphFactory,
+    ElementMove, MoveAction, LocalModelSource
+} from "../../../src"
 import createContainer from "./di.config"
-import { LocalModelSource } from "../../../src/local"
 
 export default function runStandalone() {
     const container = createContainer(false)

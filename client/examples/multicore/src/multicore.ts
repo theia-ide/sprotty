@@ -5,15 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Direction } from "../../../src/utils"
+import { Direction, LocalModelSource, TYPES, UpdateModelAction, IActionDispatcher } from "../../../src"
 import {
     ChannelSchema, CoreSchema, CrossbarSchema, ProcessorSchema
 } from './chipmodel';
 import createContainer from "./di.config"
-import { LocalModelSource } from "../../../src/local"
-import { TYPES } from "../../../src/base"
-import { UpdateModelAction } from "../../../src/features"
-import { IActionDispatcher } from "../../../src/base"
 
 export default function runMulticore() {
     const container = createContainer(false)

@@ -5,10 +5,8 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { LocalModelSource } from "../../../src/local"
-import { TYPES, SModelRootSchema } from "../../../src/base"
+import { LocalModelSource, TYPES, SModelRootSchema, ShapedPreRenderedElementSchema } from "../../../src"
 import createContainer from "./di.config"
-import { ShapedPreRenderedElementSchema } from "../../../src/lib"
 
 function loadFile(path: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {

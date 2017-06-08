@@ -5,8 +5,8 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SModelRoot } from "../../base/model/smodel"
 import { Bounds, Point, isBounds, isValidDimension } from "../../utils/geometry"
+import { SModelRoot } from "../../base/model/smodel"
 import { Viewport, viewportFeature } from "./model"
 
 export class ViewportRootElement extends SModelRoot implements Viewport {

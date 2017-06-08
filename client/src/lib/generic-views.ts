@@ -7,7 +7,7 @@
 
 import virtualize from "snabbdom-virtualize/strings"
 import { VNode } from "snabbdom/vnode"
-import { IView, RenderingContext } from "../base/view/views"
+import { IView, RenderingContext } from "../base/views/view"
 import { PreRenderedElement } from "./model"
 
 export class PreRenderedView implements IView {
