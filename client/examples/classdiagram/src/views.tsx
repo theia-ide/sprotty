@@ -18,7 +18,7 @@ const JSX = {createElement: snabbdom.svg}
  */
 export class ClassNodeView extends RectangularNodeView {
     render(node: SNode, context: RenderingContext): VNode {
-        return <g key={node.id} id={context.createUniqueDOMElementId(node)} class-node={true}>
+        return <g class-node={true}>
             <rect class-node={true} class-selected={node.selected} class-mouseover={node.hoverFeedback}
                   x={0} y={0}
                   width={Math.max(0, node.bounds.width)} height={Math.max(0, node.bounds.height)} />

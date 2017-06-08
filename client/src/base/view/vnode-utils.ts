@@ -28,7 +28,7 @@ export function on(vnode: VNode, event: string, listener: (model: SModelElement,
     (on as any)[event] = [listener, element]
 }
 
-function getAttrs(vnode: VNode) {
+export function getAttrs(vnode: VNode) {
     const data = getData(vnode)
     if (!data.attrs)
         data.attrs = {}

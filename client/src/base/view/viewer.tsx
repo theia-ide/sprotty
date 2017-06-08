@@ -27,7 +27,6 @@ import { EMPTY_ROOT } from "../model/smodel-factory"
 import { IActionDispatcher } from "../intent/action-dispatcher"
 import { InitializeCanvasBoundsAction } from "../features/initialize-canvas"
 import { ORIGIN_POINT } from "../../utils/geometry"
-import { DOMHelper } from "./dom-helper"
 
 const JSX = {createElement: snabbdom.html}  // must be html here, as we're creating a div
 
@@ -40,7 +39,6 @@ export interface IViewer {
 export class ModelRenderer implements RenderingContext {
 
     constructor(public viewRegistry: ViewRegistry,
-                private domHelper: DOMHelper,
                 private decorators: IVNodeDecorator[]) {
     }
 
@@ -63,10 +61,6 @@ export class ModelRenderer implements RenderingContext {
 
     postUpdate() {
         this.decorators.forEach(decorator => decorator.postUpdate())
-    }
-
-    createUniqueDOMElementId(element: SModelElement): string {
-        return this.domHelper.createUniqueDOMElementId(element)
     }
 }
 

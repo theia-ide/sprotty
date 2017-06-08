@@ -24,6 +24,7 @@ import { ViewerCache } from "./view/viewer-cache"
 import { AnimationFrameSyncer } from "./animations/animation-frame-syncer"
 import { TYPES } from "./types"
 import { DOMHelper } from "./view/dom-helper"
+import { IdDecorator } from "./view/id-decorator"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
@@ -88,16 +89,18 @@ let defaultContainerModule = new ContainerModule(bind => {
     bind(TYPES.ModelRendererFactory).toFactory<ModelRenderer>((context: interfaces.Context) => {
         return (decorators: IVNodeDecorator[]) => {
             const viewRegistry = context.container.get<ViewRegistry>(TYPES.ViewRegistry)
-            const domHelper = context.container.get<DOMHelper>(TYPES.DOMHelper)
-            return new ModelRenderer(viewRegistry, domHelper, decorators)
+            return new ModelRenderer(viewRegistry, decorators)
         }
     })
 
     // Tools & Decorators --------------------------------------
+    bind(TYPES.IVNodeDecorator).to(IdDecorator).inSingletonScope()
     bind(TYPES.IVNodeDecorator).to(MouseTool).inSingletonScope()
     bind(TYPES.IVNodeDecorator).to(KeyTool).inSingletonScope()
     bind(TYPES.IVNodeDecorator).to(FocusFixDecorator).inSingletonScope()
+    bind(TYPES.PopupVNodeDecorator).to(IdDecorator).inSingletonScope()
     bind(TYPES.PopupVNodeDecorator).to(PopupMouseTool).inSingletonScope()
+    bind(TYPES.HiddenVNodeDecorator).to(IdDecorator).inSingletonScope()
 
     // Animation Frame Sync ------------------------------------------
     bind(TYPES.AnimationFrameSyncer).to(AnimationFrameSyncer).inSingletonScope()

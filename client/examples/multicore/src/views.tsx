@@ -16,7 +16,7 @@ const JSX = {createElement: snabbdom.svg}
 export class ProcessorView implements IView {
     render(model: Processor, context: RenderingContext): VNode {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
-        return <svg key={model.id} id={context.createUniqueDOMElementId(model)}>
+        return <svg>
                 <defs>
                     <clipPath id="core-clip">
                         <rect width={CORE_WIDTH} height={CORE_WIDTH} rx={4} ry={4}/>
@@ -47,9 +47,7 @@ export class SimpleCoreView extends ThunkView {
         const content = <g>
                 {context.renderChildren(model)}
             </g>
-        return <g class-core={true}
-                  id={context.createUniqueDOMElementId(model)}
-                  key={model.id}>
+        return <g class-core={true}>
                 <rect width={model.size.width}
                       height={model.size.height}
                       rx={4}
@@ -70,9 +68,7 @@ export class CoreView implements IView {
                 {context.renderChildren(model)}
             </g>
         setAttr(content, 'clip-path', 'url(#core-clip)')
-        return <g class-core={true}
-                  id={context.createUniqueDOMElementId(model)}
-                  key={model.id}>
+        return <g class-core={true}>
                 <rect width={model.size.width}
                       height={model.size.height}
                       rx={4}
@@ -121,8 +117,6 @@ export class CrossbarView implements IView {
                 break;
         }
         return <rect class-crossbar={true}
-                     id={context.createUniqueDOMElementId(model)}
-                     key={model.id}
                      width={width}
                      height={height}
                      x={x}
@@ -163,7 +157,7 @@ export class ChannelView extends ThunkView {
 
     doRender(model: Channel, context: RenderingContext): VNode {
         if (!this.isVisible(model))
-            return <g id={context.createUniqueDOMElementId(model)} key={model.id} />
+            return <g/>
         let points: number[]
         switch (model.direction) {
             case Direction.up:
@@ -214,8 +208,6 @@ export class ChannelView extends ThunkView {
 
         const transform = 'translate(' + position.x + ',' + position.y + ')'
         return <polygon class-channel={true}
-                        id={model.id}
-                        key={model.id}
                         points={points}
                         transform={transform}
                         fill={toSVG({red: 120, green: 180, blue: 220})} />

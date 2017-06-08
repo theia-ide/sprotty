@@ -15,7 +15,7 @@ const JSX = {createElement: snabbdom.html}
 
 export class HtmlRootView implements IView {
     render(model: HtmlRoot, context: RenderingContext): VNode {
-        const root = <div id={context.createUniqueDOMElementId(model)}>
+        const root = <div>
             { context.renderChildren(model) }
         </div>
         for (const c of model.classes) {

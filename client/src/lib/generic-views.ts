@@ -8,14 +8,11 @@
 import virtualize from "snabbdom-virtualize/strings"
 import { VNode } from "snabbdom/vnode"
 import { IView, RenderingContext } from "../base/view/views"
-import { setAttr } from "../base/view/vnode-utils"
 import { PreRenderedElement } from "./model"
 
 export class PreRenderedView implements IView {
     render(model: PreRenderedElement, context: RenderingContext): VNode {
         const node = virtualize(model.code)
-        node.key = model.id
-        setAttr(node, 'id', context.createUniqueDOMElementId(model))
         this.correctNamespace(node)
         return node
     }
