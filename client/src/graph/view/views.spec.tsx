@@ -99,8 +99,8 @@ describe('graph views', () => {
             +   '</g>'
             + '</g>'
             + '</svg>'
-        for(let i=0; i<html.length; ++i) {
-            if(html.charAt(i) !== expectation.charAt(i)) {
+        for (let i = 0; i < html.length; ++i) {
+            if (html.charAt(i) !== expectation.charAt(i)) {
                 console.log('Different char at ' + i)
             }
         }
