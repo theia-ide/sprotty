@@ -21,8 +21,6 @@ import { UpdateModelAction, UpdateModelCommand } from "../features/update/update
 import { RequestPopupModelAction, SetPopupModelAction } from "../features/hover/hover"
 import { ModelSource } from "./model-source"
 
-export type LayoutEngine = (root: SModelRootSchema) => void
-
 export type PopupModelFactory = (request: RequestPopupModelAction, element?: SModelElementSchema)
     => SModelRootSchema | undefined
 
@@ -51,7 +49,6 @@ export class LocalModelSource extends ModelSource {
     constructor(@inject(TYPES.IActionDispatcher) actionDispatcher: IActionDispatcher,
                 @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
                 @inject(TYPES.ViewerOptions) viewerOptions: ViewerOptions,
-                @inject(TYPES.LayoutEngine)@optional() protected layoutEngine?: LayoutEngine,
                 @inject(TYPES.PopupModelFactory)@optional() protected popupModelFactory?: PopupModelFactory) {
         super(actionDispatcher, actionHandlerRegistry, viewerOptions)
     }
@@ -85,9 +82,6 @@ export class LocalModelSource extends ModelSource {
         if (this.viewerOptions.needsClientLayout) {
             this.actionDispatcher.dispatch(new RequestBoundsAction(newRoot))
         } else {
-            if (this.layoutEngine !== undefined) {
-                this.layoutEngine(newRoot)
-            }
             if (update) {
                 this.actionDispatcher.dispatch(new UpdateModelAction(newRoot))
             } else {
@@ -105,9 +99,6 @@ export class LocalModelSource extends ModelSource {
         if (this.viewerOptions.needsClientLayout) {
             this.actionDispatcher.dispatch(new RequestBoundsAction(root))
         } else {
-            if (this.layoutEngine !== undefined) {
-                this.layoutEngine(root)
-            }
             const update = new UpdateModelAction()
             update.matches = matches
             this.actionDispatcher.dispatch(update)
@@ -189,9 +180,6 @@ export class LocalModelSource extends ModelSource {
             const element = index.getById(b.elementId)
             if (element !== undefined)
                 this.applyBounds(element, b.newBounds)
-        }
-        if (this.layoutEngine !== undefined) {
-            this.layoutEngine(root)
         }
         this.actionDispatcher.dispatch(new UpdateModelAction(root))
         if (this.onModelSubmitted !== undefined) {
