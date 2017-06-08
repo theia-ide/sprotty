@@ -154,6 +154,7 @@ class FitToScreenAction implements Action {
 	List<String> elementIds
 	Double padding
 	Double maxZoom
+	boolean animate = true
 	
 	new() {}
 	new(Consumer<FitToScreenAction> initializer) {
