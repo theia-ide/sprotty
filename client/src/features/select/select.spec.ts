@@ -27,6 +27,8 @@ describe('select', () => {
         children: [myNode1, myNode0]  // myNode0 is selected, so put at the end
     })
 
+    const emptyRoot = modelFactory.createRoot(EMPTY_ROOT)
+
     // create the select action
     const mySelectAction = new SelectAction(
         ['node1'], // selected list
@@ -43,7 +45,7 @@ describe('select', () => {
     let newModel: SModelRoot
 
     const context: CommandExecutionContext = {
-        root: EMPTY_ROOT,
+        root: emptyRoot,
         modelFactory: modelFactory,
         duration: 0,
         modelChanged: undefined!,

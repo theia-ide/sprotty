@@ -37,8 +37,11 @@ function compare(expected: SModelElementSchema, actual: SModelElement) {
 
 describe('UpdateModelCommand', () => {
     const graphFactory = new SGraphFactory()
+
+    const emptyRoot = graphFactory.createRoot(EMPTY_ROOT)
+
     const context: CommandExecutionContext = {
-        root: EMPTY_ROOT,
+        root: emptyRoot,
         modelFactory: graphFactory,
         duration: 0,
         modelChanged: undefined!,

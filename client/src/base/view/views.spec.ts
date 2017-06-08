@@ -5,9 +5,9 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import "mocha"
+import 'mocha';
 import { expect } from "chai"
-import { EMPTY_ROOT } from "../model/smodel-factory"
+import { EMPTY_ROOT, SModelFactory } from '../model/smodel-factory';
 import { SNode } from "../../graph/model/sgraph"
 import { EmptyView, MissingView } from "./views"
 import { ModelRenderer } from "./viewer"
@@ -17,10 +17,11 @@ const toHTML = require('snabbdom-to-html')
 describe('base views', () => {
 
     const context = new ModelRenderer(undefined!, [])
+    const emptyRoot = new SModelFactory().createRoot(EMPTY_ROOT)
 
     it('empty view', () => {
         const emptyView = new EmptyView()
-        const vnode = emptyView.render(EMPTY_ROOT, context)
+        const vnode = emptyView.render(emptyRoot, context)
         const html = toHTML(vnode)
         expect(html).to.be.equal('<svg id="EMPTY" class="empty"></svg>')
     })
@@ -28,7 +29,7 @@ describe('base views', () => {
     const missingView = new MissingView
 
     it('missing view', () => {
-        const vnode = missingView.render(EMPTY_ROOT, context)
+        const vnode = missingView.render(emptyRoot, context)
         expect(toHTML(vnode)).to.be.equal('<text id="EMPTY" class="missing" x="0" y="0">?EMPTY?</text>')
         const model = new SNode()
         model.bounds = {

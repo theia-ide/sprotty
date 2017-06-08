@@ -90,7 +90,7 @@ export class SModelFactory implements IModelFactory {
     }
 }
 
-export const EMPTY_ROOT: Readonly<SModelRoot> = Object.freeze(new SModelFactory().createRoot({
+export const EMPTY_ROOT: Readonly<SModelRootSchema> = Object.freeze({
     type: 'NONE',
     id: 'EMPTY'
-}))
+})
