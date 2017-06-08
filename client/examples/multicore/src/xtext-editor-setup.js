@@ -48,7 +48,7 @@ require(['webjars/ace/1.2.3/src/ace'], function() {
 
         // Handling example files --------
 
-        var examples = ['example01', 'example02', 'example03'];
+        var examples = ['example01', 'example02'];
         var exampleSelectionEl = jQuery('#example-selection');
         var exampleChangeHandler = function(chosenExample){
             jQuery.ajax('/examples/' + chosenExample + '.multicore').done(function(exampleCode) {
