@@ -20,7 +20,7 @@ import { isViewport, Viewport } from "./model"
 export class CenterAction implements Action {
     readonly kind = CenterCommand.KIND
 
-    constructor(public readonly elementIds: string[]) {
+    constructor(public readonly elementIds: string[], public readonly animate: boolean = true) {
     }
 }
 
@@ -29,7 +29,8 @@ export class FitToScreenAction implements Action {
 
     constructor(public readonly elementIds: string[],
                 public readonly padding?: number,
-                public readonly maxZoom?: number) {
+                public readonly maxZoom?: number,
+                public readonly animate: boolean = true) {
     }
 }
 
@@ -37,6 +38,10 @@ export abstract class BoundsAwareViewportCommand extends Command {
 
     oldViewport: Viewport
     newViewport: Viewport
+
+    constructor(protected readonly animate: boolean) {
+        super()
+    }
 
     protected initialize(model: SModelRoot) {
         if (isViewport(model)) {
@@ -92,18 +97,28 @@ export abstract class BoundsAwareViewportCommand extends Command {
 
     undo(context: CommandExecutionContext) {
         const model = context.root
-        if (isViewport(model) && this.newViewport && !this.equal(this.newViewport, this.oldViewport))
-            return new ViewportAnimation(model, this.newViewport, this.oldViewport, context).start()
-        else
-            return model
+        if (isViewport(model) && this.newViewport && !this.equal(this.newViewport, this.oldViewport)) {
+            if (this.animate)
+                return new ViewportAnimation(model, this.newViewport, this.oldViewport, context).start()
+            else {
+                model.scroll = this.oldViewport.scroll
+                model.zoom = this.oldViewport.zoom
+            }
+        }
+        return model
     }
 
     redo(context: CommandExecutionContext) {
         const model = context.root
-        if (isViewport(model) && this.newViewport && !this.equal(this.newViewport, this.oldViewport))
-            return new ViewportAnimation(model, this.oldViewport, this.newViewport, context).start()
-        else
-            return model
+        if (isViewport(model) && this.newViewport && !this.equal(this.newViewport, this.oldViewport)) {
+            if (this.animate) {
+               return new ViewportAnimation(model, this.oldViewport, this.newViewport, context).start()
+            } else {
+                model.scroll = this.newViewport.scroll
+                model.zoom = this.newViewport.zoom
+            }
+        }
+        return model
     }
 
     protected equal(vp1: Viewport, vp2: Viewport): boolean {
@@ -115,7 +130,7 @@ export class CenterCommand extends BoundsAwareViewportCommand {
     static readonly KIND = 'center'
 
     constructor(protected action: CenterAction) {
-        super()
+        super(action.animate)
     }
 
     getElementIds() {
@@ -138,7 +153,7 @@ export class FitToScreenCommand extends BoundsAwareViewportCommand {
     static readonly KIND = 'fit'
 
     constructor(protected action: FitToScreenAction) {
-        super()
+        super(action.animate)
     }
 
     getElementIds() {
