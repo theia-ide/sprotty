@@ -9,7 +9,7 @@ import { VNode } from "snabbdom/vnode"
 import { EMPTY_BOUNDS, Bounds, isValidDimension } from '../../utils/geometry'
 import { SChildElement } from '../../base/model/smodel'
 import { SParentElement, SModelElement } from "../../base/model/smodel"
-import { ILayout, StatefulLayouter } from './micro-layout'
+import { ILayout, StatefulLayouter } from './layout'
 import { BoundsAware, isBoundsAware, isLayouting, Layouting } from './model'
 
 /**

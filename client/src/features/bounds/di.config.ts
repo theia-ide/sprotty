@@ -9,7 +9,7 @@ import { ContainerModule } from "inversify"
 import { TYPES } from "../../base/types"
 import { SetBoundsCommand, RequestBoundsCommand } from "./bounds-manipulation"
 import { HiddenBoundsUpdater } from './hidden-bounds-updater'
-import { Layouter, LayoutRegistry } from "./micro-layout"
+import { Layouter, LayoutRegistry } from "./layout"
 
 const boundsModule = new ContainerModule(bind => {
     bind(TYPES.ICommand).toConstructor(SetBoundsCommand)

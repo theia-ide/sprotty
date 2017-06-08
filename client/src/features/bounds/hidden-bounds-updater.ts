@@ -14,7 +14,7 @@ import { IVNodeDecorator } from "../../base/views/vnode-decorators"
 import { IActionDispatcher } from "../../base/actions/action-dispatcher"
 import { ComputedBoundsAction, ElementAndBounds } from './bounds-manipulation'
 import { BoundsAware, isSizeable, isLayouting } from "./model"
-import { Layouter } from "./micro-layout"
+import { Layouter } from "./layout"
 
 export class BoundsData {
     vnode?: VNode
