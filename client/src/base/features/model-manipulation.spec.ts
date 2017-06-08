@@ -69,13 +69,13 @@ describe('SetModelCommand', () => {
         context.root = model1  /* the old model */
         const newModel = cmd.execute(context)
         compare(model2, newModel)
-        expect(model1).to.equal(cmd.oldRoot)
-        expect(newModel).to.equal(cmd.newRoot)
+        expect(model1.id).to.equal(cmd.oldRoot.id)
+        expect(newModel.id).to.equal(cmd.newRoot.id)
     })
 
     it('undo() returns the previous model', () => {
         // test "undo": returns old model
-        expect(model1).to.equal(cmd.undo(context))
+        expect(model1.id).to.equal(cmd.undo(context).id)
     })
 
     it('redo() returns the new model', () => {

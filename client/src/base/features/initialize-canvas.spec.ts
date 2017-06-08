@@ -43,7 +43,7 @@ describe('InitializeCanvasBoundsCommand', () => {
 
     it('undo() works as expected', () => {
         command.undo(context)
-        expect(EMPTY_BOUNDS).deep.equals(root.canvasBounds)
+        expect(bounds).deep.equals(root.canvasBounds)
     })
 
     it('redo() works as expected', () => {
