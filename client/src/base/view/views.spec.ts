@@ -5,9 +5,9 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import 'mocha';
+import 'mocha'
 import { expect } from "chai"
-import { EMPTY_ROOT, SModelFactory } from '../model/smodel-factory';
+import { EMPTY_ROOT, SModelFactory } from '../model/smodel-factory'
 import { SNode } from "../../graph/model/sgraph"
 import { EmptyView, MissingView } from "./views"
 import { ModelRenderer } from "./viewer"

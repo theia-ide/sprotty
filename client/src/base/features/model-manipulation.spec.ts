@@ -5,11 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import 'reflect-metadata';
-import 'mocha';
+import 'reflect-metadata'
+import 'mocha'
 import { expect } from "chai"
 import { SModelElement, SModelElementSchema, SModelRootSchema } from "../model/smodel"
-import { EMPTY_ROOT, SModelFactory } from '../model/smodel-factory';
+import { EMPTY_ROOT, SModelFactory } from '../model/smodel-factory'
 import { SGraphFactory } from "../../graph/model/sgraph-factory"
 import { CommandExecutionContext } from "../intent/commands"
 import { ConsoleLogger } from "../../utils/logging"
