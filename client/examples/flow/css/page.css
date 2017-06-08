@@ -1,5 +1,5 @@
 .row {
-    margin-top: 25px;
+    margin-bottom: 15px;
 }
 
 .form-group {
@@ -15,15 +15,22 @@
 
 svg {
     width: 100%;
-    height: 600px;
+    height: 500px;
     border-style: solid;
     border-width: 1px;
     border-color: #bbb;
 }
 
+.help {
+    margin-top: 24px;
+    text-align: right;
+    font-size: 16px;
+    color: #888;
+}
+
 #xtext-editor {
 	width: 100%;
-    height: 600px;
+    height: 500px;
 	padding: 4px;
     border-style: solid;
     border-width: 1px;
