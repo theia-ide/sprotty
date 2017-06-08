@@ -11,5 +11,5 @@ node {
         sh "./gradlew clean build createLocalMavenRepo --refresh-dependencies --continue"
     }
     
-    archive 'build/**'
+    archive 'server/build/**'
 }
