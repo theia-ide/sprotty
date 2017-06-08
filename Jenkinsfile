@@ -7,7 +7,9 @@ node {
     checkout scm
     
     stage 'Gradle Build'
-    sh "./gradlew clean build createLocalMavenRepo --refresh-dependencies --continue"
+    dir('server') {
+        sh "./gradlew clean build createLocalMavenRepo --refresh-dependencies --continue"
+    }
     
     archive 'build/**'
 }
