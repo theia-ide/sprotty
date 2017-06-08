@@ -60,7 +60,7 @@ describe('graph views', () => {
         const view = new SGraphView()
         const vnode = view.render(graph, context)
         const html = toHTML(vnode)
-        expect(html).to.be.equal('<svg id="mygraph" class="graph"><g transform="scale(1) translate(0,0)"></g></svg>')
+        expect(html).to.be.equal('<svg class="graph"><g transform="scale(1) translate(0,0)"></g></svg>')
     })
 
     const node0 = {id: 'node0', type: 'node:circle', position: { x: 100, y: 100 } }
@@ -73,27 +73,37 @@ describe('graph views', () => {
         const vnode = view.render(graph.index.getById('edge0') as SEdge, context)
         const html = toHTML(vnode)
         expect(html).to.be.equal(
-            '<g id="edge0"><path class="edge" d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" /></g>')
+            '<g><path class="edge" d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" /></g>')
     })
 
     it('render a circle node', () => {
         const view = new CircleNodeView()
         const vnode = view.render(graph.index.getById('node0') as SNode, context)
         const html = toHTML(vnode)
-        expect(html).to.be.equal('<g id="node0"><circle class="node" r="40" cx="40" cy="40" /></g>')
+        expect(html).to.be.equal('<g><circle class="node" r="40" cx="40" cy="40" /></g>')
     })
 
     it('render a whole graph', () => {
-        const view = new SGraphView()
-        const vnode = view.render(graph, context)
-        const html = toHTML(vnode)
-        expect(html).to.be.equal(
-            '<svg id="graph" class="graph">'
+        const vnode = context.renderElement(graph)
+        const html:string  = toHTML(vnode)
+        const expectation = '<svg id="sprotty_graph" class="graph" tabindex="1002">'
             + '<g transform="scale(1) translate(0,0)">'
-            +   '<g id="node0" transform="translate(100, 100)"><circle class="node" r="40" cx="40" cy="40" /></g>'
-            +   '<g id="node1" class="selected" transform="translate(200, 150)"><circle class="node selected" r="40" cx="40" cy="40" /></g>'
-            +   '<g id="edge0"><path class="edge" d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" /></g>'
+            +   '<g id="sprotty_node0" transform="translate(100, 100)">'
+            +     '<circle class="node" r="40" cx="40" cy="40" />'
+            +   '</g>'
+            +   '<g id="sprotty_node1" class="selected" transform="translate(200, 150)">'
+            +     '<circle class="node selected" r="40" cx="40" cy="40" />'
+            +   '</g>' 
+            +   '<g id="sprotty_edge0">'
+            +     '<path class="edge" d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" />'
+            +   '</g>'
             + '</g>'
-            + '</svg>')
+            + '</svg>'
+        for(let i=0; i<html.length; ++i) {
+            if(html.charAt(i) !== expectation.charAt(i)) {
+                console.log('Different char at ' + i)
+            }
+        }
+        expect(html).to.be.equal(expectation)
     })
 })
