@@ -1,6 +1,6 @@
 # sprotty
 
-This is the client part of _sprotty_, a next-generation, open-source diagramming framework built with web-technologies. 
+This is the client part of _sprotty_, a next-generation, open-source diagramming framework built with web technologies. 
 
 Some selected features:
 
@@ -14,8 +14,6 @@ Some selected features:
 
 [![sprotty demo](../sprotty_demo_screenshot.png)](http://www.youtube.com/watch?v=IydM4l7WFKk "sprotty demo")
 
-The server part of sprotty is written in Java/Xtend and is available via maven central or jcenter
-
+The server part of sprotty is written in Java / [Xtend](http://xtend-lang.org) and is available via [Maven Central](http://repo.maven.apache.org/maven2/io/typefox/sprotty/) or [JCenter](http://jcenter.bintray.com/io/typefox/sprotty/).
 
 For further information please consult the [wiki](https://github.com/TypeFox/sprotty/wiki) or this [blog post](http://typefox.io/sprotty-a-web-based-diagramming-framework).
-
