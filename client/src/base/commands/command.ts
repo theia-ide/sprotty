@@ -11,7 +11,9 @@ import { IModelFactory } from "../model/smodel-factory"
 import { IViewer } from "../views/viewer"
 import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
 import { Action } from "../actions/action"
-import { IActionHandler } from "../actions/action-handler"
+import { ActionHandlerRegistry, IActionHandler, IActionHandlerInitializer } from "../actions/action-handler"
+import { injectable, multiInject, optional } from "inversify"
+import { TYPES } from "../types"
 
 /**
  * A command holds the behaviour of an action.
@@ -162,5 +164,19 @@ export class CommandActionHandler implements IActionHandler {
 
     handle(action: Action): ICommand {
         return new this.commandType(action)
+    }
+}
+
+@injectable()
+export class CommandActionHandlerInitializer implements IActionHandlerInitializer {
+
+    constructor(@multiInject(TYPES.ICommand) @optional() protected commandCtrs: (ICommandFactory)[]){
+
+    }
+
+    initialize(registry: ActionHandlerRegistry): void {
+        this.commandCtrs.forEach(
+            commandCtr => registry.registerCommand(commandCtr)
+        )
     }
 }
