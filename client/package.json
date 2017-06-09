@@ -62,6 +62,7 @@
     "@types/node": "^7.0.10",
     "chai": "^3.5.0",
     "circular-dependency-plugin": "^2.0.0",
+    "jenkins-mocha": "^4.1.2",
     "jsdom": "9.12.0",
     "jsdom-global": "2.1.1",
     "mocha": "^3.2.0",
@@ -79,28 +80,12 @@
     "typings": "^2.1.0",
     "webpack": "^2.2.1"
   },
-  "nyc": {
-    "include": [
-      "src/**/*.ts"
-    ],
-    "exclude": [
-      "typings",
-      "src/**/*.spec.ts"
-    ],
-    "reporter": [
-      "html"
-    ],
-    "extension": [
-      ".ts"
-    ]
-  },
   "scripts": {
     "clean": "rimraf lib",
     "build": "tsc && npm run lint",
     "lint": "tslint -c ./tslint.json --project ./tsconfig.json",
     "watch": "tsc-watch --onSuccess \"npm run lint\"",
-    "test": "mocha --opts ./mocha.opts",
-    "coverage": "nyc mocha --opts ./mocha.opts",
+    "test": "jenkins-mocha --opts ./mocha.opts",
     "prepare": "npm run clean && npm run build",
     "prepublishOnly": "npm run test",
     "examples:build": "webpack --progress",
