@@ -12,7 +12,7 @@ Some selected features:
 * configuration via dependency injection,
 * integration with [Xtext, the Language Server Protocol and Theia](https://github.com/TypeFox/theia-sprotty-example) that can be run as rich-client as well as in the browser.
 
-[![sprotty demo](../sprotty_demo_screenshot.png)](http://www.youtube.com/watch?v=IydM4l7WFKk "sprotty demo")
+[![sprotty demo](https://github.com/TypeFox/sprotty/raw/master/sprotty_demo_screenshot.png)](http://www.youtube.com/watch?v=IydM4l7WFKk "sprotty demo")
 
 The server part of sprotty is written in Java / [Xtend](http://xtend-lang.org) and is available via [Maven Central](http://repo.maven.apache.org/maven2/io/typefox/sprotty/) or [JCenter](http://jcenter.bintray.com/io/typefox/sprotty/).
 
