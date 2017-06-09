@@ -29,4 +29,4 @@ cd ../server
 # point your web browser to localhost:8080
 ```
 
-For further information please consult the [wiki](https://github.com/TypeFox/sprotty/wiki).
+For further information please consult the [wiki](https://github.com/TypeFox/sprotty/wiki) or this [blog post](http://typefox.io/sprotty-a-web-based-diagramming-framework).
