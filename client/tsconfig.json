@@ -26,5 +26,8 @@
   },
   "include": [
     "src", "typings"
+  ],
+  "exclude": [
+    "**/*.spec.ts", "**/*.spec.tsx"
   ]
 }
