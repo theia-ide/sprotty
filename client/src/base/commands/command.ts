@@ -170,7 +170,7 @@ export class CommandActionHandler implements IActionHandler {
 @injectable()
 export class CommandActionHandlerInitializer implements IActionHandlerInitializer {
 
-    constructor(@multiInject(TYPES.ICommand) @optional() protected commandCtrs: (ICommandFactory)[]){
+    constructor(@multiInject(TYPES.ICommand) @optional() protected commandCtrs: (ICommandFactory)[]) {
 
     }
 
