@@ -11,9 +11,11 @@ import {
     HoverMouseListener, PopupHoverMouseListener, HoverFeedbackCommand, SetPopupModelCommand, HoverKeyListener, HoverState
 } from "./hover"
 import { PopupPositionUpdater } from "./popup-position-updater"
+import { PopupActionHandlerInitializer } from "./initializer"
 
 const hoverModule = new ContainerModule(bind => {
     bind(TYPES.PopupVNodeDecorator).to(PopupPositionUpdater).inSingletonScope()
+    bind(TYPES.IActionHandlerInitializer).to(PopupActionHandlerInitializer)
     bind(TYPES.ICommand).toConstructor(HoverFeedbackCommand)
     bind(TYPES.ICommand).toConstructor(SetPopupModelCommand)
     bind(TYPES.MouseListener).to(HoverMouseListener)

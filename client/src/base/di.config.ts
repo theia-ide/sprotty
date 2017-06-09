@@ -25,6 +25,7 @@ import { ViewRegistry } from "./views/view"
 import { ViewerCache } from "./views/viewer-cache"
 import { DOMHelper } from "./views/dom-helper"
 import { IdDecorator } from "./views/id-decorator"
+import { CommandActionHandlerInitializer } from "./commands/command"
 
 let defaultContainerModule = new ContainerModule(bind => {
     // Logging ---------------------------------------------
@@ -47,6 +48,9 @@ let defaultContainerModule = new ContainerModule(bind => {
             })
         }
     })
+
+    // Action handler
+    bind(TYPES.IActionHandlerInitializer).to(CommandActionHandlerInitializer)
 
     // Command Stack ---------------------------------------------
     bind(TYPES.ICommandStack).to(CommandStack).inSingletonScope()

@@ -8,11 +8,15 @@
 import { injectable, multiInject, optional } from "inversify"
 import { TYPES } from "../types"
 import { MultiInstanceRegistry } from "../../utils/registry"
-import { ICommand, CommandActionHandler, ICommandFactory } from "../commands/command"
+import { CommandActionHandler, ICommand, ICommandFactory } from "../commands/command"
 import { Action } from "./action"
 
 export interface IActionHandler {
     handle(action: Action): ICommand | Action | void
+}
+
+export interface IActionHandlerInitializer {
+    initialize(registry: ActionHandlerRegistry): void
 }
 
 /**
@@ -21,14 +25,19 @@ export interface IActionHandler {
 @injectable()
 export class ActionHandlerRegistry extends MultiInstanceRegistry<IActionHandler> {
 
-    constructor(@multiInject(TYPES.ICommand) @optional() commandCtrs: (ICommandFactory)[]) {
+    constructor(@multiInject(TYPES.IActionHandlerInitializer) @optional() initializers: (IActionHandlerInitializer)[]) {
         super()
-        commandCtrs.forEach(
-            commandCtr => this.registerCommand(commandCtr)
+
+        initializers.forEach(
+            initializer => this.initializeActionHandler(initializer)
         )
     }
 
     registerCommand(commandType: ICommandFactory): void {
         this.register(commandType.KIND, new CommandActionHandler(commandType))
+    }
+
+    initializeActionHandler(initializer: IActionHandlerInitializer): void {
+        initializer.initialize(this)
     }
 }
