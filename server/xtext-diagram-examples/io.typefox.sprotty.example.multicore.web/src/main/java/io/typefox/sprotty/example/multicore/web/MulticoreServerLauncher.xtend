@@ -83,6 +83,7 @@ class MulticoreServerLauncher {
 		val server = new Server(new InetSocketAddress(8080))
 		val webAppContext = new WebAppContext => [
 			resourceBase = 'src/main/webapp'
+			
 			welcomeFiles = #['index.html']
 			contextPath = '/'
 			configurations = #[
@@ -92,13 +93,15 @@ class MulticoreServerLauncher {
 				new MetaInfConfiguration
 			]
 			setAttribute(WebInfConfiguration.CONTAINER_JAR_PATTERN, '.*/io\\.typefox\\.sprotty\\.example\\.multicore\\.web/.*,.*\\.jar')
-			setInitParameter('org.mortbay.jetty.servlet.Default.useFileMappedBuffer', 'false')
+			setInitParameter('org.eclipse.jetty.servlet.Default.dirAllowed', 'false')
+			setInitParameter('org.eclipse.jetty.servlet.Default.useFileMappedBuffer', 'false')
 			addEventListener(injector.getInstance(DiagramService))
 		]
 		server.handler = new HandlerList => [
 			addHandler(new ResourceHandler => [
 				resourceBase = '../../../client'
 				welcomeFiles = #['examples/index.html']
+				dirAllowed = false
 			])
 			addHandler(webAppContext)
 		]
