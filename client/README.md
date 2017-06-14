@@ -10,10 +10,10 @@ Some selected features:
 * a fast, reactive client architecure implemented in TypeScript,
 * a Java-based server architecture,
 * configuration via dependency injection,
-* integration with [Xtext, the Language Server Protocol and Theia](https://github.com/TypeFox/theia-sprotty-example) that can be run as rich-client as well as in the browser.
+* integration with [Xtext, the Language Server Protocol and Theia](https://github.com/theia-ide/theia-sprotty-example) that can be run as rich-client as well as in the browser.
 
-[![sprotty demo](https://github.com/TypeFox/sprotty/raw/master/sprotty_demo_screenshot.png)](http://www.youtube.com/watch?v=IydM4l7WFKk "sprotty demo")
+[![sprotty demo](https://github.com/theia-ide/sprotty/raw/master/sprotty_demo_screenshot.png)](http://www.youtube.com/watch?v=IydM4l7WFKk "sprotty demo")
 
 The server part of sprotty is written in Java / [Xtend](http://xtend-lang.org) and is available via [Maven Central](http://repo.maven.apache.org/maven2/io/typefox/sprotty/) or [JCenter](http://jcenter.bintray.com/io/typefox/sprotty/).
 
-For further information please consult the [wiki](https://github.com/TypeFox/sprotty/wiki) or this [blog post](http://typefox.io/sprotty-a-web-based-diagramming-framework).
+For further information please consult the [wiki](https://github.com/theia-ide/sprotty/wiki) or this [blog post](http://typefox.io/sprotty-a-web-based-diagramming-framework).

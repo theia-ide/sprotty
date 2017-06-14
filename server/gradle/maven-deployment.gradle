@@ -12,7 +12,7 @@ def configurePom = { pom ->
 			description = project.description
 		}
 		packaging 'jar'
-		url 'https://github.com/TypeFox/sprotty'
+		url 'https://github.com/theia-ide/sprotty'
 		licenses {
 			license {
 				name 'Apache License 2.0'
@@ -37,9 +37,9 @@ def configurePom = { pom ->
 			}
 		}
 		scm {
-			connection 'scm:git:git@github.com:TypeFox/sprotty.git'
-			developerConnection 'scm:git:git@github.com:TypeFox/sprotty.git'
-			url 'git@github.com:TypeFox/sprotty.git'
+			connection 'scm:git:git@github.com:theia-ide/sprotty.git'
+			developerConnection 'scm:git:git@github.com:theia-ide/sprotty.git'
+			url 'git@github.com:theia-ide/sprotty.git'
 		}
 	}
 }

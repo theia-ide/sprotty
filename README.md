@@ -7,7 +7,7 @@ sprotty is a next-generation, open-source, web-based diagramming framework. Some
 * a fast, reactive client architecure implemented in TypeScript,
 * a Java-based server architecture,
 * configuration via dependency injection,
-* integration with [Xtext, the Language Server Protocol and Theia](https://github.com/TypeFox/theia-sprotty-example) that can be run as rich-client as well as in the browser..
+* integration with [Xtext, the Language Server Protocol and Theia](https://github.com/theia-ide/theia-sprotty-example) that can be run as rich-client as well as in the browser..
 
 [![sprotty demo](./sprotty_demo_screenshot.png)](http://www.youtube.com/watch?v=IydM4l7WFKk "sprotty demo")
 
@@ -15,7 +15,7 @@ sprotty is a next-generation, open-source, web-based diagramming framework. Some
 
 ```bash
 # clone the repo
-git clone git@github.com:TypeFox/sprotty.git
+git clone git@github.com:theia-ide/sprotty.git
 
 # build sprotty client and examples
 cd sprotty/client
@@ -29,4 +29,4 @@ cd ../server
 # point your web browser to localhost:8080
 ```
 
-For further information please consult the [wiki](https://github.com/TypeFox/sprotty/wiki) or this [blog post](http://typefox.io/sprotty-a-web-based-diagramming-framework).
+For further information please consult the [wiki](https://github.com/theia-ide/sprotty/wiki) or this [blog post](http://typefox.io/sprotty-a-web-based-diagramming-framework).
