@@ -6,6 +6,7 @@ import { injectable } from "inversify"
 import { IVNodeDecorator } from "../../base/views/vnode-decorators"
 import { VNode } from "snabbdom/vnode"
 import { setClass } from "../../base/views/vnode-utils"
+import { SControlPoint, SEdge } from "../../graph/sgraph"
 
 export class ActivateEditModeAction implements Action {
     kind: string = ActivateEditModeCommand.KIND
@@ -31,10 +32,19 @@ export class ActivateEditModeCommand implements Command {
 
         const changeEditMode = (id: string, toggle: boolean) => {
             const element = sModelRoot.index.getById(id)
-            if (element instanceof SChildElement && isEditable(element)) {
+            if (element instanceof SEdge && isEditable(element)) {
                 element.inEditMode = toggle ? !element.inEditMode : false
+                if (element.inEditMode) {
+                    const sControlPoint = new SControlPoint()
+                    sControlPoint.type = 'volatile-control-point'
+                    sControlPoint.id = 'vcp'
+                    sControlPoint.opacity = 1
+                    sControlPoint.position = {x: }
+                    element.add(sControlPoint)
+                }
             }
         }
+
 
         this.elementsToToggle.forEach(id => {
             changeEditMode(id, true)
