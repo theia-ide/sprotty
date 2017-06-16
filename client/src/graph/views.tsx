@@ -92,7 +92,7 @@ export class PolylineEdgeView implements IView {
             let pn = edge.routingPoints[edge.routingPoints.length - 1]
             targetAnchor = targetView.getAnchor(target, pn)
             if (manhattanDistance(previousPoint, pn) >= this.minimalPointDistance
-                    && manhattanDistance(pn, targetAnchor) >= this.minimalPointDistance) {
+                && manhattanDistance(pn, targetAnchor) >= this.minimalPointDistance) {
                 result.push(pn)
             }
         } else {

@@ -30,7 +30,13 @@
 .edge {
     fill: none;
     stroke: #488;
-    stroke-width: 2;
+    stroke-width: 2px;
+}
+
+.edge.edit path {
+    fill: none;
+    stroke: #00F;
+    stroke-width: 2px;
 }
 
 .node.selected {

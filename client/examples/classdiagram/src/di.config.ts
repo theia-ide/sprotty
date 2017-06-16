@@ -8,12 +8,14 @@
 import { Container, ContainerModule } from "inversify"
 import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphView, SLabelView, SCompartmentView,
-    PolylineEdgeView, ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule,
-    undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView, editModule
+    CircularNodeView, PolylineEdgeView, ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule,
+    selectModule, undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView,
+    editModule
 } from "../../../src"
 import { ClassNodeView } from "./views"
 import { ClassDiagramFactory } from "./model-factory"
 import { popupModelFactory } from "./popup"
+import {  } from "../../../src/lib/svg-views"
 
 const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
@@ -45,6 +47,8 @@ export default (useWebsocket: boolean, containerId: string) => {
     viewRegistry.register('edge:straight', PolylineEdgeView)
     viewRegistry.register('html', HtmlRootView)
     viewRegistry.register('pre-rendered', PreRenderedView)
+    viewRegistry.register('volatile-control-point', CircularNodeView)
+    viewRegistry.register('control-point', CircularNodeView)
 
     return container
 }
