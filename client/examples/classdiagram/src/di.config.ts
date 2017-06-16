@@ -9,12 +9,11 @@ import { Container, ContainerModule } from "inversify"
 import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphView, SLabelView, SCompartmentView,
     PolylineEdgeView, ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule,
-    undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView
+    undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView, editModule
 } from "../../../src"
 import { ClassNodeView } from "./views"
 import { ClassDiagramFactory } from "./model-factory"
 import { popupModelFactory } from "./popup"
-import editModule from "../../../src/features/edit/di.config"
 
 const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
