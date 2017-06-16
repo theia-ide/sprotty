@@ -14,6 +14,7 @@ import {
 import { ClassNodeView } from "./views"
 import { ClassDiagramFactory } from "./model-factory"
 import { popupModelFactory } from "./popup"
+import editModule from "../../../src/features/edit/di.config"
 
 const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
@@ -24,7 +25,8 @@ const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) =
 
 export default (useWebsocket: boolean, containerId: string) => {
     const container = new Container()
-    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, hoverModule, classDiagramModule)
+    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule,
+        hoverModule, classDiagramModule, editModule)
     if (useWebsocket)
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else

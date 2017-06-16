@@ -83,7 +83,8 @@ import selectModule from "./features/select/di.config"
 import undoRedoModule from "./features/undo-redo/di.config"
 import viewportModule from "./features/viewport/di.config"
 import hoverModule from "./features/hover/di.config"
-export { moveModule, boundsModule, fadeModule, selectModule, undoRedoModule, viewportModule, hoverModule }
+import editModule from "./features/edit/di.config"
+export { moveModule, boundsModule, fadeModule, selectModule, undoRedoModule, viewportModule, hoverModule, editModule }
 
 
 // ------------------ Graph ------------------
