@@ -13,6 +13,7 @@ import { Locateable, moveFeature } from "../features/move/model"
 import { BoundsAware, boundsFeature, layoutFeature, Layouting } from "../features/bounds/model"
 import { Fadeable, fadeFeature } from "../features/fade/model"
 import { Hoverable, hoverFeedbackFeature, popupFeature } from "../features/hover/model"
+import { Editable, editFeature } from "../features/edit/model"
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
@@ -123,11 +124,13 @@ export interface SEdgeSchema extends SModelElementSchema {
     routingPoints?: Point[]
 }
 
-export class SEdge extends SChildElement implements Fadeable {
+export class SEdge extends SChildElement implements Fadeable, Selectable, Editable {
+    inEditMode: boolean = false
     sourceId: string
     targetId: string
     routingPoints: Point[] = []
     opacity: number = 1
+    selected: boolean = false
 
     get source(): SNode | SPort | undefined {
         return this.index.getById(this.sourceId) as SNode | SPort
@@ -138,7 +141,17 @@ export class SEdge extends SChildElement implements Fadeable {
     }
 
     hasFeature(feature: symbol): boolean {
-        return feature === fadeFeature
+        return feature === fadeFeature || feature === selectFeature || feature === editFeature
+    }
+}
+
+export class SControlPoint extends SChildElement implements Fadeable, Selectable, Locateable {
+    selected: boolean = false
+    opacity: number = 0
+    position: Point = {x: 0, y: 0}
+
+    hasFeature(feature: symbol): boolean {
+        return feature === fadeFeature || feature === selectFeature || feature === moveFeature
     }
 }
 

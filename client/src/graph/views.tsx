@@ -67,7 +67,7 @@ export class PolylineEdgeView implements IView {
 
         const segments = this.computeSegments(edge, source, sourceView, target, targetView)
 
-        return <g>
+        return <g class-edge={true}>
             {this.renderLine(edge, segments, context)}
             {this.renderAdditionals(edge, segments, context)}
             {context.renderChildren(edge)}
