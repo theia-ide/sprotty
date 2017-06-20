@@ -12,6 +12,7 @@ export const editFeature = Symbol('editFeature')
 
 export interface Editable extends SModelExtension {
     inEditMode: boolean
+    controlPointsSet: boolean
 }
 
 export function isEditable(element: SModelElement): element is SModelElement & Editable {

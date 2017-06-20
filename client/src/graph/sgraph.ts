@@ -130,6 +130,7 @@ export interface SEdgeAnchorsSchema {
 }
 
 export class SEdge extends SChildElement implements Fadeable, Selectable, Editable {
+    controlPointsSet: boolean = false
     inEditMode: boolean = false
     sourceId: string
     targetId: string
