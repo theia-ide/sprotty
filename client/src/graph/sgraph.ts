@@ -100,10 +100,16 @@ export interface SEdgeSchema extends SModelElementSchema {
     routingPoints?: Point[]
 }
 
+export interface SEdgeAnchorsSchema {
+    sourceAnchor: Point
+    targetAnchor: Point
+}
+
 export class SEdge extends SChildElement implements Fadeable, Selectable, Editable {
     inEditMode: boolean = false
     sourceId: string
     targetId: string
+    anchors: SEdgeAnchorsSchema = {sourceAnchor: ORIGIN_POINT, targetAnchor: ORIGIN_POINT}
     routingPoints: Point[] = []
     opacity: number = 1
     selected: boolean = false
@@ -121,13 +127,13 @@ export class SEdge extends SChildElement implements Fadeable, Selectable, Editab
     }
 }
 
-export class SControlPoint extends SChildElement implements Fadeable, Selectable, Locateable {
+export class SControlPoint extends SChildElement implements Selectable, Locateable, Hoverable {
+    hoverFeedback: boolean = false
     selected: boolean = false
-    opacity: number = 0
     position: Point = {x: 0, y: 0}
 
     hasFeature(feature: symbol): boolean {
-        return feature === fadeFeature || feature === selectFeature || feature === moveFeature
+        return feature === selectFeature || feature === moveFeature || feature === hoverFeedbackFeature
     }
 }
 

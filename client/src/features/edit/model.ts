@@ -17,3 +17,7 @@ export interface Editable extends SModelExtension {
 export function isEditable(element: SModelElement): element is SModelElement & Editable {
     return element.hasFeature(editFeature)
 }
+
+export function hasEditFeature(element: SModelElement): boolean {
+    return element.hasFeature(editFeature)
+}

@@ -59,6 +59,28 @@ export class CircularNodeView extends SNodeView {
     }
 }
 
+export class ControlPointView extends SNodeView {
+
+    render(node: SNode, context: RenderingContext): VNode {
+        const radius = this.getRadius(node)
+        return <g>
+            <circle class-controlpoint={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
+                    r={radius}></circle>
+        </g>
+    }
+
+    protected getRadius(node: SNode): number {
+        return 5
+    }
+
+    getAnchor(node: SNode, refPoint: Point): Point {
+        return {
+            x: node.position.x,
+            y: node.position.y
+        }
+    }
+}
+
 export class RectangularNodeView extends SNodeView {
 
     render(node: SNode, context: RenderingContext): VNode {

@@ -34,9 +34,17 @@
 }
 
 .edge.edit path {
-    fill: none;
     stroke: #00F;
-    stroke-width: 2px;
+}
+
+.edge.edit circle {
+    fill: #88f;
+    stroke: none;
+}
+
+.edge .controlpoint.selected{
+    fill: #4f4;
+    stroke: none;
 }
 
 .node.selected {
