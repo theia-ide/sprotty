@@ -7,11 +7,14 @@
 
 import { ContainerModule } from "inversify"
 import { TYPES } from "../../base/types"
-import { ActivateEditModeCommand, EditActivationDecorator } from "./edit"
+import { ActivateEditModeCommand, EditActivationDecorator, SetControlPointsCommand } from "./edit"
+import { EditActionHandlerInitializer } from "./initializer"
 
 const editModule = new ContainerModule(bind => {
     bind(TYPES.ICommand).toConstructor(ActivateEditModeCommand)
+    bind(TYPES.ICommand).toConstructor(SetControlPointsCommand)
     bind(TYPES.IVNodeDecorator).to(EditActivationDecorator).inSingletonScope()
+    bind(TYPES.IActionHandlerInitializer).to(EditActionHandlerInitializer)
 })
 
 export default editModule
