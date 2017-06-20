@@ -111,6 +111,16 @@ export function center(b: Bounds): Point {
     }
 }
 
+export function centerOfLine(s: Point, e: Point): Point {
+    const b: Bounds = {
+        x: s.x > e.x ? e.x : s.x,
+        y: s.y > e.y ? e.y : s.y,
+        width: Math.abs(e.x - s.x),
+        height: Math.abs(e.y - s.y)
+    }
+    return center(b)
+}
+
 /**
  * Checks whether the point p is included in the bounds b.
  */
@@ -158,7 +168,7 @@ export function manhattanDistance(a: Point, b: Point): number {
 
 // range (-PI, PI]
 export function angle(a: Point, b: Point): number {
-  return Math.atan2(b.y - a.y, b.x - a.x)
+    return Math.atan2(b.y - a.y, b.x - a.x)
 }
 
 /**

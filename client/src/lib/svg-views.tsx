@@ -59,9 +59,31 @@ export class CircularNodeView extends AnchorableView {
     }
 }
 
+export class ControlPointView extends AnchorableView {
+
+    render(node: SNode, context: RenderingContext): VNode {
+        const radius = this.getRadius(node)
+        return <g>
+            <circle class-controlpoint={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
+                    r={radius}></circle>
+        </g>
+    }
+
+    protected getRadius(node: SNode): number {
+        return 5
+    }
+
+    getAnchor(node: SNode, refPoint: Point): Point {
+        return {
+            x: node.position.x,
+            y: node.position.y
+        }
+    }
+}
+
 export class RectangularNodeView extends AnchorableView {
 
-    render(node: SNode | SPort, context: RenderingContext): VNode {
+    render(node: SNode, context: RenderingContext): VNode {
         return <g>
             <rect class-node={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
                   x="0" y="0" width={node.size.width} height={node.size.height}></rect>

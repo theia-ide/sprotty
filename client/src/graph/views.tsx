@@ -88,6 +88,7 @@ export class PolylineEdgeView implements IView {
         }
         const result: Point[] = [sourceAnchor]
         let previousPoint = sourceAnchor
+        edge.anchors.sourceAnchor = sourceAnchor
 
         for (let i = 0; i < edge.routingPoints.length - 1; i++) {
             const p = edge.routingPoints[i]
@@ -112,6 +113,7 @@ export class PolylineEdgeView implements IView {
             targetAnchor = targetView.getTranslatedAnchor(target, reference, source, edge)
         }
         result.push(targetAnchor)
+        edge.anchors.targetAnchor = targetAnchor
         return result
     }
 
@@ -126,7 +128,7 @@ export class PolylineEdgeView implements IView {
     }
 
     protected renderAdditionals(edge: SEdge, segments: Point[], context: RenderingContext): VNode[] {
-        return []
+        return context.renderChildren(edge)
     }
 
     protected renderDanglingEdge(message: string, edge: SEdge, context: RenderingContext): VNode {

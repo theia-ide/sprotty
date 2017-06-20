@@ -1,57 +1,97 @@
 import { Action } from "../../base/actions/action"
 import { Command, CommandExecutionContext, CommandResult } from "../../base/commands/command"
-import { SChildElement, SModelElement, SModelRoot } from "../../base/model/smodel"
-import { isEditable } from "./model"
+import { SModelElement, SModelRoot } from "../../base/model/smodel"
+import { hasEditFeature, isEditable } from "./model"
 import { injectable } from "inversify"
 import { IVNodeDecorator } from "../../base/views/vnode-decorators"
 import { VNode } from "snabbdom/vnode"
 import { setClass } from "../../base/views/vnode-utils"
 import { SControlPoint, SEdge } from "../../graph/sgraph"
+import { centerOfLine, Point } from "../../utils/geometry"
+import { SelectAction } from "../select/select"
+import { findParent } from "../../base/model/smodel-utils"
 
 export class ActivateEditModeAction implements Action {
     kind: string = ActivateEditModeCommand.KIND
+    elementsToToggle: string[] = []
+    elementsToDeactivate: string[] = []
+    selectAction: SelectAction
 
-    constructor(public readonly elementsToToggle: string[], public readonly elementsToDeactivate: string[]) {
-
+    constructor(action: SelectAction) {
+        if (action.selectedElementsIDs !== undefined)
+            action.selectedElementsIDs.forEach(id => {
+                this.elementsToToggle.push(id)
+            })
+        if (action.deselectedElementsIDs !== undefined)
+            action.deselectedElementsIDs.forEach(id => {
+                this.elementsToDeactivate.push(id)
+            })
+        this.selectAction = action
     }
 }
 
 export class ActivateEditModeCommand implements Command {
 
-    protected elementsToToggle: string[]
+    protected elementsToActivate: string[]
     protected elementsToDeactivate: string[]
     static KIND: string = "editModeActivated"
 
     constructor(public action: ActivateEditModeAction) {
-        this.elementsToToggle = action.elementsToToggle
+        this.elementsToActivate = action.elementsToToggle
         this.elementsToDeactivate = action.elementsToDeactivate
     }
 
     execute(context: CommandExecutionContext): CommandResult {
         const sModelRoot: SModelRoot = context.root
+        const dontDeactivate: string[] = []
 
-        const changeEditMode = (id: string, toggle: boolean) => {
+        const createControlPoint = (cptype: string, id: string, position: Point) => {
+            const sControlPoint = new SControlPoint()
+            sControlPoint.type = cptype
+            sControlPoint.id = id
+            sControlPoint.position = position
+            return sControlPoint
+        }
+
+        const changeEditMode = (id: string, deactivate: boolean) => {
             const element = sModelRoot.index.getById(id)
-            if (element instanceof SEdge && isEditable(element)) {
-                element.inEditMode = toggle ? !element.inEditMode : false
-                if (element.inEditMode) {
-                    const sControlPoint = new SControlPoint()
-                    sControlPoint.type = 'volatile-control-point'
-                    sControlPoint.id = 'vcp'
-                    sControlPoint.opacity = 1
-                    sControlPoint.position = {x: }
-                    element.add(sControlPoint)
+            const editTarget = element ? findParent(element, hasEditFeature) : undefined
+            if (editTarget instanceof SEdge) {
+                if (!editTarget.inEditMode && !deactivate) {
+                    editTarget.inEditMode = true
+                    if (editTarget.routingPoints.length === 0) {
+                        const sourceAnchor = editTarget.anchors.sourceAnchor
+                        const targetAnchor = editTarget.anchors.targetAnchor
+                        if (sourceAnchor && targetAnchor) {
+                            editTarget.add(createControlPoint('control-point', 'startcp', sourceAnchor))
+                            editTarget.add(createControlPoint('control-point', 'endcp', targetAnchor))
+                            editTarget.add(
+                                createControlPoint('volatile-control-point', 'vcp',
+                                    centerOfLine(sourceAnchor, targetAnchor)))
+                        }
+                    } else {
+                        // editTarget.routingPoints.forEach()
+                    }
+
+                } else if (editTarget.inEditMode && !deactivate) {
+                    editTarget.inEditMode = true
+                } else {
+                    editTarget.inEditMode = false
+                    while (editTarget.children.length)
+                        editTarget.remove(editTarget.children[0])
                 }
+                if (editTarget.inEditMode)
+                    dontDeactivate.push(editTarget.id)
             }
         }
 
-
-        this.elementsToToggle.forEach(id => {
-            changeEditMode(id, true)
+        this.elementsToActivate.forEach(id => {
+            changeEditMode(id, false)
         })
 
         this.elementsToDeactivate.forEach(id => {
-            changeEditMode(id, false)
+            if (dontDeactivate.indexOf(id) === -1)
+                changeEditMode(id, true)
         })
 
         return context.root

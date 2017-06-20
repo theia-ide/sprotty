@@ -12,22 +12,9 @@ import { ICommand } from "../../base/commands/command"
 import { SelectAction, SelectCommand } from "./select"
 import { ActivateEditModeAction } from "../edit/edit"
 
-
 class ActivateEditModeHandler implements IActionHandler {
     handle(action: SelectAction): void | ICommand | Action {
-        console.log("bla action ", action)
-        let editElementsToToggle: string[] = []
-        let editElementsToDeactivate: string[] = []
-
-        action.selectedElementsIDs.forEach(id => {
-            editElementsToToggle.push(id)
-        })
-
-        action.deselectedElementsIDs.forEach(id => {
-            editElementsToDeactivate.push(id)
-        })
-
-        return new ActivateEditModeAction(editElementsToToggle, editElementsToDeactivate)
+        return new ActivateEditModeAction(action)
     }
 }
 
