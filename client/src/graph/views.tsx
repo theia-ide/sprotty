@@ -69,7 +69,7 @@ export class PolylineEdgeView implements IView {
         if (edge.routingPoints !== undefined && edge.routingPoints.length >= 1) {
             // Use the first routing point as start anchor reference
             let p0 = edge.routingPoints[0]
-            sourceAnchor = sourceView.getAnchor(source, p0)
+            sourceAnchor = sourceView.getAnchor(source, p0.position)
         } else {
             // Use the target center as start anchor reference
             const reference = center(target.bounds)
@@ -79,22 +79,22 @@ export class PolylineEdgeView implements IView {
         let previousPoint = sourceAnchor
         edge.anchors.sourceAnchor = sourceAnchor
 
-        for (let i = 0; i < edge.routingPoints.length - 1; i++) {
+        for (let i = 0; i < edge.routingPoints.length; i++) {
             const p = edge.routingPoints[i]
-            if (manhattanDistance(previousPoint, p) >= this.minimalPointDistance) {
-                result.push(p)
-                previousPoint = p
+            if (manhattanDistance(previousPoint, p.position) >= this.minimalPointDistance) {
+                result.push(p.position)
+                previousPoint = p.position
             }
         }
 
         let targetAnchor: Point
-        if (edge.routingPoints && edge.routingPoints.length >= 2) {
+        if (edge.routingPoints && edge.routingPoints.length >= 1) {
             // Use the last routing point as end anchor reference
             let pn = edge.routingPoints[edge.routingPoints.length - 1]
-            targetAnchor = targetView.getAnchor(target, pn)
-            if (manhattanDistance(previousPoint, pn) >= this.minimalPointDistance
-                && manhattanDistance(pn, targetAnchor) >= this.minimalPointDistance) {
-                result.push(pn)
+            targetAnchor = targetView.getAnchor(target, pn.position)
+            if (manhattanDistance(previousPoint, pn.position) >= this.minimalPointDistance
+                && manhattanDistance(pn.position, targetAnchor) >= this.minimalPointDistance) {
+                result.push(pn.position)
             }
         } else {
             // Use the source center as end anchor reference
