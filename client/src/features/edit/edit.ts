@@ -10,15 +10,19 @@ import { SControlPoint, SEdge } from "../../graph/sgraph"
 import { centerOfLine, Point } from "../../utils/geometry"
 import { SelectAction } from "../select/select"
 import { findParent } from "../../base/model/smodel-utils"
+import { ElementMove, MoveAction } from "../move/move"
 
-export class SetControlPointsAction implements Action {
-    kind: string = SetControlPointsCommand.KIND
+export class ShowControlPointsAction implements Action {
+    kind: string = ShowControlPointsCommand.KIND
+
+    constructor(public priviousAction: Action) {
+    }
 }
 
-export class SetControlPointsCommand implements Command {
-    static KIND: string = "controlPointsSet"
+export class ShowControlPointsCommand implements Command {
+    static KIND: string = "controlPointsVisible"
 
-    constructor(public action: SetControlPointsAction) {
+    constructor(public action: ShowControlPointsAction) {
     }
 
     execute(context: CommandExecutionContext): CommandResult {
@@ -32,15 +36,16 @@ export class SetControlPointsCommand implements Command {
             return sControlPoint
         }
 
-        const addControlPoint = (editTarget: SEdge) => {
+        const showControlPoint = (editTarget: SEdge) => {
             if (editTarget instanceof SEdge) {
                 if (editTarget.routingPoints.length === 0) {
                     const sourceAnchor = editTarget.anchors.sourceAnchor
                     const targetAnchor = editTarget.anchors.targetAnchor
                     if (sourceAnchor && targetAnchor) {
-                        editTarget.add(
-                            createControlPoint('volatile-control-point', 'vcp',
-                                centerOfLine(sourceAnchor, targetAnchor)))
+                        const controlPoint = createControlPoint(
+                            'volatile-control-point', editTarget.id + '_vcp', centerOfLine(sourceAnchor, targetAnchor))
+                        controlPoint.volatile = true
+                        editTarget.add(controlPoint)
                     }
                 } else {
                     // editTarget.routingPoints.forEach()
@@ -50,16 +55,76 @@ export class SetControlPointsCommand implements Command {
 
         sModelRoot.index.all().forEach(element => {
             if (element instanceof SEdge) {
-                console.log("bla move", element)
-                if (element.inEditMode && !element.controlPointsSet) {
-                    addControlPoint(element)
-                    element.controlPointsSet = true
-                } else if (!element.inEditMode) {
-                    element.controlPointsSet = false
+                if (element.inEditMode) {
+                    if (!element.controlPointsVisible) {
+                        showControlPoint(element)
+                        element.controlPointsVisible = true
+                    } else if (element.controlPointsVisible) {
+                        // FIXME improve this, its very expensive, better just set new positions
+                        if (this.action.priviousAction instanceof MoveAction) {
+                            const cp = this.action.priviousAction.moves.find(moveEl => {
+                                return sModelRoot.index.getById(moveEl.elementId) instanceof SControlPoint
+                            })
+                            if (cp === undefined) {
+                                console.log("bla privious", this.action.priviousAction)
+                                while (element.children.length)
+                                    element.remove(element.children[0])
+                                showControlPoint(element)
+                            }
+                        }
+                    }
+                } else {
+                    element.controlPointsVisible = false
+                    while (element.children.length)
+                        element.remove(element.children[0])
                 }
             }
         })
 
+        return context.root
+    }
+
+    undo(context: CommandExecutionContext): CommandResult {
+        return context.root
+    }
+
+    redo(context: CommandExecutionContext): CommandResult {
+        return context.root
+    }
+
+}
+
+export class MoveControlPointAction implements Action {
+    kind: string = MoveControlPointCommand.KIND
+
+    constructor(public moveElements: ElementMove[]) {
+    }
+
+}
+
+export class MoveControlPointCommand implements Command {
+    static KIND: string = "routingPointCreated"
+    protected moveElements: ElementMove[] = []
+
+    constructor(action: MoveControlPointAction) {
+        this.moveElements = action.moveElements
+    }
+
+    execute(context: CommandExecutionContext): CommandResult {
+        this.moveElements.forEach(element => {
+            const moveElement: SModelElement | undefined = context.root.index.getById(element.elementId)
+            if (moveElement instanceof SControlPoint) {
+                const sEdge = (moveElement.parent as SEdge)
+                const routingPoints = sEdge.routingPoints
+                const routingPoint = routingPoints.find(rp => {
+                    return rp.id === moveElement.id
+                })
+                if (routingPoint === undefined) {
+                    moveElement.volatile = false
+                    routingPoints.push(moveElement)
+                }
+            }
+        })
         return context.root
     }
 
@@ -103,34 +168,33 @@ export class ActivateEditModeCommand implements Command {
 
     execute(context: CommandExecutionContext): CommandResult {
         const sModelRoot: SModelRoot = context.root
-        const dontDeactivate: string[] = []
 
         const changeEditMode = (id: string, deactivate: boolean) => {
             const element = sModelRoot.index.getById(id)
             const editTarget = element ? findParent(element, hasEditFeature) : undefined
             if (editTarget instanceof SEdge) {
-                if (!editTarget.inEditMode && !deactivate) {
-                    editTarget.inEditMode = true
-                } else if (editTarget.inEditMode && !deactivate) {
-                    editTarget.inEditMode = true
-                } else {
-                    editTarget.inEditMode = false
-                    while (editTarget.children.length)
-                        editTarget.remove(editTarget.children[0])
-                }
-                if (editTarget.inEditMode) {
-                    dontDeactivate.push(editTarget.id)
-                }
+                const source = editTarget.source
+                const target = editTarget.target
+                if (source && target)
+                    if (this.elementsToActivate.indexOf(source.id) === -1 &&
+                        this.elementsToActivate.indexOf(target.id) === -1) {
+                        if (!editTarget.inEditMode && !deactivate) {
+                            editTarget.inEditMode = true
+                        } else if (editTarget.inEditMode && !deactivate) {
+                            editTarget.inEditMode = true
+                        } else {
+                            editTarget.inEditMode = false
+                        }
+                    }
             }
         }
 
-        this.elementsToActivate.forEach(id => {
-            changeEditMode(id, false)
+        this.elementsToDeactivate.forEach(id => {
+            changeEditMode(id, true)
         })
 
-        this.elementsToDeactivate.forEach(id => {
-            if (dontDeactivate.indexOf(id) === -1)
-                changeEditMode(id, true)
+        this.elementsToActivate.forEach(id => {
+            changeEditMode(id, false)
         })
 
         return context.root
