@@ -132,7 +132,7 @@ export class SControlPoint extends SChildElement implements Selectable, Locateab
     hoverFeedback: boolean = false
     selected: boolean = false
     position: Point = {x: 0, y: 0}
-    volatile: boolean = false
+    anchors: [SControlPoint, SControlPoint]
 
     hasFeature(feature: symbol): boolean {
         return feature === selectFeature || feature === moveFeature || feature === hoverFeedbackFeature

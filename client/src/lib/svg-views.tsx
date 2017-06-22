@@ -65,6 +65,7 @@ export class ControlPointView extends SNodeView {
         const radius = this.getRadius(node)
         return <g>
             <circle class-controlpoint={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
+                    class-volatile={node.type==='volatile-control-point'}
                     r={radius}></circle>
         </g>
     }

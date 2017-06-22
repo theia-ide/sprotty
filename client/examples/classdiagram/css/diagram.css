@@ -42,9 +42,18 @@
     stroke: none;
 }
 
-.edge .controlpoint.selected{
+.edge .controlpoint.selected {
     fill: #4f4;
     stroke: none;
+}
+
+.edge .controlpoint.volatile {
+    opacity: 0.5;
+    z-index: 1000;
+}
+
+.edge .controlpoint.mouseover {
+    stroke: #ff7f24;
 }
 
 .node.selected {
