@@ -11,11 +11,12 @@ import { centerOfLine, Point } from "../../utils/geometry"
 import { SelectAction } from "../select/select"
 import { findParent } from "../../base/model/smodel-utils"
 import { ElementMove } from "../move/move"
+import { KeyListener } from "../../base/views/key-tool"
 
 export class ShowControlPointsAction implements Action {
     kind: string = ShowControlPointsCommand.KIND
 
-    constructor(public priviousAction: Action) {
+    constructor(public priviousAction?: Action) {
     }
 }
 
@@ -72,9 +73,9 @@ export class ShowControlPointsCommand implements Command {
                         showControlPoint(element)
                         element.controlPointsVisible = true
                     } else if (element.controlPointsVisible) {
-                        if (this.action.priviousAction instanceof MoveControlPointAction) {
+                        if (this.action.priviousAction instanceof MoveControlPointAction ||
+                            this.action.priviousAction === undefined) {
                             while (element.children.length) {
-                                console.log("bla remove ", element.children[0].id)
                                 element.remove(element.children[0])
                             }
                             showControlPoint(element)
@@ -233,4 +234,21 @@ export class EditActivationDecorator implements IVNodeDecorator {
     postUpdate(): void {
     }
 
+}
+
+export class EditKeyboardListener extends KeyListener {
+    keyPress(element: SModelElement, event: KeyboardEvent): Action[] {
+        if (event.keyCode === 8) {
+            element.root.index.all()
+                .filter(e => e instanceof SEdge && isEditable(e) && e.inEditMode)
+                .forEach(e => {
+                    let idx: number
+                    const routingPoints = (e as SEdge).routingPoints
+                    while ((idx = routingPoints.findIndex(rp => rp.selected)) !== -1)
+                        routingPoints.splice(idx, 1)
+                })
+            return [new ShowControlPointsAction()]
+        }
+        return []
+    }
 }
