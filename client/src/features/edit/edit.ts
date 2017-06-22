@@ -10,7 +10,7 @@ import { SControlPoint, SEdge } from "../../graph/sgraph"
 import { centerOfLine, Point } from "../../utils/geometry"
 import { SelectAction } from "../select/select"
 import { findParent } from "../../base/model/smodel-utils"
-import { ElementMove, MoveAction } from "../move/move"
+import { ElementMove } from "../move/move"
 
 export class ShowControlPointsAction implements Action {
     kind: string = ShowControlPointsCommand.KIND
@@ -38,18 +38,30 @@ export class ShowControlPointsCommand implements Command {
 
         const showControlPoint = (editTarget: SEdge) => {
             if (editTarget instanceof SEdge) {
-                if (editTarget.routingPoints.length === 0) {
-                    const sourceAnchor = editTarget.anchors.sourceAnchor
-                    const targetAnchor = editTarget.anchors.targetAnchor
-                    if (sourceAnchor && targetAnchor) {
-                        const controlPoint = createControlPoint(
-                            'volatile-control-point', editTarget.id + '_vcp', centerOfLine(sourceAnchor, targetAnchor))
-                        controlPoint.volatile = true
-                        editTarget.add(controlPoint)
-                    }
-                } else {
-                    // editTarget.routingPoints.forEach()
+                const sourceContolPoint = createControlPoint('control-point', editTarget.id + '_source',
+                    editTarget.anchors.sourceAnchor)
+                const targetControlPoint = createControlPoint('control-point', editTarget.id + '_target',
+                    editTarget.anchors.targetAnchor)
+                const rpNumber = editTarget.routingPoints.length
+                let prevPoint: SControlPoint = sourceContolPoint
+                for (let i = 0; i < rpNumber; i++) {
+                    const routingPoint: SControlPoint = editTarget.routingPoints[i]
+                    routingPoint.id = editTarget.id + '_cp' + i
+                    const controlPoint = createControlPoint(
+                        'volatile-control-point',
+                        editTarget.id + '_vcp' + i,
+                        centerOfLine(prevPoint.position, routingPoint.position))
+                    controlPoint.anchors = [prevPoint, routingPoint]
+                    editTarget.add(controlPoint)
+                    editTarget.add(routingPoint)
+                    prevPoint = routingPoint
                 }
+                const controlPoint = createControlPoint(
+                    'volatile-control-point',
+                    editTarget.id + '_vcp' + rpNumber,
+                    centerOfLine(prevPoint.position, targetControlPoint.position))
+                controlPoint.anchors = [prevPoint, targetControlPoint]
+                editTarget.add(controlPoint)
             }
         }
 
@@ -60,17 +72,12 @@ export class ShowControlPointsCommand implements Command {
                         showControlPoint(element)
                         element.controlPointsVisible = true
                     } else if (element.controlPointsVisible) {
-                        // FIXME improve this, its very expensive, better just set new positions
-                        if (this.action.priviousAction instanceof MoveAction) {
-                            const cp = this.action.priviousAction.moves.find(moveEl => {
-                                return sModelRoot.index.getById(moveEl.elementId) instanceof SControlPoint
-                            })
-                            if (cp === undefined) {
-                                console.log("bla privious", this.action.priviousAction)
-                                while (element.children.length)
-                                    element.remove(element.children[0])
-                                showControlPoint(element)
+                        if (this.action.priviousAction instanceof MoveControlPointAction) {
+                            while (element.children.length) {
+                                console.log("bla remove ", element.children[0].id)
+                                element.remove(element.children[0])
                             }
+                            showControlPoint(element)
                         }
                     }
                 } else {
@@ -103,7 +110,7 @@ export class MoveControlPointAction implements Action {
 }
 
 export class MoveControlPointCommand implements Command {
-    static KIND: string = "routingPointCreated"
+    static KIND: string = 'routingPointCreated'
     protected moveElements: ElementMove[] = []
 
     constructor(action: MoveControlPointAction) {
@@ -119,9 +126,15 @@ export class MoveControlPointCommand implements Command {
                 const routingPoint = routingPoints.find(rp => {
                     return rp.id === moveElement.id
                 })
+                // if the dragged control point is not a routing point already, it becomes one now
                 if (routingPoint === undefined) {
-                    moveElement.volatile = false
-                    routingPoints.push(moveElement)
+                    moveElement.type = 'control-point'
+                    const indexOfPredecessor = routingPoints.indexOf(moveElement.anchors[0])
+                    if (indexOfPredecessor !== -1)
+                        routingPoints.splice(indexOfPredecessor + 1, 0, moveElement)
+                    else
+                        routingPoints.unshift(moveElement)
+
                 }
             }
         })

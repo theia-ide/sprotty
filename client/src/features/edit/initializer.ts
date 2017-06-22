@@ -6,7 +6,7 @@ import { Action } from "../../base/actions/action"
 import { ICommand } from "../../base/commands/command"
 import { injectable } from "inversify"
 import {
-    ActivateEditModeCommand, MoveControlPointAction, ShowControlPointsAction
+    ActivateEditModeCommand, MoveControlPointAction, MoveControlPointCommand, ShowControlPointsAction
 } from "./edit"
 import { MoveAction, MoveCommand } from "../move/move"
 
@@ -27,7 +27,7 @@ export class EditActionHandlerInitializer implements IActionHandlerInitializer {
     initialize(registry: ActionHandlerRegistry): void {
         const showControlPointsActionHandler = new ShowControlPointsActionHandler()
         registry.register(ActivateEditModeCommand.KIND, showControlPointsActionHandler)
-        registry.register(MoveCommand.KIND, showControlPointsActionHandler)
+        registry.register(MoveControlPointCommand.KIND, showControlPointsActionHandler)
 
         const moveControlPointActionHandler = new MoveControlPointActionHandler()
         registry.register(MoveCommand.KIND, moveControlPointActionHandler)
