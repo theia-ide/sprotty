@@ -29,4 +29,4 @@ cd ../server
 # point your web browser to localhost:8080
 ```
 
-For further information please consult the [wiki](https://github.com/theia-ide/sprotty/wiki) or this [blog post](http://typefox.io/sprotty-a-web-based-diagramming-framework).
+For further information please consult the [wiki](https://github.com/theia-ide/sprotty/wiki) or this [blog post](http://typefox.io/sprotty-a-web-based-diagramming-framework). The examples contained in this repository are available on a [demo page](http://sprotty-demo.typefox.io).
