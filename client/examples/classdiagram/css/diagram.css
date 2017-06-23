@@ -27,35 +27,6 @@
     text-align: inherit;
 }
 
-.edge {
-    fill: none;
-    stroke: #488;
-    stroke-width: 2px;
-}
-
-.edge.edit path {
-    stroke: #00F;
-}
-
-.edge.edit circle {
-    fill: #88f;
-    stroke: none;
-}
-
-.edge .controlpoint.selected {
-    fill: #4f4;
-    stroke: none;
-}
-
-.edge .controlpoint.volatile {
-    opacity: 0.5;
-    z-index: 1000;
-}
-
-.edge .controlpoint.mouseover {
-    stroke: #ff7f24;
-}
-
 .node.selected {
     stroke: #152;
     stroke-width: 5;
@@ -81,4 +52,41 @@
 
 .popup-body > p {
     margin-bottom: 2px;
+}
+
+.edge {
+    fill: none;
+    stroke: #488;
+    stroke-width: 2px;
+}
+
+.edge.edit path {
+    stroke: #00F;
+}
+
+.edge.mouseover path{
+    stroke-width: 6px;
+}
+
+.edge.edit.mouseover path{
+    stroke-width: 2px;
+}
+
+.edge.edit .controlpoint {
+    fill: #88f;
+    stroke: none;
+}
+
+.edge .controlpoint.selected {
+    fill: #4f4;
+    stroke: none;
+}
+
+.edge .controlpoint.volatile {
+    opacity: 0.5;
+    z-index: 1000;
+}
+
+.edge .controlpoint.mouseover {
+    stroke: #ff7f24;
 }
