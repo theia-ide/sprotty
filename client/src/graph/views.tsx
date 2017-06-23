@@ -12,7 +12,7 @@ import { setAttr } from '../base/views/vnode-utils'
 import { RenderingContext, IView } from "../base/views/view"
 import { SModelElement, SChildElement } from "../base/model/smodel"
 import { getSubType, translatePoint } from "../base/model/smodel-utils"
-import { SCompartment, SEdge, SGraph, SLabel, SNode, SPort } from "./sgraph"
+import { SCompartment, SControlPoint, SEdge, SGraph, SLabel, SNode, SPort } from "./sgraph"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -67,11 +67,19 @@ export class PolylineEdgeView implements IView {
 
         const segments = this.computeSegments(edge, source, sourceView, target, targetView)
 
-        return <g class-edge={true}>
+        return <g class-edge={true} class-mouseover={edge.hoverFeedback}>
             {this.renderLine(edge, segments, context)}
             {this.renderAdditionals(edge, segments, context)}
             {context.renderChildren(edge)}
         </g>
+    }
+
+    protected findPosition(p: SControlPoint | Point): Point {
+        if (p instanceof SControlPoint) {
+            return p.position
+        } else {
+            return p
+        }
     }
 
     protected computeSegments(edge: SEdge, source: SNode | SPort, sourceView: AnchorableView,
@@ -92,9 +100,10 @@ export class PolylineEdgeView implements IView {
 
         for (let i = 0; i < edge.routingPoints.length; i++) {
             const p = edge.routingPoints[i]
-            if (manhattanDistance(previousPoint, p.position) >= this.minimalPointDistance) {
-                result.push(p.position)
-                previousPoint = p.position
+            const pPosition = this.findPosition(p)
+            if (manhattanDistance(previousPoint, pPosition) >= this.minimalPointDistance) {
+                result.push(pPosition)
+                previousPoint = pPosition
             }
         }
 
