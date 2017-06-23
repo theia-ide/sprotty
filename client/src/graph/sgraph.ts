@@ -105,11 +105,13 @@ export interface SEdgeAnchorsSchema {
     targetAnchor: Point
 }
 
-export class SEdge extends SChildElement implements Fadeable, Selectable, Editable {
+export class SEdge extends SChildElement implements Fadeable, Selectable, Editable, Hoverable {
+    hoverFeedback: boolean = false
     controlPointsVisible: boolean = false
     inEditMode: boolean = false
     sourceId: string
     targetId: string
+    // the source and target anchor of the edge. Get set when its segments get computed.
     anchors: SEdgeAnchorsSchema = {sourceAnchor: ORIGIN_POINT, targetAnchor: ORIGIN_POINT}
     routingPoints: SControlPoint[] = []
     opacity: number = 1
@@ -124,7 +126,8 @@ export class SEdge extends SChildElement implements Fadeable, Selectable, Editab
     }
 
     hasFeature(feature: symbol): boolean {
-        return feature === fadeFeature || feature === selectFeature || feature === editFeature
+        return feature === fadeFeature || feature === selectFeature ||
+            feature === editFeature || feature === hoverFeedbackFeature
     }
 }
 
