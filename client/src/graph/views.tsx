@@ -11,7 +11,7 @@ import { center, manhattanDistance, Point } from "../utils/geometry"
 import { setAttr } from '../base/views/vnode-utils'
 import { RenderingContext, IView } from "../base/views/view"
 import { getSubType } from "../base/model/smodel-utils"
-import { SCompartment, SEdge, SGraph, SLabel, SNode } from "./sgraph"
+import { SCompartment, SControlPoint, SEdge, SGraph, SLabel, SNode } from "./sgraph"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -58,10 +58,18 @@ export class PolylineEdgeView implements IView {
 
         const segments = this.computeSegments(edge, source, sourceView, target, targetView)
 
-        return <g class-edge={true}>
+        return <g class-edge={true} class-mouseover={edge.hoverFeedback}>
             {this.renderLine(edge, segments, context)}
             {this.renderAdditionals(edge, segments, context)}
         </g>
+    }
+
+    protected findPosition(p: SControlPoint | Point): Point {
+        if (p instanceof SControlPoint) {
+            return p.position
+        } else {
+            return p
+        }
     }
 
     protected computeSegments(edge: SEdge, source: SNode, sourceView: SNodeView, target: SNode, targetView: SNodeView): Point[] {
@@ -69,7 +77,7 @@ export class PolylineEdgeView implements IView {
         if (edge.routingPoints !== undefined && edge.routingPoints.length >= 1) {
             // Use the first routing point as start anchor reference
             let p0 = edge.routingPoints[0]
-            sourceAnchor = sourceView.getAnchor(source, p0.position)
+            sourceAnchor = sourceView.getAnchor(source, this.findPosition(p0))
         } else {
             // Use the target center as start anchor reference
             const reference = center(target.bounds)
@@ -81,9 +89,10 @@ export class PolylineEdgeView implements IView {
 
         for (let i = 0; i < edge.routingPoints.length; i++) {
             const p = edge.routingPoints[i]
-            if (manhattanDistance(previousPoint, p.position) >= this.minimalPointDistance) {
-                result.push(p.position)
-                previousPoint = p.position
+            const pPosition = this.findPosition(p)
+            if (manhattanDistance(previousPoint, pPosition) >= this.minimalPointDistance) {
+                result.push(pPosition)
+                previousPoint = pPosition
             }
         }
 
@@ -91,10 +100,11 @@ export class PolylineEdgeView implements IView {
         if (edge.routingPoints && edge.routingPoints.length >= 1) {
             // Use the last routing point as end anchor reference
             let pn = edge.routingPoints[edge.routingPoints.length - 1]
-            targetAnchor = targetView.getAnchor(target, pn.position)
-            if (manhattanDistance(previousPoint, pn.position) >= this.minimalPointDistance
-                && manhattanDistance(pn.position, targetAnchor) >= this.minimalPointDistance) {
-                result.push(pn.position)
+            const pnPosition = this.findPosition(pn)
+            targetAnchor = targetView.getAnchor(target, pnPosition)
+            if (manhattanDistance(previousPoint, pnPosition) >= this.minimalPointDistance
+                && manhattanDistance(pnPosition, targetAnchor) >= this.minimalPointDistance) {
+                result.push(pnPosition)
             }
         } else {
             // Use the source center as end anchor reference
