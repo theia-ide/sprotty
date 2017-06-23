@@ -1,7 +1,7 @@
 import { Action } from "../../base/actions/action"
 import { Command, CommandExecutionContext, CommandResult } from "../../base/commands/command"
 import { SModelElement, SModelRoot } from "../../base/model/smodel"
-import { hasEditFeature, isEditable } from "./model"
+import { Editable, hasEditFeature, isEditable } from "./model"
 import { injectable } from "inversify"
 import { IVNodeDecorator } from "../../base/views/vnode-decorators"
 import { VNode } from "snabbdom/vnode"
@@ -37,7 +37,7 @@ export class ShowControlPointsCommand implements Command {
             return sControlPoint
         }
 
-        const showControlPoint = (editTarget: SEdge) => {
+        const showControlPoint = (editTarget: Editable) => {
             if (editTarget instanceof SEdge) {
                 const sourceContolPoint = createControlPoint('control-point', editTarget.id + '_source',
                     editTarget.anchors.sourceAnchor)
@@ -135,7 +135,6 @@ export class MoveControlPointCommand implements Command {
                         routingPoints.splice(indexOfPredecessor + 1, 0, moveElement)
                     else
                         routingPoints.unshift(moveElement)
-
                 }
             }
         })
@@ -238,7 +237,7 @@ export class EditActivationDecorator implements IVNodeDecorator {
 
 export class EditKeyboardListener extends KeyListener {
     keyPress(element: SModelElement, event: KeyboardEvent): Action[] {
-        if (event.keyCode === 8) {
+        if (event.keyCode === 8 || event.keyCode === 46) {
             element.root.index.all()
                 .filter(e => e instanceof SEdge && isEditable(e) && e.inEditMode)
                 .forEach(e => {
