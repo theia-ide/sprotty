@@ -16,7 +16,7 @@ import { KeyListener } from "../../base/views/key-tool"
 export class ShowRoutingPointsAction implements Action {
     kind: string = ShowRoutingPointsCommand.KIND
 
-    constructor(public priviousAction?: Action) {
+    constructor(public previousAction?: Action) {
     }
 }
 
@@ -26,59 +26,59 @@ export class ShowRoutingPointsCommand implements Command {
     constructor(public action: ShowRoutingPointsAction) {
     }
 
+    protected createRoutingPoint(cptype: string, id: string, position: Point): SRoutingPoint {
+        const sRoutingPoint = new SRoutingPoint()
+        sRoutingPoint.type = cptype
+        sRoutingPoint.id = id
+        sRoutingPoint.position = position
+        return sRoutingPoint
+    }
+
+    protected showRoutingPoint(editTarget: Editable): void {
+    if (editTarget instanceof SEdge) {
+        const sourceRoutingPoint = this.createRoutingPoint('routing-point', editTarget.id + '_source',
+            editTarget.anchors.sourceAnchor)
+        const targetRoutingPoint = this.createRoutingPoint('routing-point', editTarget.id + '_target',
+            editTarget.anchors.targetAnchor)
+        const rpNumber = editTarget.routingPoints.length
+        let prevPoint: SRoutingPoint = sourceRoutingPoint
+        for (let i = 0; i < rpNumber; i++) {
+            const routingPoint: SRoutingPoint = editTarget.routingPoints[i]
+            routingPoint.id = editTarget.id + '_cp' + i
+            const volatileRoutingPoint = this.createRoutingPoint(
+                'volatile-routing-point',
+                editTarget.id + '_vcp' + i,
+                centerOfLine(prevPoint.position, routingPoint.position))
+            volatileRoutingPoint.anchors = [prevPoint, routingPoint]
+            editTarget.add(volatileRoutingPoint)
+            editTarget.add(routingPoint)
+            prevPoint = routingPoint
+        }
+        const volatileRoutingPoint = this.createRoutingPoint(
+            'volatile-routing-point',
+            editTarget.id + '_vcp' + rpNumber,
+            centerOfLine(prevPoint.position, targetRoutingPoint.position))
+        volatileRoutingPoint.anchors = [prevPoint, targetRoutingPoint]
+        editTarget.add(volatileRoutingPoint)
+    }
+}
+
     execute(context: CommandExecutionContext): CommandResult {
         const sModelRoot = context.root
-
-        const createRoutingPoint = (cptype: string, id: string, position: Point) => {
-            const sRoutingPoint = new SRoutingPoint()
-            sRoutingPoint.type = cptype
-            sRoutingPoint.id = id
-            sRoutingPoint.position = position
-            return sRoutingPoint
-        }
-
-        const showRoutingPoint = (editTarget: Editable) => {
-            if (editTarget instanceof SEdge) {
-                const sourceRoutingPoint = createRoutingPoint('routing-point', editTarget.id + '_source',
-                    editTarget.anchors.sourceAnchor)
-                const targetRoutingPoint = createRoutingPoint('routing-point', editTarget.id + '_target',
-                    editTarget.anchors.targetAnchor)
-                const rpNumber = editTarget.routingPoints.length
-                let prevPoint: SRoutingPoint = sourceRoutingPoint
-                for (let i = 0; i < rpNumber; i++) {
-                    const routingPoint: SRoutingPoint = editTarget.routingPoints[i]
-                    routingPoint.id = editTarget.id + '_cp' + i
-                    const volatileRoutingPoint = createRoutingPoint(
-                        'volatile-routing-point',
-                        editTarget.id + '_vcp' + i,
-                        centerOfLine(prevPoint.position, routingPoint.position))
-                    volatileRoutingPoint.anchors = [prevPoint, routingPoint]
-                    editTarget.add(volatileRoutingPoint)
-                    editTarget.add(routingPoint)
-                    prevPoint = routingPoint
-                }
-                const volatileRoutingPoint = createRoutingPoint(
-                    'volatile-routing-point',
-                    editTarget.id + '_vcp' + rpNumber,
-                    centerOfLine(prevPoint.position, targetRoutingPoint.position))
-                volatileRoutingPoint.anchors = [prevPoint, targetRoutingPoint]
-                editTarget.add(volatileRoutingPoint)
-            }
-        }
 
         sModelRoot.index.all().forEach(element => {
             if (element instanceof SEdge) {
                 if (element.inEditMode) {
                     if (!element.routingPointsVisible) {
-                        showRoutingPoint(element)
+                        this.showRoutingPoint(element)
                         element.routingPointsVisible = true
                     } else if (element.routingPointsVisible) {
-                        if (this.action.priviousAction instanceof MoveRoutingPointAction ||
-                            this.action.priviousAction === undefined) {
+                        if (this.action.previousAction instanceof MoveRoutingPointAction ||
+                            this.action.previousAction === undefined) {
                             while (element.children.length) {
                                 element.remove(element.children[0])
                             }
-                            showRoutingPoint(element)
+                            this.showRoutingPoint(element)
                         }
                     }
                 } else {
