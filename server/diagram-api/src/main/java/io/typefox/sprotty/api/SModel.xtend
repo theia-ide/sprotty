@@ -48,9 +48,22 @@ class SGraph extends SModelRoot implements BoundsAware {
 class SNode extends SModelElement implements BoundsAware  {
 	Point position
 	Dimension size
+	String layout
+	Boolean resizeContainer
 	
 	new() {}
 	new(Consumer<SNode> initializer) {
+		initializer.accept(this)
+	}
+}
+
+@Accessors@ToString
+class SPort extends SModelElement implements BoundsAware  {
+	Point position
+	Dimension size
+	
+	new() {}
+	new(Consumer<SPort> initializer) {
 		initializer.accept(this)
 	}
 }

@@ -170,10 +170,7 @@ class MulticoreAllocationDiagramGenerator {
 			]
 		} else {
 			val stackBeginAddr = Integer.parseInt(task.task.kernel.stackBeginAddr.substring(2), 16) as int
-			val stackSize = task.task.kernel.stackSize as float
 			val currentStackPointer = Integer.parseInt(task.stackPointer.substring(2), 16) as int
-			val percentStackUsed = ((stackBeginAddr - currentStackPointer) / stackSize) * 100.0 as float
-			val percentStackUsedFormatted = String.format("%.1f", percentStackUsed)
 			result += new SLabel [
 				id = 't_' + coreIndex
 				type = 'label:info' 								
