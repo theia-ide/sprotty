@@ -59,13 +59,13 @@ export class CircularNodeView extends SNodeView {
     }
 }
 
-export class ControlPointView extends SNodeView {
+export class RoutingPointView extends SNodeView {
 
     render(node: SNode, context: RenderingContext): VNode {
         const radius = this.getRadius(node)
         return <g>
-            <circle class-controlpoint={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
-                    class-volatile={node.type === 'volatile-control-point'}
+            <circle class-routingpoint={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
+                    class-volatile={node.type === 'volatile-routing-point'}
                     r={radius}></circle>
         </g>
     }

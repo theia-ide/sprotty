@@ -11,7 +11,7 @@ import { center, manhattanDistance, Point } from "../utils/geometry"
 import { setAttr } from '../base/views/vnode-utils'
 import { RenderingContext, IView } from "../base/views/view"
 import { getSubType } from "../base/model/smodel-utils"
-import { SCompartment, SControlPoint, SEdge, SGraph, SLabel, SNode } from "./sgraph"
+import { SCompartment, SRoutingPoint, SEdge, SGraph, SLabel, SNode } from "./sgraph"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -64,8 +64,8 @@ export class PolylineEdgeView implements IView {
         </g>
     }
 
-    protected findPosition(p: SControlPoint | Point): Point {
-        if (p instanceof SControlPoint) {
+    protected findPosition(p: SRoutingPoint | Point): Point {
+        if (p instanceof SRoutingPoint) {
             return p.position
         } else {
             return p

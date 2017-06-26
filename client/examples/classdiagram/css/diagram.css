@@ -72,21 +72,21 @@
     stroke-width: 2px;
 }
 
-.edge.edit .controlpoint {
+.edge.edit .routingpoint {
     fill: #88f;
     stroke: none;
 }
 
-.edge .controlpoint.selected {
+.edge .routingpoint.selected {
     fill: #4f4;
     stroke: none;
 }
 
-.edge .controlpoint.volatile {
+.edge .routingpoint.volatile {
     opacity: 0.5;
     z-index: 1000;
 }
 
-.edge .controlpoint.mouseover {
+.edge .routingpoint.mouseover {
     stroke: #ff7f24;
 }

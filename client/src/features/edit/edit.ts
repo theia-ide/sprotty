@@ -6,83 +6,83 @@ import { injectable } from "inversify"
 import { IVNodeDecorator } from "../../base/views/vnode-decorators"
 import { VNode } from "snabbdom/vnode"
 import { setClass } from "../../base/views/vnode-utils"
-import { SControlPoint, SEdge } from "../../graph/sgraph"
+import { SRoutingPoint, SEdge } from "../../graph/sgraph"
 import { centerOfLine, Point } from "../../utils/geometry"
 import { SelectAction } from "../select/select"
 import { findParent } from "../../base/model/smodel-utils"
 import { ElementMove } from "../move/move"
 import { KeyListener } from "../../base/views/key-tool"
 
-export class ShowControlPointsAction implements Action {
-    kind: string = ShowControlPointsCommand.KIND
+export class ShowRoutingPointsAction implements Action {
+    kind: string = ShowRoutingPointsCommand.KIND
 
     constructor(public priviousAction?: Action) {
     }
 }
 
-export class ShowControlPointsCommand implements Command {
-    static KIND: string = "controlPointsVisible"
+export class ShowRoutingPointsCommand implements Command {
+    static KIND: string = "routingPointsVisible"
 
-    constructor(public action: ShowControlPointsAction) {
+    constructor(public action: ShowRoutingPointsAction) {
     }
 
     execute(context: CommandExecutionContext): CommandResult {
         const sModelRoot = context.root
 
-        const createControlPoint = (cptype: string, id: string, position: Point) => {
-            const sControlPoint = new SControlPoint()
-            sControlPoint.type = cptype
-            sControlPoint.id = id
-            sControlPoint.position = position
-            return sControlPoint
+        const createRoutingPoint = (cptype: string, id: string, position: Point) => {
+            const sRoutingPoint = new SRoutingPoint()
+            sRoutingPoint.type = cptype
+            sRoutingPoint.id = id
+            sRoutingPoint.position = position
+            return sRoutingPoint
         }
 
-        const showControlPoint = (editTarget: Editable) => {
+        const showRoutingPoint = (editTarget: Editable) => {
             if (editTarget instanceof SEdge) {
-                const sourceContolPoint = createControlPoint('control-point', editTarget.id + '_source',
+                const sourceRoutingPoint = createRoutingPoint('routing-point', editTarget.id + '_source',
                     editTarget.anchors.sourceAnchor)
-                const targetControlPoint = createControlPoint('control-point', editTarget.id + '_target',
+                const targetRoutingPoint = createRoutingPoint('routing-point', editTarget.id + '_target',
                     editTarget.anchors.targetAnchor)
                 const rpNumber = editTarget.routingPoints.length
-                let prevPoint: SControlPoint = sourceContolPoint
+                let prevPoint: SRoutingPoint = sourceRoutingPoint
                 for (let i = 0; i < rpNumber; i++) {
-                    const routingPoint: SControlPoint = editTarget.routingPoints[i]
+                    const routingPoint: SRoutingPoint = editTarget.routingPoints[i]
                     routingPoint.id = editTarget.id + '_cp' + i
-                    const controlPoint = createControlPoint(
-                        'volatile-control-point',
+                    const volatileRoutingPoint = createRoutingPoint(
+                        'volatile-routing-point',
                         editTarget.id + '_vcp' + i,
                         centerOfLine(prevPoint.position, routingPoint.position))
-                    controlPoint.anchors = [prevPoint, routingPoint]
-                    editTarget.add(controlPoint)
+                    volatileRoutingPoint.anchors = [prevPoint, routingPoint]
+                    editTarget.add(volatileRoutingPoint)
                     editTarget.add(routingPoint)
                     prevPoint = routingPoint
                 }
-                const controlPoint = createControlPoint(
-                    'volatile-control-point',
+                const volatileRoutingPoint = createRoutingPoint(
+                    'volatile-routing-point',
                     editTarget.id + '_vcp' + rpNumber,
-                    centerOfLine(prevPoint.position, targetControlPoint.position))
-                controlPoint.anchors = [prevPoint, targetControlPoint]
-                editTarget.add(controlPoint)
+                    centerOfLine(prevPoint.position, targetRoutingPoint.position))
+                volatileRoutingPoint.anchors = [prevPoint, targetRoutingPoint]
+                editTarget.add(volatileRoutingPoint)
             }
         }
 
         sModelRoot.index.all().forEach(element => {
             if (element instanceof SEdge) {
                 if (element.inEditMode) {
-                    if (!element.controlPointsVisible) {
-                        showControlPoint(element)
-                        element.controlPointsVisible = true
-                    } else if (element.controlPointsVisible) {
-                        if (this.action.priviousAction instanceof MoveControlPointAction ||
+                    if (!element.routingPointsVisible) {
+                        showRoutingPoint(element)
+                        element.routingPointsVisible = true
+                    } else if (element.routingPointsVisible) {
+                        if (this.action.priviousAction instanceof MoveRoutingPointAction ||
                             this.action.priviousAction === undefined) {
                             while (element.children.length) {
                                 element.remove(element.children[0])
                             }
-                            showControlPoint(element)
+                            showRoutingPoint(element)
                         }
                     }
                 } else {
-                    element.controlPointsVisible = false
+                    element.routingPointsVisible = false
                     while (element.children.length)
                         element.remove(element.children[0])
                 }
@@ -102,34 +102,34 @@ export class ShowControlPointsCommand implements Command {
 
 }
 
-export class MoveControlPointAction implements Action {
-    kind: string = MoveControlPointCommand.KIND
+export class MoveRoutingPointAction implements Action {
+    kind: string = MoveRoutingPointCommand.KIND
 
     constructor(public moveElements: ElementMove[]) {
     }
 
 }
 
-export class MoveControlPointCommand implements Command {
+export class MoveRoutingPointCommand implements Command {
     static KIND: string = 'routingPointCreated'
     protected moveElements: ElementMove[] = []
 
-    constructor(action: MoveControlPointAction) {
+    constructor(action: MoveRoutingPointAction) {
         this.moveElements = action.moveElements
     }
 
     execute(context: CommandExecutionContext): CommandResult {
         this.moveElements.forEach(element => {
             const moveElement: SModelElement | undefined = context.root.index.getById(element.elementId)
-            if (moveElement instanceof SControlPoint) {
+            if (moveElement instanceof SRoutingPoint) {
                 const sEdge = (moveElement.parent as SEdge)
                 const routingPoints = sEdge.routingPoints
                 const routingPoint = routingPoints.find(rp => {
                     return rp.id === moveElement.id
                 })
-                // if the dragged control point is not a routing point already, it becomes one now
+                // if the dragged routing point is not a routing point already, it becomes one now
                 if (routingPoint === undefined) {
-                    moveElement.type = 'control-point'
+                    moveElement.type = 'routing-point'
                     const indexOfPredecessor = routingPoints.indexOf(moveElement.anchors[0])
                     if (indexOfPredecessor !== -1)
                         routingPoints.splice(indexOfPredecessor + 1, 0, moveElement)
@@ -246,7 +246,7 @@ export class EditKeyboardListener extends KeyListener {
                     while ((idx = routingPoints.findIndex(rp => rp.selected)) !== -1)
                         routingPoints.splice(idx, 1)
                 })
-            return [new ShowControlPointsAction()]
+            return [new ShowRoutingPointsAction()]
         }
         return []
     }
