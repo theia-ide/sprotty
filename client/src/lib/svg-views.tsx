@@ -65,7 +65,7 @@ export class ControlPointView extends SNodeView {
         const radius = this.getRadius(node)
         return <g>
             <circle class-controlpoint={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
-                    class-volatile={node.type==='volatile-control-point'}
+                    class-volatile={node.type === 'volatile-control-point'}
                     r={radius}></circle>
         </g>
     }
@@ -105,10 +105,10 @@ export class RectangularNodeView extends SNodeView {
         }
         if (!almostEquals(c.x, refPoint.x)) {
             const yLeft = this.getYIntersection(bounds.x, c, refPoint)
-            if (yLeft >= bounds.y  && yLeft <= bounds.y + bounds.height)
+            if (yLeft >= bounds.y && yLeft <= bounds.y + bounds.height)
                 finder.addCandidate(bounds.x, yLeft)
             const yRight = this.getYIntersection(bounds.x + bounds.width, c, refPoint)
-            if (yRight >= bounds.y  && yRight <= bounds.y + bounds.height)
+            if (yRight >= bounds.y && yRight <= bounds.y + bounds.height)
                 finder.addCandidate(bounds.x + bounds.width, yRight)
         }
         return finder.best
@@ -129,7 +129,8 @@ class NearestPointFinder {
     protected currentBest: Point | undefined
     protected currentDist: number = -1
 
-    constructor(protected center: Point, protected refPoint: Point) {}
+    constructor(protected center: Point, protected refPoint: Point) {
+    }
 
     addCandidate(x: number, y: number) {
         const dx = this.refPoint.x - x
