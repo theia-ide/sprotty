@@ -120,7 +120,7 @@ export class PolylineEdgeView implements IView {
         return []
     }
 
-    protected renderDanglingEdge(message: string, edge: SEdge, context: RenderingContext) {
+    protected renderDanglingEdge(message: string, edge: SEdge, context: RenderingContext): VNode {
         return <text class-dangling-edge={true} title={message}>?</text>
     }
 }
