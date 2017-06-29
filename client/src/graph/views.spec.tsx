@@ -13,11 +13,11 @@ import { Container } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { TYPES } from "../base/types"
 import { IVNodeDecorator } from '../base/views/vnode-decorators'
-import { CircularNodeView } from "../lib/svg-views"
+import { CircularNodeView, RectangularNodeView } from "../lib/svg-views"
 import { RenderingContext, ViewRegistry } from "../base/views/view"
 import { ModelRendererFactory } from "../base/views/viewer"
 import { SGraphView, PolylineEdgeView } from "./views"
-import { SEdge, SGraph, SNode } from "./sgraph"
+import { SEdge, SGraph, SNode, SNodeSchema, SEdgeSchema, SPortSchema, SPort } from "./sgraph"
 import { SGraphFactory } from "./sgraph-factory"
 import defaultModule from "../base/di.config"
 import selectModule from "../features/select/di.config"
@@ -105,5 +105,75 @@ describe('graph views', () => {
             }
         }
         expect(html).to.be.equal(expectation)
+    })
+})
+
+describe('AnchorableView', () => {
+    const factory = new SGraphFactory()
+    const model = factory.createRoot({
+        type: 'graph',
+        id: 'graph',
+        children: [
+            {
+                type: 'node',
+                id: 'node1',
+                position: { x: 10, y: 10 },
+                size: { width: 10, height: 10 },
+                children: [
+                    {
+                        type: 'port',
+                        id: 'port1',
+                        position: { x: 10, y: 4 },
+                        size: { width: 2, height: 2 }
+                    } as SPortSchema
+                ]
+            } as SNodeSchema,
+            {
+                type: 'node',
+                id: 'node2',
+                position: { x: 30, y: 10 },
+                size: { width: 10, height: 10 },
+                children: [
+                    {
+                        type: 'port',
+                        id: 'port2',
+                        position: { x: -2, y: 4 },
+                        size: { width: 2, height: 2 }
+                    } as SPortSchema
+                ]
+            } as SNodeSchema,
+            {
+                type: 'edge',
+                id: 'edge1',
+                sourceId: 'port1',
+                targetId: 'port2'
+            } as SEdgeSchema
+        ]
+    })
+    const rectView = new RectangularNodeView()
+    
+    it('correctly translates edge source position', () => {
+        const edge = model.index.getById('edge1') as SEdge
+        const sourcePort = model.index.getById('port1') as SPort
+        const refPoint = { x: 30, y: 15 }
+        const translated = rectView.getTranslatedAnchor(sourcePort, refPoint, edge)
+        expect(translated).to.deep.equal({ x: 22, y: 15, width: -1, height: -1 })
+    })
+    
+    it('correctly translates edge target position', () => {
+        const edge = model.index.getById('edge1') as SEdge
+        const targetPort = model.index.getById('port2') as SPort
+        const refPoint = { x: 20, y: 15 }
+        const translated = rectView.getTranslatedAnchor(targetPort, refPoint, edge)
+        expect(translated).to.deep.equal({ x: 28, y: 15, width: -1, height: -1 })
+    })
+    
+    it('correctly translates edge source to target position', () => {
+        const edge = model.index.getById('edge1') as SEdge
+        const sourcePort = model.index.getById('port1') as SPort
+        const targetPort = model.index.getById('port2') as SPort
+        const refPoint = { x: 10, y: 5 }
+        const translated = rectView.getTranslatedAnchor(targetPort, refPoint, sourcePort, edge)
+        expect(translated).to.deep.equal({ x: 28, y: 15, width: -1, height: -1 })
     })
 })

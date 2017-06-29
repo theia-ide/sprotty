@@ -55,21 +55,31 @@ export abstract class SShapeElement extends SChildElement implements BoundsAware
     }
 
     localToParent(point: Point | Bounds): Bounds {
-        if (isBounds(point)) {
-            return {
-                x: point.x + this.position.x,
-                y: point.y + this.position.y,
-                width: point.width,
-                height: point.height
-            }
-        } else {
-            return {
-                x: point.x + this.position.x,
-                y: point.y + this.position.y,
-                width: -1,
-                height: -1
-            }
+        const result = {
+            x: point.x + this.position.x,
+            y: point.y + this.position.y,
+            width: -1,
+            height: -1
         }
+        if (isBounds(point)) {
+            result.width = point.width
+            result.height = point.height
+        }
+        return result
+    }
+
+    parentToLocal(point: Point | Bounds): Bounds {
+        const result = {
+            x: point.x - this.position.x,
+            y: point.y - this.position.y,
+            width: -1,
+            height: -1
+        }
+        if (isBounds(point)) {
+            result.width = point.width
+            result.height = point.height
+        }
+        return result
     }
 }
 

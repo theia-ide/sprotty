@@ -6,6 +6,7 @@
  */
 
 import { SChildElement, SModelElement, SModelElementSchema } from "./smodel"
+import { Point } from "../../utils/geometry"
 
 export function getBasicType(schema: SModelElementSchema): string {
     if (!schema.type)
@@ -64,4 +65,28 @@ export function findParentByFeature<T>(element: SModelElement, predicate: (t: SM
             current = undefined
     }
     return current
+}
+
+export function translatePoint(point: Point, source: SModelElement, target: SModelElement): Point {
+    if (source !== target) {
+        // Translate from the source to the root element
+        while (source instanceof SChildElement) {
+            point = source.localToParent(point)
+            source = source.parent
+            if (source === target)
+                return point
+        }
+        // Translate from the root to the target element
+        const targetTrace = []
+        while (target instanceof SChildElement) {
+            targetTrace.push(target)
+            target = target.parent
+        }
+        if (source !== target)
+            throw new Error("Incompatible source and target: " + source.id + ", " + target.id)
+        for (let i = targetTrace.length - 1; i >= 0; i--) {
+            point = targetTrace[i].parentToLocal(point)
+        }
+    }
+    return point
 }
