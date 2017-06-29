@@ -6,7 +6,7 @@
  */
 
 import { injectable } from "inversify"
-import { DiagramServer } from "./diagram-server"
+import { DiagramServer, ActionMessage } from "./diagram-server"
 
 /**
  * An external ModelSource that connects to the model provider using a
@@ -34,9 +34,9 @@ export class WebSocketDiagramServer extends DiagramServer {
         }
     }
 
-    protected sendMessage(message: string): void {
+    protected sendMessage(message: ActionMessage): void {
         if (this.webSocket) {
-            this.webSocket.send(message)
+            this.webSocket.send(JSON.stringify(message))
         } else {
             throw new Error('WebSocket is not connected')
         }

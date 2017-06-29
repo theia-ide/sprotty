@@ -86,10 +86,10 @@ export abstract class DiagramServer extends ModelSource {
             action: action
         }
         this.logger.log(this, 'sending', message)
-        this.sendMessage(JSON.stringify(message))
+        this.sendMessage(message)
     }
 
-    protected abstract sendMessage(message: string): void
+    protected abstract sendMessage(message: ActionMessage): void
 
     protected messageReceived(data: any): void {
         const object = typeof(data) === 'string' ? JSON.parse(data) : data
