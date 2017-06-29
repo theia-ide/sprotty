@@ -23,7 +23,7 @@ import { IActionDispatcher } from "../actions/action-dispatcher"
 import { InitializeCanvasBoundsAction } from "../features/initialize-canvas"
 import { IVNodeDecorator } from "./vnode-decorators"
 import { RenderingContext, ViewRegistry } from "./view"
-import { setClass, setAttr } from "./vnode-utils"
+import { setClass, setAttr, copyClassesFromElement, copyClassesFromVNode } from "./vnode-utils"
 import { ViewerOptions } from "./viewer-options"
 import { isThunk } from "./thunk-view"
 import { EMPTY_ROOT } from "../model/smodel-factory"
@@ -134,18 +134,25 @@ export class Viewer implements IViewer {
         const newVDOM = <div id={this.options.baseDiv}>
             {this.renderer.renderElement(model)}
         </div>
-        setClass(newVDOM, this.options.baseClass, true)
         if (this.lastVDOM !== undefined) {
             const hadFocus = this.hasFocus()
+            copyClassesFromVNode(this.lastVDOM, newVDOM)
             this.lastVDOM = this.patcher.call(this, this.lastVDOM, newVDOM)
             this.restoreFocus(hadFocus)
         } else if (typeof document !== 'undefined') {
             const placeholder = document.getElementById(this.options.baseDiv)
-            if (typeof window !== 'undefined')
-                window.addEventListener('resize', () => {
-                    this.onWindowResize(newVDOM)
-                })
-            this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
+            if (placeholder !== null) {
+                if (typeof window !== 'undefined') {
+                    window.addEventListener('resize', () => {
+                        this.onWindowResize(newVDOM)
+                    })
+                }
+                copyClassesFromElement(placeholder, newVDOM)
+                setClass(newVDOM, this.options.baseClass, true)
+                this.lastVDOM = this.patcher.call(this, placeholder, newVDOM)
+            } else {
+                this.logger.error(this, 'element not in DOM:', this.options.baseDiv)
+            }
         }
         this.renderer.postUpdate()
     }
@@ -181,21 +188,23 @@ export class Viewer implements IViewer {
         } else {
             const hiddenVNode = this.hiddenRenderer.renderElement(hiddenModel)
             setAttr(hiddenVNode, 'opacity', 0)
-            setClass(hiddenVNode, this.options.hiddenClass, true)
             newVDOM = <div id={this.options.hiddenDiv}>
                 {hiddenVNode}
             </div>
-            setClass(newVDOM, this.options.baseDiv, true)
         }
 
         if (this.lastHiddenVDOM !== undefined) {
+            copyClassesFromVNode(this.lastHiddenVDOM, newVDOM)
             this.lastHiddenVDOM = this.patcher.call(this, this.lastHiddenVDOM, newVDOM)
         } else {
             let placeholder = document.getElementById(this.options.hiddenDiv)
             if (placeholder === null) {
                 placeholder = document.createElement("div")
                 document.body.appendChild(placeholder)
+            } else {
+                copyClassesFromElement(placeholder, newVDOM)
             }
+            setClass(newVDOM, this.options.hiddenClass, true)
             this.lastHiddenVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
         this.hiddenRenderer.postUpdate()
@@ -204,11 +213,10 @@ export class Viewer implements IViewer {
     updatePopup(model: SModelRoot): void {
         this.logger.log(this, 'rendering popup', model)
 
+        const popupClosed = model.type === EMPTY_ROOT.type
         let newVDOM: VNode
-        if (model.type === EMPTY_ROOT.type) {
+        if (popupClosed) {
             newVDOM = <div id={this.options.popupDiv}></div>
-            setClass(newVDOM, this.options.popupClass, true)
-            setClass(newVDOM, this.options.popupClosedClass, true)
         } else {
             const position = model.canvasBounds
             const inlineStyle = {
@@ -218,17 +226,22 @@ export class Viewer implements IViewer {
             newVDOM = <div id={this.options.popupDiv} style={inlineStyle}>
                 {this.popupRenderer.renderElement(model)}
             </div>
-            setClass(newVDOM, this.options.popupClass, true)
         }
 
         if (this.lastPopupVDOM !== undefined) {
+            copyClassesFromVNode(this.lastPopupVDOM, newVDOM)
+            setClass(newVDOM, this.options.popupClosedClass, popupClosed)
             this.lastPopupVDOM = this.patcher.call(this, this.lastPopupVDOM, newVDOM)
         } else if (typeof document !== 'undefined') {
             let placeholder = document.getElementById(this.options.popupDiv)
             if (placeholder === null) {
                 placeholder = document.createElement("div")
                 document.body.appendChild(placeholder)
+            } else {
+                copyClassesFromElement(placeholder, newVDOM)
             }
+            setClass(newVDOM, this.options.popupClass, true)
+            setClass(newVDOM, this.options.popupClosedClass, popupClosed)
             this.lastPopupVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
         this.popupRenderer.postUpdate()
