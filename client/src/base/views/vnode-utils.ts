@@ -16,6 +16,20 @@ export function setClass(vnode: VNode, name: string, value: boolean) {
     getClass(vnode)[name] = value
 }
 
+export function copyClassesFromVNode(source: VNode, target: VNode) {
+    const classList = getClass(source)
+    for (const c in classList) {
+        setClass(target, c, true)
+    }
+}
+
+export function copyClassesFromElement(element: HTMLElement, target: VNode) {
+    const classList = element.classList
+    for (let i = 0; i < classList.length; i++) {
+        setClass(target, classList.item(i), true)
+    }
+}
+
 export function mergeStyle(vnode: VNode, style: any) {
     getData(vnode).style = {...(getData(vnode).style || {}), ...style}
 }

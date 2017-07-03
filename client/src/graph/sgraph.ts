@@ -55,21 +55,31 @@ export abstract class SShapeElement extends SChildElement implements BoundsAware
     }
 
     localToParent(point: Point | Bounds): Bounds {
-        if (isBounds(point)) {
-            return {
-                x: point.x + this.position.x,
-                y: point.y + this.position.y,
-                width: point.width,
-                height: point.height
-            }
-        } else {
-            return {
-                x: point.x + this.position.x,
-                y: point.y + this.position.y,
-                width: -1,
-                height: -1
-            }
+        const result = {
+            x: point.x + this.position.x,
+            y: point.y + this.position.y,
+            width: -1,
+            height: -1
         }
+        if (isBounds(point)) {
+            result.width = point.width
+            result.height = point.height
+        }
+        return result
+    }
+
+    parentToLocal(point: Point | Bounds): Bounds {
+        const result = {
+            x: point.x - this.position.x,
+            y: point.y - this.position.y,
+            width: -1,
+            height: -1
+        }
+        if (isBounds(point)) {
+            result.width = point.width
+            result.height = point.height
+        }
+        return result
     }
 }
 
@@ -93,6 +103,20 @@ export class SNode extends SShapeElement implements Selectable, Fadeable, Hovera
     }
 }
 
+export interface SPortSchema extends SShapeElementSchema {
+}
+
+export class SPort extends SShapeElement implements Selectable, Fadeable, Hoverable {
+    hoverFeedback: boolean = false
+    selected: boolean = false
+    opacity: number = 1
+
+    hasFeature(feature: symbol): boolean {
+        return feature === selectFeature || feature === boundsFeature || feature === fadeFeature
+            || feature === hoverFeedbackFeature
+    }
+}
+
 export interface SEdgeSchema extends SModelElementSchema {
     sourceId: string
     targetId: string
@@ -105,12 +129,12 @@ export class SEdge extends SChildElement implements Fadeable {
     routingPoints: Point[] = []
     opacity: number = 1
 
-    get source(): SNode | undefined {
-        return this.index.getById(this.sourceId) as SNode
+    get source(): SNode | SPort | undefined {
+        return this.index.getById(this.sourceId) as SNode | SPort
     }
 
-    get target(): SNode | undefined {
-        return this.index.getById(this.targetId) as SNode
+    get target(): SNode | SPort | undefined {
+        return this.index.getById(this.targetId) as SNode | SPort
     }
 
     hasFeature(feature: symbol): boolean {

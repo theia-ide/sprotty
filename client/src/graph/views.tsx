@@ -10,8 +10,9 @@ import { VNode } from "snabbdom/vnode"
 import { center, manhattanDistance, Point } from "../utils/geometry"
 import { setAttr } from '../base/views/vnode-utils'
 import { RenderingContext, IView } from "../base/views/view"
-import { getSubType } from "../base/model/smodel-utils"
-import { SCompartment, SEdge, SGraph, SLabel, SNode } from "./sgraph"
+import { SModelElement, SChildElement } from "../base/model/smodel"
+import { getSubType, translatePoint } from "../base/model/smodel-utils"
+import { SCompartment, SEdge, SGraph, SLabel, SNode, SPort } from "./sgraph"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -30,10 +31,18 @@ export class SGraphView implements IView {
     }
 }
 
-export abstract class SNodeView implements IView {
-    abstract render(model: SNode, context: RenderingContext): VNode
+export abstract class AnchorableView implements IView {
+    abstract render(model: SModelElement, context: RenderingContext): VNode
 
-    abstract getAnchor(node: SNode, refPoint: Point): Point
+    abstract getAnchor(model: SNode | SPort, refPoint: Point): Point
+
+    getTranslatedAnchor(viewModel: SNode | SPort, refPoint: Point, refModel: SChildElement, targetModel?: SChildElement): Point {
+        const refContainer = refModel.parent
+        const viewContainer = viewModel.parent
+        const anchor = this.getAnchor(viewModel, translatePoint(refPoint, refContainer, viewContainer))
+        const targetContainer = targetModel !== undefined ? targetModel.parent : refContainer
+        return translatePoint(anchor, viewContainer, targetContainer)
+    }
 }
 
 export class PolylineEdgeView implements IView {
@@ -41,39 +50,41 @@ export class PolylineEdgeView implements IView {
 
     render(edge: SEdge, context: RenderingContext): VNode {
         const source = edge.source
-        if (!source)
-            return this.renderDanglingEdge("cannot resolve source", edge, context)
+        if (source === undefined)
+            return this.renderDanglingEdge("Cannot resolve source", edge, context)
 
         const target = edge.target
-        if (!target)
-            return this.renderDanglingEdge("cannot resolve target", edge, context)
+        if (target === undefined)
+            return this.renderDanglingEdge("Cannot resolve target", edge, context)
 
         const sourceView = context.viewRegistry.get(source.type, source)
-        if (!(sourceView instanceof SNodeView))
-            return this.renderDanglingEdge("expected source view type: SNodeView", edge, context)
+        if (!(sourceView instanceof AnchorableView))
+            return this.renderDanglingEdge("Expected source view type: AnchorableView", edge, context)
 
         const targetView = context.viewRegistry.get(target.type, target)
-        if (!(targetView instanceof SNodeView))
-            return this.renderDanglingEdge("expected target view type: SNodeView", edge, context)
+        if (!(targetView instanceof AnchorableView))
+            return this.renderDanglingEdge("Expected target view type: AnchorableView", edge, context)
 
         const segments = this.computeSegments(edge, source, sourceView, target, targetView)
 
         return <g>
             {this.renderLine(edge, segments, context)}
             {this.renderAdditionals(edge, segments, context)}
+            {context.renderChildren(edge)}
         </g>
     }
 
-    protected computeSegments(edge: SEdge, source: SNode, sourceView: SNodeView, target: SNode, targetView: SNodeView): Point[] {
+    protected computeSegments(edge: SEdge, source: SNode | SPort, sourceView: AnchorableView,
+                              target: SNode | SPort, targetView: AnchorableView): Point[] {
         let sourceAnchor: Point
         if (edge.routingPoints !== undefined && edge.routingPoints.length >= 1) {
             // Use the first routing point as start anchor reference
             let p0 = edge.routingPoints[0]
-            sourceAnchor = sourceView.getAnchor(source, p0)
+            sourceAnchor = sourceView.getTranslatedAnchor(source, p0, edge)
         } else {
             // Use the target center as start anchor reference
             const reference = center(target.bounds)
-            sourceAnchor = sourceView.getAnchor(source, reference)
+            sourceAnchor = sourceView.getTranslatedAnchor(source, reference, target, edge)
         }
         const result: Point[] = [sourceAnchor]
         let previousPoint = sourceAnchor
@@ -90,7 +101,7 @@ export class PolylineEdgeView implements IView {
         if (edge.routingPoints && edge.routingPoints.length >= 2) {
             // Use the last routing point as end anchor reference
             let pn = edge.routingPoints[edge.routingPoints.length - 1]
-            targetAnchor = targetView.getAnchor(target, pn)
+            targetAnchor = targetView.getTranslatedAnchor(target, pn, edge)
             if (manhattanDistance(previousPoint, pn) >= this.minimalPointDistance
                     && manhattanDistance(pn, targetAnchor) >= this.minimalPointDistance) {
                 result.push(pn)
@@ -98,7 +109,7 @@ export class PolylineEdgeView implements IView {
         } else {
             // Use the source center as end anchor reference
             const reference = center(source.bounds)
-            targetAnchor = targetView.getAnchor(target, reference)
+            targetAnchor = targetView.getTranslatedAnchor(target, reference, source, edge)
         }
         result.push(targetAnchor)
         return result
@@ -118,8 +129,7 @@ export class PolylineEdgeView implements IView {
         return []
     }
 
-
-    protected renderDanglingEdge(message: string, edge: SEdge, context: RenderingContext) {
+    protected renderDanglingEdge(message: string, edge: SEdge, context: RenderingContext): VNode {
         return <text class-dangling-edge={true} title={message}>?</text>
     }
 }

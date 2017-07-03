@@ -89,6 +89,10 @@ export class SParentElement extends SModelElement {
     localToParent(point: Point | Bounds): Bounds {
         return isBounds(point) ? point : { x: point.x, y: point.y, width: -1, height: -1 }
     }
+
+    parentToLocal(point: Point | Bounds): Bounds {
+        return isBounds(point) ? point : { x: point.x, y: point.y, width: -1, height: -1 }
+    }
 }
 
 export class SChildElement extends SParentElement {

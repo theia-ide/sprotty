@@ -18,20 +18,30 @@ export class ViewportRootElement extends SModelRoot implements Viewport {
     }
 
     localToParent(point: Point | Bounds): Bounds {
-        if (isBounds(point) && isValidDimension(point)) {
-            return {
-                x: (point.x - this.scroll.x) * this.zoom,
-                y: (point.y - this.scroll.y) * this.zoom,
-                width: point.width * this.zoom,
-                height: point.height * this.zoom
-            }
-        } else {
-            return {
-                x: (point.x - this.scroll.x) * this.zoom,
-                y: (point.y - this.scroll.y) * this.zoom,
-                width: -1,
-                height: -1
-            }
+        const result = {
+            x: (point.x - this.scroll.x) * this.zoom,
+            y: (point.y - this.scroll.y) * this.zoom,
+            width: -1,
+            height: -1
         }
+        if (isBounds(point)) {
+            result.width = point.width * this.zoom
+            result.height = point.height * this.zoom
+        }
+        return result
+    }
+
+    parentToLocal(point: Point | Bounds): Bounds {
+        const result = {
+            x: (point.x / this.zoom) + this.scroll.x,
+            y: (point.y / this.zoom) + this.scroll.y,
+            width: -1,
+            height: -1
+        }
+        if (isBounds(point) && isValidDimension(point)) {
+            result.width = point.width / this.zoom
+            result.height = point.height / this.zoom
+        }
+        return result
     }
 }

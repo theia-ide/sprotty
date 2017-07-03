@@ -9,8 +9,8 @@ import * as snabbdom from 'snabbdom-jsx'
 import { VNode } from "snabbdom/vnode"
 import { Point, center, almostEquals } from "../utils/geometry"
 import { IView, RenderingContext } from "../base/views/view"
-import { SNodeView } from "../graph/views"
-import { SNode } from "../graph/sgraph"
+import { AnchorableView } from "../graph/views"
+import { SNode, SPort } from "../graph/sgraph"
 import { ViewportRootElement } from "../features/viewport/viewport-root"
 
 const JSX = {createElement: snabbdom.svg}
@@ -26,8 +26,8 @@ export class SvgViewportView implements IView {
     }
 }
 
-export class CircularNodeView extends SNodeView {
-    render(node: SNode, context: RenderingContext): VNode {
+export class CircularNodeView extends AnchorableView {
+    render(node: SNode | SPort, context: RenderingContext): VNode {
         const radius = this.getRadius(node)
         return <g>
             <circle class-node={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
@@ -35,7 +35,7 @@ export class CircularNodeView extends SNodeView {
         </g>
     }
 
-    protected getRadius(node: SNode): number {
+    protected getRadius(node: SNode | SPort): number {
         const d = Math.min(node.size.width, node.size.height)
         if (d > 0)
             return d / 2
@@ -43,7 +43,7 @@ export class CircularNodeView extends SNodeView {
             return 0
     }
 
-    getAnchor(node: SNode, refPoint: Point): Point {
+    getAnchor(node: SNode | SPort, refPoint: Point): Point {
         const radius = this.getRadius(node)
         const cx = node.position.x + radius
         const cy = node.position.y + radius
@@ -59,16 +59,16 @@ export class CircularNodeView extends SNodeView {
     }
 }
 
-export class RectangularNodeView extends SNodeView {
+export class RectangularNodeView extends AnchorableView {
 
-    render(node: SNode, context: RenderingContext): VNode {
+    render(node: SNode | SPort, context: RenderingContext): VNode {
         return <g>
             <rect class-node={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
                   x="0" y="0" width={node.size.width} height={node.size.height}></rect>
         </g>
     }
 
-    getAnchor(node: SNode, refPoint: Point): Point {
+    getAnchor(node: SNode | SPort, refPoint: Point): Point {
         const bounds = node.bounds
         const c = center(bounds)
         const finder = new NearestPointFinder(c, refPoint)

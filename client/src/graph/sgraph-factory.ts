@@ -12,7 +12,7 @@ import {
 } from "../base/model/smodel"
 import { getBasicType } from "../base/model/smodel-utils"
 import {
-    SCompartment, SEdge, SEdgeSchema, SGraph, SGraphSchema, SLabel, SLabelSchema, SNode, SNodeSchema
+    SCompartment, SEdge, SEdgeSchema, SGraph, SGraphSchema, SLabel, SLabelSchema, SNode, SNodeSchema, SPortSchema, SPort
 } from "./sgraph"
 
 @injectable()
@@ -21,6 +21,8 @@ export class SGraphFactory extends SModelFactory {
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
         if (this.isNodeSchema(schema))
             return this.initializeChild(new SNode(), schema, parent)
+        else if (this.isPortSchema(schema))
+            return this.initializeChild(new SPort(), schema, parent)
         else if (this.isEdgeSchema(schema))
             return this.initializeChild(new SEdge(), schema, parent)
         else if (this.isLabelSchema(schema))
@@ -44,6 +46,10 @@ export class SGraphFactory extends SModelFactory {
 
     isNodeSchema(schema: SModelElementSchema): schema is SNodeSchema {
         return getBasicType(schema) === 'node'
+    }
+
+    isPortSchema(schema: SModelElementSchema): schema is SPortSchema {
+        return getBasicType(schema) === 'port'
     }
 
     isEdgeSchema(schema: SModelElementSchema): schema is SEdgeSchema {

@@ -23,6 +23,7 @@ import org.eclipse.elk.core.options.Direction
 import org.eclipse.elk.core.options.PortConstraints
 import org.eclipse.elk.core.options.PortSide
 import org.eclipse.elk.core.options.SizeConstraint
+import org.eclipse.elk.graph.ElkConnectableShape
 import org.eclipse.elk.graph.ElkEdge
 import org.eclipse.elk.graph.ElkNode
 import org.eclipse.elk.graph.util.ElkGraphUtil
@@ -55,9 +56,9 @@ class MulticoreAllocationLayoutEngine extends ElkLayoutEngine {
 		}
 	}
 	
-	override protected resolveReferences(ElkEdge elkEdge, SEdge sedge, Map<String, ElkNode> id2NodeMap, LayoutContext context) {
+	override protected resolveReferences(ElkEdge elkEdge, SEdge sedge, Map<String, ElkConnectableShape> id2NodeMap, LayoutContext context) {
 		val source = id2NodeMap.get(sedge.sourceId)
-		if (source !== null) {
+		if (source instanceof ElkNode) {
 			val index = if (sedge instanceof FlowEdge) sedge.sourceIndex
 			if (index === null)
 				elkEdge.sources.add(source)
@@ -70,7 +71,7 @@ class MulticoreAllocationLayoutEngine extends ElkLayoutEngine {
 			}
 		}
 		val target = id2NodeMap.get(sedge.targetId)
-		if (target !== null) {
+		if (target instanceof ElkNode) {
 			val index = if (sedge instanceof FlowEdge) sedge.targetIndex
 			if (index === null)
 				elkEdge.targets.add(target)

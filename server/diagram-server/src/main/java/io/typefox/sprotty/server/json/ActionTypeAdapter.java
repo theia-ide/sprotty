@@ -30,10 +30,11 @@ import io.typefox.sprotty.api.UpdateModelAction;
 
 public class ActionTypeAdapter extends PropertyBasedTypeAdapter<Action> {
 	
-	public static void configureGson(GsonBuilder gsonBuilder) {
+	public static GsonBuilder configureGson(GsonBuilder gsonBuilder) {
 		gsonBuilder
 				.registerTypeAdapterFactory(new ActionTypeAdapter.Factory())
 				.registerTypeAdapterFactory(new EnumTypeAdapter.Factory());
+		return gsonBuilder;
 	}
 	
 	public static class Factory implements TypeAdapterFactory {

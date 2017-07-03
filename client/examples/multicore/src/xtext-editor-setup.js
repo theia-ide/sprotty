@@ -14,7 +14,7 @@ require.config({
     paths: {
         'jquery': 'webjars/jquery/2.2.4/jquery.min',
         'ace/ext/language_tools': 'webjars/ace/1.2.3/src/ext-language_tools',
-        'xtext/xtext-ace': 'xtext/2.11.0/xtext-ace'
+        'xtext/xtext-ace': 'xtext/2.12.0/xtext-ace'
     }
 });
 require(['webjars/ace/1.2.3/src/ace'], function() {
