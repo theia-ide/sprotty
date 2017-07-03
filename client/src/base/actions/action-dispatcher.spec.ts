@@ -13,8 +13,7 @@ import { TYPES } from "../types"
 import { EMPTY_BOUNDS } from '../../utils/geometry'
 import { InitializeCanvasBoundsAction } from '../features/initialize-canvas'
 import { RedoAction, UndoAction } from "../../features/undo-redo/undo-redo"
-import { EMPTY_ROOT } from "../model/smodel-factory"
-import { Command, CommandExecutionContext, CommandResult } from '../commands/command'
+import { Command, CommandExecutionContext, CommandResult, ICommand } from '../commands/command'
 import { ICommandStack } from "../commands/command-stack"
 import { IActionDispatcher } from "./action-dispatcher"
 import { ActionHandlerRegistry } from "./action-handler"
@@ -27,24 +26,22 @@ describe('ActionDispatcher', () => {
     let undoCount = 0
     let redoCount = 0
 
-    const promise = Promise.resolve(EMPTY_ROOT)
-
     const mockCommandStack: ICommandStack = {
-        execute() {
+        execute(command: ICommand) {
             ++execCount
-            return promise
+            return null!
         },
-        executeAll() {
+        executeAll(commands: ICommand[]) {
             ++execCount
-            return promise
+            return null!
         },
         undo() {
             ++undoCount
-            return promise
+            return null!
         },
         redo() {
             ++redoCount
-            return promise
+            return null!
         }
     }
 
