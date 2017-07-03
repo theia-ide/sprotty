@@ -92,13 +92,22 @@ export type CommandStackProvider = () => Promise<ICommandStack>
 @injectable()
 export class CommandStack implements ICommandStack {
 
+    protected currentPromise: Promise<CommandStackState>
+
     constructor(@inject(TYPES.IModelFactory) protected modelFactory: IModelFactory,
                 @inject(TYPES.IViewerProvider) protected viewerProvider: IViewerProvider,
                 @inject(TYPES.ILogger) protected logger: ILogger,
                 @inject(TYPES.AnimationFrameSyncer) protected syncer: AnimationFrameSyncer,
-                @inject(TYPES.CommandStackOptions) protected options: CommandStackOptions) {}
-
-    protected currentPromise: Promise<CommandStackState> = Promise.resolve({root: EMPTY_ROOT})
+                @inject(TYPES.CommandStackOptions) protected options: CommandStackOptions) {
+        this.currentPromise = Promise.resolve({
+            root: modelFactory.createRoot(EMPTY_ROOT),
+            hiddenRoot: undefined,
+            popupRoot: undefined,
+            rootChanged: false,
+            hiddenRootChanged: false,
+            popupChanged: false
+        })
+    }
 
     protected viewer: IViewer
 
