@@ -8,7 +8,7 @@
 import { Container, ContainerModule } from "inversify"
 import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphView, SLabelView, SCompartmentView,
-    ControlPointView, PolylineEdgeView, ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule,
+    RoutingPointView, PolylineEdgeView, ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule,
     selectModule, undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView,
     editModule
 } from "../../../src"
@@ -46,8 +46,8 @@ export default (useWebsocket: boolean, containerId: string) => {
     viewRegistry.register('edge:straight', PolylineEdgeView)
     viewRegistry.register('html', HtmlRootView)
     viewRegistry.register('pre-rendered', PreRenderedView)
-    viewRegistry.register('volatile-control-point', ControlPointView)
-    viewRegistry.register('control-point', ControlPointView)
+    viewRegistry.register('volatile-routing-point', RoutingPointView)
+    viewRegistry.register('routing-point', RoutingPointView)
 
     return container
 }

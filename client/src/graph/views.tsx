@@ -12,7 +12,7 @@ import { setAttr } from '../base/views/vnode-utils'
 import { RenderingContext, IView } from "../base/views/view"
 import { SModelElement, SChildElement } from "../base/model/smodel"
 import { getSubType, translatePoint } from "../base/model/smodel-utils"
-import { SCompartment, SControlPoint, SEdge, SGraph, SLabel, SNode, SPort } from "./sgraph"
+import { SCompartment, SRoutingPoint, SEdge, SGraph, SLabel, SNode, SPort } from "./sgraph"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -74,8 +74,8 @@ export class PolylineEdgeView implements IView {
         </g>
     }
 
-    protected findPosition(p: SControlPoint | Point): Point {
-        if (p instanceof SControlPoint) {
+    protected findPosition(p: SRoutingPoint | Point): Point {
+        if (p instanceof SRoutingPoint) {
             return p.position
         } else {
             return p
