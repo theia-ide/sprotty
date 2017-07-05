@@ -88,7 +88,7 @@ export class PolylineEdgeView implements IView {
         if (edge.routingPoints !== undefined && edge.routingPoints.length >= 1) {
             // Use the first routing point as start anchor reference
             let p0 = edge.routingPoints[0]
-            sourceAnchor = sourceView.getTranslatedAnchor(source, p0.position, edge)
+            sourceAnchor = sourceView.getTranslatedAnchor(source, this.findPosition(p0.position, edge))
         } else {
             // Use the target center as start anchor reference
             const reference = center(target.bounds)
