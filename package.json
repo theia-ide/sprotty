@@ -1,0 +1,16 @@
+{
+  "name": "sprotty-root",
+  "version": "0.0.0",
+  "description": "Root project of sprotty used for GitHub dependencies",
+  "license": "Apache-2.0",
+  "repository": {
+    "type": "git",
+    "url": "https://github.com/theia-ide/sprotty.git"
+  },
+  "files": [
+    "client"
+  ],
+  "dependencies": {
+      "sprotty": "file:client"
+  }
+}
