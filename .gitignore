@@ -1,2 +1,4 @@
 client/coverage
 client/.nyc_output
+org.eclipse.wst.common.component
+org.eclipse.wst.common.project.facet.core.xml
