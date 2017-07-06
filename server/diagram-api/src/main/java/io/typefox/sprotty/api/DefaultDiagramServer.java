@@ -30,6 +30,10 @@ public class DefaultDiagramServer implements IDiagramServer {
 	
 	private IDiagramSelectionListener diagramSelectionListener;
 	
+	private boolean needsClientLayout = true;
+	
+	private boolean needsServerLayout = false;
+	
 	public DefaultDiagramServer() {
 		currentRoot = new SModelRoot();
 		currentRoot.setType("NONE");
@@ -129,16 +133,22 @@ public class DefaultDiagramServer implements IDiagramServer {
 	 * Whether the client needs to compute the layout of parts of the model.
 	 */
 	protected boolean needsClientLayout(SModelRoot root) {
-		// Override in subclasses
-		return true;
+		return needsClientLayout;
+	}
+	
+	public void setNeedsClientLayout(boolean value) {
+		this.needsClientLayout = value;
 	}
 	
 	/**
 	 * Whether the server needs to compute the layout of parts of the model.
 	 */
 	protected boolean needsServerLayout(SModelRoot root) {
-		// Override in subclasses
-		return false;
+		return needsServerLayout;
+	}
+	
+	public void setNeedsServerLayout(boolean value) {
+		this.needsServerLayout = value;
 	}
 	
 	/**
