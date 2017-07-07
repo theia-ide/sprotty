@@ -133,16 +133,16 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	
 	protected void resolveReferences(ElkEdge elkEdge, SEdge sedge, Map<String, ElkConnectableShape> id2NodeMap, LayoutContext context) {
 		ElkConnectableShape source = id2NodeMap.get(sedge.getSourceId());
-		if (source != null)
-			elkEdge.getSources().add(source);
 		ElkConnectableShape target = id2NodeMap.get(sedge.getTargetId());
-		if (target != null)
+		if (source != null && target != null) {
+			elkEdge.getSources().add(source);
 			elkEdge.getTargets().add(target);
-		ElkNode container = ElkGraphUtil.findBestEdgeContainment(elkEdge);
-		if (container != null)
-			elkEdge.setContainingNode(container);
-		else
-			elkEdge.setContainingNode(context.elkGraph);
+			ElkNode container = ElkGraphUtil.findBestEdgeContainment(elkEdge);
+			if (container != null)
+				elkEdge.setContainingNode(container);
+			else
+				elkEdge.setContainingNode(context.elkGraph);
+		}
 	}
 	
 	protected ElkNode createNode(SNode snode) {
