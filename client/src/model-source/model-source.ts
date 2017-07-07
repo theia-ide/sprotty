@@ -13,6 +13,7 @@ import { IActionDispatcher } from "../base/actions/action-dispatcher"
 import { ViewerOptions } from "../base/views/viewer-options"
 import { RequestModelAction, SetModelCommand } from "../base/features/set-model"
 import { ICommand } from "../base/commands/command"
+import { ExportSvgAction } from '../features/export/svg-exporter'
 
 /**
  * A model source is serving the model to the event cycle. It represents
@@ -47,6 +48,7 @@ export abstract class ModelSource implements IActionHandler {
 
         // Register this model source
         registry.register(RequestModelAction.KIND, this)
+        registry.register(ExportSvgAction.KIND, this)
     }
 
     abstract handle(action: Action): ICommand | Action | void

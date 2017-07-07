@@ -21,6 +21,7 @@
     stroke-width: 0;
     fill: #000;
     font-weight: inherit;
+    font-size: 100%;
 }
 
 .core.selected {

@@ -9,7 +9,8 @@ import { Container, ContainerModule } from "inversify"
 import {
     SCompartmentView, SLabelView, defaultModule, TYPES, ViewRegistry, overrideViewerOptions,
     ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, selectModule, viewportModule,
-    moveModule, fadeModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView
+    moveModule, fadeModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView, 
+    exportModule
 } from '../../../src'
 import { ChipModelFactory } from "./chipmodel-factory"
 import { ProcessorView, CoreView, CrossbarView, ChannelView, SimpleCoreView } from "./views"
@@ -22,7 +23,7 @@ const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
 
 export default (useWebsocket: boolean) => {
     const container = new Container()
-    container.load(defaultModule, boundsModule, selectModule, moveModule, viewportModule, fadeModule, multicoreModule, hoverModule)
+    container.load(defaultModule, boundsModule, selectModule, moveModule, viewportModule, fadeModule, multicoreModule, exportModule, hoverModule)
     if (useWebsocket)
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else

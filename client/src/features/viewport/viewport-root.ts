@@ -8,13 +8,15 @@
 import { Bounds, Point, isBounds, isValidDimension } from "../../utils/geometry"
 import { SModelRoot } from "../../base/model/smodel"
 import { Viewport, viewportFeature } from "./model"
+import { Exportable, exportFeature } from "../export/model"
 
-export class ViewportRootElement extends SModelRoot implements Viewport {
+export class ViewportRootElement extends SModelRoot implements Viewport, Exportable {
     scroll: Point = { x: 0, y: 0 }
     zoom: number = 1
+    export: boolean = false
 
     hasFeature(feature: symbol) {
-        return feature === viewportFeature
+        return feature === viewportFeature || feature === exportFeature
     }
 
     localToParent(point: Point | Bounds): Bounds {

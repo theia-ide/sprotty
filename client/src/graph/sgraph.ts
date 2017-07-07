@@ -5,14 +5,14 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SChildElement, SModelElementSchema, SModelRootSchema } from "../base/model/smodel"
-import { Bounds, Point, ORIGIN_POINT, Dimension, EMPTY_DIMENSION, isBounds } from "../utils/geometry"
-import { ViewportRootElement } from "../features/viewport/viewport-root"
-import { Selectable, selectFeature } from "../features/select/model"
-import { Locateable, moveFeature } from "../features/move/model"
-import { BoundsAware, boundsFeature, layoutFeature, Layouting } from "../features/bounds/model"
-import { Fadeable, fadeFeature } from "../features/fade/model"
-import { Hoverable, hoverFeedbackFeature, popupFeature } from "../features/hover/model"
+import { SChildElement, SModelElementSchema, SModelRootSchema } from '../base/model/smodel'
+import { BoundsAware, boundsFeature, layoutFeature, Layouting } from '../features/bounds/model'
+import { Fadeable, fadeFeature } from '../features/fade/model'
+import { Hoverable, hoverFeedbackFeature, popupFeature } from '../features/hover/model'
+import { Locateable, moveFeature } from '../features/move/model'
+import { Selectable, selectFeature } from '../features/select/model'
+import { ViewportRootElement } from '../features/viewport/viewport-root'
+import { Bounds, Dimension, EMPTY_DIMENSION, isBounds, ORIGIN_POINT, Point } from '../utils/geometry'
 
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]

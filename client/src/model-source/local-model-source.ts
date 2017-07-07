@@ -20,6 +20,8 @@ import { Match, applyMatches } from "../features/update/model-matching"
 import { UpdateModelAction, UpdateModelCommand } from "../features/update/update-model"
 import { RequestPopupModelAction, SetPopupModelAction } from "../features/hover/hover"
 import { ModelSource } from "./model-source"
+import { ExportSvgAction } from '../features/export/svg-exporter'
+import { saveAs } from 'file-saver'
 
 export type PopupModelFactory = (request: RequestPopupModelAction, element?: SModelElementSchema)
     => SModelRootSchema | undefined
@@ -165,6 +167,9 @@ export class LocalModelSource extends ModelSource {
             case RequestPopupModelAction.KIND:
                 this.handleRequestPopupModel(action as RequestPopupModelAction)
                 break
+            case ExportSvgAction.KIND:
+                this.handleExportSvgAction(action as ExportSvgAction)
+                break
         }
     }
 
@@ -202,5 +207,10 @@ export class LocalModelSource extends ModelSource {
                 this.actionDispatcher.dispatch(new SetPopupModelAction(popupRoot))
             }
         }
+    }
+
+    protected handleExportSvgAction(action: ExportSvgAction): void {
+        const blob = new Blob([action.svg], {type: "text/plain;charset=utf-8"})
+        saveAs(blob, "diagram.svg")
     }
 }
