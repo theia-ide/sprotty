@@ -8,7 +8,7 @@
 import {
     SCompartmentElementSchema, SShapeElement, SChildElement, SModelElementSchema, SModelRootSchema,
     Bounds, Direction, BoundsAware, boundsFeature, Fadeable, fadeFeature, layoutFeature, Layouting, Selectable,
-    selectFeature, viewportFeature, ViewportRootElement, hoverFeedbackFeature, Hoverable, popupFeature
+    selectFeature, ViewportRootElement, hoverFeedbackFeature, Hoverable, popupFeature
 } from '../../../src'
 import { CORE_DISTANCE, CORE_WIDTH } from "./views"
 
@@ -31,7 +31,7 @@ export class Processor extends ViewportRootElement implements BoundsAware {
     }
 
     hasFeature(feature: symbol): boolean {
-        return feature === viewportFeature || feature === boundsFeature
+        return feature === boundsFeature || super.hasFeature(feature)
     }
 }
 

@@ -15,9 +15,11 @@ import { ICommand, CommandExecutionContext, MergeableCommand } from "../../base/
 import { Animation } from "../../base/animations/animation"
 import { MouseListener } from "../../base/views/mouse-tool"
 import { setAttr } from "../../base/views/vnode-utils"
+import { IVNodeDecorator } from "../../base/views/vnode-decorators"
 import { isViewport } from "../viewport/model"
 import { isSelectable } from "../select/model"
 import { isMoveable, Locateable, isLocateable } from "./model"
+import { injectable } from "inversify"
 
 export class MoveAction implements Action {
     kind = MoveCommand.KIND
@@ -199,10 +201,21 @@ export class MoveMouseListener extends MouseListener {
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
+        return vnode
+    }
+}
+
+@injectable()
+export class LocationDecorator implements IVNodeDecorator {
+
+    decorate(vnode: VNode, element: SModelElement): VNode {
         if (isLocateable(element) && element instanceof SChildElement && element.parent !== undefined) {
             const translate = 'translate(' + element.position.x + ', ' + element.position.y + ')'
             setAttr(vnode, 'transform', translate)
         }
         return vnode
+    }
+
+    postUpdate(): void {
     }
 }

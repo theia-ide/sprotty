@@ -21,6 +21,8 @@ import { UpdateModelCommand, UpdateModelAction } from "../features/update/update
 import { ComputedBoundsAction, RequestBoundsCommand } from '../features/bounds/bounds-manipulation'
 import { RequestPopupModelAction } from "../features/hover/hover"
 import { ModelSource } from "./model-source"
+import { ExportSvgAction } from '../features/export/svg-exporter'
+import { saveAs } from 'file-saver'
 
 /**
  * Wrapper for messages when transferring them vie a DiagramServer.
@@ -74,6 +76,8 @@ export abstract class DiagramServer extends ModelSource {
 
     handle(action: Action): void | ICommand {
         this.storeNewModel(action)
+        if (action.kind === ExportSvgAction.KIND)
+            return this.handleExportSvgAction(action as ExportSvgAction)
 
         if (action.kind === ComputedBoundsAction.KIND && !this.viewerOptions.needsServerLayout)
             return this.handleComputedBounds(action as ComputedBoundsAction)
@@ -130,5 +134,10 @@ export abstract class DiagramServer extends ModelSource {
         const e = element as any
         e.position = { x: newBounds.x, y: newBounds.y }
         e.size = { width: newBounds.width, height: newBounds.height }
+    }
+
+    protected handleExportSvgAction(action: ExportSvgAction): void {
+        const blob = new Blob([action.svg], {type: "text/plain;charset=utf-8"})
+        saveAs(blob, "diagram.svg")
     }
 }

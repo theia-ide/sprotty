@@ -60,8 +60,8 @@ export default function runClassDiagram() {
         id: 'node1',
         type: 'node:class',
         position: {
-            x: 300,
-            y: 100
+            x: 500,
+            y: 200
         },
         layout: 'vbox',
         children: [

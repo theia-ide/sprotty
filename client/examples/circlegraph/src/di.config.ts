@@ -9,7 +9,7 @@ import { Container, ContainerModule } from "inversify"
 import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphFactory, SGraphView, PolylineEdgeView,
     ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule, undoRedoModule,
-    viewportModule, LocalModelSource
+    viewportModule, LocalModelSource, exportModule
 } from "../../../src"
 import { CircleNodeView } from "./views"
 
@@ -21,7 +21,7 @@ const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) =>
 
 export default (useWebsocket: boolean) => {
     const container = new Container()
-    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, circlegraphModule)
+    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, exportModule, circlegraphModule)
     if (useWebsocket)
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else

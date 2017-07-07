@@ -9,7 +9,8 @@ import { Container, ContainerModule } from "inversify"
 import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphView, SLabelView, SCompartmentView,
     PolylineEdgeView, ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule,
-    undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView
+    undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView, 
+    exportModule
 } from "../../../src"
 import { ClassNodeView } from "./views"
 import { ClassDiagramFactory } from "./model-factory"
@@ -24,7 +25,7 @@ const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) =
 
 export default (useWebsocket: boolean, containerId: string) => {
     const container = new Container()
-    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, hoverModule, classDiagramModule)
+    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, hoverModule, exportModule, classDiagramModule)
     if (useWebsocket)
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else

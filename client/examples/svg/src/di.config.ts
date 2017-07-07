@@ -8,7 +8,8 @@
 import { Container, ContainerModule } from "inversify"
 import {
     defaultModule, TYPES, ViewRegistry, ConsoleLogger, LogLevel, boundsModule, moveModule, selectModule,
-    undoRedoModule, viewportModule, hoverModule, LocalModelSource, PreRenderedView, SvgViewportView
+    undoRedoModule, viewportModule, hoverModule, LocalModelSource, PreRenderedView, SvgViewportView, 
+    exportModule
 } from "../../../src"
 import { SvgFactory } from "./model-factory"
 
@@ -21,7 +22,7 @@ const svgModule = new ContainerModule((bind, unbind, isBound, rebind) => {
 
 export default () => {
     const container = new Container()
-    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, hoverModule, svgModule)
+    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, hoverModule, exportModule, svgModule)
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)

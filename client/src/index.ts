@@ -52,6 +52,9 @@ export * from "./features/bounds/layout"
 export * from "./features/bounds/model"
 export * from "./features/bounds/vbox-layout"
 
+export * from "./features/export/export"
+export * from "./features/export/model"
+
 export * from "./features/fade/fade"
 export * from "./features/fade/model"
 
@@ -83,7 +86,8 @@ import selectModule from "./features/select/di.config"
 import undoRedoModule from "./features/undo-redo/di.config"
 import viewportModule from "./features/viewport/di.config"
 import hoverModule from "./features/hover/di.config"
-export { moveModule, boundsModule, fadeModule, selectModule, undoRedoModule, viewportModule, hoverModule }
+import exportModule from "./features/export/di.config"
+export { moveModule, boundsModule, fadeModule, selectModule, undoRedoModule, viewportModule, hoverModule, exportModule }
 
 
 // ------------------ Graph ------------------

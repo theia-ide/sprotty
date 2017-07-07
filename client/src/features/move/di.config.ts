@@ -6,12 +6,14 @@
  */
 
 import { ContainerModule } from "inversify"
-import { TYPES } from "../../base/types"
-import { MoveCommand, MoveMouseListener } from "./move"
+import { TYPES } from '../../base/types'
+import { MoveCommand, MoveMouseListener, LocationDecorator } from './move'
 
 const moveModule = new ContainerModule(bind => {
     bind(TYPES.MouseListener).to(MoveMouseListener)
     bind(TYPES.ICommand).toConstructor(MoveCommand)
+    bind(TYPES.IVNodeDecorator).to(LocationDecorator)
+    bind(TYPES.HiddenVNodeDecorator).to(LocationDecorator)
 })
 
 export default moveModule

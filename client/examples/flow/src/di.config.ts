@@ -9,7 +9,7 @@ import { Container, ContainerModule } from "inversify"
 import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, ConsoleLogger, LogLevel, WebSocketDiagramServer,
     boundsModule, moveModule, fadeModule, hoverModule, viewportModule, selectModule, SGraphView, LocalModelSource,
-    HtmlRootView, PreRenderedView
+    HtmlRootView, PreRenderedView, exportModule
 } from "../../../src"
 import { FlowModelFactory } from "./flowmodel-factory"
 import { TaskNodeView, BarrierNodeView, FlowEdgeView } from "./views"
@@ -22,7 +22,7 @@ const flowModule = new ContainerModule((bind, unbind, isBound, rebind) => {
 
 export default (useWebsocket: boolean) => {
     const container = new Container()
-    container.load(defaultModule, selectModule, moveModule, boundsModule, fadeModule, viewportModule, flowModule, hoverModule)
+    container.load(defaultModule, selectModule, moveModule, boundsModule, fadeModule, viewportModule, flowModule, exportModule, hoverModule)
     if (useWebsocket)
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else
