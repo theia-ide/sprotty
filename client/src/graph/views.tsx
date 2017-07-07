@@ -12,7 +12,7 @@ import { setAttr } from '../base/views/vnode-utils'
 import { RenderingContext, IView } from "../base/views/view"
 import { SModelElement, SChildElement } from "../base/model/smodel"
 import { getSubType, translatePoint } from "../base/model/smodel-utils"
-import { SCompartment, SEdge, SGraph, SLabel, SNode, SPort } from "./sgraph"
+import { SCompartment, SRoutingPoint, SEdge, SGraph, SLabel, SNode, SPort } from "./sgraph"
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -67,11 +67,19 @@ export class PolylineEdgeView implements IView {
 
         const segments = this.computeSegments(edge, source, sourceView, target, targetView)
 
-        return <g>
+        return <g class-edge={true} class-mouseover={edge.hoverFeedback}>
             {this.renderLine(edge, segments, context)}
             {this.renderAdditionals(edge, segments, context)}
             {context.renderChildren(edge)}
         </g>
+    }
+
+    protected findPosition(p: SRoutingPoint | Point): Point {
+        if (p instanceof SRoutingPoint) {
+            return p.position
+        } else {
+            return p
+        }
     }
 
     protected computeSegments(edge: SEdge, source: SNode | SPort, sourceView: AnchorableView,
@@ -80,7 +88,7 @@ export class PolylineEdgeView implements IView {
         if (edge.routingPoints !== undefined && edge.routingPoints.length >= 1) {
             // Use the first routing point as start anchor reference
             let p0 = edge.routingPoints[0]
-            sourceAnchor = sourceView.getTranslatedAnchor(source, p0, edge)
+            sourceAnchor = sourceView.getTranslatedAnchor(source, this.findPosition(p0.position, edge))
         } else {
             // Use the target center as start anchor reference
             const reference = center(target.bounds)
@@ -88,30 +96,33 @@ export class PolylineEdgeView implements IView {
         }
         const result: Point[] = [sourceAnchor]
         let previousPoint = sourceAnchor
+        edge.anchors.sourceAnchor = sourceAnchor
 
-        for (let i = 0; i < edge.routingPoints.length - 1; i++) {
+        for (let i = 0; i < edge.routingPoints.length; i++) {
             const p = edge.routingPoints[i]
-            if (manhattanDistance(previousPoint, p) >= this.minimalPointDistance) {
-                result.push(p)
-                previousPoint = p
+            const pPosition = this.findPosition(p)
+            if (manhattanDistance(previousPoint, pPosition) >= this.minimalPointDistance) {
+                result.push(pPosition)
+                previousPoint = pPosition
             }
         }
 
         let targetAnchor: Point
-        if (edge.routingPoints && edge.routingPoints.length >= 2) {
+        if (edge.routingPoints && edge.routingPoints.length >= 1) {
             // Use the last routing point as end anchor reference
             let pn = edge.routingPoints[edge.routingPoints.length - 1]
-            targetAnchor = targetView.getTranslatedAnchor(target, pn, edge)
-            if (manhattanDistance(previousPoint, pn) >= this.minimalPointDistance
-                    && manhattanDistance(pn, targetAnchor) >= this.minimalPointDistance) {
-                result.push(pn)
+            targetAnchor = targetView.getTranslatedAnchor(target, pn.position, edge)
+            if (manhattanDistance(previousPoint, pn.position) >= this.minimalPointDistance
+                && manhattanDistance(pn.position, targetAnchor) >= this.minimalPointDistance) {
+                result.push(pn.position)
+            } else {
+                // Use the source center as end anchor reference
+                const reference = center(source.bounds)
+                targetAnchor = targetView.getTranslatedAnchor(target, reference, source, edge)
             }
-        } else {
-            // Use the source center as end anchor reference
-            const reference = center(source.bounds)
-            targetAnchor = targetView.getTranslatedAnchor(target, reference, source, edge)
+            result.push(targetAnchor)
+            edge.anchors.targetAnchor = targetAnchor
         }
-        result.push(targetAnchor)
         return result
     }
 
@@ -126,7 +137,7 @@ export class PolylineEdgeView implements IView {
     }
 
     protected renderAdditionals(edge: SEdge, segments: Point[], context: RenderingContext): VNode[] {
-        return []
+        return context.renderChildren(edge)
     }
 
     protected renderDanglingEdge(message: string, edge: SEdge, context: RenderingContext): VNode {

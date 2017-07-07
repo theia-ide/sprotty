@@ -8,8 +8,9 @@
 import { Container, ContainerModule } from "inversify"
 import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphView, SLabelView, SCompartmentView,
-    PolylineEdgeView, ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule,
-    undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView
+    RoutingPointView, PolylineEdgeView, ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule,
+    selectModule, undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView,
+    editModule
 } from "../../../src"
 import { ClassNodeView } from "./views"
 import { ClassDiagramFactory } from "./model-factory"
@@ -24,7 +25,8 @@ const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) =
 
 export default (useWebsocket: boolean, containerId: string) => {
     const container = new Container()
-    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, hoverModule, classDiagramModule)
+    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule,
+        hoverModule, classDiagramModule, editModule)
     if (useWebsocket)
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else
@@ -44,6 +46,8 @@ export default (useWebsocket: boolean, containerId: string) => {
     viewRegistry.register('edge:straight', PolylineEdgeView)
     viewRegistry.register('html', HtmlRootView)
     viewRegistry.register('pre-rendered', PreRenderedView)
+    viewRegistry.register('volatile-routing-point', RoutingPointView)
+    viewRegistry.register('routing-point', RoutingPointView)
 
     return container
 }

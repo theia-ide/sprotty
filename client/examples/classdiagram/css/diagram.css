@@ -27,12 +27,6 @@
     text-align: inherit;
 }
 
-.edge {
-    fill: none;
-    stroke: #488;
-    stroke-width: 2;
-}
-
 .node.selected {
     stroke: #152;
     stroke-width: 5;
@@ -58,4 +52,41 @@
 
 .popup-body > p {
     margin-bottom: 2px;
+}
+
+.edge {
+    fill: none;
+    stroke: #488;
+    stroke-width: 2px;
+}
+
+.edge.edit path {
+    stroke: #00F;
+}
+
+.edge.mouseover path{
+    stroke-width: 6px;
+}
+
+.edge.edit.mouseover path{
+    stroke-width: 2px;
+}
+
+.edge.edit .routingpoint {
+    fill: #88f;
+    stroke: none;
+}
+
+.edge .routingpoint.selected {
+    fill: #4f4;
+    stroke: none;
+}
+
+.edge .routingpoint.volatile {
+    opacity: 0.5;
+    z-index: 1000;
+}
+
+.edge .routingpoint.mouseover {
+    stroke: #ff7f24;
 }

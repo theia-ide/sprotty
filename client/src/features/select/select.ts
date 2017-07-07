@@ -70,7 +70,7 @@ export class SelectCommand extends Command {
                         element: element,
                         index: element.parent.children.indexOf(element)
                     })
-                    if (element instanceof SNode)
+                    if (element instanceof SNode || element instanceof SEdge)
                         selectedNodeIds.push(id)
                 }
             })
