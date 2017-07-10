@@ -19,3 +19,15 @@ export function isCtrlOrCmd(event: KeyboardEvent | MouseEvent) {
 export function isMac(): boolean {
     return window.navigator.userAgent.indexOf("Mac") !== -1
 }
+
+export function isCrossSite(url: string): boolean {
+    if (url && typeof window !== 'undefined' && window.location) {
+        let baseURL: string = ''
+        if (window.location.protocol) 
+            baseURL += window.location.protocol + '//'
+        if (window.location.host) 
+            baseURL += window.location.host
+        return baseURL.length > 0 && !url.startsWith(baseURL)
+    }
+    return false
+}
