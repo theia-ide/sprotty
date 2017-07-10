@@ -9,12 +9,13 @@ import { inject, injectable } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { TYPES } from "../../base/types"
 import { almostEquals, Bounds, Point } from '../../utils/geometry'
-import { SModelElement } from "../../base/model/smodel"
+import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { IVNodeDecorator } from "../../base/views/vnode-decorators"
 import { IActionDispatcher } from "../../base/actions/action-dispatcher"
 import { ComputedBoundsAction, ElementAndBounds, ElementAndAlignment } from './bounds-manipulation'
 import { BoundsAware, isSizeable, isLayouting, isAlignable } from "./model"
 import { Layouter } from "./layout"
+import { isExportable } from "../export/model"
 
 export class BoundsData {
     vnode?: VNode
@@ -44,6 +45,8 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
 
     private readonly element2boundsData: Map<SModelElement, BoundsData> = new Map
 
+    root: SModelRoot | undefined
+
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (isSizeable(element) || isLayouting(element)) {
             this.element2boundsData.set(element, {
@@ -53,10 +56,14 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
                 alignmentChanged: false
             })
         }
+        if (element instanceof SModelRoot) 
+            this.root = element
         return vnode
     }
 
     postUpdate() {
+        if (this.root !== undefined && isExportable(this.root) && this.root.export)
+            return;
         this.getBoundsFromDOM()
         this.layouter.layout(this.element2boundsData)
         const resizes: ElementAndBounds[] = []
