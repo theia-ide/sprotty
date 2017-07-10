@@ -6,10 +6,11 @@
  */
 
 import { SModelElement } from '../../base/model/smodel'
+import { SModelExtension } from '../../base/model/smodel-extension'
 
 export const exportFeature = Symbol('exportFeature')
 
-export interface Exportable {
+export interface Exportable extends SModelExtension {
     export: boolean
 }
 

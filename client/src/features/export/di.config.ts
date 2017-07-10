@@ -14,7 +14,7 @@ const exportSvgModule = new ContainerModule(bind => {
     bind(TYPES.KeyListener).to(ExportSvgKeyListener).inSingletonScope()
     bind(TYPES.HiddenVNodeDecorator).to(ExportSvgDecorator).inSingletonScope()
     bind(TYPES.ICommand).toConstructor(ExportSvgCommand)
-    bind(SvgExporter).toSelf().inSingletonScope()
+    bind(TYPES.SvgExporter).to(SvgExporter).inSingletonScope()
 })
 
 export default exportSvgModule

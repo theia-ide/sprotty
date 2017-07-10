@@ -9,20 +9,31 @@ import { Container, ContainerModule } from "inversify"
 import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, ConsoleLogger, LogLevel, WebSocketDiagramServer,
     boundsModule, moveModule, fadeModule, hoverModule, viewportModule, selectModule, SGraphView, LocalModelSource,
-    HtmlRootView, PreRenderedView, exportModule
+    HtmlRootView, PreRenderedView, exportModule, SvgExporter
 } from "../../../src"
 import { FlowModelFactory } from "./flowmodel-factory"
 import { TaskNodeView, BarrierNodeView, FlowEdgeView } from "./views"
+
+class FilteringSvgExporter extends SvgExporter {
+    isExported(styleSheet: CSSStyleSheet): boolean {
+        return styleSheet.href !== null && (
+            styleSheet.href.endsWith('diagram.css')
+            || styleSheet.href.endsWith('sprotty.css')
+            || styleSheet.href.endsWith('page.css')
+        )
+    }
+}
 
 const flowModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
     rebind(TYPES.IModelFactory).to(FlowModelFactory).inSingletonScope()
+    rebind(TYPES.SvgExporter).to(FilteringSvgExporter).inSingletonScope()
 })
 
 export default (useWebsocket: boolean) => {
     const container = new Container()
-    container.load(defaultModule, selectModule, moveModule, boundsModule, fadeModule, viewportModule, flowModule, exportModule, hoverModule)
+    container.load(defaultModule, selectModule, moveModule, boundsModule, fadeModule, viewportModule, exportModule, hoverModule, flowModule)
     if (useWebsocket)
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else

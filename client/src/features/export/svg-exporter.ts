@@ -75,12 +75,14 @@ export class SvgExporter {
         let css = '<![CDATA['
         for (let i = 0; i < document.styleSheets.length; ++i) {
             const styleSheet = document.styleSheets.item(i) as CSSStyleSheet
-            if (styleSheet.cssRules) {
-                for (let j = 0; j < styleSheet.cssRules.length; ++j)
-                    css = css + styleSheet.cssRules.item(j).cssText + ' '
-            } else {
-                if (isCrossSite(styleSheet.href))
-                    this.log.warn(this, styleSheet.href + ' is a cross-site css which cannot be inspected by some browsers. SVG may lack some styles.')
+            if (this.isExported(styleSheet)) {
+                if (styleSheet.cssRules) {
+                    for (let j = 0; j < styleSheet.cssRules.length; ++j)
+                        css = css + styleSheet.cssRules.item(j).cssText + ' '
+                } else {
+                    if (isCrossSite(styleSheet.href))
+                        this.log.warn(this, styleSheet.href + ' is a cross-site css which cannot be inspected by some browsers. SVG may lack some styles.')
+                }
             }
         }
         css += ']]>'
@@ -88,6 +90,10 @@ export class SvgExporter {
         style.setAttribute('type', 'text/css')
         style.innerText = css
         return style
+    }
+
+    protected isExported(styleSheet: CSSStyleSheet) {
+        return true
     }
 
     protected getBounds(root: SModelRoot) {
