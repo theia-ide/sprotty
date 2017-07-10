@@ -7,7 +7,7 @@
 
 import { SModelRoot, SModelRootSchema, SChildElement, SModelElementSchema } from "../base/model/smodel"
 import { Point, Dimension, ORIGIN_POINT, EMPTY_DIMENSION, Bounds } from "../utils/geometry"
-import { BoundsAware, boundsFeature } from "../features/bounds/model"
+import { BoundsAware, boundsFeature, Alignable, alignFeature } from "../features/bounds/model"
 import { Locateable, moveFeature } from "../features/move/model"
 import { Selectable, selectFeature } from "../features/select/model"
 
@@ -32,10 +32,11 @@ export interface ShapedPreRenderedElementSchema extends PreRenderedElementSchema
     size?: Dimension
 }
 
-export class ShapedPreRenderedElement extends PreRenderedElement implements BoundsAware, Locateable, Selectable {
+export class ShapedPreRenderedElement extends PreRenderedElement implements BoundsAware, Locateable, Selectable, Alignable {
     position: Point = ORIGIN_POINT
     size: Dimension = EMPTY_DIMENSION
     selected: boolean = false
+    alignment: Point = ORIGIN_POINT
 
     get bounds(): Bounds {
         return {
@@ -58,6 +59,6 @@ export class ShapedPreRenderedElement extends PreRenderedElement implements Boun
     }
 
     hasFeature(feature: symbol): boolean {
-        return feature === moveFeature || feature === boundsFeature || feature === selectFeature
+        return feature === moveFeature || feature === boundsFeature || feature === selectFeature || feature === alignFeature
     }
 }

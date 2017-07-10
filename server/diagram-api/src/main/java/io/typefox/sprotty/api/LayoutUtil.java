@@ -34,6 +34,13 @@ public final class LayoutUtil {
 				bae.setSize(new Dimension(newBounds.getWidth(), newBounds.getHeight()));
 			}
 		}
+		for (ElementAndAlignment a: action.getAlignments()) {
+			SModelElement element = index.get(a.getElementId());
+			if (element instanceof Alignable) {
+				Alignable alignable = (Alignable) element;
+				alignable.setAlignment(a.getNewAlignment());
+			}
+		}
 	}
 
 	public static void copyLayoutData(SModelRoot fromRoot, SModelRoot toRoot) {

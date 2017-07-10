@@ -64,3 +64,8 @@ interface BoundsAware {
 	def Dimension getSize()
 	def void setSize(Dimension size)
 }
+
+interface Alignable {
+	def Point getAlignment()
+	def void setAlignment(Point alignment)
+}

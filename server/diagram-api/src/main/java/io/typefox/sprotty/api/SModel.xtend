@@ -92,10 +92,11 @@ class SCompartment extends SModelElement {
 }
 
 @Accessors@ToString
-class SLabel extends SModelElement implements BoundsAware  {
+class SLabel extends SModelElement implements BoundsAware, Alignable {
 	Point position
 	Dimension size
 	String text
+	Point alignment
 	
 	new() {}
 	new(Consumer<SLabel> initializer) {

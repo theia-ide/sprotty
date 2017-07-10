@@ -11,6 +11,10 @@ import { SModelExtension } from "../../base/model/smodel-extension"
 
 export const moveFeature = Symbol('moveFeature')
 
+/**
+ * An element that can be placed at a specific location using its position
+ * property.
+ */
 export interface Locateable extends SModelExtension {
     position: Point
 }

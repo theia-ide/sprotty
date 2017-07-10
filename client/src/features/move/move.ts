@@ -19,6 +19,7 @@ import { IVNodeDecorator } from "../../base/views/vnode-decorators"
 import { isViewport } from "../viewport/model"
 import { isSelectable } from "../select/model"
 import { isMoveable, Locateable, isLocateable } from "./model"
+import { isAlignable } from "../bounds/model"
 import { injectable } from "inversify"
 
 export class MoveAction implements Action {
@@ -209,10 +210,17 @@ export class MoveMouseListener extends MouseListener {
 export class LocationDecorator implements IVNodeDecorator {
 
     decorate(vnode: VNode, element: SModelElement): VNode {
+        let translate: string  = ''
         if (isLocateable(element) && element instanceof SChildElement && element.parent !== undefined) {
-            const translate = 'translate(' + element.position.x + ', ' + element.position.y + ')'
-            setAttr(vnode, 'transform', translate)
+            translate = 'translate(' + element.position.x + ', ' + element.position.y + ')'
         }
+        if (isAlignable(element)) {
+            if (translate.length > 0)
+                translate += ' '
+            translate += 'translate('  + element.alignment.x + ', ' + element.alignment.y + ')'
+        }
+        if (translate.length > 0)
+            setAttr(vnode, 'transform', translate)
         return vnode
     }
 

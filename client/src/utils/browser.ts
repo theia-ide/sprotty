@@ -23,7 +23,7 @@ export function isMac(): boolean {
 export function isCrossSite(url: string): boolean {
     if (url && typeof window !== 'undefined' && window.location) {
         let baseURL: string = ''
-        if (window.location.protocol) 
+        if (window.location.protocol)
             baseURL += window.location.protocol + '//'
         if (window.location.host) 
             baseURL += window.location.host
