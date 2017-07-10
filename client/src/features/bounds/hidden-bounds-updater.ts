@@ -63,7 +63,7 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
 
     postUpdate() {
         if (this.root !== undefined && isExportable(this.root) && this.root.export)
-            return;
+            return
         this.getBoundsFromDOM()
         this.layouter.layout(this.element2boundsData)
         const resizes: ElementAndBounds[] = []
