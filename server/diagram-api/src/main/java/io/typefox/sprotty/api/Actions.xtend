@@ -17,7 +17,9 @@ interface Action {
 	def String getKind()
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class ActionMessage {
 	String clientId
 	Action action
@@ -32,7 +34,9 @@ class ActionMessage {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class RequestModelAction implements Action {
 	public static val KIND = 'requestModel'
 	String kind = KIND
@@ -45,7 +49,9 @@ class RequestModelAction implements Action {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class SetBoundsAction implements Action {
     public static val KIND ='setBounds'
 	String kind = KIND
@@ -58,7 +64,9 @@ class SetBoundsAction implements Action {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class ElementAndBounds {
     String elementId
     Bounds newBounds
@@ -69,7 +77,9 @@ class ElementAndBounds {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class ElementAndAlignment{
     String elementId
     Point newAlignment
@@ -80,7 +90,9 @@ class ElementAndAlignment{
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class SetModelAction implements Action {
 	public static val KIND = 'setModel'
 	String kind = KIND
@@ -96,7 +108,9 @@ class SetModelAction implements Action {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class SelectAction implements Action {
 	public static val KIND = 'elementSelected'
 	String kind = KIND
@@ -112,7 +126,9 @@ class SelectAction implements Action {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class UpdateModelAction implements Action {
 	public static val KIND = 'updateModel'
 	String kind = KIND
@@ -128,7 +144,9 @@ class UpdateModelAction implements Action {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class RequestBoundsAction implements Action {
 	public static val KIND = 'requestBounds'
 	String kind = KIND
@@ -144,7 +162,9 @@ class RequestBoundsAction implements Action {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class ComputedBoundsAction implements Action {
 	public static val KIND = 'computedBounds'
 	String kind = KIND
@@ -158,7 +178,9 @@ class ComputedBoundsAction implements Action {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class FitToScreenAction implements Action {
 	public static val KIND = 'fit'
 	String kind = KIND
@@ -174,7 +196,9 @@ class FitToScreenAction implements Action {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class RequestPopupModelAction implements Action {
 	public static val KIND = 'requestPopupModel'
 	String kind = KIND
@@ -188,7 +212,9 @@ class RequestPopupModelAction implements Action {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class SetPopupModelAction implements Action {
 	public static val KIND = 'setPopupModel'
 	String kind = KIND

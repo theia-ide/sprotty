@@ -10,7 +10,9 @@ import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
 import org.eclipse.xtend.lib.annotations.ToString
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class Point {
     double x
     double y
@@ -26,7 +28,9 @@ class Point {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class Dimension {
     double width = -1
     double height = -1
@@ -42,7 +46,9 @@ class Dimension {
 	}
 }
 
-@Accessors@EqualsHashCode@ToString
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
 class Bounds {
     double x
     double y

@@ -12,11 +12,13 @@ import io.typefox.sprotty.api.SNode
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.ToString
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class Flow extends SGraph {
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class TaskNode extends SNode {
 	String name
 	String status
@@ -24,12 +26,14 @@ class TaskNode extends SNode {
 	int kernelNr
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class BarrierNode extends SNode {
 	String name	
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class FlowEdge extends SEdge {
 	transient Integer sourceIndex
 	transient Integer targetIndex

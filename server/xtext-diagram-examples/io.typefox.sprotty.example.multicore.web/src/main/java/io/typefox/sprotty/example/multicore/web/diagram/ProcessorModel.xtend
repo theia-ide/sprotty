@@ -12,13 +12,15 @@ import java.util.function.Consumer
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.ToString
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class Processor extends SModelRoot {
 	int rows
 	int columns
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class Core extends SModelElement {
 	int row
 	int column
@@ -34,12 +36,14 @@ class Core extends SModelElement {
 	
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class Crossbar extends SModelElement {
 	CoreDirection direction
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class Channel extends SModelElement {
 	int row
 	int column

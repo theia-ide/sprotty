@@ -11,7 +11,8 @@ import java.util.function.Consumer
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.ToString
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 abstract class SModelElement {
 	String type
 	String id
@@ -23,7 +24,8 @@ abstract class SModelElement {
 	}
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class SModelRoot extends SModelElement {
 	Bounds canvasBounds
 	
@@ -33,7 +35,8 @@ class SModelRoot extends SModelElement {
 	}
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class SGraph extends SModelRoot implements BoundsAware {
 	Point position
 	Dimension size
@@ -44,7 +47,8 @@ class SGraph extends SModelRoot implements BoundsAware {
 	}
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class SNode extends SModelElement implements BoundsAware  {
 	Point position
 	Dimension size
@@ -57,7 +61,8 @@ class SNode extends SModelElement implements BoundsAware  {
 	}
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class SPort extends SModelElement implements BoundsAware  {
 	Point position
 	Dimension size
@@ -68,7 +73,8 @@ class SPort extends SModelElement implements BoundsAware  {
 	}
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class SEdge extends SModelElement {
 	String sourceId
 	String targetId
@@ -80,7 +86,8 @@ class SEdge extends SModelElement {
 	}
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class SCompartment extends SModelElement {
 	String layout
 	Boolean resizeContainer
@@ -91,7 +98,8 @@ class SCompartment extends SModelElement {
 	}
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class SLabel extends SModelElement implements BoundsAware, Alignable {
 	Point position
 	Dimension size
@@ -104,7 +112,8 @@ class SLabel extends SModelElement implements BoundsAware, Alignable {
 	}
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class HtmlRoot extends SModelRoot {
     List<String> classes
 	
@@ -114,7 +123,8 @@ class HtmlRoot extends SModelRoot {
 	}
 }
 
-@Accessors@ToString
+@Accessors
+@ToString(skipNulls = true)
 class PreRenderedElement extends SModelElement {
 	String code
 	
