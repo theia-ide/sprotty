@@ -14,7 +14,6 @@ import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
-import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.ElkBendPoint;
@@ -49,9 +48,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	public static final IProperty<String> P_TYPE = new Property<>("io.typefox.sprotty.layout.type");
 	
 	public static void initialize(ILayoutMetaDataProvider ...providers) {
-		LayoutMetaDataService metaDataService = LayoutMetaDataService.getInstance();
-		metaDataService.registerLayoutMetaDataProviders(new CoreOptions());
-		metaDataService.registerLayoutMetaDataProviders(providers);
+		LayoutMetaDataService.getInstance().registerLayoutMetaDataProviders(providers);
 	}
 	
 	private IGraphLayoutEngine engine = new RecursiveGraphLayoutEngine();
