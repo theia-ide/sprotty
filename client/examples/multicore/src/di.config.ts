@@ -10,20 +10,31 @@ import {
     SCompartmentView, SLabelView, defaultModule, TYPES, ViewRegistry, overrideViewerOptions,
     ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, selectModule, viewportModule,
     moveModule, fadeModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView, 
-    exportModule
+    exportModule, SvgExporter
 } from '../../../src'
 import { ChipModelFactory } from "./chipmodel-factory"
 import { ProcessorView, CoreView, CrossbarView, ChannelView, SimpleCoreView } from "./views"
+
+class FilteringSvgExporter extends SvgExporter {
+    isExported(styleSheet: CSSStyleSheet): boolean {
+        return styleSheet.href !== null && (
+            styleSheet.href.endsWith('diagram.css')
+            || styleSheet.href.endsWith('sprotty.css')
+            || styleSheet.href.endsWith('page.css')
+        )
+    }
+}
 
 const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
     rebind(TYPES.IModelFactory).to(ChipModelFactory).inSingletonScope()
+    rebind(TYPES.SvgExporter).to(FilteringSvgExporter).inSingletonScope()
 })
 
 export default (useWebsocket: boolean) => {
     const container = new Container()
-    container.load(defaultModule, boundsModule, selectModule, moveModule, viewportModule, fadeModule, multicoreModule, exportModule, hoverModule)
+    container.load(defaultModule, boundsModule, selectModule, moveModule, viewportModule, fadeModule, exportModule, hoverModule, multicoreModule)
     if (useWebsocket)
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else

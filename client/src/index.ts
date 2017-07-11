@@ -54,6 +54,7 @@ export * from "./features/bounds/vbox-layout"
 
 export * from "./features/export/export"
 export * from "./features/export/model"
+export * from "./features/export/svg-exporter"
 
 export * from "./features/fade/fade"
 export * from "./features/fade/model"

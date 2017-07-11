@@ -7,7 +7,7 @@
 
 import { inject, injectable } from "inversify"
 import { TYPES } from "../base/types"
-import { Bounds } from "../utils/geometry"
+import { Bounds, Point } from "../utils/geometry"
 import { ILogger } from "../utils/logging"
 import { SModelRootSchema, SModelIndex, SModelElementSchema } from "../base/model/smodel"
 import { SModelStorage } from "../base/model/smodel-storage"
@@ -127,6 +127,13 @@ export abstract class DiagramServer extends ModelSource {
             if (element !== undefined)
                 this.applyBounds(element, b.newBounds)
         }
+        if (action.alignments !== undefined) {
+            for (const a of action.alignments) {
+                const element = index.getById(a.elementId)
+                if (element !== undefined)
+                    this.applyAlignment(element, a.newAlignment)
+            }
+        }
         this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
     }
 
@@ -134,6 +141,11 @@ export abstract class DiagramServer extends ModelSource {
         const e = element as any
         e.position = { x: newBounds.x, y: newBounds.y }
         e.size = { width: newBounds.width, height: newBounds.height }
+    }
+
+    protected applyAlignment(element: SModelElementSchema, newAlignment: Point) {
+        const e = element as any
+        e.alignment = { x: newAlignment.x, y: newAlignment.y }
     }
 
     protected handleExportSvgAction(action: ExportSvgAction): void {

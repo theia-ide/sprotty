@@ -19,6 +19,7 @@ import { SvgExporter } from './svg-exporter'
 import { EMPTY_ROOT } from '../../base/model/smodel-factory'
 import { isViewport } from '../viewport/model'
 import { isHoverable } from '../hover/model'
+import { TYPES } from '../../base/types'
 
 @injectable()
 export class ExportSvgKeyListener extends KeyListener {
@@ -67,7 +68,7 @@ export class ExportSvgDecorator implements IVNodeDecorator {
 
     root: SModelRoot
 
-    constructor(@inject(SvgExporter) protected svgExporter: SvgExporter) {
+    constructor(@inject(TYPES.SvgExporter) protected svgExporter: SvgExporter) {
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {

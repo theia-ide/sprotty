@@ -6,7 +6,7 @@
  */
 
 import { SChildElement, SModelElementSchema, SModelRootSchema } from '../base/model/smodel'
-import { BoundsAware, boundsFeature, layoutFeature, Layouting } from '../features/bounds/model'
+import { BoundsAware, boundsFeature, layoutFeature, Layouting, Alignable, alignFeature } from '../features/bounds/model'
 import { Fadeable, fadeFeature } from '../features/fade/model'
 import { Hoverable, hoverFeedbackFeature, popupFeature } from '../features/hover/model'
 import { Locateable, moveFeature } from '../features/move/model'
@@ -152,12 +152,13 @@ export interface SLabelSchema extends SShapeElementSchema {
     selected?: boolean
 }
 
-export class SLabel extends SShapeElement implements Selectable {
+export class SLabel extends SShapeElement implements Selectable, Alignable {
     text: string
     selected: boolean = false
+    alignment: Point = ORIGIN_POINT
 
     hasFeature(feature: symbol) {
-        return feature === boundsFeature
+        return feature === boundsFeature || feature === alignFeature
     }
 }
 

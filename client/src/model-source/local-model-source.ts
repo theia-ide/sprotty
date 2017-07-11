@@ -6,7 +6,7 @@
  */
 
 import { injectable, inject, optional } from "inversify"
-import { Bounds } from "../utils/geometry"
+import { Bounds, Point } from "../utils/geometry"
 import { TYPES } from "../base/types"
 import { Action } from "../base/actions/action"
 import { ActionHandlerRegistry } from "../base/actions/action-handler"
@@ -186,6 +186,13 @@ export class LocalModelSource extends ModelSource {
             if (element !== undefined)
                 this.applyBounds(element, b.newBounds)
         }
+        if (action.alignments !== undefined) {
+            for (const a of action.alignments) {
+                const element = index.getById(a.elementId)
+                if (element !== undefined)
+                    this.applyAlignment(element, a.newAlignment)
+            }
+        }
         this.actionDispatcher.dispatch(new UpdateModelAction(root))
         if (this.onModelSubmitted !== undefined) {
             this.onModelSubmitted(root)
@@ -196,6 +203,11 @@ export class LocalModelSource extends ModelSource {
         const e = element as any
         e.position = { x: newBounds.x, y: newBounds.y }
         e.size = { width: newBounds.width, height: newBounds.height }
+    }
+
+    protected applyAlignment(element: SModelElementSchema, newAlignment: Point) {
+        const e = element as any
+        e.alignment = { x: newAlignment.x, y: newAlignment.y }
     }
 
     protected handleRequestPopupModel(action: RequestPopupModelAction): void {

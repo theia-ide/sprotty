@@ -25,6 +25,7 @@ export const TYPES = {
     ModelRendererFactory: Symbol('ModelRendererFactory'),
     ModelSource: Symbol('ModelSource'),
     SModelStorage: Symbol('SModelStorage'),
+    SvgExporter: Symbol('SvgExporter'),
     MouseListener: Symbol('MouseListener'),
     PopupModelFactory: Symbol('PopupModelFactory'),
     PopupMouseListener: Symbol('PopupMouseListener'),

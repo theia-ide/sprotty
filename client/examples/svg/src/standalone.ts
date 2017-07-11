@@ -36,13 +36,13 @@ export default function runMulticore() {
                 {
                     type: 'pre-rendered',
                     id: 'logo',
-                    position: { x: 200, y: 300 },
+                    position: { x: 200, y: 200 },
                     code: svgLogo
                 } as ShapedPreRenderedElementSchema,
                 {
                     type: 'pre-rendered',
                     id: 'tiger',
-                    position: { x: 700, y: 350 },
+                    position: { x: 400, y: 0 },
                     code: tiger
                 } as ShapedPreRenderedElementSchema
             ]

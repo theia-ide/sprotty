@@ -70,6 +70,17 @@ class ElementAndBounds {
 }
 
 @Accessors@EqualsHashCode@ToString
+class ElementAndAlignment{
+    String elementId
+    Point newAlignment
+	
+	new() {}
+	new(Consumer<ElementAndAlignment> initializer) {
+		initializer.accept(this)
+	}
+}
+
+@Accessors@EqualsHashCode@ToString
 class SetModelAction implements Action {
 	public static val KIND = 'setModel'
 	String kind = KIND
@@ -139,6 +150,7 @@ class ComputedBoundsAction implements Action {
 	String kind = KIND
 	
 	List<ElementAndBounds> bounds
+	List<ElementAndAlignment> alignments
 	
 	new() {}
 	new(Consumer<ComputedBoundsAction> initializer) {

@@ -5,13 +5,14 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds, EMPTY_BOUNDS } from "../../utils/geometry"
+import { Bounds, EMPTY_BOUNDS, Point } from "../../utils/geometry"
 import { SModelElement, SParentElement, SChildElement } from "../../base/model/smodel"
 import { SModelExtension } from "../../base/model/smodel-extension"
 import { findParentByFeature } from '../../base/model/smodel-utils'
 
 export const boundsFeature = Symbol('boundsFeature')
 export const layoutFeature = Symbol('layoutFeature')
+export const alignFeature = Symbol('alignFeature')
 
 export interface BoundsAware extends SModelExtension {
     bounds: Bounds
@@ -20,6 +21,14 @@ export interface BoundsAware extends SModelExtension {
 export interface Layouting extends SModelExtension {
     layout: string
     resizeContainer: boolean
+}
+
+/**
+ * Used to adjust elements whose bounding box is not at the origin, e.g.
+ * labels, or pre-rendered SVG figures.
+ */
+export interface Alignable extends SModelExtension {
+    alignment: Point
 }
 
 export function isBoundsAware(element: SModelElement): element is SModelElement & BoundsAware {
@@ -35,6 +44,11 @@ export function isLayouting(element: SModelElement): element is SParentElement &
 
 export function isSizeable(element: SModelElement): element is SModelElement & BoundsAware {
     return element.hasFeature(boundsFeature) && isBoundsAware(element)
+}
+
+export function isAlignable(element: SModelElement): element is SModelElement & Alignable {
+    return 'alignment' in element
+        && element.hasFeature(alignFeature)
 }
 
 export function getAbsoluteBounds(element: SModelElement): Bounds {

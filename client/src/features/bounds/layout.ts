@@ -57,7 +57,8 @@ export class StatefulLayouter {
         if (!boundsData) {
             boundsData = {
                 bounds: bounds,
-                boundsChanged: false
+                boundsChanged: false,
+                alignmentChanged: false
             }
             this.element2boundsData.set(element, boundsData)
         }

@@ -5,11 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds } from "../../utils/geometry"
+import { Bounds, Point } from "../../utils/geometry"
 import { SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel"
 import { Action } from "../../base/actions/action"
 import { CommandExecutionContext, HiddenCommand, SystemCommand } from "../../base/commands/command"
-import { BoundsAware, isBoundsAware } from './model'
+import { BoundsAware, isBoundsAware, Alignable } from './model'
 
 export class SetBoundsAction implements Action {
     readonly kind = SetBoundsCommand.KIND
@@ -30,7 +30,7 @@ export class ComputedBoundsAction implements Action {
 
     readonly kind = ComputedBoundsAction.KIND
 
-    constructor(public bounds: ElementAndBounds[]) {
+    constructor(public bounds: ElementAndBounds[], public alignments?: ElementAndAlignment[]) {
     }
 }
 
@@ -39,10 +39,21 @@ export interface ElementAndBounds {
     newBounds: Bounds
 }
 
+export interface ElementAndAlignment {
+    elementId: string
+    newAlignment: Point
+}
+
 export interface ResolvedElementAndBounds {
     element: SModelElement & BoundsAware
     oldBounds: Bounds
     newBounds: Bounds
+}
+
+export interface ResolvedElementAndAlignment {
+    element: SModelElement & Alignable
+    oldAlignment: Point
+    newAlignment: Point
 }
 
 export class SetBoundsCommand extends SystemCommand {
