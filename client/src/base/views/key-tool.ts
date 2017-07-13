@@ -40,8 +40,8 @@ export class KeyTool implements IVNodeDecorator {
         }
     }
 
-    keyPress(element: SModelRoot, event: KeyboardEvent): void {
-        this.handleEvent('keyPress', element, event)
+    keyDown(element: SModelRoot, event: KeyboardEvent): void {
+        this.handleEvent('keyDown', element, event)
     }
 
     focus() {}
@@ -49,10 +49,7 @@ export class KeyTool implements IVNodeDecorator {
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (element instanceof SModelRoot) {
             on(vnode, 'focus', this.focus.bind(this), element)
-            on(vnode, 'keypress', this.keyPress.bind(this), element)
-            on(vnode, 'keydown', this.keyPress.bind(this), element)
-            on(vnode, 'keyup', this.keyPress.bind(this), element)
-
+            on(vnode, 'keydown', this.keyDown.bind(this), element)
         }
         return vnode
     }
@@ -63,7 +60,7 @@ export class KeyTool implements IVNodeDecorator {
 
 @injectable()
 export class KeyListener {
-    keyPress(element: SModelElement, event: KeyboardEvent): Action[] {
+    keyDown(element: SModelElement, event: KeyboardEvent): Action[] {
         return []
     }
 }

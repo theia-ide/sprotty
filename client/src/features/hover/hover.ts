@@ -242,7 +242,7 @@ export class PopupHoverMouseListener extends AbstractHoverMouseListener {
 }
 
 export class HoverKeyListener extends KeyListener {
-    keyPress(element: SModelElement, event: KeyboardEvent): Action[] {
+    keyDown(element: SModelElement, event: KeyboardEvent): Action[] {
         if (event.keyCode === 27) {
             return [new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id})]
         }

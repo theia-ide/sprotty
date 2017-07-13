@@ -181,7 +181,7 @@ export class FitToScreenCommand extends BoundsAwareViewportCommand {
 }
 
 export class CenterKeyboardListener extends KeyListener {
-    keyPress(element: SModelElement, event: KeyboardEvent): Action[] {
+    keyDown(element: SModelElement, event: KeyboardEvent): Action[] {
         if (isCtrlOrCmd(event)) {
             switch (event.keyCode) {
                 case 67:
