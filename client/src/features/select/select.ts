@@ -220,7 +220,7 @@ export class SelectMouseListener extends MouseListener {
 }
 
 export class SelectKeyboardListener extends KeyListener {
-    keyPress(element: SModelElement, event: KeyboardEvent): Action[] {
+    keyDown(element: SModelElement, event: KeyboardEvent): Action[] {
         if (isCtrlOrCmd(event) && event.keyCode === 65) {
             return [new SelectAction(
                 element.root.index.all().filter(e => isSelectable(e)).map(e => e.id), [])]

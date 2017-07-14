@@ -21,7 +21,7 @@ export class RedoAction implements Action {
 }
 
 export class UndoRedoKeyListener extends KeyListener {
-    keyPress(element: SModelElement, event: KeyboardEvent): Action[] {
+    keyDown(element: SModelElement, event: KeyboardEvent): Action[] {
         if (isCtrlOrCmd(event) && event.keyCode === 90) {
             if (event.shiftKey)
                 return [new RedoAction]

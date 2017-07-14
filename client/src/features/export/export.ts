@@ -23,7 +23,7 @@ import { TYPES } from '../../base/types'
 
 @injectable()
 export class ExportSvgKeyListener extends KeyListener {
-    keyPress(element: SModelElement, event: KeyboardEvent): Action[] {
+    keyDown(element: SModelElement, event: KeyboardEvent): Action[] {
         if (isCtrlOrCmd(event) && event.keyCode === 69)
             return [ new RequestExportSvgAction() ]
         else
