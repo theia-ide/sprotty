@@ -20,6 +20,7 @@ import org.eclipse.elk.graph.ElkBendPoint;
 import org.eclipse.elk.graph.ElkConnectableShape;
 import org.eclipse.elk.graph.ElkEdge;
 import org.eclipse.elk.graph.ElkEdgeSection;
+import org.eclipse.elk.graph.ElkGraphElement;
 import org.eclipse.elk.graph.ElkGraphFactory;
 import org.eclipse.elk.graph.ElkLabel;
 import org.eclipse.elk.graph.ElkNode;
@@ -88,32 +89,53 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		return elkGraph;
 	}
 	
-	protected void processChildren(SModelElement element, ElkNode parent, LayoutContext context) {
+	protected void processChildren(SModelElement element, ElkGraphElement parent, LayoutContext context) {
 		if (element.getChildren() != null) {
-			for (SModelElement child : element.getChildren()) {
-				if (child instanceof SNode) {
-					SNode snode = (SNode) child;
-					ElkNode elkNode = createNode(snode);
-					elkNode.setParent(parent);
-					context.connectableMap.put(snode, elkNode);
-					processChildren(snode, elkNode, context);
-				} else if (child instanceof SPort) {
-					SPort sport = (SPort) child;
-					ElkPort elkPort = createPort(sport);
-					elkPort.setParent(parent);
-					context.connectableMap.put(sport, elkPort);
-				} else if (child instanceof SEdge) {
-					SEdge sedge = (SEdge) child;
-					ElkEdge elkEdge = createEdge(sedge);
-					// The most suitable container for the edge is determined later
-					context.edgeMap.put(sedge, elkEdge);
-				} else if (child instanceof SLabel) {
-					SLabel slabel = (SLabel) child;
-					ElkLabel elkLabel = createLabel(slabel);
-					context.labelMap.put(slabel, elkLabel);
+			for (SModelElement schild : element.getChildren()) {
+				if (shouldInclude(schild, element, context)) {
+					ElkGraphElement elkChild = null;
+					if (schild instanceof SNode) {
+						SNode snode = (SNode) schild;
+						ElkNode elkNode = createNode(snode);
+						if (parent instanceof ElkNode)
+							elkNode.setParent((ElkNode) parent);
+						context.connectableMap.put(snode, elkNode);
+						elkChild = elkNode;
+					} else if (schild instanceof SPort) {
+						SPort sport = (SPort) schild;
+						ElkPort elkPort = createPort(sport);
+						if (parent instanceof ElkNode)
+							elkPort.setParent((ElkNode) parent);
+						context.connectableMap.put(sport, elkPort);
+						elkChild = elkPort;
+					} else if (schild instanceof SEdge) {
+						SEdge sedge = (SEdge) schild;
+						ElkEdge elkEdge = createEdge(sedge);
+						// The most suitable container for the edge is determined later
+						context.edgeMap.put(sedge, elkEdge);
+						elkChild = elkEdge;
+					} else if (schild instanceof SLabel) {
+						SLabel slabel = (SLabel) schild;
+						ElkLabel elkLabel = createLabel(slabel);
+						elkLabel.setParent(parent);
+						context.labelMap.put(slabel, elkLabel);
+						elkChild = elkLabel;
+					}
+					if (elkChild != null) {
+						processChildren(schild, elkChild, context);
+					}
 				}
 			}
 		}
+	}
+	
+	protected boolean shouldInclude(SModelElement element, SModelElement parent, LayoutContext context) {
+		if (element instanceof SLabel)
+			// Omit node labels, since these are handled by the sprotty client layouts
+			return !(parent instanceof SNode);
+		else
+			// All other graph elements can only be contained in a node or in the graph (root node)
+			return parent instanceof SNode || parent instanceof SGraph;
 	}
 	
 	protected void resolveReferences(LayoutContext context) {
