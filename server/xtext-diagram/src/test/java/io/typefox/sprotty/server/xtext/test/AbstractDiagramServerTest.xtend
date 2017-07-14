@@ -31,6 +31,10 @@ abstract class AbstractDiagramServerTest extends AbstractLanguageServerTest {
 		languageServer.notify('diagram/accept', new ActionMessage(CLIENT_ID, action))
 	}
 	
+	protected def closeDiagram() {
+		languageServer.notify('diagram/didClose', CLIENT_ID)
+	}
+	
 	protected def assertGenerated(CharSequence expectedResult) {
 		val diagramGenerator = getServiceProvider('file:/dummy.testlang').get(TestLanguageDiagramGenerator)
 		assertEquals(expectedResult.toString.trim, diagramGenerator.results.toString)

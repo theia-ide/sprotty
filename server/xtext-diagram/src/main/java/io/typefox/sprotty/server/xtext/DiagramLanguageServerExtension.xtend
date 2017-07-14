@@ -17,7 +17,6 @@ import org.apache.log4j.Logger
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.lsp4j.jsonrpc.Endpoint
-import org.eclipse.lsp4j.jsonrpc.services.JsonNotification
 import org.eclipse.lsp4j.jsonrpc.services.ServiceEndpoints
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtext.diagnostics.Severity
@@ -28,9 +27,9 @@ import org.eclipse.xtext.util.CancelIndicator
 import org.eclipse.xtext.validation.CheckMode
 import org.eclipse.xtext.validation.IResourceValidator
 
-class DiagramLanguageServerExtension implements DiagramEndpoint, ILanguageServerExtension, IDiagramServer.Provider {
+class DiagramLanguageServerExtension implements DiagramServer, ILanguageServerExtension, IDiagramServer.Provider {
 	
-	static val LOG = Logger.getLogger(DiagramLanguageServerExtension)
+	protected static val LOG = Logger.getLogger(DiagramLanguageServerExtension)
 	
 	@Inject extension IResourceValidator
 
@@ -91,10 +90,15 @@ class DiagramLanguageServerExtension implements DiagramEndpoint, ILanguageServer
 		}
 	}
 	
-	@JsonNotification
 	override void accept(ActionMessage message) {
 		val server = getDiagramServer(message.clientId)
 		server.accept(message)
+	}
+	
+	override didClose(String clientId) {
+		synchronized (diagramServers) {
+			diagramServers.remove(clientId)
+		}
 	}
 	
 	def void updateDiagrams(Collection<URI> uris) {

@@ -18,3 +18,11 @@ interface DiagramEndpoint extends Consumer<ActionMessage> {
 	override accept(ActionMessage actionMessage);
 
 }
+
+@JsonSegment('diagram')
+interface DiagramServer extends DiagramEndpoint {
+	
+	@JsonNotification
+	def void didClose(String clientId)
+	
+}
