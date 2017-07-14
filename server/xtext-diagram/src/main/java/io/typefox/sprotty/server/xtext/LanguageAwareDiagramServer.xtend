@@ -12,19 +12,23 @@ import org.eclipse.xtend.lib.annotations.Accessors
 
 class LanguageAwareDiagramServer extends DefaultDiagramServer {
 	
+	public static val OPTION_SOURCE_URI = 'sourceUri'
+	
 	@Accessors
 	DiagramLanguageServerExtension languageServerExtension
 	
-	@Accessors
-	String sourceUri
-	
 	override protected handle(RequestModelAction request) {
 		if (model.type == 'NONE' && languageServerExtension !== null) {
-			sourceUri = request.options?.get('uri') ?: clientId
-			languageServerExtension.updateDiagrams(sourceUri)
+			if (request.options !== null)
+				options = request.options
+			languageServerExtension.updateDiagram(this)
 		} else {
 			super.handle(request)
 		}
+	}
+	
+	def getSourceUri() {
+		options.get(OPTION_SOURCE_URI)
 	}
 	
 }

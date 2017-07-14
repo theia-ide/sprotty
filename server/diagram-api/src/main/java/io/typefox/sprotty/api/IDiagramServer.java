@@ -6,6 +6,7 @@
  */
 package io.typefox.sprotty.api;
 
+import java.util.Map;
 import java.util.function.Consumer;
 
 /**
@@ -52,6 +53,12 @@ public interface IDiagramServer extends Consumer<ActionMessage> {
 	 * animated in the client.
 	 */
 	void updateModel(SModelRoot root);
+	
+	/**
+	 * The options received from the client with the last {@link RequestModelAction}. These options
+	 * can be used to control diagram creation.
+	 */
+	Map<String, String> getOptions();
 	
 	/**
 	 * A diagram server provider creates a diagram server for a given {@code clientId} or returns

@@ -7,11 +7,12 @@
 package io.typefox.sprotty.server.xtext
 
 import io.typefox.sprotty.api.SModelRoot
+import java.util.Map
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.util.CancelIndicator
 
 interface IDiagramGenerator {
 	
-	def SModelRoot generate(Resource resource, CancelIndicator cancelIndicator)
+	def SModelRoot generate(Resource resource, Map<String, String> options, CancelIndicator cancelIndicator)
 	
 }

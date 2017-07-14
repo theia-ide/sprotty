@@ -10,10 +10,11 @@ import com.google.inject.Inject
 import com.google.inject.Provider
 import io.typefox.sprotty.api.ActionMessage
 import io.typefox.sprotty.api.IDiagramServer
-import io.typefox.sprotty.api.SModelRoot
+import java.util.Collection
 import java.util.List
 import java.util.Map
 import org.apache.log4j.Logger
+import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.lsp4j.jsonrpc.Endpoint
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification
@@ -27,8 +28,6 @@ import org.eclipse.xtext.util.CancelIndicator
 import org.eclipse.xtext.validation.CheckMode
 import org.eclipse.xtext.validation.IResourceValidator
 
-import static java.util.Collections.*
-
 class DiagramLanguageServerExtension implements DiagramEndpoint, ILanguageServerExtension, IDiagramServer.Provider {
 	
 	static val LOG = Logger.getLogger(DiagramLanguageServerExtension)
@@ -39,7 +38,7 @@ class DiagramLanguageServerExtension implements DiagramEndpoint, ILanguageServer
 	
 	@Inject Provider<IDiagramServer> diagramServerProvider
 	
-	@Inject(optional = true) IDiagramGenerator diagramGenerator
+	@Inject Provider<IDiagramGenerator> diagramGeneratorProvider
 	
 	@Accessors(PROTECTED_GETTER)
 	val Map<String, IDiagramServer> diagramServers = newLinkedHashMap
@@ -51,9 +50,7 @@ class DiagramLanguageServerExtension implements DiagramEndpoint, ILanguageServer
 	override initialize(ILanguageServerAccess access) {
 		this.languageServerAccess = access
 		access.addBuildListener[ deltas |
-			for (delta : deltas) {
-				updateDiagrams(delta.uri.toPath)
-			}
+			updateDiagrams(deltas.map[uri].toSet)
 		]
 	}
 
@@ -88,18 +85,9 @@ class DiagramLanguageServerExtension implements DiagramEndpoint, ILanguageServer
 			server.languageServerExtension = this
 	}
 	
-	protected def IDiagramServer findDiagramServerByUri(String uri) {
+	protected def List<? extends IDiagramServer> findDiagramServersByUri(String uri) {
 		synchronized (diagramServers) {
-			val matching = diagramServers.values.filter(LanguageAwareDiagramServer).findFirst[sourceUri == uri]
-			if (matching !== null) {
-				return matching
-			} else {
-				// Fall back to finding or creating a diagram server with clientId equal to sourceUri
-				return getDiagramServer(uri) => [ server |
-					if (server instanceof LanguageAwareDiagramServer)
-						server.sourceUri = uri
-				]
-			}
+			diagramServers.values.filter(LanguageAwareDiagramServer).filter[sourceUri == uri].toList
 		}
 	}
 	
@@ -109,31 +97,50 @@ class DiagramLanguageServerExtension implements DiagramEndpoint, ILanguageServer
 		server.accept(message)
 	}
 	
-	def void updateDiagrams(String uri) {
-		uri.doRead [ context |
-			context.resource?.generateDiagrams(context.cancelChecker) ?: emptyList
-		].thenAccept[ newRoots |
-			updateDiagrams(newRoots, uri)
-		].exceptionally[ throwable |
-			LOG.error('Error while processing build results', throwable)
-			return null
-		]
-	}
-
-	protected def List<SModelRoot> generateDiagrams(Resource resource, CancelIndicator cancelIndicator) {
-		if (diagramGenerator !== null && resource.shouldGenerate(cancelIndicator))
-			singletonList(diagramGenerator.generate(resource, cancelIndicator))
+	def void updateDiagrams(Collection<URI> uris) {
+		for (uri : uris) {
+			val path = uri.toPath
+			val diagramServers = findDiagramServersByUri(path)
+			if (!diagramServers.empty) {
+				path.doRead [ context |
+					if (context.resource.shouldGenerate(context.cancelChecker)) {
+						val diagramGenerator = diagramGeneratorProvider.get
+						return diagramServers.map[it -> diagramGenerator.generate(context.resource, options, context.cancelChecker)]
+					} else
+						return emptyList
+				].thenAccept[ resultList |
+					resultList.filter[value !== null].forEach[key.updateModel(value)]
+				].exceptionally[ throwable |
+					LOG.error('Error while processing build results', throwable)
+					return null
+				]
+			}
+		}
 	}
 	
+	def void updateDiagram(LanguageAwareDiagramServer diagramServer) {
+		val path = diagramServer.sourceUri
+		if (path !== null) {
+			path.doRead [ context |
+				if (context.resource.shouldGenerate(context.cancelChecker)) {
+					val diagramGenerator = diagramGeneratorProvider.get
+					return diagramGenerator.generate(context.resource, diagramServer.options, context.cancelChecker)
+				}
+			].thenAccept[ result |
+				if (result !== null)
+					diagramServer.updateModel(result)
+			].exceptionally[ throwable |
+				LOG.error('Error while processing build results', throwable)
+				return null
+			]
+		}
+	}
+
 	protected def boolean shouldGenerate(Resource resource, CancelIndicator cancelIndicator) {
+		if (resource === null)
+			return false
 		val issues = resource.validate(CheckMode.NORMAL_AND_FAST, cancelIndicator)
 		return !issues.exists[severity == Severity.ERROR]
 	}
 	
-	protected def void updateDiagrams(List<SModelRoot> newRoots, String uri) {
-		if (!newRoots.empty) {
-			findDiagramServerByUri(uri).updateModel(newRoots.head)
-		}
-	}
-
 }

@@ -6,6 +6,8 @@
  */
 package io.typefox.sprotty.api;
 
+import java.util.LinkedHashMap;
+import java.util.Map;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
@@ -19,6 +21,8 @@ public class DefaultDiagramServer implements IDiagramServer {
 	private String clientId;
 	
 	private SModelRoot currentRoot;
+	
+	private Map<String, String> options;
 	
 	private Consumer<ActionMessage> remoteEndpoint;
 	
@@ -41,6 +45,7 @@ public class DefaultDiagramServer implements IDiagramServer {
 	}
 	
 	public DefaultDiagramServer(String clientId) {
+		this();
 		this.clientId = clientId;
 	}
 	
@@ -115,18 +120,33 @@ public class DefaultDiagramServer implements IDiagramServer {
 	public void setModel(SModelRoot newRoot) {
 		if (newRoot == null)
 			throw new NullPointerException();
-		this.currentRoot = newRoot;
+		currentRoot = newRoot;
 		submitModel(newRoot, false);
 	}
 	
 	@Override
 	public void updateModel(SModelRoot newRoot) {
 		if (newRoot == null) {
-			submitModel(this.currentRoot, true);
+			submitModel(currentRoot, true);
 		} else {
-			this.currentRoot = newRoot;
+			if (needsServerLayout(newRoot)) {
+				LayoutUtil.copyLayoutData(currentRoot, newRoot);
+			}
+			currentRoot = newRoot;
 			submitModel(newRoot, true);
 		}
+	}
+	
+	@Override
+	public Map<String, String> getOptions() {
+		if (options == null) {
+			options = new LinkedHashMap<>();
+		}
+		return options;
+	}
+	
+	protected void setOptions(Map<String, String> options) {
+		this.options = new LinkedHashMap<>(options);
 	}
 	
 	/**
@@ -207,6 +227,9 @@ public class DefaultDiagramServer implements IDiagramServer {
 	 * Called when a {@code RequestModelAction} is received.
 	 */
 	protected void handle(RequestModelAction request) {
+		if (request.getOptions() != null) {
+			setOptions(request.getOptions());
+		}
 		SModelRoot model = getModel();
 		if (model != null) {
 			submitModel(model, false);

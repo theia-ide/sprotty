@@ -88,7 +88,9 @@ class SEdge extends SModelElement {
 
 @Accessors
 @ToString(skipNulls = true)
-class SCompartment extends SModelElement {
+class SCompartment extends SModelElement implements BoundsAware {
+	Point position
+	Dimension size
 	String layout
 	Boolean resizeContainer
 	
