@@ -4,4 +4,5 @@ bin/
 .project
 .classpath
 org.eclipse.buildship.core.prefs
-npm-debug.log
+org.eclipse.wst.common.component
+org.eclipse.wst.common.project.facet.core.xml

@@ -1,0 +1,65 @@
+/*
+ * Copyright (C) 2017 TypeFox and others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ */
+module io.typefox.sprotty.server.xtext.testlanguage.GenerateTestLanguage
+
+import org.eclipse.xtext.xtext.generator.*
+import org.eclipse.xtext.xtext.generator.model.project.*
+
+var rootPath = ".."
+var fileHeader = "/*
+ * Copyright (C) 2017 TypeFox and others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the \"License\"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ */"
+
+Workflow {
+	
+	component = XtextGenerator {
+		configuration = {
+			project = StandardProjectConfig {
+				baseName = "xtext-diagram"
+				rootPath = rootPath
+				runtime = {
+					root = "${rootPath}/xtext-diagram"
+					src = "src/test/java"
+					srcGen = "src/test/xtext-gen"
+					ecoreModel = "${rootPath}/xtext-diagram/src/test/xtext-gen/io/typefox/sprotty/server/xtext/testlanguage"
+				}
+				genericIde = {
+					enabled = true
+					root = "${rootPath}/xtext-diagram"
+					src = "src/test/java"
+					srcGen = "src/test/xtext-gen"
+				}
+			}
+			code = {
+				encoding = "UTF-8"
+				lineDelimiter = "\n"
+				fileHeader = fileHeader
+			}
+		}
+		language = XtextGeneratorLanguage {
+			name = "io.typefox.sprotty.server.xtext.testlanguage.TestLanguage"
+			fileExtensions = "testlang"
+
+			fragment = grammarAccess.GrammarAccessFragment2 {}
+			fragment = ecore.EMFGeneratorFragment2 {
+				javaModelDirectory = "/xtext-diagram/src/test/xtext-gen"
+			}
+			fragment = serializer.SerializerFragment2 {
+				generateStub = false
+			}
+			fragment = resourceFactory.ResourceFactoryFragment2 {}
+			fragment = parser.antlr.XtextAntlrGeneratorFragment2 {}
+			fragment = scoping.ImportNamespacesScopingFragment2 {
+				generateStub = false
+			}
+			fragment = exporting.QualifiedNamesFragment2 {}
+		}
+	}
+}
