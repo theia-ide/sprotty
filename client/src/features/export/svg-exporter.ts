@@ -92,8 +92,13 @@ export class SvgExporter {
         return style
     }
 
+    /**
+     * By default, only CSS rules from files with a given comment are exported.
+     */
     protected isExported(styleSheet: CSSStyleSheet) {
-        return true
+        return styleSheet.ownerNode
+            && (styleSheet.ownerNode as any).innerHTML
+            && (styleSheet.ownerNode as any).innerHTML.indexOf('/* sprotty SVG export */') !== -1
     }
 
     protected getBounds(root: SModelRoot) {
