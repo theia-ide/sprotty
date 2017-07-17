@@ -1,6 +1,7 @@
 /.gradle/
 build/
 bin/
+xtend-gen/
 .project
 .classpath
 org.eclipse.buildship.core.prefs
