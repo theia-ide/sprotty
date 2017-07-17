@@ -98,9 +98,13 @@ let defaultContainerModule = new ContainerModule(bind => {
     })
 
     // Tools & Decorators --------------------------------------
+    bind(KeyTool).toSelf().inSingletonScope()
+    bind(MouseTool).toSelf().inSingletonScope()
     bind(TYPES.IVNodeDecorator).to(IdDecorator).inSingletonScope()
-    bind(TYPES.IVNodeDecorator).to(MouseTool).inSingletonScope()
-    bind(TYPES.IVNodeDecorator).to(KeyTool).inSingletonScope()
+    bind(TYPES.IVNodeDecorator).toDynamicValue(context => 
+        context.container.get(MouseTool)).inSingletonScope
+    bind(TYPES.IVNodeDecorator).toDynamicValue(context => 
+        context.container.get(KeyTool)).inSingletonScope
     bind(TYPES.IVNodeDecorator).to(FocusFixDecorator).inSingletonScope()
     bind(TYPES.PopupVNodeDecorator).to(IdDecorator).inSingletonScope()
     bind(TYPES.PopupVNodeDecorator).to(PopupMouseTool).inSingletonScope()
