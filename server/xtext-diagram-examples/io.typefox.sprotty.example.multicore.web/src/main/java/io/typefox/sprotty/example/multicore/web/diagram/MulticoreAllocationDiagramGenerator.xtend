@@ -25,6 +25,7 @@ import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.util.CancelIndicator
 
 import static extension org.eclipse.xtext.EcoreUtil2.*
+import io.typefox.sprotty.api.LayoutOptions
 
 @Singleton
 class MulticoreAllocationDiagramGenerator {
@@ -115,6 +116,14 @@ class MulticoreAllocationDiagramGenerator {
 		    rows = dimension
 		    columns = dimension
 		    children = newArrayList
+		    layoutOptions = new LayoutOptions [
+		    	resizeContainer = false
+		    	paddingLeft = 0.0
+		    	paddingRight = 0.0
+		    	paddingTop = 0.0
+		    	paddingBottom = 0.0
+		    	VGap = 0.0
+		    ]
 		]
 	}
 	
@@ -127,9 +136,11 @@ class MulticoreAllocationDiagramGenerator {
 	        column = columnParam
 	        kernelNr = kernelIndex
 	        layout = 'vbox'
-			resizeContainer = false
 	        children = newArrayList
 			children += new SLabel => [
+				layoutOptions = new LayoutOptions [
+					HAlign = 'center'
+				]
 				id = 'nr_' + coreIndex
 				type = 'label:heading' 
 				text = padLeft(coreIndex)
@@ -201,7 +212,13 @@ class MulticoreAllocationDiagramGenerator {
 			id = 'comp_' + coreIndex
 			type = 'comp'
 			layout = 'vbox'
-			resizeContainer = true
+			layoutOptions = new LayoutOptions [
+				HAlign = 'left'
+				resizeContainer = true
+				paddingLeft = 5.0
+				paddingRight = 5.0
+				
+			]
 			children = result
 		]
 	}

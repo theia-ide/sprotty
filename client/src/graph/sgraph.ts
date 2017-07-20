@@ -19,21 +19,25 @@ export interface SGraphSchema extends SModelRootSchema {
     bounds?: Bounds
     scroll?: Point
     zoom?: number
+    layoutOptions?: any
 }
 
 export class SGraph extends ViewportRootElement {
+    layoutOptions?: any
 }
 
 export interface SShapeElementSchema extends SModelElementSchema {
     position?: Point
     size?: Dimension
     children?: SGraphElementSchema[]
+    layoutOptions?: any
 }
 
 export abstract class SShapeElement extends SChildElement implements BoundsAware, Locateable {
     position: Point = ORIGIN_POINT
     size: Dimension = EMPTY_DIMENSION
-
+    layoutOptions?: any
+    
     get bounds(): Bounds {
         return {
             x: this.position.x,
@@ -85,7 +89,6 @@ export abstract class SShapeElement extends SChildElement implements BoundsAware
 
 export interface SNodeSchema extends SShapeElementSchema {
     layout?: string
-    resizeContainer?: boolean
 }
 
 export class SNode extends SShapeElement implements Selectable, Fadeable, Hoverable {
@@ -94,7 +97,6 @@ export class SNode extends SShapeElement implements Selectable, Fadeable, Hovera
     layout?: string
     selected: boolean = false
     opacity: number = 1
-    resizeContainer: boolean = true
 
     hasFeature(feature: symbol): boolean {
         return feature === selectFeature || feature === moveFeature || feature === boundsFeature
@@ -164,13 +166,11 @@ export class SLabel extends SShapeElement implements Selectable, Alignable {
 
 export interface SCompartmentSchema extends SShapeElementSchema {
     layout?: string
-    resizeContainer?: boolean
 }
 
 export class SCompartment extends SShapeElement implements Layouting {
     children: SCompartmentElement[]
     layout: string
-    resizeContainer: boolean = true
 
     hasFeature(feature: symbol) {
         return feature === boundsFeature || feature === layoutFeature

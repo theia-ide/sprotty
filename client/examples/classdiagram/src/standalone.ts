@@ -122,7 +122,19 @@ export default function runClassDiagram() {
         sourceId: node0.id,
         targetId: node1.id
     } as SEdge
-    const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0, node1, edge] }
+    const graph: SGraphSchema = { 
+        id: 'graph', 
+        type: 'graph', 
+        children: [node0, node1, edge], 
+        layoutOptions: {
+            hGap: 10,
+            hAlign: 'left',
+            paddingLeft: 10,
+            paddingRight: 10,
+            paddingTop: 10,
+            paddingBottom: 10
+        }
+    }
     // Run
     const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
     modelSource.setModel(graph)

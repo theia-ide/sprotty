@@ -20,6 +20,7 @@ export interface ProcessorSchema extends SModelRootSchema {
 export class Processor extends ViewportRootElement implements BoundsAware {
     rows: number = 0
     columns: number = 0
+    layoutOptions: any
 
     get bounds(): Bounds {
         return {

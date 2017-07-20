@@ -17,12 +17,13 @@ export abstract class AbstractLayout implements ILayout {
 
     protected getFixedContainerBounds(
             container: SModelElement,
+            layoutOptions: any, 
             layouter: StatefulLayouter): Bounds {
         let currentContainer = container
         while (true) {
             if (isBoundsAware(currentContainer)) {
                 const bounds = currentContainer.bounds
-                if (isLayouting(currentContainer) && currentContainer.resizeContainer)
+                if (isLayouting(currentContainer) && layoutOptions.resizeContainer)
                     layouter.log.error(currentContainer, 'Resizable container found while detecting fixed bounds')
                 if (isValidDimension(bounds))
                     return bounds
@@ -34,31 +35,5 @@ export abstract class AbstractLayout implements ILayout {
                 return EMPTY_BOUNDS
             }
         }
-    }
-
-    protected getFloatValue(style: CSSStyleDeclaration | undefined,
-                            property: string,
-                            defaultValue: number): number {
-        if (style) {
-            const stringVal = style.getPropertyValue(property)
-            if (stringVal) {
-                const floatVal = parseFloat(stringVal)
-                if (!isNaN(floatVal)) {
-                    return floatVal
-                }
-            }
-        }
-        return defaultValue
-    }
-
-    protected getStringValue(style: CSSStyleDeclaration | undefined,
-                             property: string,
-                             defaultValue: string): string {
-        if (style) {
-            const stringVal = style.getPropertyValue(property)
-            if (stringVal)
-                return stringVal
-        }
-        return defaultValue
     }
 }
