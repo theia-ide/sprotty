@@ -145,8 +145,10 @@ export class SLabelView implements IView {
 export class SCompartmentView implements IView {
     render(model: SCompartment, context: RenderingContext): VNode {
         const translate = `translate(${model.bounds.x}, ${model.bounds.y})`
-        return <g transform={translate} class-comp="{true}">
+        const vnode = <g transform={translate} class-comp="{true}">
             {context.renderChildren(model)}
         </g>
+        setAttr(vnode, 'class', getSubType(model))
+        return vnode
     }
 }

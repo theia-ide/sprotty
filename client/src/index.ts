@@ -116,6 +116,7 @@ export * from "./model-source/websocket"
 // ------------------ Utilities ------------------
 
 export * from "./utils/color"
+export * from "./utils/css"
 export * from "./utils/geometry"
 export * from "./utils/logging"
 export * from "./utils/registry"

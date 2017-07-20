@@ -167,7 +167,7 @@ export interface SCompartmentSchema extends SShapeElementSchema {
     resizeContainer?: boolean
 }
 
-export class SCompartment extends SShapeElement implements BoundsAware, Layouting {
+export class SCompartment extends SShapeElement implements Layouting {
     children: SCompartmentElement[]
     layout: string
     resizeContainer: boolean = true

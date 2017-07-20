@@ -18,7 +18,7 @@ export interface BoundsAware extends SModelExtension {
     bounds: Bounds
 }
 
-export interface Layouting extends SModelExtension {
+export interface Layouting extends SModelExtension, BoundsAware {
     layout: string
     resizeContainer: boolean
 }
@@ -35,7 +35,7 @@ export function isBoundsAware(element: SModelElement): element is SModelElement 
     return 'bounds' in element
 }
 
-export function isLayouting(element: SModelElement): element is SParentElement & Layouting & BoundsAware {
+export function isLayouting(element: SModelElement): element is SParentElement & Layouting {
     return 'layout' in element
         && 'resizeContainer' in element
         && isBoundsAware(element)
