@@ -14,11 +14,13 @@ import { SParentElement, SModelElement } from "../../base/model/smodel"
 import { isLayouting, Layouting } from "./model"
 import { BoundsData } from "./hidden-bounds-updater"
 import { VBoxLayouter } from "./vbox-layout"
+import { HBoxLayouter } from "./hbox-layout"
 
 export class LayoutRegistry extends InstanceRegistry<ILayout> {
     constructor() {
         super()
         this.register(VBoxLayouter.KIND, new VBoxLayouter())
+        this.register(HBoxLayouter.KIND, new HBoxLayouter())
     }
 }
 
@@ -90,7 +92,6 @@ export class StatefulLayouter {
 }
 
 export interface ILayout {
-    layout(container: Layouting & SParentElement,
+    layout(container: SParentElement & Layouting,
            layouter: StatefulLayouter): void
 }
-

@@ -9,109 +9,109 @@ import { isValidDimension } from '../../utils/geometry'
 import { SParentElement, SModelElement, SChildElement } from "../../base/model/smodel"
 import { StatefulLayouter } from './layout'
 import { AbstractLayout } from './abstract-layout'
-import { Layouting } from './model';
+import { Layouting } from './model'
 
-export type HAlignment = 'left' | 'center' | 'right'
+export type VAlignment = 'top' | 'center' | 'bottom'
 
-export interface VBoxLayoutOptions {
+export interface HBoxLayoutOptions {
     resizeContainer: boolean
     paddingTop: number
     paddingBottom: number
     paddingLeft: number
     paddingRight: number
-    vGap: number
-    hAlign: HAlignment
+    hGap: number
+    vAlign: VAlignment
 }
 
-export const DEFAULT_VBOX_LAYOUT_OPTIONS: VBoxLayoutOptions = {
+export const DEFAULT_HBOX_LAYOUT_OPTIONS: HBoxLayoutOptions = {
     resizeContainer: true,
     paddingTop: 5,
     paddingBottom: 5,
     paddingLeft: 5,
     paddingRight: 5,
-    vGap: 1,
-    hAlign: 'center'
+    hGap: 1,
+    vAlign: 'center'
 }
 
-export class VBoxLayouter extends AbstractLayout {
-    static KIND = 'vbox'
+export class HBoxLayouter extends AbstractLayout {
+    static KIND = 'hbox'
 
     layout(container: SParentElement & Layouting,
            layouter: StatefulLayouter) {
         const boundsData = layouter.getBoundsData(container)
         const options = this.getLayoutOptions(container)
-        const maxWidth = options.resizeContainer
-            ? this.getMaxWidth(container, layouter)
-            : Math.max(0, this.getFixedContainerBounds(container, options, layouter).width) - options.paddingLeft - options.paddingRight
-        if (maxWidth > 0) {
-            let y = this.layoutChildren(container, layouter, options, maxWidth)
+        const maxHeight = options.resizeContainer
+            ? this.getMaxHeight(container, layouter)
+            : Math.max(0, this.getFixedContainerBounds(container, options, layouter).height) - options.paddingTop - options.paddingBottom
+        if (maxHeight > 0) {
+            let x = this.layoutChildren(container, layouter, options, maxHeight)
             if (options.resizeContainer) {
                 boundsData.bounds = {
                     x: container.bounds.x,
                     y: container.bounds.y,
-                    width: maxWidth + options.paddingLeft + options.paddingRight,
-                    height: y - options.vGap + options.paddingBottom
+                    width: x - options.hGap + options.paddingRight,
+                    height: maxHeight + options.paddingTop + options.paddingBottom
                 }
                 boundsData.boundsChanged = true
             }
         }
     }
 
-    protected getMaxWidth(container: SParentElement & Layouting,
+    protected getMaxHeight(container: SParentElement & Layouting,
                           layouter: StatefulLayouter) {
-        let maxWidth = -1
+        let maxHeight = -1
         container.children.forEach(
             child => {
                 const bounds = layouter.getBoundsData(child).bounds
                 if (bounds !== undefined && isValidDimension(bounds))
-                    maxWidth = Math.max(maxWidth, bounds.width)
+                    maxHeight = Math.max(maxHeight, bounds.height)
             }
         )
-        return maxWidth
+        return maxHeight
     }
 
     protected layoutChildren(container: SParentElement & Layouting,
                              layouter: StatefulLayouter,
-                             options: VBoxLayoutOptions,
-                             maxWidth: number) {
-        let y = options.paddingTop
+                             options: HBoxLayoutOptions,
+                             maxHeight: number) {
+        let x = options.paddingLeft
         container.children.forEach(
             child => {
                 const boundsData = layouter.getBoundsData(child)
                 const bounds = boundsData.bounds
                 const layoutOptions = (child as any).layoutOptions
-                const hAlign = (layoutOptions === undefined) 
-                    ? options.hAlign 
-                    : {...options, ...layoutOptions}.hAlign
+                const vAlign = (layoutOptions === undefined) 
+                    ? options.vAlign 
+                    : {...options, ...layoutOptions}.vAlign
                 if (bounds !== undefined && isValidDimension(bounds)) {
-                    let dx = 0
-                    switch (hAlign) {
-                        case 'left':
-                            dx = 0
+                    let dy = 0
+                    switch (vAlign) {
+                        case 'top':
+                            dy = 0
                             break
                         case 'center':
-                            dx = 0.5 * (maxWidth - bounds.width)
+                            dy = 0.5 * (maxHeight - bounds.height)
                             break
-                        case 'right':
-                            dx = maxWidth - bounds.width
+                        case 'bottom':
+                            dy = maxHeight - bounds.height
                     }
                     boundsData.bounds = {
-                        x: options.paddingLeft + (child as any).bounds.x - bounds.x + dx,
-                        y: y + (child as any).bounds.y - bounds.y,
+                        x: x + (child as any).bounds.x - bounds.x,
+                        y: options.paddingTop + (child as any).bounds.y - bounds.y + dy,
                         width: bounds.width,
                         height: bounds.height
                     }
                     boundsData.boundsChanged = true
-                    y += bounds.height + options.vGap
+                    x += bounds.width + options.hGap
                 }
             }
         )
-        return y
+        return x
     }
 
-    protected getLayoutOptions(element: SModelElement): VBoxLayoutOptions {
+    protected getLayoutOptions(element: SModelElement): HBoxLayoutOptions {
         let current = element
-        const allOptions: VBoxLayoutOptions[] = []
+        const allOptions: HBoxLayoutOptions[] = []
         while (true) {
             const layoutOptions = (current as any).layoutOptions
             if (layoutOptions !== undefined) 
@@ -122,6 +122,6 @@ export class VBoxLayouter extends AbstractLayout {
                 break
         }
         return allOptions.reverse().reduce(
-            (a,b) => ({...a, ...b}), DEFAULT_VBOX_LAYOUT_OPTIONS)
+            (a,b) => ({...a, ...b}), DEFAULT_HBOX_LAYOUT_OPTIONS)
     }
 }

@@ -12,7 +12,7 @@ import {
     undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView, 
     exportModule
 } from "../../../src"
-import { ClassNodeView } from "./views"
+import { ClassNodeView, IconView} from "./views"
 import { ClassDiagramFactory } from "./model-factory"
 import { popupModelFactory } from "./popup"
 
@@ -42,6 +42,8 @@ export default (useWebsocket: boolean, containerId: string) => {
     viewRegistry.register('label:heading', SLabelView)
     viewRegistry.register('label:text', SLabelView)
     viewRegistry.register('comp:comp', SCompartmentView)
+    viewRegistry.register('comp:header', SCompartmentView)
+    viewRegistry.register('label:icon', IconView)
     viewRegistry.register('edge:straight', PolylineEdgeView)
     viewRegistry.register('html', HtmlRootView)
     viewRegistry.register('pre-rendered', PreRenderedView)

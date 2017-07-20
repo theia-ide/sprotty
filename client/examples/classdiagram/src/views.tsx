@@ -5,9 +5,9 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { RenderingContext, SNode, RectangularNodeView } from "../../../src"
+import { RenderingContext, SNode, SLabel, RectangularNodeView, IView } from "../../../src"
 import { VNode } from "snabbdom/vnode"
-import * as snabbdom from "snabbdom-jsx"
+import * as snabbdom from 'snabbdom-jsx';
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -22,5 +22,20 @@ export class ClassNodeView extends RectangularNodeView {
                   width={Math.max(0, node.bounds.width)} height={Math.max(0, node.bounds.height)} />
             {context.renderChildren(node)}
         </g>
+    }
+}
+
+export class IconView implements IView {
+
+    render(element: SLabel, context: RenderingContext): VNode {
+        const radius = this.getRadius()
+        return <g>
+            <circle class-icon={true} r={radius} cx={radius} cy={radius}></circle>
+            <text class-icon={true} x={radius} y={radius}>{element.text}</text>
+        </g>
+    }
+
+    getRadius() {
+        return 16
     }
 }

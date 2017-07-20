@@ -12,11 +12,6 @@
     stroke: #152;
     stroke-width: 0;
     font-weight: bold;
-
-    /* properties for vbox */
-    line-height: 10px;
-    padding: 10px;
-    text-align: center;
 }
 
 .comp {
@@ -29,12 +24,17 @@
     font-size: 15pt;
 }
 
+
 .label {
     stroke-width: 0;
     fill: #000;
     font-weight: inherit;
     text-align: inherit;
     font-size: 100%;
+}
+
+.heading.label {
+    font-weight: bold;
 }
 
 .edge {
@@ -68,4 +68,14 @@
 
 .popup-body > p {
     margin-bottom: 2px;
+}
+
+.icon {
+    fill: #153;
+}
+
+text.icon {
+    fill: #fff;
+    text-anchor: middle;
+    dominant-baseline: central;
 }

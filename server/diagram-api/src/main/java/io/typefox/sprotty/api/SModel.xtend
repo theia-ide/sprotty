@@ -40,6 +40,7 @@ class SModelRoot extends SModelElement {
 class SGraph extends SModelRoot implements BoundsAware {
 	Point position
 	Dimension size
+	LayoutOptions layoutOptions
 
 	new() {}
 	new(Consumer<SGraph> initializer) {
@@ -53,7 +54,7 @@ class SNode extends SModelElement implements BoundsAware  {
 	Point position
 	Dimension size
 	String layout
-	Boolean resizeContainer
+	LayoutOptions layoutOptions
 	
 	new() {}
 	new(Consumer<SNode> initializer) {
@@ -66,6 +67,7 @@ class SNode extends SModelElement implements BoundsAware  {
 class SPort extends SModelElement implements BoundsAware  {
 	Point position
 	Dimension size
+	LayoutOptions layoutOptions
 	
 	new() {}
 	new(Consumer<SPort> initializer) {
@@ -92,7 +94,7 @@ class SCompartment extends SModelElement implements BoundsAware {
 	Point position
 	Dimension size
 	String layout
-	Boolean resizeContainer
+	LayoutOptions layoutOptions
 	
 	new() {}
 	new(Consumer<SCompartment> initializer) {
@@ -107,9 +109,30 @@ class SLabel extends SModelElement implements BoundsAware, Alignable {
 	Dimension size
 	String text
 	Point alignment
+	LayoutOptions layoutOptions
 	
 	new() {}
 	new(Consumer<SLabel> initializer) {
+		initializer.accept(this)
+	}
+}
+
+@Accessors
+@ToString(skipNulls = true)
+class LayoutOptions {
+	Double paddingLeft	
+	Double paddingRight
+	Double paddingTop	
+	Double paddingBottom
+	Boolean resizeContainer
+	Double vGap
+	Double hGap
+	String vAlign
+	String hAlign
+	
+	new() {}
+	
+	new(Consumer<LayoutOptions> initializer) {
 		initializer.accept(this)
 	}
 }

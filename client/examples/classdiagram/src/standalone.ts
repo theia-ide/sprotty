@@ -22,9 +22,20 @@ export default function runClassDiagram() {
         layout: 'vbox',
         children: [
             {
-                id: 'node0_classname',
-                type: 'label:heading',
-                text: 'Foo'
+                id: 'node0_header',
+                type: 'comp:header',
+                layout: 'hbox',
+                children: [
+                    {
+                        id: 'node0_icon',
+                        type: 'label:icon',
+                        text: 'C'
+                    }, {
+                        id: 'node0_classname',
+                        type: 'label:heading',
+                        text: 'Foo'
+                    }
+                ]
             },
             {
                 id: 'node0_attrs',
@@ -66,11 +77,19 @@ export default function runClassDiagram() {
         layout: 'vbox',
         children: [
             {
-                id: 'node1_classname',
-                type: 'label:heading',
-                text: 'Bar'
-            },
-            {
+                id: 'node1_header',
+                type: 'comp:header',
+                layout: 'hbox',
+                children: [{
+                    id: 'node1_icon',
+                    type: 'label:icon',
+                    text: 'C'
+                }, {
+                    id: 'node1_classname',
+                    type: 'label:heading',
+                    text: 'Bar'
+                }]
+            }, {
                 id: 'node1_attrs',
                 type: 'comp:comp',
                 layout: 'vbox',
@@ -103,7 +122,19 @@ export default function runClassDiagram() {
         sourceId: node0.id,
         targetId: node1.id
     } as SEdge
-    const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0, node1, edge] }
+    const graph: SGraphSchema = { 
+        id: 'graph', 
+        type: 'graph', 
+        children: [node0, node1, edge], 
+        layoutOptions: {
+            hGap: 5,
+            hAlign: 'left',
+            paddingLeft: 7,
+            paddingRight: 7,
+            paddingTop: 7,
+            paddingBottom: 7
+        }
+    }
     // Run
     const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
     modelSource.setModel(graph)

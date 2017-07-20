@@ -11,12 +11,19 @@ import io.typefox.sprotty.api.SModelRoot
 import java.util.function.Consumer
 import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.ToString
+import io.typefox.sprotty.api.LayoutOptions
 
 @Accessors
 @ToString(skipNulls = true)
 class Processor extends SModelRoot {
 	int rows
 	int columns
+	LayoutOptions layoutOptions
+
+	new() {}
+	new(Consumer<Processor> initializer) {
+		initializer.accept(this)
+	}
 }
 
 @Accessors
@@ -26,14 +33,13 @@ class Core extends SModelElement {
 	int column
 	int kernelNr
 	String layout
-	Boolean resizeContainer
+	LayoutOptions layoutOptions
 	Boolean selected
 	 
 	new() {}
 	new(Consumer<Core> initializer) {
 		initializer.accept(this)
 	}
-	
 }
 
 @Accessors
