@@ -80,8 +80,8 @@ export class HBoxLayouter extends AbstractLayout {
                 const boundsData = layouter.getBoundsData(child)
                 const bounds = boundsData.bounds
                 const layoutOptions = (child as any).layoutOptions
-                const vAlign = (layoutOptions === undefined) 
-                    ? options.vAlign 
+                const vAlign = (layoutOptions === undefined)
+                    ? options.vAlign
                     : {...options, ...layoutOptions}.vAlign
                 if (bounds !== undefined && isValidDimension(bounds)) {
                     let dy = 0
@@ -114,14 +114,14 @@ export class HBoxLayouter extends AbstractLayout {
         const allOptions: HBoxLayoutOptions[] = []
         while (true) {
             const layoutOptions = (current as any).layoutOptions
-            if (layoutOptions !== undefined) 
+            if (layoutOptions !== undefined)
                 allOptions.push(layoutOptions)
-            if (current instanceof SChildElement) 
+            if (current instanceof SChildElement)
                 current = current.parent
             else
                 break
         }
         return allOptions.reverse().reduce(
-            (a,b) => ({...a, ...b}), DEFAULT_HBOX_LAYOUT_OPTIONS)
+            (a, b) => ({...a, ...b}), DEFAULT_HBOX_LAYOUT_OPTIONS)
     }
 }

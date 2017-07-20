@@ -37,7 +37,7 @@ export abstract class SShapeElement extends SChildElement implements BoundsAware
     position: Point = ORIGIN_POINT
     size: Dimension = EMPTY_DIMENSION
     layoutOptions?: any
-    
+
     get bounds(): Bounds {
         return {
             x: this.position.x,

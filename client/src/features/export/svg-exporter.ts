@@ -94,16 +94,16 @@ export class SvgExporter {
 
     /**
      * By default, only CSS rules from files
-     * 1) with a specific comment 
+     * 1) with a specific comment
      * 2) with standard file names
      * are exported.
      */
     protected isExported(styleSheet: CSSStyleSheet) {
-        return this.isStandardSprottyStylesheet(styleSheet) || this.hasExportComment(styleSheet)
+        return this.isStandardSprottyStylesheet(styleSheet) || this.hasExportComment(styleSheet)
     }
-    
+
     protected isStandardSprottyStylesheet(styleSheet: CSSStyleSheet) {
-        return styleSheet.href !== undefined && (styleSheet.href.endsWith('sprotty.css') || styleSheet.href.endsWith('diagram.css'))
+        return styleSheet.href !== undefined && (styleSheet.href.endsWith('sprotty.css') || styleSheet.href.endsWith('diagram.css'))
     }
 
     protected hasExportComment(styleSheet: CSSStyleSheet) {

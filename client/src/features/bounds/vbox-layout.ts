@@ -9,7 +9,7 @@ import { isValidDimension } from '../../utils/geometry'
 import { SParentElement, SModelElement, SChildElement } from "../../base/model/smodel"
 import { StatefulLayouter } from './layout'
 import { AbstractLayout } from './abstract-layout'
-import { Layouting } from './model';
+import { Layouting } from './model'
 
 export type HAlignment = 'left' | 'center' | 'right'
 
@@ -80,8 +80,8 @@ export class VBoxLayouter extends AbstractLayout {
                 const boundsData = layouter.getBoundsData(child)
                 const bounds = boundsData.bounds
                 const layoutOptions = (child as any).layoutOptions
-                const hAlign = (layoutOptions === undefined) 
-                    ? options.hAlign 
+                const hAlign = (layoutOptions === undefined)
+                    ? options.hAlign
                     : {...options, ...layoutOptions}.hAlign
                 if (bounds !== undefined && isValidDimension(bounds)) {
                     let dx = 0
@@ -114,14 +114,14 @@ export class VBoxLayouter extends AbstractLayout {
         const allOptions: VBoxLayoutOptions[] = []
         while (true) {
             const layoutOptions = (current as any).layoutOptions
-            if (layoutOptions !== undefined) 
+            if (layoutOptions !== undefined)
                 allOptions.push(layoutOptions)
-            if (current instanceof SChildElement) 
+            if (current instanceof SChildElement)
                 current = current.parent
             else
                 break
         }
         return allOptions.reverse().reduce(
-            (a,b) => ({...a, ...b}), DEFAULT_VBOX_LAYOUT_OPTIONS)
+            (a, b) => ({...a, ...b}), DEFAULT_VBOX_LAYOUT_OPTIONS)
     }
 }

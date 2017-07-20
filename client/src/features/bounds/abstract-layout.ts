@@ -17,7 +17,7 @@ export abstract class AbstractLayout implements ILayout {
 
     protected getFixedContainerBounds(
             container: SModelElement,
-            layoutOptions: any, 
+            layoutOptions: any,
             layouter: StatefulLayouter): Bounds {
         let currentContainer = container
         while (true) {
