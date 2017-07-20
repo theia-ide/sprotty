@@ -127,12 +127,12 @@ export default function runClassDiagram() {
         type: 'graph', 
         children: [node0, node1, edge], 
         layoutOptions: {
-            hGap: 10,
+            hGap: 5,
             hAlign: 'left',
-            paddingLeft: 10,
-            paddingRight: 10,
-            paddingTop: 10,
-            paddingBottom: 10
+            paddingLeft: 7,
+            paddingRight: 7,
+            paddingTop: 7,
+            paddingBottom: 7
         }
     }
     // Run

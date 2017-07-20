@@ -12,11 +12,6 @@
     stroke: #152;
     stroke-width: 0;
     font-weight: bold;
-
-    /* properties for vbox */
-    line-height: 10px;
-    padding: 10px;
-    text-align: center;
 }
 
 .comp {
@@ -39,7 +34,6 @@
 }
 
 .heading.label {
-    vertical-align: middle;
     font-weight: bold;
 }
 
@@ -84,8 +78,4 @@ text.icon {
     fill: #fff;
     text-anchor: middle;
     dominant-baseline: central;
-}
-
-.comp.header {
-    line-height: 10px;
 }
