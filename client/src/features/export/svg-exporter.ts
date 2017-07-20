@@ -93,9 +93,20 @@ export class SvgExporter {
     }
 
     /**
-     * By default, only CSS rules from files with a given comment are exported.
+     * By default, only CSS rules from files
+     * 1) with a specific comment 
+     * 2) with standard file names
+     * are exported.
      */
     protected isExported(styleSheet: CSSStyleSheet) {
+        return this.isStandardSprottyStylesheet(styleSheet) || this.hasExportComment(styleSheet)
+    }
+    
+    protected isStandardSprottyStylesheet(styleSheet: CSSStyleSheet) {
+        return styleSheet.href !== undefined && (styleSheet.href.endsWith('sprotty.css') || styleSheet.href.endsWith('diagram.css'))
+    }
+
+    protected hasExportComment(styleSheet: CSSStyleSheet) {
         return styleSheet.ownerNode
             && (styleSheet.ownerNode as any).innerHTML
             && (styleSheet.ownerNode as any).innerHTML.indexOf('/* sprotty SVG export */') !== -1
