@@ -1,19 +1,37 @@
-/*
- * Copyright (C) 2017 TypeFox and others.
- *
- * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
- * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
- */
 
-import { Bounds, EMPTY_BOUNDS, isValidDimension } from "../../utils/geometry"
+
+import { Bounds, EMPTY_BOUNDS, isValidDimension, Point } from "../../utils/geometry"
 import { SParentElement, SModelElement, SChildElement } from "../../base/model/smodel"
 import { isLayouting, Layouting, isBoundsAware } from "./model"
 import { ILayout, StatefulLayouter } from './layout'
+import { AbstractLayoutOptions, HAlignment, VAlignment } from './layout-options'
+import { BoundsData } from './hidden-bounds-updater'
 
-export abstract class AbstractLayout implements ILayout {
+export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> implements ILayout {
 
-    abstract layout(container: SParentElement & Layouting,
-           layouter: StatefulLayouter): void
+    layout(container: SParentElement & Layouting,
+           layouter: StatefulLayouter) {
+        const boundsData = layouter.getBoundsData(container)
+        const options = this.getLayoutOptions(container)
+                const maxWidth = options.resizeContainer
+            ? this.getMaxWidth(container, layouter)
+            : Math.max(0, this.getFixedContainerBounds(container, options, layouter).width) - options.paddingLeft - options.paddingRight
+        const maxHeight = options.resizeContainer
+            ? this.getMaxHeight(container, layouter)
+            : Math.max(0, this.getFixedContainerBounds(container, options, layouter).height) - options.paddingTop - options.paddingBottom
+        if (maxWidth > 0 && maxHeight > 0) {
+            const offset = this.layoutChildren(container, layouter, options, maxWidth, maxHeight)
+            boundsData.bounds = this.getFinalContainerBounds(container, offset, options, maxWidth, maxHeight)
+            boundsData.boundsChanged = true
+        }
+    }
+    protected abstract layoutChild(child: SChildElement,
+                                boundsData: BoundsData, bounds: Bounds,
+                                childOptions: T, containerOptions: T,
+                                currentOffset: Point,
+                                maxWidth: number, maxHeight: number): Point
+
+    protected abstract getFinalContainerBounds(container: SParentElement & Layouting, lastOffset: Point, options: T, maxWidth: number, maxHeight: number): Bounds
 
     protected getFixedContainerBounds(
             container: SModelElement,
@@ -36,4 +54,100 @@ export abstract class AbstractLayout implements ILayout {
             }
         }
     }
+
+    protected getMaxWidth(container: SParentElement & Layouting,
+                          layouter: StatefulLayouter) {
+        let maxWidth = -1
+        container.children.forEach(
+            child => {
+                const bounds = layouter.getBoundsData(child).bounds
+                if (bounds !== undefined && isValidDimension(bounds))
+                    maxWidth = Math.max(maxWidth, bounds.width)
+            }
+        )
+        return maxWidth
+    }
+
+    protected getMaxHeight(container: SParentElement & Layouting,
+                          layouter: StatefulLayouter) {
+        let maxHeight = -1
+        container.children.forEach(
+            child => {
+                const bounds = layouter.getBoundsData(child).bounds
+                if (bounds !== undefined && isValidDimension(bounds))
+                    maxHeight = Math.max(maxHeight, bounds.height)
+            }
+        )
+        return maxHeight
+    }
+
+    protected layoutChildren(container: SParentElement & Layouting,
+                            layouter: StatefulLayouter,
+                            containerOptions: T,
+                            maxWidth: number,
+                            maxHeight: number): Point {
+        let currentOffset: Point = { x: containerOptions.paddingLeft, y: containerOptions.paddingTop }
+        container.children.forEach(
+            child => {
+                const boundsData = layouter.getBoundsData(child)
+                const bounds = boundsData.bounds
+                const childOptions = this.getChildLayoutOptions(child, containerOptions)
+                if (bounds !== undefined && isValidDimension(bounds)) {
+                    currentOffset = this.layoutChild(child, boundsData, bounds,
+                        childOptions, containerOptions, currentOffset, maxWidth, maxHeight)
+                }
+            }
+        )
+        return currentOffset
+    }
+
+    protected getDx(hAlign: HAlignment, bounds: Bounds, maxWidth: number): number {
+        switch (hAlign) {
+            case 'left':
+                return 0
+            case 'center':
+                return 0.5 * (maxWidth - bounds.width)
+            case 'right':
+                return maxWidth - bounds.width
+        }
+    }
+
+    protected getDy(vAlign: VAlignment, bounds: Bounds, maxHeight: number): number {
+        switch (vAlign) {
+            case 'top':
+                return 0
+            case 'center':
+                return 0.5 * (maxHeight - bounds.height)
+            case 'bottom':
+                return maxHeight - bounds.height
+        }
+    }
+
+    protected getChildLayoutOptions(child: SChildElement, containerOptions: T): T {
+        let layoutOptions = (child as any).layoutOptions
+        if (layoutOptions === undefined)
+            return containerOptions
+        else
+            return this.spread(containerOptions, layoutOptions)
+    }
+
+    protected getLayoutOptions(element: SModelElement): T {
+        let current = element
+        const allOptions: T[] = []
+        while (true) {
+            const layoutOptions = (current as any).layoutOptions
+            if (layoutOptions !== undefined)
+                allOptions.push(layoutOptions)
+            if (current instanceof SChildElement)
+                current = current.parent
+            else
+                break
+        }
+        return allOptions.reverse().reduce(
+            (a, b) => { return this.spread(a, b)}, this.getDefaultLayoutOptions())
+    }
+
+    protected abstract getDefaultLayoutOptions(): T
+
+    protected abstract spread(a: T, b: T): T
 }

@@ -15,12 +15,14 @@ import { isLayouting, Layouting } from "./model"
 import { BoundsData } from "./hidden-bounds-updater"
 import { VBoxLayouter } from "./vbox-layout"
 import { HBoxLayouter } from "./hbox-layout"
+import { StackLayouter } from "./stack-layout"
 
 export class LayoutRegistry extends InstanceRegistry<ILayout> {
     constructor() {
         super()
         this.register(VBoxLayouter.KIND, new VBoxLayouter())
         this.register(HBoxLayouter.KIND, new HBoxLayouter())
+        this.register(StackLayouter.KIND, new StackLayouter())
     }
 }
 
