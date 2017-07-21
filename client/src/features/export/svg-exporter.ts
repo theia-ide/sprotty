@@ -103,7 +103,7 @@ export class SvgExporter {
     }
 
     protected isStandardSprottyStylesheet(styleSheet: CSSStyleSheet) {
-        return styleSheet.href !== undefined && (styleSheet.href.endsWith('sprotty.css') || styleSheet.href.endsWith('diagram.css'))
+        return styleSheet.href && (styleSheet.href.endsWith('sprotty.css') || styleSheet.href.endsWith('diagram.css'))
     }
 
     protected hasExportComment(styleSheet: CSSStyleSheet) {
