@@ -29,8 +29,8 @@ export class StackLayouter extends AbstractLayout<StackLayoutOptions> {
                         containerOptions: StackLayoutOptions,
                         currentOffset: Point,
                         maxWidth: number, maxHeight: number): Point {
-        const dx = this.getDx(childOptions.hAlign, bounds, maxWidth)
-        const dy = this.getDy(childOptions.vAlign, bounds, maxHeight)
+        const dx = this.getDx(childOptions.hAlign, bounds, maxWidth * containerOptions.paddingFactor)
+        const dy = this.getDy(childOptions.vAlign, bounds, maxHeight * containerOptions.paddingFactor)
         boundsData.bounds = {
             x: containerOptions.paddingLeft + (child as any).bounds.x - bounds.x + dx,
             y: containerOptions.paddingTop + (child as any).bounds.y - bounds.y + dy,
@@ -49,8 +49,8 @@ export class StackLayouter extends AbstractLayout<StackLayoutOptions> {
         return {
             x: container.bounds.x,
             y: container.bounds.y,
-            width: maxWidth + options.paddingLeft + options.paddingRight,
-            height: maxHeight + options.paddingTop + options.paddingBottom
+            width: maxWidth * options.paddingFactor + options.paddingLeft + options.paddingRight,
+            height: maxHeight * options.paddingFactor + options.paddingTop + options.paddingBottom
         }
     }
 

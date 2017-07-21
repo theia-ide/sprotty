@@ -124,6 +124,7 @@ class LayoutOptions {
 	Double paddingRight
 	Double paddingTop	
 	Double paddingBottom
+	Double paddingFactor
 	Boolean resizeContainer
 	Double vGap
 	Double hGap
