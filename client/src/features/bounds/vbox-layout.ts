@@ -5,12 +5,13 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds, Point } from '../../utils/geometry'
+import { Bounds, Point, isValidDimension } from '../../utils/geometry'
 import { SParentElement, SChildElement } from "../../base/model/smodel"
 import { AbstractLayout } from './abstract-layout'
 import { AbstractLayoutOptions, HAlignment } from './layout-options'
 import { BoundsData } from './hidden-bounds-updater'
 import { Layouting } from './model'
+import { StatefulLayouter } from './layout'
 
 export interface VBoxLayoutOptions extends AbstractLayoutOptions {
     vGap: number
@@ -24,16 +25,28 @@ export class VBoxLayouter extends AbstractLayout<VBoxLayoutOptions> {
 
     static KIND = 'vbox'
 
-    protected getFinalContainerBounds(container: SParentElement & Layouting,
-                                    lastOffset: Point,
-                                    options: VBoxLayoutOptions,
-                                    maxWidth: number,
-                                    maxHeight: number): Bounds {
+    protected getChildrenSize(container: SParentElement & Layouting,
+                               containerOptions: VBoxLayoutOptions,
+                               layouter: StatefulLayouter) {
+        let maxWidth = -1
+        let maxHeight = 0
+        let isFirst = true
+        container.children.forEach(
+            child => {
+                const bounds = layouter.getBoundsData(child).bounds
+                if (bounds !== undefined && isValidDimension(bounds)) {
+                    maxHeight += bounds.height
+                    if (isFirst)
+                        isFirst = false
+                    else
+                        maxHeight += containerOptions.vGap
+                    maxWidth = Math.max(maxWidth, bounds.width)
+                }
+            }
+        )
         return {
-            x: container.bounds.x,
-            y: container.bounds.y,
-            width: maxWidth + options.paddingLeft + options.paddingRight,
-            height: lastOffset.y - options.vGap + options.paddingBottom
+            width: maxWidth,
+            height: maxHeight
         }
     }
 

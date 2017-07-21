@@ -1,6 +1,6 @@
 
 
-import { Bounds, EMPTY_BOUNDS, isValidDimension, Point } from "../../utils/geometry"
+import { Bounds, EMPTY_BOUNDS, isValidDimension, Dimension, Point } from "../../utils/geometry"
 import { SParentElement, SModelElement, SChildElement } from "../../base/model/smodel"
 import { isLayouting, Layouting, isBoundsAware } from "./model"
 import { ILayout, StatefulLayouter } from './layout'
@@ -13,14 +13,14 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
            layouter: StatefulLayouter) {
         const boundsData = layouter.getBoundsData(container)
         const options = this.getLayoutOptions(container)
-        const maxChildrenSize = this.getMaxChildrenSize(container, layouter)
+        const childrenSize = this.getChildrenSize(container, options, layouter)
         const maxWidth = options.paddingFactor * (
             options.resizeContainer
-            ? maxChildrenSize.width
+            ? childrenSize.width
             : Math.max(0, this.getFixedContainerBounds(container, options, layouter).width) - options.paddingLeft - options.paddingRight)
         const maxHeight =  options.paddingFactor * (
             options.resizeContainer
-            ? maxChildrenSize.height
+            ? childrenSize.height
             : Math.max(0, this.getFixedContainerBounds(container, options, layouter).height) - options.paddingTop - options.paddingBottom)
         if (maxWidth > 0 && maxHeight > 0) {
             const offset = this.layoutChildren(container, layouter, options, maxWidth, maxHeight)
@@ -34,7 +34,18 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
                                 currentOffset: Point,
                                 maxWidth: number, maxHeight: number): Point
 
-    protected abstract getFinalContainerBounds(container: SParentElement & Layouting, lastOffset: Point, options: T, maxWidth: number, maxHeight: number): Bounds
+    protected getFinalContainerBounds(container: SParentElement & Layouting,
+                                    lastOffset: Point,
+                                    options: T,
+                                    maxWidth: number,
+                                    maxHeight: number): Bounds {
+        return {
+            x: container.bounds.x,
+            y: container.bounds.y,
+            width: maxWidth + options.paddingLeft + options.paddingRight,
+            height: maxHeight + options.paddingTop + options.paddingBottom
+        }
+    }
 
     protected getFixedContainerBounds(
             container: SModelElement,
@@ -58,31 +69,18 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
         }
     }
 
-    protected getMaxChildrenSize(container: SParentElement & Layouting,
-                                 layouter: StatefulLayouter) {
-        let maxWidth = -1
-        let maxHeight = -1
-        container.children.forEach(
-            child => {
-                const bounds = layouter.getBoundsData(child).bounds
-                if (bounds !== undefined && isValidDimension(bounds)) {
-                    maxWidth = Math.max(maxWidth, bounds.width)
-                    maxHeight = Math.max(maxHeight, bounds.height)
-                }
-            }
-        )
-        return {
-            width: maxWidth,
-            height: maxHeight
-        }
-    }
+    protected abstract getChildrenSize(container: SParentElement & Layouting,
+                               containerOptions: T,
+                               layouter: StatefulLayouter): Dimension;
 
     protected layoutChildren(container: SParentElement & Layouting,
                             layouter: StatefulLayouter,
                             containerOptions: T,
                             maxWidth: number,
                             maxHeight: number): Point {
-        let currentOffset: Point = { x: containerOptions.paddingLeft, y: containerOptions.paddingTop }
+        let currentOffset: Point = {
+            x: containerOptions.paddingLeft + 0.5 * (maxWidth - (maxWidth / containerOptions.paddingFactor)),
+            y: containerOptions.paddingTop + 0.5 * (maxHeight - (maxHeight / containerOptions.paddingFactor))}
         container.children.forEach(
             child => {
                 const boundsData = layouter.getBoundsData(child)

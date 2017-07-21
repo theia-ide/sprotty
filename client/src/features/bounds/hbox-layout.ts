@@ -5,12 +5,13 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds, Point } from '../../utils/geometry'
-import { SChildElement, SParentElement } from "../../base/model/smodel"
+import { Bounds, Point, isValidDimension } from '../../utils/geometry'
+import { SParentElement, SChildElement } from "../../base/model/smodel"
 import { AbstractLayout } from './abstract-layout'
 import { AbstractLayoutOptions, VAlignment } from './layout-options'
 import { BoundsData } from './hidden-bounds-updater'
 import { Layouting } from './model'
+import { StatefulLayouter } from './layout'
 
 export interface HBoxLayoutOptions extends AbstractLayoutOptions {
     hGap: number
@@ -23,6 +24,31 @@ export interface HBoxLayoutOptions extends AbstractLayoutOptions {
 export class HBoxLayouter extends AbstractLayout<HBoxLayoutOptions> {
 
     static KIND = 'hbox'
+
+    protected getChildrenSize(container: SParentElement & Layouting,
+                               containerOptions: HBoxLayoutOptions,
+                               layouter: StatefulLayouter) {
+        let maxWidth = 0
+        let maxHeight = -1
+        let isFirst = true
+        container.children.forEach(
+            child => {
+                const bounds = layouter.getBoundsData(child).bounds
+                if (bounds !== undefined && isValidDimension(bounds)) {
+                    if (isFirst)
+                        isFirst = false
+                    else
+                        maxWidth += containerOptions.hGap
+                    maxWidth += bounds.width
+                    maxHeight = Math.max(maxHeight, bounds.height)
+                }
+            }
+        )
+        return {
+            width: maxWidth,
+            height: maxHeight
+        }
+    }
 
     protected layoutChild(child: SChildElement,
                         boundsData: BoundsData,
@@ -43,19 +69,6 @@ export class HBoxLayouter extends AbstractLayout<HBoxLayoutOptions> {
         return {
             x: currentOffset.x + bounds.width + containerOptions.hGap,
             y: currentOffset.y
-        }
-    }
-
-    protected getFinalContainerBounds(container: SParentElement & Layouting,
-                                    lastOffset: Point,
-                                    options: HBoxLayoutOptions,
-                                    maxWidth: number,
-                                    maxHeight: number): Bounds {
-        return {
-            x: container.bounds.x,
-            y: container.bounds.y,
-            width: lastOffset.x - options.hGap + options.paddingRight,
-            height: maxHeight + options.paddingTop + options.paddingBottom
         }
     }
 

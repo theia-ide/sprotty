@@ -5,12 +5,13 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds, Point } from '../../utils/geometry'
-import { SChildElement, SParentElement } from "../../base/model/smodel"
+import { Bounds, Point, isValidDimension } from '../../utils/geometry'
+import { SParentElement, SChildElement } from "../../base/model/smodel"
 import { AbstractLayout } from './abstract-layout'
 import { AbstractLayoutOptions, HAlignment, VAlignment } from './layout-options'
 import { BoundsData } from './hidden-bounds-updater'
 import { Layouting } from './model'
+import { StatefulLayouter } from './layout'
 
 export interface StackLayoutOptions extends AbstractLayoutOptions {
     paddingFactor: number
@@ -21,6 +22,26 @@ export interface StackLayoutOptions extends AbstractLayoutOptions {
 export class StackLayouter extends AbstractLayout<StackLayoutOptions> {
 
     static KIND = 'stack'
+
+    protected getChildrenSize(container: SParentElement & Layouting,
+                            options: StackLayoutOptions,
+                            layouter: StatefulLayouter) {
+        let maxWidth = -1
+        let maxHeight = -1
+        container.children.forEach(
+            child => {
+                const bounds = layouter.getBoundsData(child).bounds
+                if (bounds !== undefined && isValidDimension(bounds)) {
+                    maxWidth = Math.max(maxWidth, bounds.width)
+                    maxHeight = Math.max(maxHeight, bounds.height)
+                }
+            }
+        )
+        return {
+            width: maxWidth,
+            height: maxHeight
+        }
+    }
 
     protected layoutChild(child: SChildElement,
                         boundsData: BoundsData,
@@ -39,19 +60,6 @@ export class StackLayouter extends AbstractLayout<StackLayoutOptions> {
         }
         boundsData.boundsChanged = true
         return currentOffset
-    }
-
-    protected getFinalContainerBounds(container: SParentElement & Layouting,
-                                    lastOffset: Point,
-                                    options: StackLayoutOptions,
-                                    maxWidth: number,
-                                    maxHeight: number): Bounds {
-        return {
-            x: container.bounds.x,
-            y: container.bounds.y,
-            width: maxWidth + options.paddingLeft + options.paddingRight,
-            height: maxHeight + options.paddingTop + options.paddingBottom
-        }
     }
 
     protected getDefaultLayoutOptions(): StackLayoutOptions {
