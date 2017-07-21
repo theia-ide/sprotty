@@ -15,4 +15,5 @@ export interface AbstractLayoutOptions extends Object {
     paddingBottom: number
     paddingLeft: number
     paddingRight: number
+    paddingFactor: number
 }

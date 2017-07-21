@@ -64,6 +64,7 @@ export class VBoxLayouter extends AbstractLayout<VBoxLayoutOptions> {
             paddingBottom: 5,
             paddingLeft: 5,
             paddingRight: 5,
+            paddingFactor: 1,
             vGap: 1,
             hAlign: 'center'
         }

@@ -13,12 +13,14 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
            layouter: StatefulLayouter) {
         const boundsData = layouter.getBoundsData(container)
         const options = this.getLayoutOptions(container)
-                const maxWidth = options.resizeContainer
+        const maxWidth = options.paddingFactor * (
+            options.resizeContainer
             ? this.getMaxWidth(container, layouter)
-            : Math.max(0, this.getFixedContainerBounds(container, options, layouter).width) - options.paddingLeft - options.paddingRight
-        const maxHeight = options.resizeContainer
+            : Math.max(0, this.getFixedContainerBounds(container, options, layouter).width) - options.paddingLeft - options.paddingRight)
+        const maxHeight =  options.paddingFactor * (
+            options.resizeContainer
             ? this.getMaxHeight(container, layouter)
-            : Math.max(0, this.getFixedContainerBounds(container, options, layouter).height) - options.paddingTop - options.paddingBottom
+            : Math.max(0, this.getFixedContainerBounds(container, options, layouter).height) - options.paddingTop - options.paddingBottom)
         if (maxWidth > 0 && maxHeight > 0) {
             const offset = this.layoutChildren(container, layouter, options, maxWidth, maxHeight)
             boundsData.bounds = this.getFinalContainerBounds(container, offset, options, maxWidth, maxHeight)
@@ -94,7 +96,8 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
                 const childOptions = this.getChildLayoutOptions(child, containerOptions)
                 if (bounds !== undefined && isValidDimension(bounds)) {
                     currentOffset = this.layoutChild(child, boundsData, bounds,
-                        childOptions, containerOptions, currentOffset, maxWidth, maxHeight)
+                        childOptions, containerOptions, currentOffset,
+                        maxWidth, maxHeight)
                 }
             }
         )
