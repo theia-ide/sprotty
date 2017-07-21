@@ -16,6 +16,7 @@ import { BoundsData } from "./hidden-bounds-updater"
 import { VBoxLayouter } from "./vbox-layout"
 import { HBoxLayouter } from "./hbox-layout"
 import { StackLayouter } from "./stack-layout"
+import { FreeLayouter } from "./free-layout"
 
 export class LayoutRegistry extends InstanceRegistry<ILayout> {
     constructor() {
@@ -23,6 +24,7 @@ export class LayoutRegistry extends InstanceRegistry<ILayout> {
         this.register(VBoxLayouter.KIND, new VBoxLayouter())
         this.register(HBoxLayouter.KIND, new HBoxLayouter())
         this.register(StackLayouter.KIND, new StackLayouter())
+        this.register(FreeLayouter.KIND, new FreeLayouter())
     }
 }
 

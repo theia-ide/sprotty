@@ -17,6 +17,9 @@ export interface HBoxLayoutOptions extends AbstractLayoutOptions {
     vAlign: VAlignment
 }
 
+/**
+ * Layouts children of a container in horizontal (left->right) direction.
+ */
 export class HBoxLayouter extends AbstractLayout<HBoxLayoutOptions> {
 
     static KIND = 'hbox'

@@ -13,11 +13,13 @@ import { BoundsData } from './hidden-bounds-updater'
 import { Layouting } from './model'
 
 export interface VBoxLayoutOptions extends AbstractLayoutOptions {
-    resizeContainer: boolean
     vGap: number
     hAlign: HAlignment
 }
 
+/**
+ * Layouts children of a container in vertical (top->bottom) direction.
+ */
 export class VBoxLayouter extends AbstractLayout<VBoxLayoutOptions> {
 
     static KIND = 'vbox'

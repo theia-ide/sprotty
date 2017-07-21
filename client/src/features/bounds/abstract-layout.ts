@@ -13,13 +13,14 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
            layouter: StatefulLayouter) {
         const boundsData = layouter.getBoundsData(container)
         const options = this.getLayoutOptions(container)
+        const maxChildrenSize = this.getMaxChildrenSize(container, layouter)
         const maxWidth = options.paddingFactor * (
             options.resizeContainer
-            ? this.getMaxWidth(container, layouter)
+            ? maxChildrenSize.width
             : Math.max(0, this.getFixedContainerBounds(container, options, layouter).width) - options.paddingLeft - options.paddingRight)
         const maxHeight =  options.paddingFactor * (
             options.resizeContainer
-            ? this.getMaxHeight(container, layouter)
+            ? maxChildrenSize.height
             : Math.max(0, this.getFixedContainerBounds(container, options, layouter).height) - options.paddingTop - options.paddingBottom)
         if (maxWidth > 0 && maxHeight > 0) {
             const offset = this.layoutChildren(container, layouter, options, maxWidth, maxHeight)
@@ -57,30 +58,23 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
         }
     }
 
-    protected getMaxWidth(container: SParentElement & Layouting,
-                          layouter: StatefulLayouter) {
+    protected getMaxChildrenSize(container: SParentElement & Layouting,
+                                 layouter: StatefulLayouter) {
         let maxWidth = -1
-        container.children.forEach(
-            child => {
-                const bounds = layouter.getBoundsData(child).bounds
-                if (bounds !== undefined && isValidDimension(bounds))
-                    maxWidth = Math.max(maxWidth, bounds.width)
-            }
-        )
-        return maxWidth
-    }
-
-    protected getMaxHeight(container: SParentElement & Layouting,
-                          layouter: StatefulLayouter) {
         let maxHeight = -1
         container.children.forEach(
             child => {
                 const bounds = layouter.getBoundsData(child).bounds
-                if (bounds !== undefined && isValidDimension(bounds))
+                if (bounds !== undefined && isValidDimension(bounds)) {
+                    maxWidth = Math.max(maxWidth, bounds.width)
                     maxHeight = Math.max(maxHeight, bounds.height)
+                }
             }
         )
-        return maxHeight
+        return {
+            width: maxWidth,
+            height: maxHeight
+        }
     }
 
     protected layoutChildren(container: SParentElement & Layouting,
