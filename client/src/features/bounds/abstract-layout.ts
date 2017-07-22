@@ -129,7 +129,7 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
     protected getLayoutOptions(element: SModelElement): T {
         let current = element
         const allOptions: T[] = []
-        while (true) {
+        while (current !== undefined) {
             const layoutOptions = (current as any).layoutOptions
             if (layoutOptions !== undefined)
                 allOptions.push(layoutOptions)
