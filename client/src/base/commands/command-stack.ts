@@ -184,9 +184,15 @@ export class CommandStack implements ICommandStack {
         this.currentPromise = this.currentPromise.then(
             state => {
                 const promise = new Promise(
-                    (resolve: (result: CommandStackState) => void, reject: (result: CommandStackState) => void) => {
+                    (resolve: (result: CommandStackState) => void, reject: (reason?: any) => void) => {
                         const context = this.createContext(state.root)
-                        const newResult = operation.call(command, context) as CommandResult
+                        let newResult: CommandResult
+                        try {
+                            newResult = operation.call(command, context)
+                        } catch (error) {
+                            this.logger.error(this, "Failed to execute command:", error)
+                            newResult = state.root
+                        }
                         if (command instanceof HiddenCommand) {
                             resolve({
                                 ...state, ...{
