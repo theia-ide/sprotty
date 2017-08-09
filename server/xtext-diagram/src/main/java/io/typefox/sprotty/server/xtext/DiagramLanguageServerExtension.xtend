@@ -31,7 +31,7 @@ import org.eclipse.xtext.validation.IResourceValidator
  * An extension of the <a href="https://github.com/Microsoft/language-server-protocol">Language Server Protocol (LSP)</a>
  * that adds diagram-related messages.
  */
-class DiagramLanguageServerExtension implements DiagramServer, ILanguageServerExtension, IDiagramServer.Provider {
+class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguageServerExtension, IDiagramServer.Provider {
 	
 	protected static val LOG = Logger.getLogger(DiagramLanguageServerExtension)
 	

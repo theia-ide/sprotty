@@ -30,7 +30,7 @@ interface DiagramEndpoint extends Consumer<ActionMessage> {
  * LSP4J binding for the diagram server.
  */
 @JsonSegment('diagram')
-interface DiagramServer extends DiagramEndpoint {
+interface DiagramServerEndpoint extends DiagramEndpoint {
 	
 	/**
 	 * Sent by the client when a diagram has been closed. The server should release any
