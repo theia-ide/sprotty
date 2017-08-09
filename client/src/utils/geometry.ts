@@ -6,7 +6,7 @@
  */
 
 /**
- * A Point is composed of the (x,y) coordinates of an object
+ * A Point is composed of the (x,y) coordinates of an object.
  */
 export interface Point {
     readonly x: number
@@ -14,7 +14,7 @@ export interface Point {
 }
 
 /**
- * (x,y) coordinates of the origin
+ * (x,y) coordinates of the origin.
  */
 export const ORIGIN_POINT: Point = Object.freeze({
     x: 0,
@@ -22,7 +22,7 @@ export const ORIGIN_POINT: Point = Object.freeze({
 })
 
 /**
- * The Dimension of an object is composed of its width and height
+ * The Dimension of an object is composed of its width and height.
  */
 export interface Dimension {
     readonly width: number
@@ -47,8 +47,7 @@ export function isValidDimension(d: Dimension): boolean {
 }
 
 /**
- * The bounds are the position (x, y) and dimension (width, height)
- * of an object
+ * The bounds are the position (x, y) and dimension (width, height) of an object.
  */
 export interface Bounds extends Point, Dimension {
 }

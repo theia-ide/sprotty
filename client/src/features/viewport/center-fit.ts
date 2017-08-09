@@ -17,13 +17,26 @@ import { isSelectable } from "../select/model"
 import { ViewportAnimation } from "./viewport"
 import { isViewport, Viewport } from "./model"
 
+/**
+ * Triggered when the user requests the viewer to center on the current model. The resulting
+ * CenterCommand changes the scroll setting of the viewport accordingly and resets the zoom to its default.
+ * This action can also be sent from the model source to the client in order to perform such a
+ * viewport change programmatically.
+ */
 export class CenterAction implements Action {
     readonly kind = CenterCommand.KIND
 
-    constructor(public readonly elementIds: string[], public readonly animate: boolean = true) {
+    constructor(public readonly elementIds: string[],
+                public readonly animate: boolean = true) {
     }
 }
 
+/**
+ * Triggered when the user requests the viewer to fit its content to the available drawing area.
+ * The resulting FitToScreenCommand changes the zoom and scroll settings of the viewport so the model
+ * can be shown completely. This action can also be sent from the model source to the client in order
+ * to perform such a viewport change programmatically.
+ */
 export class FitToScreenAction implements Action {
     readonly kind = FitToScreenCommand.KIND
 

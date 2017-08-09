@@ -19,6 +19,9 @@ import { ViewerOptions } from "../../base/views/viewer-options"
 import { getAbsoluteBounds } from '../bounds/model'
 import { hasPopupFeature, isHoverable } from "./model"
 
+/**
+ * Triggered when the user puts the mouse pointer over an element.
+ */
 export class HoverFeedbackAction implements Action {
     kind = HoverFeedbackCommand.KIND
 
@@ -56,6 +59,11 @@ export class HoverFeedbackCommand extends Command {
     }
 }
 
+/**
+ * Triggered when the user hovers the mouse pointer over an element to get a popup with details on
+ * that element. This action is sent from the client to the model source, e.g. a DiagramServer.
+ * The response is a SetPopupModelAction.
+ */
 export class RequestPopupModelAction implements Action {
     static readonly KIND = 'requestPopupModel'
     readonly kind = RequestPopupModelAction.KIND
@@ -64,6 +72,10 @@ export class RequestPopupModelAction implements Action {
     }
 }
 
+/**
+ * Sent from the model source to the client to display a popup in response to a RequestPopupModelAction.
+ * This action can also be used to remove any existing popup by choosing EMPTY_ROOT as root element.
+ */
 export class SetPopupModelAction implements Action {
     readonly kind = SetPopupModelCommand.KIND
 

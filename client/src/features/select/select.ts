@@ -17,6 +17,12 @@ import { KeyListener } from "../../base/views/key-tool"
 import { setClass } from "../../base/views/vnode-utils"
 import { isSelectable } from "./model"
 
+/**
+ * Triggered when the user changes the selection, e.g. by clicking on a selectable element. The resulting
+ * SelectCommand changes the `selected` state accordingly, so the elements can be rendered differently.
+ * This action is also forwarded to the diagram server, if present, so it may react on the selection change.
+ * Furthermore, the server can send such an action to the client in order to change the selection programmatically.
+ */
 export class SelectAction implements Action {
     kind = SelectCommand.KIND
     selectAll: boolean = false

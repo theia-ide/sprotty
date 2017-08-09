@@ -20,6 +20,10 @@ import { ViewportRootElement } from "../viewport/viewport-root"
 import { isSelectable } from "../select/model"
 import { MatchResult, ModelMatcher, Match } from "./model-matching"
 
+/**
+ * Sent from the model source to the client in order to update the model. If no model is present yet,
+ * this behaves the same as a SetModelAction. The transition from the old model to the new one can be animated.
+ */
 export class UpdateModelAction implements Action {
     readonly kind = UpdateModelCommand.KIND
     matches?: Match[]

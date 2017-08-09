@@ -13,7 +13,7 @@ import java.util.function.Consumer;
 import javax.inject.Inject;
 
 /**
- * Default diagram server implementation that realizes the same message protocol as the
+ * The default diagram server implementation. It realizes the same message protocol as the
  * TypeScript class {@code LocalModelSource}.
  */
 public class DefaultDiagramServer implements IDiagramServer {
@@ -106,8 +106,9 @@ public class DefaultDiagramServer implements IDiagramServer {
 	
 	@Override
 	public void dispatch(Action action) {
+		Consumer<ActionMessage> remoteEndpoint = getRemoteEndpoint();
 		if (remoteEndpoint != null) {
-			remoteEndpoint.accept(new ActionMessage(clientId, action));
+			remoteEndpoint.accept(new ActionMessage(getClientId(), action));
 		}
 	}
 	
@@ -150,7 +151,12 @@ public class DefaultDiagramServer implements IDiagramServer {
 	}
 	
 	/**
-	 * Whether the client needs to compute the layout of parts of the model.
+	 * Whether the client needs to compute the layout of parts of the model. This affects the behavior or
+	 * {@link #submitModel(SModelRoot, boolean)}.
+	 * 
+	 * <p>The default implementation returns the value configured with {@link #setNeedsClientLayout(boolean)},
+	 * but this can be overridden to determine the value depending on the given model. The initial value
+	 * is {@code true}.</p>
 	 */
 	protected boolean needsClientLayout(SModelRoot root) {
 		return needsClientLayout;
@@ -161,7 +167,13 @@ public class DefaultDiagramServer implements IDiagramServer {
 	}
 	
 	/**
-	 * Whether the server needs to compute the layout of parts of the model.
+	 * Whether the server needs to compute the layout of parts of the model. The layout is computed with
+	 * the layout engine configured with {@link #setLayoutEngine(ILayoutEngine)}, so returning {@code true}
+	 * here makes sense only if such an engine is available.
+	 * 
+	 * <p>The default implementation returns the value configured with {@link #setNeedsServerLayout(boolean)},
+	 * but this can be overridden to determine the value depending on the given model. The initial value
+	 * is {@code false}.</p>
 	 */
 	protected boolean needsServerLayout(SModelRoot root) {
 		return needsServerLayout;
@@ -172,16 +184,16 @@ public class DefaultDiagramServer implements IDiagramServer {
 	}
 	
 	/**
-	 * Submit a new or updated model to the client. If client layout is required, a {@code RequestBoundsAction}
-	 * is sent, otherwise either a {@code SetModelAction} or an {@code UpdateModelAction} is sent depending on
-	 * whether {@code oldRoot} is {@code null} or not.
+	 * Submit a new or updated model to the client. If client layout is required, a {@link RequestBoundsAction}
+	 * is sent, otherwise either a {@link SetModelAction} or an {@link UpdateModelAction} is sent depending on
+	 * the {@code update} parameter.
 	 */
 	protected void submitModel(SModelRoot newRoot, boolean update) {
 		IModelUpdateListener listener = getModelUpdateListener();
 		if (needsClientLayout(newRoot)) {
 			dispatch(new RequestBoundsAction(newRoot));
 			if (!needsServerLayout(newRoot) && listener != null) {
-				// In this case the client is expected to apply the computed bounds, so we trigger the listener immediately
+				// In this case the client won't send us the computed bounds, so we trigger the listener immediately
 				listener.modelSubmitted(newRoot, this);
 			}
 		} else {
@@ -204,7 +216,8 @@ public class DefaultDiagramServer implements IDiagramServer {
 	
 	@Override
 	public void accept(ActionMessage message) {
-		if (this.clientId.equals(message.getClientId())) {
+		String clientId = getClientId();
+		if (clientId != null && clientId.equals(message.getClientId())) {
 			Action action = message.getAction();
 			switch (action.getKind()) {
 				case RequestModelAction.KIND:

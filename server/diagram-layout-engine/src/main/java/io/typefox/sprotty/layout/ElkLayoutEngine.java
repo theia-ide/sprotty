@@ -44,6 +44,14 @@ import io.typefox.sprotty.api.SModelRoot;
 import io.typefox.sprotty.api.SNode;
 import io.typefox.sprotty.api.SPort;
 
+/**
+ * Layout engine that uses the <a href="https://www.eclipse.org/elk/">Eclipse Layout Kernel (ELK)</a>.
+ * 
+ * <p>The layout engine must be initialized once during the lifecycle of the application by calling
+ * {@link #initialize(ILayoutMetaDataProvider...)}. The arguments of that method should be all meta data
+ * providers of the layout algorithms that should be used by this layout engine,
+ * e.g. {@link org.eclipse.elk.alg.layered.options.LayeredMetaDataProvider}.</p>
+ */
 public class ElkLayoutEngine implements ILayoutEngine {
 	
 	public static final IProperty<String> P_TYPE = new Property<>("io.typefox.sprotty.layout.type");
@@ -56,6 +64,12 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	
 	protected final ElkGraphFactory factory = ElkGraphFactory.eINSTANCE;
 	
+	/**
+	 * Compute a layout for a graph. The default implementation uses only default settings for all layout
+	 * options (see <a href="https://www.eclipse.org/elk/reference.html">layout options reference</a>).
+	 * Override this in a subclass in order to customize the layout for your model using a
+	 * {@link SprottyLayoutConfigurator}.
+	 */
 	@Override
 	public void layout(SModelRoot root) {
 		if (root instanceof SGraph) {
@@ -63,6 +77,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		}
 	}
 
+	/**
+	 * Compute a layout for a graph with the given configurator (or {@code null} to use only default settings).
+	 */
 	public void layout(SGraph sgraph, SprottyLayoutConfigurator configurator) {
 		LayoutContext context = transformGraph(sgraph);
 		if (configurator != null) {
@@ -72,6 +89,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		transferLayout(context);
 	}
 	
+	/**
+	 * Transform a sprotty graph to an ELK graph, including all contents.
+	 */
 	protected LayoutContext transformGraph(SGraph sgraph) {
 		LayoutContext result = new LayoutContext();
 		result.sgraph = sgraph;
@@ -82,6 +102,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		return result;
 	}
 	
+	/**
+	 * Create a root ELK node for the given sprotty graph.
+	 */
 	protected ElkNode createGraph(SGraph sgraph) {
 		ElkNode elkGraph = factory.createElkNode();
 		elkGraph.setIdentifier(sgraph.getId());
@@ -89,6 +112,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		return elkGraph;
 	}
 	
+	/**
+	 * Transform the children of a sprotty model element to their ELK graph counterparts.
+	 */
 	protected void processChildren(SModelElement element, ElkGraphElement parent, LayoutContext context) {
 		if (element.getChildren() != null) {
 			for (SModelElement schild : element.getChildren()) {
@@ -129,6 +155,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		}
 	}
 	
+	/**
+	 * Return true if the given model element should be included in the layout computation.
+	 */
 	protected boolean shouldInclude(SModelElement element, SModelElement parent, LayoutContext context) {
 		if (element instanceof SLabel)
 			// Omit node labels, since these are handled by the sprotty client layouts
@@ -138,6 +167,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 			return parent instanceof SNode || parent instanceof SGraph;
 	}
 	
+	/**
+	 * Resolve cross-references in the ELK graph.
+	 */
 	protected void resolveReferences(LayoutContext context) {
 		Map<String, ElkConnectableShape> id2NodeMap = Maps.newHashMapWithExpectedSize(context.connectableMap.size());
 		for (Map.Entry<SModelElement, ElkConnectableShape> entry : context.connectableMap.entrySet()) {
@@ -150,6 +182,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		}
 	}
 	
+	/**
+	 * Resolve the source and target cross-references for the given ELK edge.
+	 */
 	protected void resolveReferences(ElkEdge elkEdge, SEdge sedge, Map<String, ElkConnectableShape> id2NodeMap, LayoutContext context) {
 		ElkConnectableShape source = id2NodeMap.get(sedge.getSourceId());
 		ElkConnectableShape target = id2NodeMap.get(sedge.getTargetId());
@@ -164,6 +199,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		}
 	}
 	
+	/**
+	 * Create an ELK node for the given sprotty node.
+	 */
 	protected ElkNode createNode(SNode snode) {
 		ElkNode elkNode = factory.createElkNode();
 		elkNode.setIdentifier(snode.getId());
@@ -172,6 +210,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		return elkNode;
 	}
 	
+	/**
+	 * Create an ELK port for the given sprotty port.
+	 */
 	protected ElkPort createPort(SPort sport) {
 		ElkPort elkPort = factory.createElkPort();
 		elkPort.setIdentifier(sport.getId());
@@ -180,6 +221,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		return elkPort;
 	}
 	
+	/**
+	 * Create an ELK edge for the given sprotty edge.
+	 */
 	protected ElkEdge createEdge(SEdge sedge) {
 		ElkEdge elkEdge = factory.createElkEdge();
 		elkEdge.setIdentifier(sedge.getId());
@@ -188,6 +232,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		return elkEdge;
 	}
 	
+	/**
+	 * Create an ELK label for the given sprotty label.
+	 */
 	protected ElkLabel createLabel(SLabel slabel) {
 		ElkLabel elkLabel = factory.createElkLabel();
 		elkLabel.setIdentifier(slabel.getId());
@@ -196,6 +243,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		return elkLabel;
 	}
 	
+	/**
+	 * Apply the bounds of the given bounds-aware element to an ELK shape (node, port, or label).
+	 */
 	protected void applyBounds(BoundsAware bounds, ElkShape elkShape) {
 		Point position = bounds.getPosition();
 		if (position != null) {
@@ -211,18 +261,42 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		}
 	}
 	
+	/**
+	 * Set the graph layout engine to invoke in {@link #applyEngine(ElkNode)}. The default is
+	 * the {@link RecursiveGraphLayoutEngine}, which determines the layout algorithm to apply to each
+	 * composite node based on the {@link org.eclipse.elk.core.options.CoreOptions#ALGORITHM} option.
+	 * This requires the meta data providers of the referenced algorithms to be registered
+	 * using {@link #initialize(ILayoutMetaDataProvider...)} before any layout is performed, e.g. on
+	 * application start. Alternatively, you can use a specific layout algorithm directly, e.g.
+	 * {@link org.eclipse.elk.alg.layered.LayeredLayoutProvider}.
+	 */
 	public void setEngine(IGraphLayoutEngine engine) {
+		if (engine == null)
+			throw new NullPointerException();
 		this.engine = engine;
 	}
 	
-	protected void applyEngine(ElkNode elkGraph) {
-		engine.layout(elkGraph, new BasicProgressMonitor());
+	public IGraphLayoutEngine getEngine() {
+		return engine;
 	}
 	
+	/**
+	 * Apply the layout engine that has been configured with {@link #setEngine(IGraphLayoutEngine)}.
+	 */
+	protected void applyEngine(ElkNode elkGraph) {
+		getEngine().layout(elkGraph, new BasicProgressMonitor());
+	}
+	
+	/**
+	 * Transfer the computed ELK layout back to the original sprotty graph.
+	 */
 	protected void transferLayout(LayoutContext context) {
 		transferLayout(context.sgraph, context);
 	}
 	
+	/**
+	 * Apply the computed ELK layout to the given model element.
+	 */
 	protected void transferLayout(SModelElement element, LayoutContext context) {
 		if (element instanceof SGraph) {
 			transferGraphLayout((SGraph) element, context.elkGraph);
@@ -254,26 +328,41 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		}
 	}
 	
+	/**
+	 * Apply the computed ELK layout to the given sprotty graph.
+	 */
 	protected void transferGraphLayout(SGraph sgraph, ElkNode elkGraph) {
 		sgraph.setPosition(new Point(elkGraph.getX(), elkGraph.getY()));
 		sgraph.setSize(new Dimension(elkGraph.getWidth(), elkGraph.getHeight()));
 	}
 	
+	/**
+	 * Apply the computed ELK layout to the given sprotty node.
+	 */
 	protected void transferNodeLayout(SNode snode, ElkNode elkNode) {
 		snode.setPosition(new Point(elkNode.getX(), elkNode.getY()));
 		snode.setSize(new Dimension(elkNode.getWidth(), elkNode.getHeight()));
 	}
 	
+	/**
+	 * Apply the computed ELK layout to the given sprotty port.
+	 */
 	protected void transferPortLayout(SPort sport, ElkPort elkPort) {
 		sport.setPosition(new Point(elkPort.getX(), elkPort.getY()));
 		sport.setSize(new Dimension(elkPort.getWidth(), elkPort.getHeight()));
 	}
 	
+	/**
+	 * Apply the computed ELK layout to the given sprotty label.
+	 */
 	protected void transferLabelLayout(SLabel slabel, ElkLabel elkLabel) {
 		slabel.setPosition(new Point(elkLabel.getX(), elkLabel.getY()));
 		slabel.setSize(new Dimension(elkLabel.getWidth(), elkLabel.getHeight()));
 	}
 	
+	/**
+	 * Apply the computed ELK layout to the given sprotty edge.
+	 */
 	protected void transferEdgeLayout(SEdge sedge, ElkEdge elkEdge) {
 		if (!elkEdge.getSections().isEmpty()) {
 			ElkEdgeSection section = elkEdge.getSections().get(0);
@@ -296,6 +385,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		}
 	}
 	
+	/**
+	 * Data required for applying the computed ELK layout to the original sprotty model.
+	 */
 	protected static class LayoutContext {
 		public SGraph sgraph;
 		public ElkNode elkGraph;

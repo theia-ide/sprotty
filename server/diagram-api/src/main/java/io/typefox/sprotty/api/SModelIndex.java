@@ -9,8 +9,15 @@ package io.typefox.sprotty.api;
 import java.util.HashMap;
 import java.util.Map;
 
+/**
+ * Utility class that stores all model elements by their id. Use this for fast model element lookup.
+ */
 public class SModelIndex {
 	
+	/**
+	 * Find a single model element without building an index first. If you need to find multiple
+	 * elements, creating an {@link SModelIndex} instance is more effective.
+	 */
 	public static SModelElement find(SModelElement parent, String elementId) {
 		if (elementId != null) {
 			if (elementId.equals(parent.getId()))
@@ -28,11 +35,17 @@ public class SModelIndex {
 	
 	private final Map<String, SModelElement> index;
 
+	/**
+	 * Build an index from the given parent element. All content of the element is included recursively.
+	 */
 	public SModelIndex(SModelElement parent) {
 		index = new HashMap<>();
 		addToIndex(parent);
 	}
 	
+	/**
+	 * Get the element with the given id. Returns {@code null} if such an element does not exist.
+	 */
 	public SModelElement get(String elementId) {
 		return index.get(elementId);
 	}

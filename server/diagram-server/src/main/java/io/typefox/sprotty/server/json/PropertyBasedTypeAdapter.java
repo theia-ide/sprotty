@@ -22,6 +22,10 @@ import com.google.gson.stream.JsonReader;
 import com.google.gson.stream.JsonToken;
 import com.google.gson.stream.JsonWriter;
 
+/**
+ * Gson type adapter that can determine the actual Java class to use for a JSON object based
+ * on a discriminator property.
+ */
 public abstract class PropertyBasedTypeAdapter<T> extends TypeAdapter<T> {
 	
 	private final Gson gson;

@@ -7,7 +7,7 @@
 package io.typefox.sprotty.api;
 
 /**
- * Listener for client model updates.
+ * Listener for client model updates. Invoked by {@link DefaultDiagramServer}.
  */
 public interface IModelUpdateListener {
 	

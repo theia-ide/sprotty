@@ -22,6 +22,9 @@ import org.eclipse.lsp4j.services.LanguageClient
 import org.eclipse.lsp4j.services.LanguageClientAware
 import org.eclipse.lsp4j.services.LanguageServer
 
+/**
+ * Web socket endpoint for language servers including the diagram extension.
+ */
 class LanguageServerEndpoint extends Endpoint {
 	
 	@Inject LanguageServer languageServer

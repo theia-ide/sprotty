@@ -14,6 +14,9 @@ export const boundsFeature = Symbol('boundsFeature')
 export const layoutFeature = Symbol('layoutFeature')
 export const alignFeature = Symbol('alignFeature')
 
+/**
+ * Model elements that implement this interface have a position and a size.
+ */
 export interface BoundsAware extends SModelExtension {
     bounds: Bounds
 }

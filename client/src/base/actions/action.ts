@@ -7,7 +7,8 @@
 
 /**
  * An action describes a change to the model declaratively.
- * It is a plain data structure, as such transferable between server and client.
+ * It is a plain data structure, and as such transferable between server and client. An action must never contain actual
+ * SModelElement instances, but either refer to them via their ids or contain serializable schema for model elements.
  */
 export interface Action {
     readonly kind: string

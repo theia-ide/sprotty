@@ -12,6 +12,9 @@ import org.eclipse.lsp4j.jsonrpc.json.MessageJsonHandler
 import org.eclipse.lsp4j.jsonrpc.json.StreamMessageConsumer
 import org.eclipse.lsp4j.jsonrpc.messages.Message
 
+/**
+ * LSP4J message consumer that forwards messages to a web socket.
+ */
 class WebSocketMessageConsumer extends StreamMessageConsumer {
 	
 	val RemoteEndpoint.Async remote

@@ -14,6 +14,10 @@ import io.typefox.sprotty.api.IPopupModelFactory
 import org.eclipse.xtext.ide.server.ILanguageServerExtension
 import org.eclipse.xtext.service.AbstractGenericModule
 
+/**
+ * Guice bindings for sprotty diagrams. Include this module in your Guice configuration in
+ * order to support sprotty messages in the language server.
+ */
 class DefaultDiagramModule extends AbstractGenericModule {
 	
 	def Class<? extends ILanguageServerExtension> bindILanguageServerExtension() {

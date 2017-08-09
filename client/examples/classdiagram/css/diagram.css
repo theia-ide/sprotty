@@ -72,6 +72,7 @@
 
 .icon {
     fill: #153;
+    stroke-width: 0;
 }
 
 text.icon {

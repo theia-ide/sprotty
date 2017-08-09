@@ -10,6 +10,11 @@ import io.typefox.sprotty.api.DefaultDiagramServer
 import io.typefox.sprotty.api.RequestModelAction
 import org.eclipse.xtend.lib.annotations.Accessors
 
+/**
+ * Diagram server for Xtext languages. When a {@link RequestModelAction} is received,
+ * a diagram is generated for the corresponding resource by calling
+ * {@link DiagramLanguageServerExtension#updateDiagram(LanguageAwareDiagramServer)}.
+ */
 class LanguageAwareDiagramServer extends DefaultDiagramServer {
 	
 	public static val OPTION_SOURCE_URI = 'sourceUri'

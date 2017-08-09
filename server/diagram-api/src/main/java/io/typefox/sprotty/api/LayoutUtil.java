@@ -19,10 +19,16 @@ import io.typefox.sprotty.api.SModelElement;
 import io.typefox.sprotty.api.SModelIndex;
 import io.typefox.sprotty.api.SModelRoot;
 
+/**
+ * Utility functions for handling model layouts.
+ */
 public final class LayoutUtil {
 	
 	private LayoutUtil() {}
 	
+	/**
+	 * Apply the computed bounds from the given action to the model.
+	 */
 	public static void applyBounds(SModelRoot root, ComputedBoundsAction action) {
 		SModelIndex index = new SModelIndex(root);
 		for (ElementAndBounds b : action.getBounds()) {
@@ -43,12 +49,15 @@ public final class LayoutUtil {
 		}
 	}
 
+	/**
+	 * Copy the layout of one model instance to another. Model elements are matched by their id.
+	 */
 	public static void copyLayoutData(SModelRoot fromRoot, SModelRoot toRoot) {
 		SModelIndex oldIndex = new SModelIndex(fromRoot);
 		copyLayoutDataRecursively(toRoot, oldIndex);
 	}
 	
-	protected static void copyLayoutDataRecursively(SModelElement element, SModelIndex oldIndex) {
+	private static void copyLayoutDataRecursively(SModelElement element, SModelIndex oldIndex) {
 		if (element instanceof BoundsAware) {
 			SModelElement oldElement = oldIndex.get(element.getId());
 			if (oldElement instanceof BoundsAware) {

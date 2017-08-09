@@ -7,10 +7,14 @@
 package io.typefox.sprotty.api;
 
 /**
- * A layout engine is able to compute layout information for a model.
+ * A layout engine is able to compute layout information for a model. Invoked by {@link DefaultDiagramServer}
+ * when {@link DefaultDiagramServer#needsServerLayout(SModelRoot)} returns {@code true}.
  */
 public interface ILayoutEngine {
 	
+	/**
+	 * Compute a layout for the given model and modify the model accordingly.
+	 */
 	public void layout(SModelRoot root);
 	
 	/**

@@ -7,7 +7,7 @@
 package io.typefox.sprotty.api;
 
 /**
- * Listener for diagram selection changes.
+ * Listener for diagram selection changes. Invoked by {@link DefaultDiagramServer}.
  */
 public interface IDiagramSelectionListener {
 	

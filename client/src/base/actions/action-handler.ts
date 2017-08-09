@@ -11,10 +11,17 @@ import { MultiInstanceRegistry } from "../../utils/registry"
 import { CommandActionHandler, ICommand, ICommandFactory } from "../commands/command"
 import { Action } from "./action"
 
+/**
+ * An action handler accepts an action and reacts to it by returning either a command to be
+ * executed, or another action to be dispatched.
+ */
 export interface IActionHandler {
     handle(action: Action): ICommand | Action | void
 }
 
+/**
+ * Initializes and registers action handlers.
+ */
 export interface IActionHandlerInitializer {
     initialize(registry: ActionHandlerRegistry): void
 }

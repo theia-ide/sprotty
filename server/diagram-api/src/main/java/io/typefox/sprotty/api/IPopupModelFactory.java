@@ -7,10 +7,17 @@
 package io.typefox.sprotty.api;
 
 /**
- * Factory for hover popup contents.
+ * Factory for hover popup contents. Invoked by {@link DefaultDiagramServer} when a hover popup is requested
+ * by the client.
  */
 public interface IPopupModelFactory {
 	
+	/**
+	 * Create a model to be displayed in a hover popup. Return {@code null} if no popup should be shown for the
+	 * given request.
+	 * 
+	 * @param element - the model element referenced by the request, or {@code null} if no such element exists
+	 */
 	SModelRoot createPopupModel(SModelElement element, RequestPopupModelAction request, IDiagramServer server);
 	
 	/**

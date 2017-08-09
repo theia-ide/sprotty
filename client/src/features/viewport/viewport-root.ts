@@ -10,6 +10,10 @@ import { SModelRoot } from "../../base/model/smodel"
 import { Viewport, viewportFeature } from "./model"
 import { Exportable, exportFeature } from "../export/model"
 
+/**
+ * Model root element that defines a viewport, so it transforms the coordinate system with
+ * a `scroll` translation and a `zoom` scaling.
+ */
 export class ViewportRootElement extends SModelRoot implements Viewport, Exportable {
     scroll: Point = { x: 0, y: 0 }
     zoom: number = 1

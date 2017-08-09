@@ -27,6 +27,10 @@ import org.eclipse.xtext.util.CancelIndicator
 import org.eclipse.xtext.validation.CheckMode
 import org.eclipse.xtext.validation.IResourceValidator
 
+/**
+ * An extension of the <a href="https://github.com/Microsoft/language-server-protocol">Language Server Protocol (LSP)</a>
+ * that adds diagram-related messages.
+ */
 class DiagramLanguageServerExtension implements DiagramServer, ILanguageServerExtension, IDiagramServer.Provider {
 	
 	protected static val LOG = Logger.getLogger(DiagramLanguageServerExtension)
@@ -63,6 +67,10 @@ class DiagramLanguageServerExtension implements DiagramServer, ILanguageServerEx
 		return _client
 	}
 	
+	/**
+	 * Return the diagram server with the given client identifier, or create one if it does not
+	 * exist yet.
+	 */
 	override getDiagramServer(String clientId) {
 		synchronized (diagramServers) {
 			var server = diagramServers.get(clientId)
@@ -76,6 +84,9 @@ class DiagramLanguageServerExtension implements DiagramServer, ILanguageServerEx
 		}
 	}
 	
+	/**
+	 * Initialize a diagram server. Override this in order to use custom settings for diagram servers.
+	 */
 	protected def void initializeDiagramServer(IDiagramServer server) {
 		server.remoteEndpoint = [ message |
 			client?.accept(message)
@@ -90,17 +101,27 @@ class DiagramLanguageServerExtension implements DiagramServer, ILanguageServerEx
 		}
 	}
 	
+	/**
+	 * Find a diagram server for the client referred in the given message and forward the message to
+	 * that server.
+	 */
 	override void accept(ActionMessage message) {
 		val server = getDiagramServer(message.clientId)
 		server.accept(message)
 	}
 	
+	/**
+	 * Remove the diagram server associated with the given client identifier.
+	 */
 	override didClose(String clientId) {
 		synchronized (diagramServers) {
 			diagramServers.remove(clientId)
 		}
 	}
 	
+	/**
+	 * Update the diagrams for the given URIs using the configured diagram generator.
+	 */
 	def void updateDiagrams(Collection<URI> uris) {
 		for (uri : uris) {
 			val path = uri.toPath
@@ -122,6 +143,9 @@ class DiagramLanguageServerExtension implements DiagramServer, ILanguageServerEx
 		}
 	}
 	
+	/**
+	 * Update the diagram for the given diagram server using the configured diagram generator.
+	 */
 	def void updateDiagram(LanguageAwareDiagramServer diagramServer) {
 		val path = diagramServer.sourceUri
 		if (path !== null) {

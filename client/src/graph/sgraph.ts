@@ -14,6 +14,9 @@ import { Selectable, selectFeature } from '../features/select/model'
 import { ViewportRootElement } from '../features/viewport/viewport-root'
 import { Bounds, Dimension, EMPTY_DIMENSION, isBounds, ORIGIN_POINT, Point } from '../utils/geometry'
 
+/**
+ * Serializable schema for graph-like models.
+ */
 export interface SGraphSchema extends SModelRootSchema {
     children: SGraphElementSchema[]
     bounds?: Bounds
@@ -22,10 +25,16 @@ export interface SGraphSchema extends SModelRootSchema {
     layoutOptions?: any
 }
 
+/**
+ * Root element for graph-like models.
+ */
 export class SGraph extends ViewportRootElement {
     layoutOptions?: any
 }
 
+/**
+ * Serializable schema for SShapeElement.
+ */
 export interface SShapeElementSchema extends SModelElementSchema {
     position?: Point
     size?: Dimension
@@ -33,6 +42,9 @@ export interface SShapeElementSchema extends SModelElementSchema {
     layoutOptions?: any
 }
 
+/**
+ * Abstract class for elements with a position and a size.
+ */
 export abstract class SShapeElement extends SChildElement implements BoundsAware, Locateable {
     position: Point = ORIGIN_POINT
     size: Dimension = EMPTY_DIMENSION
@@ -87,10 +99,18 @@ export abstract class SShapeElement extends SChildElement implements BoundsAware
     }
 }
 
+/**
+ * Serializable schema for SNode.
+ */
 export interface SNodeSchema extends SShapeElementSchema {
     layout?: string
 }
 
+/**
+ * Model element class for nodes, which are connectable entities in a graph. A node can be connected to
+ * another node via an SEdge. Such a connection can be direct, i.e. the node is the source or target of
+ * the edge, or indirect through a port, i.e. it contains an SPort which is the source or target of the edge.
+ */
 export class SNode extends SShapeElement implements Selectable, Fadeable, Hoverable {
     hoverFeedback: boolean = false
     children: SCompartmentElement[]
@@ -105,9 +125,15 @@ export class SNode extends SShapeElement implements Selectable, Fadeable, Hovera
     }
 }
 
+/**
+ * Serializable schema for SPort.
+ */
 export interface SPortSchema extends SShapeElementSchema {
 }
 
+/**
+ * A port is a connection point for edges. It should always be contained in an SNode.
+ */
 export class SPort extends SShapeElement implements Selectable, Fadeable, Hoverable {
     hoverFeedback: boolean = false
     selected: boolean = false
@@ -119,12 +145,20 @@ export class SPort extends SShapeElement implements Selectable, Fadeable, Hovera
     }
 }
 
+/**
+ * Serializable schema for SEdge.
+ */
 export interface SEdgeSchema extends SModelElementSchema {
     sourceId: string
     targetId: string
     routingPoints?: Point[]
 }
 
+/**
+ * Model element class for edges, which are the connectors in a graph. An edge has a source and a target,
+ * each of which can be either a node or a port. The source and target elements are referenced via their
+ * ids and can be resolved with the index stored in the root element.
+ */
 export class SEdge extends SChildElement implements Fadeable {
     sourceId: string
     targetId: string
@@ -149,11 +183,18 @@ export type SGraphElement = SNode | SEdge
 export type SCompartmentElementSchema = SCompartmentSchema | SLabelSchema
 export type SCompartmentElement = SCompartment | SLabel
 
+
+/**
+ * Serializable schema for SLabel.
+ */
 export interface SLabelSchema extends SShapeElementSchema {
     text: string
     selected?: boolean
 }
 
+/**
+ * A label can be attached to a node, edge, or port, and contains some text to be rendered in its view.
+ */
 export class SLabel extends SShapeElement implements Selectable, Alignable {
     text: string
     selected: boolean = false
@@ -164,10 +205,17 @@ export class SLabel extends SShapeElement implements Selectable, Alignable {
     }
 }
 
+/**
+ * Serializable schema for SCompartment.
+ */
 export interface SCompartmentSchema extends SShapeElementSchema {
     layout?: string
 }
 
+/**
+ * A compartment is used to group multiple child elements such as labels of a node. Usually a `vbox`
+ * or `hbox` layout is used to arrange these children.
+ */
 export class SCompartment extends SShapeElement implements Layouting {
     children: SCompartmentElement[]
     layout: string

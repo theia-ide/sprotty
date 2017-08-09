@@ -15,11 +15,18 @@ import org.eclipse.elk.graph.properties.MapPropertyHolder;
 
 import com.google.common.collect.Maps;
 
+/**
+ * Specialized {@link LayoutConfigurator} that can configure layout options based on the {@code id}
+ * and {@code type} attributes of sprotty model elements.
+ */
 public class SprottyLayoutConfigurator extends LayoutConfigurator {
 	
     private final Map<String, MapPropertyHolder> idOptionMap = Maps.newHashMap();
     private final Map<String, MapPropertyHolder> typeOptionMap = Maps.newHashMap();
     
+    /**
+     * Configure layout options for the model element with the given id.
+     */
     public IPropertyHolder configureById(String id) {
         MapPropertyHolder result = idOptionMap.get(id);
         if (result == null) {
@@ -33,6 +40,9 @@ public class SprottyLayoutConfigurator extends LayoutConfigurator {
         return idOptionMap.get(id);
     }
     
+    /**
+     * Configure layout options for all model elements with the given type.
+     */
     public IPropertyHolder configureByType(String type) {
     	MapPropertyHolder result = typeOptionMap.get(type);
     	if (result == null) {
@@ -49,15 +59,10 @@ public class SprottyLayoutConfigurator extends LayoutConfigurator {
     @Override
     public void visit(final ElkGraphElement element) {
         super.visit(element);
-        IPropertyHolder idProperties = getPropertiesById(element.getIdentifier());
         IPropertyHolder typeProperties = getPropertiesByType(element.getProperty(ElkLayoutEngine.P_TYPE));
-        // TODO consider option filter
-        if (idProperties != null) {
-            element.copyProperties(idProperties);
-        }
-        if (typeProperties != null) {
-            element.copyProperties(typeProperties);
-        }
+        applyProperties(element, typeProperties);
+        IPropertyHolder idProperties = getPropertiesById(element.getIdentifier());
+        applyProperties(element, idProperties);
     }
     
     @Override

@@ -11,6 +11,10 @@ import { Action } from "../../base/actions/action"
 import { CommandExecutionContext, HiddenCommand, SystemCommand } from "../../base/commands/command"
 import { BoundsAware, isBoundsAware, Alignable } from './model'
 
+/**
+ * Sent from the model source (e.g. a DiagramServer) to the client to update the bounds of some
+ * (or all) model elements.
+ */
 export class SetBoundsAction implements Action {
     readonly kind = SetBoundsCommand.KIND
 
@@ -18,6 +22,12 @@ export class SetBoundsAction implements Action {
     }
 }
 
+/**
+ * Sent from the model source to the client to request bounds for the given model. The model is
+ * rendered invisibly so the bounds can derived from the DOM. The response is a ComputedBoundsAction.
+ * This hidden rendering round-trip is necessary if the client is responsible for parts of the layout
+ * (see `needsClientLayout` viewer option).
+ */
 export class RequestBoundsAction implements Action {
     readonly kind = RequestBoundsCommand.KIND
 
@@ -25,6 +35,13 @@ export class RequestBoundsAction implements Action {
     }
 }
 
+/**
+ * Sent from the client to the model source (e.g. a DiagramServer) to transmit the result of bounds
+ * computation as a response to a RequestBoundsAction. If the server is responsible for parts of
+ * the layout (see `needsServerLayout` viewer option), it can do so after applying the computed bounds
+ * received with this action. Otherwise there is no need to send the computed bounds to the server,
+ * so they can be processed locally by the client.
+ */
 export class ComputedBoundsAction implements Action {
     static readonly KIND = 'computedBounds'
 
@@ -34,11 +51,17 @@ export class ComputedBoundsAction implements Action {
     }
 }
 
+/**
+ * Associates new bounds with a model element, which is referenced via its id.
+ */
 export interface ElementAndBounds {
     elementId: string
     newBounds: Bounds
 }
 
+/**
+ * Associates a new alignment with a model element, which is referenced via its id.
+ */
 export interface ElementAndAlignment {
     elementId: string
     newAlignment: Point

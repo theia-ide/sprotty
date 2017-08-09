@@ -11,27 +11,46 @@ import { BoundsAware, boundsFeature, Alignable, alignFeature } from "../features
 import { Locateable, moveFeature } from "../features/move/model"
 import { Selectable, selectFeature } from "../features/select/model"
 
+/**
+ * Serializable schema for HtmlRoot.
+ */
 export interface HtmlRootSchema extends SModelRootSchema {
     classes?: string[]
 }
 
+/**
+ * Root model element class for HTML content. Usually this is rendered with a `div` DOM element.
+ */
 export class HtmlRoot extends SModelRoot {
     classes: string[] = []
 }
 
+/**
+ * Serializable schema for PreRenderedElement.
+ */
 export interface PreRenderedElementSchema extends SModelElementSchema {
     code: string
 }
 
+/**
+ * Pre-rendered elements contain HTML or SVG code to be transferred to the DOM. This can be useful to
+ * render complex figures or to compute the view on the server instead of the client code.
+ */
 export class PreRenderedElement extends SChildElement {
     code: string
 }
 
+/**
+ * Serializable schema for ShapedPreRenderedElement.
+ */
 export interface ShapedPreRenderedElementSchema extends PreRenderedElementSchema {
     position?: Point
     size?: Dimension
 }
 
+/**
+ * Same as PreRenderedElement, but with a position and a size.
+ */
 export class ShapedPreRenderedElement extends PreRenderedElement implements BoundsAware, Locateable, Selectable, Alignable {
     position: Point = ORIGIN_POINT
     size: Dimension = EMPTY_DIMENSION

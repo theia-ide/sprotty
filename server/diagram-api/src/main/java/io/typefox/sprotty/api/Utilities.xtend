@@ -10,6 +10,9 @@ import org.eclipse.xtend.lib.annotations.Accessors
 import org.eclipse.xtend.lib.annotations.EqualsHashCode
 import org.eclipse.xtend.lib.annotations.ToString
 
+/**
+ * A Point is composed of the (x,y) coordinates of an object.
+ */
 @Accessors
 @EqualsHashCode
 @ToString(skipNulls = true)
@@ -28,6 +31,9 @@ class Point {
 	}
 }
 
+/**
+ * The Dimension of an object is composed of its width and height.
+ */
 @Accessors
 @EqualsHashCode
 @ToString(skipNulls = true)
@@ -46,6 +52,9 @@ class Dimension {
 	}
 }
 
+/**
+ * The bounds are the position (x, y) and dimension (width, height) of an object.
+ */
 @Accessors
 @EqualsHashCode
 @ToString(skipNulls = true)
@@ -64,6 +73,9 @@ class Bounds {
 	}
 }
 
+/**
+ * Model elements that implement this interface have a position and a size.
+ */
 interface BoundsAware {
 	def Point getPosition()
 	def void setPosition(Point position)
@@ -71,6 +83,10 @@ interface BoundsAware {
 	def void setSize(Dimension size)
 }
 
+/**
+ * Used to adjust elements whose bounding box is not at the origin, e.g.
+ * labels, or pre-rendered SVG figures.
+ */
 interface Alignable {
 	def Point getAlignment()
 	def void setAlignment(Point alignment)

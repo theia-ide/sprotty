@@ -17,6 +17,7 @@ import com.google.gson.TypeAdapterFactory;
 import com.google.gson.reflect.TypeToken;
 
 import io.typefox.sprotty.api.Action;
+import io.typefox.sprotty.api.CenterAction;
 import io.typefox.sprotty.api.ComputedBoundsAction;
 import io.typefox.sprotty.api.FitToScreenAction;
 import io.typefox.sprotty.api.RequestBoundsAction;
@@ -28,8 +29,15 @@ import io.typefox.sprotty.api.SetModelAction;
 import io.typefox.sprotty.api.SetPopupModelAction;
 import io.typefox.sprotty.api.UpdateModelAction;
 
+/**
+ * Gson type adapter for sprotty actions.
+ */
 public class ActionTypeAdapter extends PropertyBasedTypeAdapter<Action> {
 	
+	/**
+	 * Configure a Gson builder with the default sprotty actions. If you need to register your own action
+	 * classes, create an instance of {@link Factory} instead and call {@link Factory#addActionKind(String, Class)}.
+	 */
 	public static GsonBuilder configureGson(GsonBuilder gsonBuilder) {
 		gsonBuilder
 				.registerTypeAdapterFactory(new ActionTypeAdapter.Factory())
@@ -37,6 +45,10 @@ public class ActionTypeAdapter extends PropertyBasedTypeAdapter<Action> {
 		return gsonBuilder;
 	}
 	
+	/**
+	 * Type adapter factory for sprotty actions. Action classes are registered via their {@code kind}
+	 * attribute using {@link #addActionKind(String, Class)}.
+	 */
 	public static class Factory implements TypeAdapterFactory {
 		
 		private final Map<String, Class<? extends Action>> actionKinds = new HashMap<>();
@@ -48,11 +60,12 @@ public class ActionTypeAdapter extends PropertyBasedTypeAdapter<Action> {
 		protected void addDefaultActionKinds() {
 			addActionKind(RequestModelAction.KIND, RequestModelAction.class);
 			addActionKind(SetModelAction.KIND, SetModelAction.class);
-			addActionKind(SetBoundsAction.KIND, SetBoundsAction.class);
-			addActionKind(SelectAction.KIND, SelectAction.class);
 			addActionKind(UpdateModelAction.KIND, UpdateModelAction.class);
 			addActionKind(RequestBoundsAction.KIND, RequestBoundsAction.class);
 			addActionKind(ComputedBoundsAction.KIND, ComputedBoundsAction.class);
+			addActionKind(SetBoundsAction.KIND, SetBoundsAction.class);
+			addActionKind(SelectAction.KIND, SelectAction.class);
+			addActionKind(CenterAction.KIND, CenterAction.class);
 			addActionKind(FitToScreenAction.KIND, FitToScreenAction.class);
 			addActionKind(RequestPopupModelAction.KIND, RequestPopupModelAction.class);
 			addActionKind(SetPopupModelAction.KIND, SetPopupModelAction.class);

@@ -25,7 +25,7 @@ import { ExportSvgAction } from '../features/export/svg-exporter'
 import { saveAs } from 'file-saver'
 
 /**
- * Wrapper for messages when transferring them vie a DiagramServer.
+ * Wrapper for actions when transferring them between client and server via a DiagramServer.
  */
 export interface ActionMessage {
     clientId: string

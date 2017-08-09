@@ -8,6 +8,10 @@
 import { SChildElement, SModelElement, SModelElementSchema } from "./smodel"
 import { Point } from "../../utils/geometry"
 
+/**
+ * Model element types can include a colon to separate the basic type and a sub-type. This function
+ * extracts the basic type of a model element.
+ */
 export function getBasicType(schema: SModelElementSchema): string {
     if (!schema.type)
         return ''
@@ -18,6 +22,10 @@ export function getBasicType(schema: SModelElementSchema): string {
         return schema.type
 }
 
+/**
+ * Model element types can include a colon to separate the basic type and a sub-type. This function
+ * extracts the sub-type of a model element.
+ */
 export function getSubType(schema: SModelElementSchema): string {
     if (!schema.type)
         return ''
@@ -28,6 +36,10 @@ export function getSubType(schema: SModelElementSchema): string {
         return schema.type
 }
 
+/**
+ * Find the element with the given identifier. If you need to find multiple elements, using an
+ * SModelIndex might be more effective.
+ */
 export function findElement(parent: SModelElementSchema, elementId: string): SModelElementSchema | undefined {
     if (parent.id === elementId)
         return parent
@@ -41,6 +53,9 @@ export function findElement(parent: SModelElementSchema, elementId: string): SMo
     return undefined
 }
 
+/**
+ * Find a parent element that satisfies the given predicate.
+ */
 export function findParent(element: SModelElement, predicate: (e: SModelElement) => boolean): SModelElement | undefined {
     let current: SModelElement | undefined = element
     while (current !== undefined) {
@@ -54,6 +69,9 @@ export function findParent(element: SModelElement, predicate: (e: SModelElement)
     return current
 }
 
+/**
+ * Find a parent element that implements the feature identified with the given predicate.
+ */
 export function findParentByFeature<T>(element: SModelElement, predicate: (t: SModelElement) => t is SModelElement & T): SModelElement & T | undefined {
     let current: SModelElement | undefined = element
     while (current !== undefined) {
@@ -67,6 +85,10 @@ export function findParentByFeature<T>(element: SModelElement, predicate: (t: SM
     return current
 }
 
+/**
+ * Translate a point from the coordinate system of the source element to the coordinate system
+ * of the target element.
+ */
 export function translatePoint(point: Point, source: SModelElement, target: SModelElement): Point {
     if (source !== target) {
         // Translate from the source to the root element

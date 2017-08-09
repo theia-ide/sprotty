@@ -10,6 +10,10 @@ import {
     SChildElement, SModelElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement
 } from "./smodel"
 
+/**
+ * A model factory transforms a serializable model schema into the model representation that is used
+ * internally by sprotty.
+ */
 export interface IModelFactory {
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement
 
@@ -18,6 +22,10 @@ export interface IModelFactory {
     createSchema(element: SModelElement): SModelElementSchema
 }
 
+/**
+ * The default model factory creates SModelRoot for the root element and SChildElement for all other
+ * model elements.
+ */
 @injectable()
 export class SModelFactory implements IModelFactory {
 
