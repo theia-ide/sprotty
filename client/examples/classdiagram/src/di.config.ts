@@ -10,7 +10,7 @@ import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphView, SLabelView, SCompartmentView,
     PolylineEdgeView, ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule,
     undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView, 
-    exportModule
+    exportModule, expandModule
 } from "../../../src"
 import { ClassNodeView, IconView} from "./views"
 import { ClassDiagramFactory } from "./model-factory"
@@ -25,7 +25,7 @@ const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) =
 
 export default (useWebsocket: boolean, containerId: string) => {
     const container = new Container()
-    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, hoverModule, exportModule, classDiagramModule)
+    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, hoverModule, exportModule, expandModule, classDiagramModule)
     if (useWebsocket)
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else
