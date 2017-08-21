@@ -51,6 +51,8 @@ export * from "./features/bounds/bounds-manipulation"
 export * from "./features/bounds/layout"
 export * from "./features/bounds/model"
 export * from "./features/bounds/vbox-layout"
+export * from "./features/bounds/hbox-layout"
+export * from "./features/bounds/stack-layout"
 
 export * from "./features/export/export"
 export * from "./features/export/model"
