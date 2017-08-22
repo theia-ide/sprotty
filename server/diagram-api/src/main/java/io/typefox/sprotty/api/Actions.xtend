@@ -313,3 +313,23 @@ class SetPopupModelAction implements Action {
 		this.newRoot = newRoot
 	}
 }
+
+/**
+ * Sent from the client to the server to recalculate a diagram when elements
+ * are collapsed/expanded by the client.
+ */
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
+class CollapseExpandAction implements Action {
+	public static val KIND = 'collapseExpand'
+	String kind = KIND
+	
+	List<String> expandIds
+	List<String> collapseIds
+	
+	new() {}
+	new(Consumer<CollapseExpandAction> initializer) {
+		initializer.accept(this)
+	}
+}

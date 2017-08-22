@@ -6,8 +6,10 @@
  */
 package io.typefox.sprotty.api;
 
+import java.util.HashSet;
 import java.util.LinkedHashMap;
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 import javax.inject.Inject;
@@ -33,11 +35,17 @@ public class DefaultDiagramServer implements IDiagramServer {
 	private IPopupModelFactory popupModelFactory;
 	
 	private IDiagramSelectionListener diagramSelectionListener;
+
+	private IDiagramExpansionListener diagramExpansionListener;
 	
 	private boolean needsClientLayout = true;
 	
 	private boolean needsServerLayout = false;
 	
+	private Set<String> expandedElements = new HashSet<>();
+
+	private Set<String> selectedElements = new HashSet<>();
+
 	public DefaultDiagramServer() {
 		currentRoot = new SModelRoot();
 		currentRoot.setType("NONE");
@@ -49,6 +57,11 @@ public class DefaultDiagramServer implements IDiagramServer {
 		this.clientId = clientId;
 	}
 	
+	@Override
+	public IDiagramState getDiagramState() {
+		return new DefaultDiagramState(this);
+	}
+
 	@Override
 	public String getClientId() {
 		return clientId;
@@ -102,6 +115,15 @@ public class DefaultDiagramServer implements IDiagramServer {
 	@Inject
 	public void setSelectionListener(IDiagramSelectionListener listener) {
 		this.diagramSelectionListener = listener;
+	}
+	
+	public IDiagramExpansionListener getExpansionListener() {
+		return diagramExpansionListener;
+	}
+	
+	@Inject
+	public void setExpansionListener(IDiagramExpansionListener diagramExpansionListener) {
+		this.diagramExpansionListener = diagramExpansionListener;
 	}
 	
 	@Override
@@ -232,6 +254,9 @@ public class DefaultDiagramServer implements IDiagramServer {
 				case SelectAction.KIND:
 					handle((SelectAction) action);
 					break;
+				case CollapseExpandAction.KIND:
+					handle((CollapseExpandAction) action);
+					break;
 			}
 		}
 	}
@@ -289,10 +314,66 @@ public class DefaultDiagramServer implements IDiagramServer {
 	 * Called when a {@code SelectAction} is received.
 	 */
 	protected void handle(SelectAction action) {
+		if (action.getSelectAll() == Boolean.TRUE)
+			new SModelIndex(currentRoot).allIds().forEach(id -> selectedElements.add(id));
+		if (action.getDeselectAll() == Boolean.TRUE)
+			selectedElements.clear();
+		if (action.getDeselectedElementsIDs() != null)
+			selectedElements.removeAll(action.getDeselectedElementsIDs());
+		if (action.getSelectedElementsIDs() != null)
+			selectedElements.addAll(action.getSelectedElementsIDs());
+
 		IDiagramSelectionListener selectionListener = getSelectionListener();
 		if (selectionListener != null) {
 			selectionListener.selectionChanged(action, this);
 		}
 	}
 	
+	/**
+	 * Called when a {@code SelectAction} is received.
+	 */
+	protected void handle(CollapseExpandAction action) {
+		if (action.getCollapseIds() != null)
+			expandedElements.removeAll(action.getCollapseIds());
+		if (action.getExpandIds() != null)
+			expandedElements.addAll(action.getExpandIds());
+		IDiagramExpansionListener expansionListener = getExpansionListener();
+		if (expansionListener != null) {
+			expansionListener.expansionChanged(action, this);
+		}
+	}
+	
+	public static class DefaultDiagramState implements IDiagramState {
+
+		private DefaultDiagramServer server;
+
+		DefaultDiagramState(DefaultDiagramServer server) {
+			this.server = server;
+		}
+		
+		@Override
+		public Map<String, String> getOptions() {
+			return server.options;
+		}
+		
+		@Override
+		public String getClientId() {
+			return server.clientId;
+		}
+		
+		@Override
+		public SModelRoot getCurrentModel() {
+			return server.currentRoot;
+		}
+		
+		@Override
+		public Set<String> getExpandedElements() {
+			return server.expandedElements;
+		}
+		
+		@Override
+		public Set<String> getSelectedElements() {
+			return server.selectedElements;
+		}
+	}
 }

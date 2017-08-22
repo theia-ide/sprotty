@@ -100,6 +100,10 @@ export class MouseTool implements IVNodeDecorator {
         this.handleEvent('wheel', model, event)
     }
 
+    doubleClick(model: SModelRoot, event: WheelEvent) {
+        this.handleEvent('doubleClick', model, event)
+    }
+
     decorate(vnode: VNode, element: SModelElement) {
         if (element instanceof SModelRoot) {
             on(vnode, 'mouseover', this.mouseOver.bind(this), element)
@@ -111,6 +115,7 @@ export class MouseTool implements IVNodeDecorator {
             on(vnode, 'contextmenu', (target: SModelElement, event: any) => {
                 event.preventDefault()
             }, element)
+            on(vnode, 'dblclick', this.doubleClick.bind(this), element)
         }
         vnode = this.mouseListeners.reduce(
             (vnode: VNode, listener: MouseListener) => listener.decorate(vnode, element),
@@ -155,6 +160,10 @@ export class MouseListener {
     }
 
     wheel(target: SModelElement, event: WheelEvent): (Action | Promise<Action>)[] {
+        return []
+    }
+
+    doubleClick(target: SModelElement, event: WheelEvent): (Action | Promise<Action>)[] {
         return []
     }
 

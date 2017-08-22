@@ -6,7 +6,7 @@
  */
 
 import { injectable } from "inversify"
-import { isValidDimension } from "../../utils/geometry"
+import { isValidDimension, almostEquals } from "../../utils/geometry"
 import { Animation, CompoundAnimation } from '../../base/animations/animation'
 import { Command, CommandExecutionContext, CommandResult } from '../../base/commands/command'
 import { FadeAnimation, ResolvedElementFade } from '../fade/fade'
@@ -19,6 +19,7 @@ import { isBoundsAware } from "../bounds/model"
 import { ViewportRootElement } from "../viewport/viewport-root"
 import { isSelectable } from "../select/model"
 import { MatchResult, ModelMatcher, Match } from "./model-matching"
+import { ResolvedElementResize, ResizeAnimation } from '../bounds/resize'
 
 /**
  * Sent from the model source to the client in order to update the model. If no model is present yet,
@@ -36,6 +37,7 @@ export class UpdateModelAction implements Action {
 export interface UpdateAnimationData {
     fades: ResolvedElementFade[]
     moves?: ResolvedElementMove[]
+    resizes?: ResolvedElementResize[]
 }
 
 @injectable()
@@ -150,14 +152,16 @@ export class UpdateModelCommand extends Command {
                 // An element has been removed
                 const left = match.left
                 if (isFadeable(left) && match.leftParentId !== undefined) {
-                    const parent = newRoot.index.getById(match.leftParentId)
-                    if (parent instanceof SParentElement) {
-                        const leftCopy = context.modelFactory.createElement(left) as SChildElement & Fadeable
-                        parent.add(leftCopy)
-                        animationData.fades.push({
-                            element: leftCopy,
-                            type: 'out'
-                        })
+                    if (newRoot.index.getById(left.id) === undefined) {
+                        const parent = newRoot.index.getById(match.leftParentId)
+                        if (parent instanceof SParentElement) {
+                            const leftCopy = context.modelFactory.createElement(left) as SChildElement & Fadeable
+                            parent.add(leftCopy)
+                            animationData.fades.push({
+                                element: leftCopy,
+                                type: 'out'
+                            })
+                        }
                     }
                 }
             }
@@ -177,7 +181,7 @@ export class UpdateModelCommand extends Command {
         if (isLocateable(left) && isLocateable(right)) {
             const leftPos = left.position
             const rightPos = right.position
-            if (leftPos.x !== rightPos.x || leftPos.y !== rightPos.y) {
+            if (!almostEquals(leftPos.x, rightPos.x) || !almostEquals(leftPos.y, rightPos.y)) {
                 if (animationData.moves === undefined)
                     animationData.moves = []
                 animationData.moves.push({
@@ -189,12 +193,29 @@ export class UpdateModelCommand extends Command {
                 right.position = leftPos
             }
         }
-        if (isBoundsAware(left) && isBoundsAware(right) && !isValidDimension(right.bounds)) {
-            right.bounds = {
-                x: right.bounds.x,
-                y: right.bounds.y,
-                width: left.bounds.width,
-                height: left.bounds.height
+        if (isBoundsAware(left) && isBoundsAware(right)) {
+            if (!isValidDimension(right.bounds)) {
+                right.bounds = {
+                    x: right.bounds.x,
+                    y: right.bounds.y,
+                    width: left.bounds.width,
+                    height: left.bounds.height
+                }
+            } else if (!almostEquals(left.bounds.width, right.bounds.width)
+                    || !almostEquals(left.bounds.height, right.bounds.height)) {
+                if (animationData.resizes === undefined)
+                    animationData.resizes = []
+                animationData.resizes.push({
+                    element: right,
+                    fromDimension: {
+                        width: left.bounds.width,
+                        height: left.bounds.height,
+                    },
+                    toDimension: {
+                        width: right.bounds.width,
+                        height: right.bounds.height,
+                    }
+                })
             }
         }
         if (isSelectable(left) && isSelectable(right)) {
@@ -220,6 +241,13 @@ export class UpdateModelCommand extends Command {
                 movesMap.set(move.elementId, move)
             }
             animations.push(new MoveAnimation(root, movesMap, context, false))
+        }
+        if (data.resizes !== undefined && data.resizes.length > 0) {
+            const resizesMap: Map<string, ResolvedElementResize> = new Map
+            for (const resize of data.resizes) {
+                resizesMap.set(resize.element.id, resize)
+            }
+            animations.push(new ResizeAnimation(root, resizesMap, context, false))
         }
         return animations
     }

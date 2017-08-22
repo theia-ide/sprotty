@@ -73,6 +73,11 @@ public interface IDiagramServer extends Consumer<ActionMessage> {
 	 * not contain any options, an empty map is returned.
 	 */
 	Map<String, String> getOptions();
+
+	/**
+	 * Current state of the diagram. 
+	 */
+	IDiagramState getDiagramState();
 	
 	/**
 	 * A diagram server provider creates a diagram server for a given {@code clientId} or returns
@@ -84,5 +89,5 @@ public interface IDiagramServer extends Consumer<ActionMessage> {
 		 */
 		IDiagramServer getDiagramServer(String clientId);
 	}
-
+	
 }

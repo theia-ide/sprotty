@@ -195,13 +195,14 @@ export interface SLabelSchema extends SShapeElementSchema {
 /**
  * A label can be attached to a node, edge, or port, and contains some text to be rendered in its view.
  */
-export class SLabel extends SShapeElement implements Selectable, Alignable {
+export class SLabel extends SShapeElement implements Selectable, Alignable, Fadeable {
     text: string
     selected: boolean = false
     alignment: Point = ORIGIN_POINT
+    opacity = 1
 
     hasFeature(feature: symbol) {
-        return feature === boundsFeature || feature === alignFeature
+        return feature === boundsFeature || feature === alignFeature || feature === fadeFeature
     }
 }
 
@@ -216,11 +217,12 @@ export interface SCompartmentSchema extends SShapeElementSchema {
  * A compartment is used to group multiple child elements such as labels of a node. Usually a `vbox`
  * or `hbox` layout is used to arrange these children.
  */
-export class SCompartment extends SShapeElement implements Layouting {
+export class SCompartment extends SShapeElement implements Layouting, Fadeable {
     children: SCompartmentElement[]
     layout: string
+    opacity = 1
 
     hasFeature(feature: symbol) {
-        return feature === boundsFeature || feature === layoutFeature
+        return feature === boundsFeature || feature === layoutFeature ||  feature === fadeFeature
     }
 }

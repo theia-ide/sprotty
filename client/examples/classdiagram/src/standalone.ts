@@ -5,137 +5,16 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { TYPES, SEdge, SGraphSchema, LocalModelSource } from "../../../src"
+import { TYPES, LocalModelSource } from "../../../src"
 import createContainer from "./di.config"
+import { ModelProvider } from './model-provider'
 
 export default function runClassDiagram() {
     const container = createContainer(false, 'sprotty')
 
-    // Initialize model
-    const node0 = {
-        id: 'node0',
-        type: 'node:class',
-        position: {
-            x: 100,
-            y: 100
-        },
-        layout: 'vbox',
-        children: [
-            {
-                id: 'node0_header',
-                type: 'comp:header',
-                layout: 'hbox',
-                children: [
-                    {
-                        id: 'node0_icon',
-                        type: 'label:icon',
-                        text: 'C'
-                    }, {
-                        id: 'node0_classname',
-                        type: 'label:heading',
-                        text: 'Foo'
-                    }
-                ]
-            },
-            {
-                id: 'node0_attrs',
-                type: 'comp:comp',
-                layout: 'vbox',
-                children: [
-                    {
-                        id: 'node0_op2',
-                        type: 'label:text',
-                        text: 'name: string'
-                    }
-                ],
-            },
-            {
-                id: 'node0_ops',
-                type: 'comp:comp',
-                layout: 'vbox',
-                children: [
-                    {
-                        id: 'node0_op0',
-                        type: 'label:text',
-                        text: '+ foo(): integer'
-                    }, {
-                        id: 'node0_op1',
-                        type: 'label:text',
-                        text: '# bar(x: string): void'
-                    }
-                ],
-            }
-        ]
-    }
-    const node1 = {
-        id: 'node1',
-        type: 'node:class',
-        position: {
-            x: 500,
-            y: 200
-        },
-        layout: 'vbox',
-        children: [
-            {
-                id: 'node1_header',
-                type: 'comp:header',
-                layout: 'hbox',
-                children: [{
-                    id: 'node1_icon',
-                    type: 'label:icon',
-                    text: 'C'
-                }, {
-                    id: 'node1_classname',
-                    type: 'label:heading',
-                    text: 'Bar'
-                }]
-            }, {
-                id: 'node1_attrs',
-                type: 'comp:comp',
-                layout: 'vbox',
-                children: [
-                    {
-                        id: 'node1_op2',
-                        type: 'label:text',
-                        text: 'name: string'
-                    }
-                ],
-            },
-            {
-                id: 'node1_ops',
-                type: 'comp:comp',
-                layout: 'vbox',
-                children: [
-                    {
-                        id: 'node1_op0',
-                        type: 'label:text',
-                        text: '+ foo(): Foo'
-                    }
-
-                ],
-            }
-        ]
-    }
-    const edge = {
-        id: 'edge',
-        type: 'edge:straight',
-        sourceId: node0.id,
-        targetId: node1.id
-    } as SEdge
-    const graph: SGraphSchema = { 
-        id: 'graph', 
-        type: 'graph', 
-        children: [node0, node1, edge], 
-        layoutOptions: {
-            hGap: 5,
-            hAlign: 'left',
-            paddingLeft: 7,
-            paddingRight: 7,
-            paddingTop: 7,
-            paddingBottom: 7
-        }
-    }
     // Run
     const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
+    const modelProvider = container.get<ModelProvider>(TYPES.StateAwareModelProvider)
+    const graph = modelProvider.getModel()
     modelSource.setModel(graph)
 }

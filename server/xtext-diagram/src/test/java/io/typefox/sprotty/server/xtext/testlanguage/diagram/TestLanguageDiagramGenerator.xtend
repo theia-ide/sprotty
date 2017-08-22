@@ -7,6 +7,7 @@
 package io.typefox.sprotty.server.xtext.testlanguage.diagram
 
 import com.google.inject.Singleton
+import io.typefox.sprotty.api.IDiagramServer.IDiagramState
 import io.typefox.sprotty.api.SGraph
 import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.api.SNode
@@ -14,7 +15,6 @@ import io.typefox.sprotty.server.xtext.IDiagramGenerator
 import io.typefox.sprotty.server.xtext.LanguageAwareDiagramServer
 import io.typefox.sprotty.server.xtext.testlanguage.testLanguage.Model
 import java.util.List
-import java.util.Map
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtend.lib.annotations.Accessors
@@ -27,14 +27,14 @@ class TestLanguageDiagramGenerator implements IDiagramGenerator {
 	@Data
 	static class Result {
 		Resource resource
-		Map<String, String> options
+		IDiagramState diagramContext
 		SModelRoot model
 		
 		override toString() {
 			'''
 			{
 			  resource: «resource.URI.lastSegment»
-			  options: { «options.entrySet.map[printOption(key, value)].join(', ')» }
+			  options: { «diagramContext.options.entrySet.map[printOption(key, value)].join(', ')» }
 			  model: «model»
 			}'''
 		}
@@ -50,7 +50,7 @@ class TestLanguageDiagramGenerator implements IDiagramGenerator {
 	@Accessors
 	val List<Result> results = newArrayList
 	
-	override generate(Resource resource, Map<String, String> options, CancelIndicator cancelIndicator) {
+	override generate(Resource resource, IDiagramState state, CancelIndicator cancelIndicator) {
 		val model = resource.contents.head
 		if (model instanceof Model) {
 			val result = new SGraph
@@ -64,10 +64,9 @@ class TestLanguageDiagramGenerator implements IDiagramGenerator {
 				result.children += snode
 			}
 			synchronized (results) {
-				results += new Result(resource, options, result)
+				results += new Result(resource, state, result)
 			}
 			return result
 		}
 	}
-	
 }
