@@ -1,0 +1,16 @@
+/*
+* Copyright (C) 2017 TypeFox and others.
+*
+* Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+* You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+*/
+
+import { SNode, Expandable, expandFeature } from "../../../src"
+
+export class ClassNode extends SNode implements Expandable {
+    expanded: boolean = false
+
+    hasFeature(feature: symbol) {
+        return feature === expandFeature || super.hasFeature(feature)
+    }
+}

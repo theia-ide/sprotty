@@ -12,10 +12,10 @@ import { findParentByFeature } from '../../base/model/smodel-utils'
 import { isExpandable } from './model'
 
 export class CollapseExpandAction {
-    static KIND = 'expand'
+    static KIND = 'collapseExpand'
     kind = CollapseExpandAction.KIND
-    constructor(protected readonly expandIds: String[],
-                protected readonly collapseIds: String[]) {}
+    constructor(public readonly expandIds: string[],
+                public readonly collapseIds: string[]) {}
 }
 
 export class ExpandMouseListener extends MouseListener {
@@ -23,8 +23,8 @@ export class ExpandMouseListener extends MouseListener {
         const expandableTarget = findParentByFeature(target, isExpandable)
         if (expandableTarget !== undefined) {
             return [ new CollapseExpandAction(
-                expandableTarget.expanded ? [] : [ target.id ],
-                expandableTarget.expanded ? [ target.id ] : []) ]
+                expandableTarget.expanded ? [] : [ expandableTarget.id ],
+                expandableTarget.expanded ? [ expandableTarget.id ] : []) ]
         }
         return []
     }

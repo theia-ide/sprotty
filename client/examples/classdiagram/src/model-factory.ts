@@ -9,10 +9,13 @@ import {
     SGraphFactory, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, SChildElement,
     getBasicType, HtmlRoot, HtmlRootSchema, PreRenderedElement, PreRenderedElementSchema
 } from "../../../src"
+import { ClassNode } from './model'
 
 export class ClassDiagramFactory extends SGraphFactory {
 
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
+        if (this.isNodeSchema(schema))
+            return this.initializeChild(new ClassNode(), schema, parent)
         if (this.isPreRenderedSchema(schema))
             return this.initializeChild(new PreRenderedElement(), schema, parent)
         else
