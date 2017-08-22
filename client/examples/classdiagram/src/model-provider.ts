@@ -5,13 +5,13 @@
 * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import { ExpansionState, SModelRootSchema, SEdge, SGraphSchema, StateAwareModelProvider } from "../../../src"
+import { DiagramState, SModelRootSchema, SEdge, SGraphSchema, StateAwareModelProvider } from "../../../src"
 import { injectable } from 'inversify'
 
 @injectable()
 export class ModelProvider implements StateAwareModelProvider {
 
-    getModel(state?: ExpansionState, currentRoot?: SModelRootSchema): SModelRootSchema {
+    getModel(state?: DiagramState, currentRoot?: SModelRootSchema): SModelRootSchema {
         // Initialize model
         const node0 = {
             id: 'node0',
@@ -41,7 +41,7 @@ export class ModelProvider implements StateAwareModelProvider {
                 }
             ]
         }
-        if (state !== undefined && state.expandedElementIds.indexOf('node0') !== -1) {
+        if (state !== undefined && state.expansionState.expandedElementIds.indexOf('node0') !== -1) {
             node0.expanded = true
             node0.children.push({
                 id: 'node0_attrs',
@@ -98,7 +98,7 @@ export class ModelProvider implements StateAwareModelProvider {
                 }
             ]
         }
-        if (state !== undefined && state.expandedElementIds.indexOf('node1') !== -1) {
+        if (state !== undefined && state.expansionState.expandedElementIds.indexOf('node1') !== -1) {
             node1.expanded = true
             node1.children.push({
                 id: 'node1_attrs',

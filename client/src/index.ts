@@ -115,7 +115,7 @@ export * from "./lib/svg-views"
 // ------------------ Model Source ------------------
 
 export * from "./model-source/diagram-server"
-export * from "./model-source/expansion-state"
+export * from "./model-source/diagram-state"
 export * from "./model-source/local-model-source"
 export * from "./model-source/websocket"
 

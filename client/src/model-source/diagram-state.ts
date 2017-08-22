@@ -8,6 +8,10 @@
 import { SModelRootSchema, SModelElementSchema } from '../base/model/smodel'
 import { CollapseExpandAction } from '../features/expand/expand'
 
+export interface DiagramState {
+    expansionState: ExpansionState
+}
+
 export class ExpansionState {
     expandedElementIds: string[] = []
 

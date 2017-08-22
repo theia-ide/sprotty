@@ -23,13 +23,13 @@ import { ModelSource } from "./model-source"
 import { ExportSvgAction } from '../features/export/svg-exporter'
 import { saveAs } from 'file-saver'
 import { CollapseExpandAction } from '../features/expand/expand'
-import { ExpansionState } from './expansion-state'
+import { DiagramState, ExpansionState } from './diagram-state'
 
 export type PopupModelFactory = (request: RequestPopupModelAction, element?: SModelElementSchema)
     => SModelRootSchema | undefined
 
 export interface StateAwareModelProvider  {
-    getModel(diagramState: ExpansionState, currentRoot?: SModelRootSchema): SModelRootSchema
+    getModel(diagramState: DiagramState, currentRoot?: SModelRootSchema): SModelRootSchema
 }
 
 /**
@@ -54,7 +54,9 @@ export class LocalModelSource extends ModelSource {
 
     protected onModelSubmitted: (newRoot: SModelRootSchema) => void
 
-    protected expansionState = new ExpansionState(this.currentRoot)
+    protected diagramState: DiagramState = {
+        expansionState: new ExpansionState(this.currentRoot)
+    }
 
     constructor(@inject(TYPES.IActionDispatcher) actionDispatcher: IActionDispatcher,
                 @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
@@ -79,7 +81,9 @@ export class LocalModelSource extends ModelSource {
 
     setModel(newRoot: SModelRootSchema): void {
         this.currentRoot = newRoot
-        this.expansionState = new ExpansionState(newRoot)
+        this.diagramState = {
+            expansionState: new ExpansionState(newRoot)
+        }
         this.submitModel(newRoot, false)
     }
 
@@ -243,8 +247,8 @@ export class LocalModelSource extends ModelSource {
 
     protected handleCollapseExpandAction(action: CollapseExpandAction): void {
         if (this.modelProvider !== undefined) {
-            this.expansionState.apply(action)
-            const expandedModel = this.modelProvider.getModel(this.expansionState, this.currentRoot)
+            this.diagramState.expansionState.apply(action)
+            const expandedModel = this.modelProvider.getModel(this.diagramState, this.currentRoot)
             this.updateModel(expandedModel)
         }
     }
