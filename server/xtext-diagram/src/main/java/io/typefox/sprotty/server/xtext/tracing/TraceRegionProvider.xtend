@@ -35,10 +35,12 @@ class TraceRegionProvider {
 	
 	def TextRegion getSignificantRegion(EObject element) {
 		val feature = element.relevantFeature
-		if (feature !== null) 
-			return NodeModelUtils.findNodesForFeature(element, feature).head.toTextRegion
-		else 
-			return NodeModelUtils.findActualNodeFor(element).toTextRegion
+		if (feature !== null) {
+			val node = NodeModelUtils.findNodesForFeature(element, feature).head
+			if(node !== null)
+				return node.toTextRegion
+		}
+		return NodeModelUtils.findActualNodeFor(element).toTextRegion
 	}
 
 	protected def toTextRegion(INode node) {
