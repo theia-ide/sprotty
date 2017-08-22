@@ -56,6 +56,10 @@ class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguage
 			updateDiagrams(deltas.map[uri].toSet)
 		]
 	}
+	
+	def ILanguageServerAccess getLanguageServerAccess() {
+		languageServerAccess
+	}
 
 	protected def DiagramEndpoint getClient() {
 		if (_client === null) {
@@ -95,7 +99,7 @@ class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguage
 			server.languageServerExtension = this
 	}
 	
-	protected def List<? extends IDiagramServer> findDiagramServersByUri(String uri) {
+	def List<? extends IDiagramServer> findDiagramServersByUri(String uri) {
 		synchronized (diagramServers) {
 			diagramServers.values.filter(LanguageAwareDiagramServer).filter[sourceUri == uri].toList
 		}
