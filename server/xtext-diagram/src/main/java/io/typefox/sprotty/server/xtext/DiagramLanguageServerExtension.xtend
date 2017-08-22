@@ -130,7 +130,7 @@ class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguage
 				path.doRead [ context |
 					if (context.resource.shouldGenerate(context.cancelChecker)) {
 						val diagramGenerator = diagramGeneratorProvider.get
-						return diagramServers.map[it -> diagramGenerator.generate(context.resource, options, context.cancelChecker)]
+						return diagramServers.map[it -> diagramGenerator.generate(context.resource, diagramState, context.cancelChecker)]
 					} else
 						return emptyList
 				].thenAccept[ resultList |
@@ -152,7 +152,7 @@ class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguage
 			path.doRead [ context |
 				if (context.resource.shouldGenerate(context.cancelChecker)) {
 					val diagramGenerator = diagramGeneratorProvider.get
-					return diagramGenerator.generate(context.resource, diagramServer.options, context.cancelChecker)
+					return diagramGenerator.generate(context.resource, diagramServer.diagramState, context.cancelChecker)
 				}
 			].thenAccept[ result |
 				if (result !== null)

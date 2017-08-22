@@ -13,6 +13,7 @@ import io.typefox.sprotty.api.IModelUpdateListener
 import io.typefox.sprotty.api.IPopupModelFactory
 import org.eclipse.xtext.ide.server.ILanguageServerExtension
 import org.eclipse.xtext.service.AbstractGenericModule
+import io.typefox.sprotty.api.IDiagramExpansionListener
 
 /**
  * Guice bindings for sprotty diagrams. Include this module in your Guice configuration in
@@ -48,4 +49,7 @@ class DefaultDiagramModule extends AbstractGenericModule {
 		IDiagramSelectionListener.NullImpl
 	}
 	
+	def Class<? extends IDiagramExpansionListener> bindIDiagramExpansionListener() {
+		IDiagramExpansionListener.NullImpl
+	}
 }

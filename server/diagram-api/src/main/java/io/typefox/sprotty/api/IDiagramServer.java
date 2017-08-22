@@ -7,6 +7,7 @@
 package io.typefox.sprotty.api;
 
 import java.util.Map;
+import java.util.Set;
 import java.util.function.Consumer;
 
 /**
@@ -73,6 +74,11 @@ public interface IDiagramServer extends Consumer<ActionMessage> {
 	 * not contain any options, an empty map is returned.
 	 */
 	Map<String, String> getOptions();
+
+	/**
+	 * Current state of the diagram. 
+	 */
+	IDiagramState getDiagramState();
 	
 	/**
 	 * A diagram server provider creates a diagram server for a given {@code clientId} or returns
@@ -85,4 +91,38 @@ public interface IDiagramServer extends Consumer<ActionMessage> {
 		IDiagramServer getDiagramServer(String clientId);
 	}
 
+	/**
+	 * A read-only view on the current state of the diagram.
+	 * 
+	 * @author koehnlein
+	 */
+	public interface IDiagramState {
+		/**
+		 * The options received from the client with the last {@link RequestModelAction}. These options
+		 * can be used to control diagram creation. If no such action has been received yet, or the action did
+		 * not contain any options, an empty map is returned.
+		 */
+		Map<String, String> getOptions();
+		
+		/**
+		 * @return the identifier of the client attached to this server.
+		 */
+		String getClientId();
+		
+		/**
+		 * @return the current model
+		 */
+		SModelRoot getCurrentModel();
+		
+		/**
+		 * @return the IDs of the currently expanded {@link SModelElement}s.
+		 */
+		Set<? extends String> getExpandedElements();
+
+		/**
+		 * @return the IDs of the currently selected {@link SModelElement}s.
+		 */
+		Set<? extends String> getSelectedElements();
+	}
+	
 }

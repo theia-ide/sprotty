@@ -50,6 +50,13 @@ public class SModelIndex {
 		return index.get(elementId);
 	}
 	
+	/**
+	 * @return all IDs
+	 */
+	public Iterable<String> allIds() {
+		return index.keySet();
+	}
+	
 	protected void addToIndex(SModelElement element) {
 		index.put(element.getId(), element);
 		if (element.getChildren() != null) {

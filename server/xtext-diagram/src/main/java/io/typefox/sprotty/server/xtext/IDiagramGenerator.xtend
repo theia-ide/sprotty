@@ -7,9 +7,9 @@
 package io.typefox.sprotty.server.xtext
 
 import io.typefox.sprotty.api.SModelRoot
-import java.util.Map
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.util.CancelIndicator
+import io.typefox.sprotty.api.IDiagramServer.IDiagramState
 
 /**
  * A diagram generator creates a sprotty model for a given resource. Bind your implementation in a subclass
@@ -21,6 +21,7 @@ interface IDiagramGenerator {
 	 * Create a sprotty model for the given resource. May return {@code null} if no diagram should be
 	 * displayed for that resource.
 	 */
-	def SModelRoot generate(Resource resource, Map<String, String> options, CancelIndicator cancelIndicator)
-	
+	def SModelRoot generate(Resource resource, IDiagramState state, CancelIndicator cancelIndicator)
+
 }
+

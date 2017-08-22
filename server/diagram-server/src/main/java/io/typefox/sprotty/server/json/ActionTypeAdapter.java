@@ -18,6 +18,7 @@ import com.google.gson.reflect.TypeToken;
 
 import io.typefox.sprotty.api.Action;
 import io.typefox.sprotty.api.CenterAction;
+import io.typefox.sprotty.api.CollapseExpandAction;
 import io.typefox.sprotty.api.ComputedBoundsAction;
 import io.typefox.sprotty.api.FitToScreenAction;
 import io.typefox.sprotty.api.RequestBoundsAction;
@@ -69,6 +70,7 @@ public class ActionTypeAdapter extends PropertyBasedTypeAdapter<Action> {
 			addActionKind(FitToScreenAction.KIND, FitToScreenAction.class);
 			addActionKind(RequestPopupModelAction.KIND, RequestPopupModelAction.class);
 			addActionKind(SetPopupModelAction.KIND, SetPopupModelAction.class);
+			addActionKind(CollapseExpandAction.KIND, CollapseExpandAction.class);
 		}
 		
 		public void addActionKind(String kind, Class<? extends Action> clazz) {
