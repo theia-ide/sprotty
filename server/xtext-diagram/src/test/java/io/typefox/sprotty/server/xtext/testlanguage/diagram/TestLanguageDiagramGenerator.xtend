@@ -7,7 +7,7 @@
 package io.typefox.sprotty.server.xtext.testlanguage.diagram
 
 import com.google.inject.Singleton
-import io.typefox.sprotty.api.IDiagramServer.IDiagramState
+import io.typefox.sprotty.api.IDiagramState
 import io.typefox.sprotty.api.SGraph
 import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.api.SNode

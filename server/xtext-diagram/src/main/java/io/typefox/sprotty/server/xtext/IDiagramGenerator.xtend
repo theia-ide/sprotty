@@ -6,10 +6,10 @@
  */
 package io.typefox.sprotty.server.xtext
 
+import io.typefox.sprotty.api.IDiagramState
 import io.typefox.sprotty.api.SModelRoot
 import org.eclipse.emf.ecore.resource.Resource
 import org.eclipse.xtext.util.CancelIndicator
-import io.typefox.sprotty.api.IDiagramServer.IDiagramState
 
 /**
  * A diagram generator creates a sprotty model for a given resource. Bind your implementation in a subclass
