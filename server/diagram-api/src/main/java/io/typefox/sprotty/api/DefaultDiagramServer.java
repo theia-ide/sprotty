@@ -367,12 +367,12 @@ public class DefaultDiagramServer implements IDiagramServer {
 		}
 		
 		@Override
-		public Set<? extends String> getExpandedElements() {
+		public Set<String> getExpandedElements() {
 			return server.expandedElements;
 		}
 		
 		@Override
-		public Set<? extends String> getSelectedElements() {
+		public Set<String> getSelectedElements() {
 			return server.selectedElements;
 		}
 	}

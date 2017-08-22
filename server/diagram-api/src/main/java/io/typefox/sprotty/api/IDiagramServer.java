@@ -92,7 +92,7 @@ public interface IDiagramServer extends Consumer<ActionMessage> {
 	}
 
 	/**
-	 * A read-only view on the current state of the diagram.
+	 * A view on the current state of the diagram.
 	 * 
 	 * @author koehnlein
 	 */
@@ -117,12 +117,12 @@ public interface IDiagramServer extends Consumer<ActionMessage> {
 		/**
 		 * @return the IDs of the currently expanded {@link SModelElement}s.
 		 */
-		Set<? extends String> getExpandedElements();
+		Set<String> getExpandedElements();
 
 		/**
 		 * @return the IDs of the currently selected {@link SModelElement}s.
 		 */
-		Set<? extends String> getSelectedElements();
+		Set<String> getSelectedElements();
 	}
 	
 }
