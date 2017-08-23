@@ -4,7 +4,6 @@ import com.google.inject.Inject
 import io.typefox.sprotty.api.SModelElement
 import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.server.xtext.ILanguageAwareDiagramServer
-import io.typefox.sprotty.server.xtext.LanguageAwareDiagramServer
 import java.util.Map
 import java.util.concurrent.CompletableFuture
 import java.util.function.BiFunction
@@ -27,16 +26,10 @@ class UriTraceProvider implements ITraceProvider {
 		if (traceable.trace !== null) {
 			val uri = traceable.trace.toURI
 			val path = uriExtensions.toPath(uri.trimFragment)
-			val server = callingServer.languageServerExtension
-				.findDiagramServersByUri(path)
-				.filter(LanguageAwareDiagramServer)
-				.head
-			if (server !== null) {
-				return server.doRead(path) [ context |
-					val element = context.resource.resourceSet.getEObject(uri, true)
-					return readOperation.apply(element, context)
-				]
-			}
+			return callingServer.languageServerExtension.languageServerAccess.doRead(path) [ context |
+				val element = context.resource.resourceSet.getEObject(uri, true)
+				return readOperation.apply(element, context)
+			]
 		}
 		return CompletableFuture.completedFuture(null)
 	}
@@ -53,7 +46,10 @@ class UriTraceProvider implements ITraceProvider {
 		doFindTraceable(root, uri2container) [
 			results.put($0, $1)
 		]
-		return results.entrySet.minBy[containerChain.indexOf(key)].value
+		if(results.empty)
+			return null
+		else
+		 	return results.entrySet.minBy[containerChain.indexOf(key)].value
 	}
 	
 	protected def void doFindTraceable(SModelElement element, Map<String, EObject> uri2container, (EObject, Traceable)=>void result) {

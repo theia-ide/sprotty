@@ -8,10 +8,7 @@ package io.typefox.sprotty.server.xtext
 
 import io.typefox.sprotty.api.DefaultDiagramServer
 import io.typefox.sprotty.api.RequestModelAction
-import java.util.concurrent.CompletableFuture
-import java.util.function.Function
 import org.eclipse.xtend.lib.annotations.Accessors
-import org.eclipse.xtext.ide.server.ILanguageServerAccess.Context
 
 /**
  * Diagram server for Xtext languages. When a {@link RequestModelAction} is received,
@@ -33,11 +30,6 @@ class LanguageAwareDiagramServer extends DefaultDiagramServer implements ILangua
 		} else {
 			super.handle(request)
 		}
-	}
-	
-	override <T> CompletableFuture<T> doRead(String uri, Function<Context, T> readOperation) {
-		val languageServerAccess = languageServerExtension.languageServerAccess
-		return languageServerAccess.doRead(uri, readOperation)
 	}
 	
 	override getSourceUri() {
