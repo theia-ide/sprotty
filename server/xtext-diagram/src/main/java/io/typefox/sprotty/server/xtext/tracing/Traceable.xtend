@@ -6,17 +6,7 @@
  */ 
 package io.typefox.sprotty.server.xtext.tracing
 
-import org.eclipse.xtend.lib.annotations.Data
-
 interface Traceable {
-	def TextRegion getTraceRegion()
-	def void setTraceRegion(TextRegion traceRegion)
-	def TextRegion getSignificantRegion()
-	def void setSignificantRegion(TextRegion traceRegion)
-}
-
-@Data
-class TextRegion {
-	int offset
-	int length
+	def String getTrace()
+	def void setTrace(String trace)
 }

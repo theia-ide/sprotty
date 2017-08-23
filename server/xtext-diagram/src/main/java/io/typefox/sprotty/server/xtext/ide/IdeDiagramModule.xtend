@@ -7,8 +7,8 @@
 package io.typefox.sprotty.server.xtext.ide
 
 import io.typefox.sprotty.server.xtext.DefaultDiagramModule
-import org.eclipse.xtext.ide.server.occurrences.IDocumentHighlightService
 import io.typefox.sprotty.server.xtext.DiagramLanguageServerExtension
+import org.eclipse.xtext.ide.server.occurrences.IDocumentHighlightService
 
 class IdeDiagramModule extends DefaultDiagramModule {
 	
