@@ -16,7 +16,7 @@ import { ActionHandlerRegistry } from "../base/actions/action-handler"
 import { IActionDispatcher } from "../base/actions/action-dispatcher"
 import { ICommand } from "../base/commands/command"
 import { ViewerOptions } from "../base/views/viewer-options"
-import { SetModelCommand } from "../base/features/set-model"
+import { SetModelCommand, RequestModelAction } from "../base/features/set-model"
 import { UpdateModelCommand, UpdateModelAction } from "../features/update/update-model"
 import { ComputedBoundsAction, RequestBoundsCommand } from '../features/bounds/bounds-manipulation'
 import { RequestPopupModelAction } from "../features/hover/hover"
@@ -80,21 +80,15 @@ export abstract class DiagramServer extends ModelSource {
 
     handle(action: Action): void | ICommand {
         this.storeNewModel(action)
-        if (action.kind === ExportSvgAction.KIND)
-            return this.handleExportSvgAction(action as ExportSvgAction)
-
-        if (action.kind === ComputedBoundsAction.KIND && !this.viewerOptions.needsServerLayout)
-            return this.handleComputedBounds(action as ComputedBoundsAction)
-
-        if (action.kind === RequestBoundsCommand.KIND)
-            return
-
-        const message: ActionMessage = {
-            clientId: this.clientId,
-            action: action
+        const forwardToServer = this.handleLocally(action)
+        if (forwardToServer) {
+            const message: ActionMessage = {
+                clientId: this.clientId,
+                action: action
+            }
+            this.logger.log(this, 'sending', message)
+            this.sendMessage(message)
         }
-        this.logger.log(this, 'sending', message)
-        this.sendMessage(message)
     }
 
     protected abstract sendMessage(message: ActionMessage): void
@@ -123,7 +117,34 @@ export abstract class DiagramServer extends ModelSource {
         }
     }
 
-    protected handleComputedBounds(action: ComputedBoundsAction): ICommand | void {
+    protected handleLocally(action: Action): boolean {
+        switch (action.kind) {
+            case RequestModelAction.KIND:
+                return this.handleRequestModel(action as RequestModelAction)
+            case ComputedBoundsAction.KIND:
+                if (!this.viewerOptions.needsServerLayout)
+                    return this.handleComputedBounds(action as ComputedBoundsAction)
+                break
+            case RequestBoundsCommand.KIND:
+                return false
+            case ExportSvgAction.KIND:
+                return this.handleExportSvgAction(action as ExportSvgAction)
+        }
+        return true
+    }
+
+    protected handleRequestModel(action: RequestModelAction): boolean {
+        if (action.options === undefined)
+            action.options = {}
+        const viewerOptions = this.viewerOptions as { [key: string]: any }
+        for (const option in viewerOptions) {
+            if (!(option in action.options))
+                action.options[option] = String(viewerOptions[option])
+        }
+        return true
+    }
+
+    protected handleComputedBounds(action: ComputedBoundsAction): boolean {
         const index = new SModelIndex()
         index.add(this.currentRoot)
         for (const b of action.bounds) {
@@ -139,6 +160,7 @@ export abstract class DiagramServer extends ModelSource {
             }
         }
         this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
+        return false
     }
 
     protected applyBounds(element: SModelElementSchema, newBounds: Bounds) {
@@ -152,8 +174,9 @@ export abstract class DiagramServer extends ModelSource {
         e.alignment = { x: newAlignment.x, y: newAlignment.y }
     }
 
-    protected handleExportSvgAction(action: ExportSvgAction): void {
+    protected handleExportSvgAction(action: ExportSvgAction): boolean {
         const blob = new Blob([action.svg], {type: "text/plain;charset=utf-8"})
         saveAs(blob, "diagram.svg")
+        return false
     }
 }

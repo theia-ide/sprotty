@@ -21,7 +21,7 @@ export class RequestModelAction implements Action {
     static readonly KIND = 'requestModel'
     readonly kind = RequestModelAction.KIND
 
-    constructor(public readonly options?: { [key: string]: string }) {
+    constructor(public options?: { [key: string]: string }) {
     }
 }
 

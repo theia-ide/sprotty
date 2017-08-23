@@ -294,8 +294,12 @@ public class DefaultDiagramServer implements IDiagramServer {
 	 * Called when a {@code RequestModelAction} is received.
 	 */
 	protected void handle(RequestModelAction request) {
-		if (request.getOptions() != null) {
-			setOptions(request.getOptions());
+		Map<String, String> options = request.getOptions();
+		if (options != null) {
+			setOptions(options);
+			String needsClientLayout = options.get("needsClientLayout");
+			if (needsClientLayout != null && !needsClientLayout.isEmpty())
+				setNeedsClientLayout(Boolean.parseBoolean(needsClientLayout));
 		}
 		SModelRoot model = getModel();
 		if (model != null) {
