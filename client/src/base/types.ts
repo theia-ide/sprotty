@@ -26,6 +26,7 @@ export const TYPES = {
     IModelFactory: Symbol('IModelFactory'),
     ModelRendererFactory: Symbol('ModelRendererFactory'),
     ModelSource: Symbol('ModelSource'),
+    ModelSourceProvider: Symbol('ModelSourceProvider'),
     MouseListener: Symbol('MouseListener'),
     PopupModelFactory: Symbol('PopupModelFactory'),
     PopupMouseListener: Symbol('PopupMouseListener'),
