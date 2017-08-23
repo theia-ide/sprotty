@@ -18,7 +18,7 @@ import org.eclipse.xtext.ide.server.ILanguageServerAccess.Context
  * a diagram is generated for the corresponding resource by calling
  * {@link DiagramLanguageServerExtension#updateDiagram(LanguageAwareDiagramServer)}.
  */
-class LanguageAwareDiagramServer extends DefaultDiagramServer {
+class LanguageAwareDiagramServer extends DefaultDiagramServer implements ILanguageAwareDiagramServer {
 	
 	public static val OPTION_SOURCE_URI = 'sourceUri'
 	
@@ -35,12 +35,12 @@ class LanguageAwareDiagramServer extends DefaultDiagramServer {
 		}
 	}
 	
-	def <T> CompletableFuture<T> doRead(String uri, Function<Context, T> readOperation) {
+	override <T> CompletableFuture<T> doRead(String uri, Function<Context, T> readOperation) {
 		val languageServerAccess = languageServerExtension.languageServerAccess
 		return languageServerAccess.doRead(uri, readOperation)
 	}
 	
-	def getSourceUri() {
+	override getSourceUri() {
 		options.get(OPTION_SOURCE_URI)
 	}
 	

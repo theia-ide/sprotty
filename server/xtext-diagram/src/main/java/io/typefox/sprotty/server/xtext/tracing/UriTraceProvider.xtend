@@ -3,9 +3,10 @@ package io.typefox.sprotty.server.xtext.tracing
 import com.google.inject.Inject
 import io.typefox.sprotty.api.SModelElement
 import io.typefox.sprotty.api.SModelRoot
-import io.typefox.sprotty.server.xtext.DiagramLanguageServerExtension
+import io.typefox.sprotty.server.xtext.ILanguageAwareDiagramServer
 import io.typefox.sprotty.server.xtext.LanguageAwareDiagramServer
 import java.util.Map
+import java.util.concurrent.CompletableFuture
 import java.util.function.BiFunction
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.EObject
@@ -13,23 +14,20 @@ import org.eclipse.xtext.ide.server.ILanguageServerAccess.Context
 import org.eclipse.xtext.ide.server.UriExtensions
 
 import static extension org.eclipse.emf.ecore.util.EcoreUtil.*
-import java.util.concurrent.CompletableFuture
 
 class UriTraceProvider implements ITraceProvider {
 	
-	@Inject DiagramLanguageServerExtension languageServerExtension
-
 	@Inject UriExtensions uriExtensions
 	
 	override trace(Traceable traceable, EObject source) {
 		traceable.trace = source.URI.toPath
 	}
 
-	override <T> withSource(Traceable traceable, BiFunction<EObject, Context, T> readOperation) {
+	override <T> withSource(Traceable traceable, ILanguageAwareDiagramServer callingServer, BiFunction<EObject, Context, T> readOperation) {
 		if (traceable.trace !== null) {
 			val uri = traceable.trace.toURI
 			val path = uriExtensions.toPath(uri.trimFragment)
-			val server = languageServerExtension
+			val server = callingServer.languageServerExtension
 				.findDiagramServersByUri(path)
 				.filter(LanguageAwareDiagramServer)
 				.head

@@ -26,13 +26,11 @@ import org.eclipse.xtext.ide.server.UriExtensions
 import org.eclipse.xtext.util.CancelIndicator
 import org.eclipse.xtext.validation.CheckMode
 import org.eclipse.xtext.validation.IResourceValidator
-import com.google.inject.Singleton
 
 /**
  * An extension of the <a href="https://github.com/Microsoft/language-server-protocol">Language Server Protocol (LSP)</a>
  * that adds diagram-related messages.
  */
-@Singleton
 class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguageServerExtension, IDiagramServer.Provider {
 	
 	protected static val LOG = Logger.getLogger(DiagramLanguageServerExtension)
@@ -101,9 +99,9 @@ class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguage
 			server.languageServerExtension = this
 	}
 	
-	def List<? extends IDiagramServer> findDiagramServersByUri(String uri) {
+	def List<? extends ILanguageAwareDiagramServer> findDiagramServersByUri(String uri) {
 		synchronized (diagramServers) {
-			diagramServers.values.filter(LanguageAwareDiagramServer).filter[sourceUri == uri].toList
+			diagramServers.values.filter(ILanguageAwareDiagramServer).filter[sourceUri == uri].toList
 		}
 	}
 	
