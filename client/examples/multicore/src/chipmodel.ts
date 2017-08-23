@@ -31,6 +31,10 @@ export class Processor extends ViewportRootElement implements BoundsAware {
         }
     }
 
+    set bounds(newBounds: Bounds) {
+        // Ignore the new bounds
+    }
+
     hasFeature(feature: symbol): boolean {
         return feature === boundsFeature || super.hasFeature(feature)
     }

@@ -77,9 +77,17 @@ class MulticoreServerLauncher {
 	
 	def static void main(String[] args) {
 		Resource.Factory.Registry.INSTANCE.extensionToFactoryMap.put('elkg', new ElkGraphResourceFactory)
-		val injector = new MulticoreAllocationWebSetup().createInjectorAndDoEMFRegistration()
 		ElkLayoutEngine.initialize(new LayeredOptions)
-		
+		val injector = new MulticoreAllocationWebSetup().createInjectorAndDoEMFRegistration()
+		val launcher = injector.getInstance(MulticoreServerLauncher)
+		launcher.launch()
+	}
+	
+	@Inject DiagramService diagramService
+	@Inject TestEndpointConfigurator endpointConfigurator
+	@Inject DisposableRegistry disposableRegistry
+	
+	def void launch() {
 		val server = new Server(new InetSocketAddress(8080))
 		val webAppContext = new WebAppContext => [
 			resourceBase = 'src/main/webapp'
@@ -95,7 +103,7 @@ class MulticoreServerLauncher {
 			setAttribute(WebInfConfiguration.CONTAINER_JAR_PATTERN, '.*/io\\.typefox\\.sprotty\\.example\\.multicore\\.web/.*,.*\\.jar')
 			setInitParameter('org.eclipse.jetty.servlet.Default.dirAllowed', 'false')
 			setInitParameter('org.eclipse.jetty.servlet.Default.useFileMappedBuffer', 'false')
-			addEventListener(injector.getInstance(DiagramService))
+			addEventListener(diagramService)
 		]
 		server.handler = new HandlerList => [
 			addHandler(new ResourceHandler => [
@@ -108,7 +116,7 @@ class MulticoreServerLauncher {
 		
 		val container = WebSocketServerContainerInitializer.configureContext(webAppContext)
 		val endpointConfigBuilder = ServerEndpointConfig.Builder.create(TestServerEndpoint, '/diagram')
-		endpointConfigBuilder.configurator(injector.getInstance(TestEndpointConfigurator))
+		endpointConfigBuilder.configurator(endpointConfigurator)
 		container.addEndpoint(endpointConfigBuilder.build())
 		
 		val log = new Slf4jLog(MulticoreServerLauncher.name)
@@ -129,7 +137,7 @@ class MulticoreServerLauncher {
 			log.warn(exception.message)
 			System.exit(1)
 		} finally {
-			injector.getInstance(DisposableRegistry).dispose()
+			disposableRegistry.dispose()
 		}
 	}
 }

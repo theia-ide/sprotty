@@ -6,6 +6,7 @@
  */
 package io.typefox.sprotty.example.multicore.web
 
+import io.typefox.sprotty.api.IDiagramExpansionListener
 import io.typefox.sprotty.api.IDiagramSelectionListener
 import io.typefox.sprotty.api.IDiagramServer
 import io.typefox.sprotty.api.ILayoutEngine
@@ -60,6 +61,10 @@ class MulticoreAllocationWebModule extends AbstractMulticoreAllocationWebModule 
 	
 	def Class<? extends IDiagramSelectionListener> bindIDiagramSelectionListener() {
 		IDiagramSelectionListener.NullImpl
+	}
+	
+	def Class<? extends IDiagramExpansionListener> bindIDiagramExpansionListener() {
+		IDiagramExpansionListener.NullImpl
 	}
 	
 }
