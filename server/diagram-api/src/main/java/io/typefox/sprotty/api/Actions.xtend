@@ -333,3 +333,21 @@ class CollapseExpandAction implements Action {
 		initializer.accept(this)
 	}
 }
+
+/**
+ * Sent from the client to the server when an element is opened (double-clicked).
+ */
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
+class OpenAction implements Action {
+	public static val KIND = 'open'
+	String kind = KIND
+	
+	String elementId
+	
+	new() {}
+	new(Consumer<OpenAction> initializer) {
+		initializer.accept(this)
+	}
+}

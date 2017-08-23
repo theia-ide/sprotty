@@ -70,6 +70,9 @@ export * from "./features/hover/model"
 export * from "./features/move/model"
 export * from "./features/move/move"
 
+export * from "./features/open/open"
+export * from "./features/open/model"
+
 export * from "./features/select/model"
 export * from "./features/select/select"
 
@@ -94,7 +97,9 @@ import viewportModule from "./features/viewport/di.config"
 import hoverModule from "./features/hover/di.config"
 import exportModule from "./features/export/di.config"
 import expandModule from "./features/expand/di.config"
-export { moveModule, boundsModule, fadeModule, selectModule, undoRedoModule, viewportModule, hoverModule, exportModule, expandModule }
+import openModule from "./features/open/di.config"
+
+export { moveModule, boundsModule, fadeModule, selectModule, undoRedoModule, viewportModule, hoverModule, exportModule, expandModule, openModule }
 
 
 // ------------------ Graph ------------------
