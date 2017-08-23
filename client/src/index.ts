@@ -117,7 +117,11 @@ export * from "./lib/svg-views"
 export * from "./model-source/diagram-server"
 export * from "./model-source/diagram-state"
 export * from "./model-source/local-model-source"
+export * from "./model-source/model-source"
 export * from "./model-source/websocket"
+
+import modelSourceModule from "./model-source/di.config"
+export { modelSourceModule }
 
 
 // ------------------ Utilities ------------------
