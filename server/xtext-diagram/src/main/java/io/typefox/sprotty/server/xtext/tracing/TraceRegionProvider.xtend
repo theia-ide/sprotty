@@ -6,33 +6,28 @@
  */ 
 package io.typefox.sprotty.server.xtext.tracing
 
-import io.typefox.sprotty.server.xtext.tracing.TextRegion
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.emf.ecore.EStructuralFeature
 import org.eclipse.emf.ecore.EcorePackage
 import org.eclipse.xtext.nodemodel.INode
 import org.eclipse.xtext.nodemodel.util.NodeModelUtils
+import org.eclipse.xtext.util.TextRegion
+import org.eclipse.xtext.resource.XtextResource
+import org.eclipse.xtext.resource.EObjectAtOffsetHelper
+import com.google.inject.Inject
 
 class TraceRegionProvider {
 
-	def TextRegion getTraceRegion(EObject element) {
-		val node = NodeModelUtils.findActualNodeFor(element)
-		if (node !== null) {
-			val document = node.rootNode.text
-			val leafNodes = node.leafNodes.filter[!hidden]
-			if(!leafNodes.empty) {
-				var start = leafNodes.head.offset
-				while (start > 0 && document.charAt(start - 1) === 32) 
-					start--
-				var end = leafNodes.last.endOffset
-				while(end < document.length && document.charAt(end) === 32)
-					end++
-				return new TextRegion(start, end - start)
-			}
-		}
-		return null
-	}
+	@Inject extension EObjectAtOffsetHelper
 	
+	def EObject getElementAtOffset(XtextResource resource, int offset) {
+		val document = resource.parseResult.rootNode.text
+		var offset2 = offset
+		while(offset2 < document.length && document.charAt(offset2) === 32)
+			offset2++
+		return resource.resolveContainedElementAt(offset2)	
+	}
+
 	def TextRegion getSignificantRegion(EObject element) {
 		val feature = element.relevantFeature
 		if (feature !== null) {

@@ -99,9 +99,9 @@ class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguage
 			server.languageServerExtension = this
 	}
 	
-	def List<? extends IDiagramServer> findDiagramServersByUri(String uri) {
+	def List<? extends ILanguageAwareDiagramServer> findDiagramServersByUri(String uri) {
 		synchronized (diagramServers) {
-			diagramServers.values.filter(LanguageAwareDiagramServer).filter[sourceUri == uri].toList
+			diagramServers.values.filter(ILanguageAwareDiagramServer).filter[sourceUri == uri].toList
 		}
 	}
 	
