@@ -16,6 +16,7 @@ import io.typefox.sprotty.server.xtext.tracing.ITraceProvider
 import io.typefox.sprotty.server.xtext.tracing.UriTraceProvider
 import org.eclipse.xtext.ide.server.ILanguageServerExtension
 import org.eclipse.xtext.service.AbstractGenericModule
+import io.typefox.sprotty.api.IDiagramOpenListener
 
 /**
  * Guice bindings for sprotty diagrams. Include this module in your Guice configuration in
@@ -53,6 +54,10 @@ class DefaultDiagramModule extends AbstractGenericModule {
 	
 	def Class<? extends IDiagramExpansionListener> bindIDiagramExpansionListener() {
 		IDiagramExpansionListener.NullImpl
+	}
+	
+	def Class<? extends IDiagramOpenListener> bindIDiagramOpenListener() {
+		IDiagramOpenListener.NullImpl
 	}
 	
 	def Class<? extends ITraceProvider> bindTraceProvider() {

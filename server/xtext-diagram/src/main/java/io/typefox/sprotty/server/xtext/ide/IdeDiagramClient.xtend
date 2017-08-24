@@ -10,11 +10,18 @@ import io.typefox.sprotty.server.xtext.DiagramEndpoint
 import org.eclipse.lsp4j.Location
 import org.eclipse.lsp4j.jsonrpc.services.JsonNotification
 import org.eclipse.lsp4j.jsonrpc.services.JsonSegment
+import org.eclipse.xtend.lib.annotations.Data
 
 @JsonSegment('diagram')
 interface IdeDiagramClient extends DiagramEndpoint {
 	
 	@JsonNotification
-	def void openInTextEditor(Location location)
+	def void openInTextEditor(OpenInTextEditorMessage message)
 	
+}
+
+@Data
+class OpenInTextEditorMessage {
+	Location location
+	boolean forceOpen
 }

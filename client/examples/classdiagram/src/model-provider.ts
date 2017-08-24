@@ -36,6 +36,9 @@ export class ModelProvider implements StateAwareModelProvider {
                             id: 'node0_classname',
                             type: 'label:heading',
                             text: 'Foo'
+                        }, {
+                            id: 'node0_expand',
+                            type: 'button:expand'
                         }
                     ]
                 }
@@ -94,6 +97,9 @@ export class ModelProvider implements StateAwareModelProvider {
                         id: 'node1_classname',
                         type: 'label:heading',
                         text: 'Bar'
+                    }, {
+                        id: 'node1_expand',
+                        type: 'button:expand'
                     }]
                 }
             ]

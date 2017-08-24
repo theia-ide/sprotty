@@ -24,6 +24,7 @@ import { ModelSource } from "./model-source"
 import { ExportSvgAction } from '../features/export/svg-exporter'
 import { saveAs } from 'file-saver'
 import { CollapseExpandAction } from '../features/expand/expand'
+import { OpenAction } from '../features/open/open'
 
 /**
  * Wrapper for actions when transferring them between client and server via a DiagramServer.
@@ -74,6 +75,7 @@ export abstract class DiagramServer extends ModelSource {
         registry.register(RequestBoundsCommand.KIND, this)
         registry.register(RequestPopupModelAction.KIND, this)
         registry.register(CollapseExpandAction.KIND, this)
+        registry.register(OpenAction.KIND, this)
     }
 
     handle(action: Action): void | ICommand {

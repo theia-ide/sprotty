@@ -7,10 +7,10 @@
 
 import { ContainerModule } from "inversify"
 import { TYPES } from "../../base/types"
-import { ExpandButtonHandler } from "./expand"
+import { OpenMouseListener } from "./open"
 
-const expandModule = new ContainerModule(bind => {
-    bind(TYPES.IButtonHandler).toConstructor(ExpandButtonHandler)
+const openModule = new ContainerModule(bind => {
+    bind(TYPES.MouseListener).to(OpenMouseListener)
 })
 
-export default expandModule
+export default openModule

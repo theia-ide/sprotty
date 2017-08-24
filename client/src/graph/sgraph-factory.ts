@@ -12,7 +12,7 @@ import {
 } from "../base/model/smodel"
 import { getBasicType } from "../base/model/smodel-utils"
 import {
-    SCompartment, SEdge, SEdgeSchema, SGraph, SGraphSchema, SLabel, SLabelSchema, SNode, SNodeSchema, SPortSchema, SPort
+    SCompartment, SEdge, SEdgeSchema, SGraph, SGraphSchema, SLabel, SLabelSchema, SNode, SNodeSchema, SPortSchema, SPort, SButton, SButtonSchema
 } from "./sgraph"
 
 @injectable()
@@ -29,6 +29,8 @@ export class SGraphFactory extends SModelFactory {
             return this.initializeChild(new SLabel(), schema, parent)
         else if (this.isCompartmentSchema(schema))
             return this.initializeChild(new SCompartment(), schema, parent)
+        if (this.isButtonSchema(schema))
+            return this.initializeChild(new SButton(), schema, parent)
         else
             return super.createElement(schema, parent)
     }
@@ -64,4 +66,7 @@ export class SGraphFactory extends SModelFactory {
         return getBasicType(schema) === 'comp'
     }
 
+    isButtonSchema(schema: SModelElementSchema): schema is SButtonSchema {
+        return getBasicType(schema) === 'button'
+    }
 }

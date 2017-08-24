@@ -36,5 +36,4 @@ export class ClassDiagramFactory extends SGraphFactory {
     isPreRenderedSchema(schema: SModelElementSchema): schema is PreRenderedElementSchema {
         return getBasicType(schema) === 'pre-rendered'
     }
-
 }

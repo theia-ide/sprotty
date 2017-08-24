@@ -80,3 +80,8 @@ text.icon {
     text-anchor: middle;
     dominant-baseline: central;
 }
+
+.button {
+    fill: #152;
+    stroke-width: 0;
+}

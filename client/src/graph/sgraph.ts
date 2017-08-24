@@ -226,3 +226,16 @@ export class SCompartment extends SShapeElement implements Layouting, Fadeable {
         return feature === boundsFeature || feature === layoutFeature ||  feature === fadeFeature
     }
 }
+
+export interface SButtonSchema extends SShapeElementSchema {
+    pressed: boolean
+    enabled: boolean
+}
+
+export class SButton extends SShapeElement {
+    enabled = true
+
+    hasFeature(feature: symbol) {
+        return feature === boundsFeature ||  feature === fadeFeature
+    }
+}

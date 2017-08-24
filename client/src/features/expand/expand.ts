@@ -5,11 +5,12 @@
 * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import { MouseListener } from '../../base/views/mouse-tool'
 import { Action } from '../../base/actions/action'
-import { SModelElement } from '../../base/model/smodel'
+import { SButton } from '../../graph/sgraph'
 import { findParentByFeature } from '../../base/model/smodel-utils'
 import { isExpandable } from './model'
+import { IButtonHandler } from '../select/button-handler'
+import { injectable } from 'inversify'
 
 export class CollapseExpandAction {
     static KIND = 'collapseExpand'
@@ -18,14 +19,18 @@ export class CollapseExpandAction {
                 public readonly collapseIds: string[]) {}
 }
 
-export class ExpandMouseListener extends MouseListener {
-    doubleClick(target: SModelElement, event: WheelEvent): (Action | Promise<Action>)[] {
-        const expandableTarget = findParentByFeature(target, isExpandable)
-        if (expandableTarget !== undefined) {
+@injectable()
+export class ExpandButtonHandler implements IButtonHandler {
+    static TYPE = 'button:expand'
+
+    buttonPressed(button: SButton): Action[] {
+        const expandable = findParentByFeature(button, isExpandable)
+        if (expandable !== undefined) {
             return [ new CollapseExpandAction(
-                expandableTarget.expanded ? [] : [ expandableTarget.id ],
-                expandableTarget.expanded ? [ expandableTarget.id ] : []) ]
+                expandable.expanded ? [] : [ expandable.id ],
+                expandable.expanded ? [ expandable.id ] : []) ]
+        } else {
+            return []
         }
-        return []
     }
 }

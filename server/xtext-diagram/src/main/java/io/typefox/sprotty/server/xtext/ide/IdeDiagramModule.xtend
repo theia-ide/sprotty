@@ -27,4 +27,8 @@ class IdeDiagramModule extends DefaultDiagramModule {
 	override bindIDiagramSelectionListener() {
 		IdeDiagramSelectionListener
 	}
+
+	override bindIDiagramOpenListener() {
+		IdeDiagramOpenListener
+	}
 }

@@ -37,6 +37,8 @@ public class DefaultDiagramServer implements IDiagramServer {
 	private IDiagramSelectionListener diagramSelectionListener;
 
 	private IDiagramExpansionListener diagramExpansionListener;
+
+	private IDiagramOpenListener diagramOpenListener;
 	
 	private boolean needsClientLayout = true;
 	
@@ -124,6 +126,15 @@ public class DefaultDiagramServer implements IDiagramServer {
 	@Inject
 	public void setExpansionListener(IDiagramExpansionListener diagramExpansionListener) {
 		this.diagramExpansionListener = diagramExpansionListener;
+	}
+	
+	public IDiagramOpenListener getOpenListener() {
+		return diagramOpenListener;
+	}
+	
+	@Inject
+	public void setOpenListener(IDiagramOpenListener diagramOpenListener) {
+		this.diagramOpenListener = diagramOpenListener;
 	}
 	
 	@Override
@@ -257,6 +268,9 @@ public class DefaultDiagramServer implements IDiagramServer {
 				case CollapseExpandAction.KIND:
 					handle((CollapseExpandAction) action);
 					break;
+				case OpenAction.KIND:
+					handle((OpenAction) action);
+					break;
 			}
 		}
 	}
@@ -330,7 +344,7 @@ public class DefaultDiagramServer implements IDiagramServer {
 	}
 	
 	/**
-	 * Called when a {@code SelectAction} is received.
+	 * Called when a {@code CollapseExpandAction} is received.
 	 */
 	protected void handle(CollapseExpandAction action) {
 		if (action.getCollapseIds() != null)
@@ -340,6 +354,16 @@ public class DefaultDiagramServer implements IDiagramServer {
 		IDiagramExpansionListener expansionListener = getExpansionListener();
 		if (expansionListener != null) {
 			expansionListener.expansionChanged(action, this);
+		}
+	}
+	
+	/**
+	 * Called when a {@code OpenAction} is received.
+	 */
+	protected void handle(OpenAction action) {
+		IDiagramOpenListener openListener = getOpenListener();
+		if (openListener != null) {
+			openListener.elementOpened(action, this);
 		}
 	}
 	
