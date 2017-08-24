@@ -9,6 +9,6 @@ import { SModelElement } from "../../base/model/smodel"
 
 export const openFeature = Symbol('openFeature')
 
-export function isOpenable(element: SModelElement): element is SModelElement {
+export function isOpenable(element: SModelElement): element is SModelElement  {
     return element.hasFeature(openFeature)
 }

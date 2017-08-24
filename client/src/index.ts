@@ -56,6 +56,7 @@ export * from "./features/bounds/stack-layout"
 
 export * from "./features/expand/expand"
 export * from "./features/expand/model"
+export * from "./features/expand/views"
 
 export * from "./features/export/export"
 export * from "./features/export/model"

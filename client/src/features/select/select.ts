@@ -16,6 +16,9 @@ import { MouseListener } from "../../base/views/mouse-tool"
 import { KeyListener } from "../../base/views/key-tool"
 import { setClass } from "../../base/views/vnode-utils"
 import { isSelectable } from "./model"
+import { ButtonHandlerRegistry } from './button-handler'
+import { inject } from 'inversify'
+import { SButton } from '../../graph/sgraph'
 
 /**
  * Triggered when the user changes the selection, e.g. by clicking on a selectable element. The resulting
@@ -162,11 +165,20 @@ export class SelectCommand extends Command {
 
 export class SelectMouseListener extends MouseListener {
 
+    constructor(@inject(ButtonHandlerRegistry) protected buttonHandlerRegistry: ButtonHandlerRegistry) {
+        super()
+    }
+
     wasSelected = false
     hasDragged = false
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
         if (event.button === 0) {
+            if (target instanceof SButton) {
+                const buttonHandler = this.buttonHandlerRegistry.get(target.type)
+                if (buttonHandler !== undefined)
+                    return buttonHandler.buttonPressed(target)
+            }
             const selectableTarget = findParentByFeature(target, isSelectable)
             if (selectableTarget !== undefined || target instanceof SModelRoot) {
                 this.hasDragged = false
