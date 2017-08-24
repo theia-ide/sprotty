@@ -20,7 +20,7 @@ export class ExpandButtonView implements IView {
         const path = (expandable !== undefined && expandable.expanded)
             ? 'M 0,0 L 7,7 L 14,0 Z'
             : 'M 0,7 L 7,14 L 7,0 Z'
-        return <g class-button="{true}">
+        return <g class-button="{true}" class-enabled="{button.enabled}">
                 <path d={path}></path>
             </g>
     }

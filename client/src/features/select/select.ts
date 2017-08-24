@@ -174,7 +174,7 @@ export class SelectMouseListener extends MouseListener {
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
         if (event.button === 0) {
-            if (target instanceof SButton) {
+            if (target instanceof SButton && target.enabled) {
                 const buttonHandler = this.buttonHandlerRegistry.get(target.type)
                 if (buttonHandler !== undefined)
                     return buttonHandler.buttonPressed(target)
