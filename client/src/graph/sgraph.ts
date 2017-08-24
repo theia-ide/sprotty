@@ -233,7 +233,6 @@ export interface SButtonSchema extends SShapeElementSchema {
 }
 
 export class SButton extends SShapeElement {
-    pressed: boolean
     enabled = true
 
     hasFeature(feature: symbol) {
