@@ -81,7 +81,8 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
                         newAlignment: boundsData.alignment
                     })
             })
-        this.actionDispatcher.dispatch(new ComputedBoundsAction(resizes, realignments))
+        const revision = (this.root !== undefined) ? this.root.revision : undefined
+        this.actionDispatcher.dispatch(new ComputedBoundsAction(resizes, revision, realignments))
         this.element2boundsData.clear()
     }
 

@@ -141,6 +141,7 @@ class RequestBoundsAction implements Action {
 class ComputedBoundsAction implements Action {
 	public static val KIND = 'computedBounds'
 	String kind = KIND
+	int revision 
 	
 	List<ElementAndBounds> bounds
 	List<ElementAndAlignment> alignments

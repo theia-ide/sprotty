@@ -23,6 +23,7 @@ export interface SModelElementSchema {
  */
 export interface SModelRootSchema extends SModelElementSchema {
     canvasBounds?: Bounds
+    revision?: number
 }
 
 /**
@@ -139,6 +140,7 @@ export class SChildElement extends SParentElement {
  */
 export class SModelRoot extends SParentElement {
     readonly index: SModelIndex<SModelElement>
+    revision?: number
 
     canvasBounds: Bounds = EMPTY_BOUNDS
 

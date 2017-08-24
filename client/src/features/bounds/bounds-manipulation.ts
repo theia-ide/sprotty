@@ -47,7 +47,7 @@ export class ComputedBoundsAction implements Action {
 
     readonly kind = ComputedBoundsAction.KIND
 
-    constructor(public bounds: ElementAndBounds[], public alignments?: ElementAndAlignment[]) {
+    constructor(public bounds: ElementAndBounds[], public revision?: number, public alignments?: ElementAndAlignment[]) {
     }
 }
 

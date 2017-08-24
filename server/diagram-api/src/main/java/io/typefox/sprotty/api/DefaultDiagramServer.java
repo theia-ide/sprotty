@@ -47,7 +47,11 @@ public class DefaultDiagramServer implements IDiagramServer {
 	private Set<String> expandedElements = new HashSet<>();
 
 	private Set<String> selectedElements = new HashSet<>();
+	
+	private Object modelLock = new Object();
 
+	private int revision = 0;
+	
 	public DefaultDiagramServer() {
 		currentRoot = new SModelRoot();
 		currentRoot.setType("NONE");
@@ -152,21 +156,27 @@ public class DefaultDiagramServer implements IDiagramServer {
 	
 	@Override
 	public void setModel(SModelRoot newRoot) {
-		if (newRoot == null)
-			throw new NullPointerException();
-		currentRoot = newRoot;
-		submitModel(newRoot, false);
+		synchronized(modelLock) {
+			if (newRoot == null)
+				throw new NullPointerException();
+			newRoot.setRevision(revision++);
+			currentRoot = newRoot;
+			submitModel(newRoot, false);
+		}
 	}
 	
 	@Override
 	public void updateModel(SModelRoot newRoot) {
-		if (newRoot == null) {
-			submitModel(currentRoot, true);
-		} else {
-			if (needsServerLayout(newRoot)) {
-				LayoutUtil.copyLayoutData(currentRoot, newRoot);
+		synchronized(modelLock) {
+			if (newRoot == null) {
+				submitModel(currentRoot, true);
+			} else {
+				if (needsServerLayout(newRoot)) {
+					LayoutUtil.copyLayoutData(currentRoot, newRoot);
+				}
+				newRoot.setRevision(revision++);
+				currentRoot = newRoot;
 			}
-			currentRoot = newRoot;
 			submitModel(newRoot, true);
 		}
 	}
@@ -292,19 +302,21 @@ public class DefaultDiagramServer implements IDiagramServer {
 	 * Called when a {@code ComputedBoundsAction} is received.
 	 */
 	protected void handle(ComputedBoundsAction computedBounds) {
-		SModelRoot model = getModel();
-		if (model != null) {
-			LayoutUtil.applyBounds(model, computedBounds);
-			if (needsServerLayout(model)) {
-				ILayoutEngine layoutEngine = getLayoutEngine();
-				if (layoutEngine != null) {
-					layoutEngine.layout(model);
+		synchronized(modelLock) {
+			SModelRoot model = getModel();
+			if (model != null && model.getRevision() == computedBounds.getRevision()) {
+				LayoutUtil.applyBounds(model, computedBounds);
+				if (needsServerLayout(model)) {
+					ILayoutEngine layoutEngine = getLayoutEngine();
+					if (layoutEngine != null) {
+						layoutEngine.layout(model);
+					}
 				}
-			}
-			dispatch(new UpdateModelAction(model));
-			IModelUpdateListener listener = getModelUpdateListener();
-			if (listener != null) {
-				listener.modelSubmitted(model, this);
+				dispatch(new UpdateModelAction(model));
+				IModelUpdateListener listener = getModelUpdateListener();
+				if (listener != null) {
+					listener.modelSubmitted(model, this);
+				}
 			}
 		}
 	}

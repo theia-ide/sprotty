@@ -37,6 +37,7 @@ abstract class SModelElement {
 @ToString(skipNulls = true)
 class SModelRoot extends SModelElement {
 	Bounds canvasBounds
+	int revision
 	
 	new() {}
 	new(Consumer<SModelRoot> initializer) {
