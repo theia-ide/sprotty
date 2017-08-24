@@ -18,9 +18,10 @@ export class ExpandButtonView implements IView {
     render(button: SButton, context: RenderingContext): VNode {
         const expandable = findParentByFeature(button, isExpandable)
         const path = (expandable !== undefined && expandable.expanded)
-            ? 'M 0,0 L 7,7 L 14,0 Z'
-            : 'M 0,7 L 7,14 L 7,0 Z'
+            ? 'M 1,5 L 8,12 L 15,5 Z'
+            : 'M 1,8 L 8,15 L 8,1 Z'
         return <g class-button="{true}" class-enabled="{button.enabled}">
+                <rect x={0} y={0} width={16} height={16} opacity={0}></rect>
                 <path d={path}></path>
             </g>
     }
