@@ -14,7 +14,7 @@ const selectModule = new ContainerModule(bind => {
     bind(TYPES.ICommand).toConstructor(SelectCommand)
     bind(TYPES.KeyListener).to(SelectKeyboardListener)
     bind(TYPES.MouseListener).to(SelectMouseListener)
-    bind(ButtonHandlerRegistry).toSelf().inSingletonScope()        
+    bind(ButtonHandlerRegistry).toSelf().inSingletonScope()
 })
 
 export default selectModule
