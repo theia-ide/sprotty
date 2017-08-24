@@ -150,6 +150,23 @@ class SCompartment extends SModelElement implements BoundsAware {
 }
 
 /**
+ * A compartment is used to group multiple child elements such as labels of a node. Usually a {@code vbox}
+ * or {@code hbox} layout is used to arrange these children.
+ */
+@Accessors
+@ToString(skipNulls = true)
+class SButton extends SModelElement implements BoundsAware {
+	Point position
+	Dimension size
+	Boolean enabled
+	
+	new() {}
+	new(Consumer<SButton> initializer) {
+		initializer.accept(this)
+	}
+}
+
+/**
  * Options for client-side layout. This is a union of the different client layout option types,
  * e.g. VBoxLayoutOptions or StackLayoutOptions. It is not used for server layout, which is configured
  * directly in {@link ILayoutEngine} implementations.
