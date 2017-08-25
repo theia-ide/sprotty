@@ -13,6 +13,7 @@ import { SModelExtension } from "../../base/model/smodel-extension"
 import { findParentByFeature } from "../../base/model/smodel-utils"
 import { ViewportAction } from "./viewport"
 import { isViewport, Viewport } from "./model"
+import { isSelectable } from "../select/model"
 
 export interface Scrollable extends SModelExtension {
     scroll: Point
@@ -27,7 +28,8 @@ export class ScrollMouseListener extends MouseListener {
     lastScrollPosition: Point |undefined
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
-        if (event.button === 2) {
+        const selectable = findParentByFeature(target, isSelectable)
+        if (selectable === undefined) {
             const viewport = findParentByFeature(target, isViewport)
             if (viewport)
                 this.lastScrollPosition = {x: event.pageX, y: event.pageY}
