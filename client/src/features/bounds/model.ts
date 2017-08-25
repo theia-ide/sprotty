@@ -5,10 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds, EMPTY_BOUNDS, Point } from "../../utils/geometry"
-import { SModelElement, SParentElement, SChildElement } from "../../base/model/smodel"
+import { Bounds, EMPTY_BOUNDS, EMPTY_DIMENSION, Dimension, isBounds, ORIGIN_POINT, Point } from "../../utils/geometry"
+import { SModelElement, SModelElementSchema, SParentElement, SChildElement } from "../../base/model/smodel"
 import { SModelExtension } from "../../base/model/smodel-extension"
 import { findParentByFeature } from '../../base/model/smodel-utils'
+import { Locateable } from '../move/model'
 
 export const boundsFeature = Symbol('boundsFeature')
 export const layoutFeature = Symbol('layoutFeature')
@@ -66,5 +67,72 @@ export function getAbsoluteBounds(element: SModelElement): Bounds {
         return bounds
     } else {
         return EMPTY_BOUNDS
+    }
+}
+
+/**
+ * Serializable schema for SShapeElement.
+ */
+export interface SShapeElementSchema extends SModelElementSchema {
+    position?: Point
+    size?: Dimension
+    children?: SModelElementSchema[]
+    layoutOptions?: any
+}
+
+/**
+ * Abstract class for elements with a position and a size.
+ */
+export abstract class SShapeElement extends SChildElement implements BoundsAware, Locateable {
+    position: Point = ORIGIN_POINT
+    size: Dimension = EMPTY_DIMENSION
+    layoutOptions?: any
+
+    get bounds(): Bounds {
+        return {
+            x: this.position.x,
+            y: this.position.y,
+            width: this.size.width,
+            height: this.size.height
+        }
+    }
+
+    set bounds(newBounds: Bounds) {
+        this.position = {
+            x: newBounds.x,
+            y: newBounds.y
+        }
+        this.size = {
+            width: newBounds.width,
+            height: newBounds.height
+        }
+    }
+
+    localToParent(point: Point | Bounds): Bounds {
+        const result = {
+            x: point.x + this.position.x,
+            y: point.y + this.position.y,
+            width: -1,
+            height: -1
+        }
+        if (isBounds(point)) {
+            result.width = point.width
+            result.height = point.height
+        }
+        return result
+    }
+
+    parentToLocal(point: Point | Bounds): Bounds {
+        const result = {
+            x: point.x - this.position.x,
+            y: point.y - this.position.y,
+            width: -1,
+            height: -1
+        }
+        if (isBounds(point)) {
+            result.width = point.width
+            result.height = point.height
+        }
+        return result
     }
 }

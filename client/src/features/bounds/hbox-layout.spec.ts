@@ -9,7 +9,7 @@ import { SParentElement } from '../..';
 import 'mocha';
 import { expect } from "chai"
 import { SModelElement } from '../../base/model/smodel'
-import { SNode, SCompartmentElement } from '../../graph/sgraph'
+import { SNode } from '../../graph/sgraph'
 import { StatefulLayouter, LayoutRegistry } from './layout'
 import { BoundsData } from './hidden-bounds-updater'
 import { EMPTY_DIMENSION } from '../../utils/geometry'
@@ -53,7 +53,7 @@ describe('HBoxLayouter', () => {
             snode({ width: 1, height: 2 }),
             snode({ width: 2, height: 1 }),
             snode({ width: 3, height: 3 })
-        ] as SCompartmentElement[]
+        ]
         model.layout = 'hbox'
         return model
     }

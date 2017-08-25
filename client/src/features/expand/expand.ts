@@ -6,10 +6,10 @@
 */
 
 import { Action } from '../../base/actions/action'
-import { SButton } from '../../graph/sgraph'
+import { SButton } from '../button/model'
 import { findParentByFeature } from '../../base/model/smodel-utils'
 import { isExpandable } from './model'
-import { IButtonHandler } from '../select/button-handler'
+import { IButtonHandler } from '../button/button-handler'
 import { injectable } from 'inversify'
 
 export class CollapseExpandAction {

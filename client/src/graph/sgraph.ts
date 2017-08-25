@@ -6,19 +6,20 @@
  */
 
 import { SChildElement, SModelElementSchema, SModelRootSchema } from '../base/model/smodel'
-import { BoundsAware, boundsFeature, layoutFeature, Layouting, Alignable, alignFeature } from '../features/bounds/model'
+import { boundsFeature, layoutFeature, Layouting, Alignable, alignFeature } from '../features/bounds/model'
 import { Fadeable, fadeFeature } from '../features/fade/model'
 import { Hoverable, hoverFeedbackFeature, popupFeature } from '../features/hover/model'
-import { Locateable, moveFeature } from '../features/move/model'
+import { moveFeature } from '../features/move/model'
 import { Selectable, selectFeature } from '../features/select/model'
 import { ViewportRootElement } from '../features/viewport/viewport-root'
-import { Bounds, Dimension, EMPTY_DIMENSION, isBounds, ORIGIN_POINT, Point } from '../utils/geometry'
+import { Bounds, ORIGIN_POINT, Point } from '../utils/geometry'
+import { SShapeElement, SShapeElementSchema } from '../features/bounds/model'
 
 /**
  * Serializable schema for graph-like models.
  */
 export interface SGraphSchema extends SModelRootSchema {
-    children: SGraphElementSchema[]
+    children: SModelElementSchema[]
     bounds?: Bounds
     scroll?: Point
     zoom?: number
@@ -30,73 +31,6 @@ export interface SGraphSchema extends SModelRootSchema {
  */
 export class SGraph extends ViewportRootElement {
     layoutOptions?: any
-}
-
-/**
- * Serializable schema for SShapeElement.
- */
-export interface SShapeElementSchema extends SModelElementSchema {
-    position?: Point
-    size?: Dimension
-    children?: SGraphElementSchema[]
-    layoutOptions?: any
-}
-
-/**
- * Abstract class for elements with a position and a size.
- */
-export abstract class SShapeElement extends SChildElement implements BoundsAware, Locateable {
-    position: Point = ORIGIN_POINT
-    size: Dimension = EMPTY_DIMENSION
-    layoutOptions?: any
-
-    get bounds(): Bounds {
-        return {
-            x: this.position.x,
-            y: this.position.y,
-            width: this.size.width,
-            height: this.size.height
-        }
-    }
-
-    set bounds(newBounds: Bounds) {
-        this.position = {
-            x: newBounds.x,
-            y: newBounds.y
-        }
-        this.size = {
-            width: newBounds.width,
-            height: newBounds.height
-        }
-    }
-
-    localToParent(point: Point | Bounds): Bounds {
-        const result = {
-            x: point.x + this.position.x,
-            y: point.y + this.position.y,
-            width: -1,
-            height: -1
-        }
-        if (isBounds(point)) {
-            result.width = point.width
-            result.height = point.height
-        }
-        return result
-    }
-
-    parentToLocal(point: Point | Bounds): Bounds {
-        const result = {
-            x: point.x - this.position.x,
-            y: point.y - this.position.y,
-            width: -1,
-            height: -1
-        }
-        if (isBounds(point)) {
-            result.width = point.width
-            result.height = point.height
-        }
-        return result
-    }
 }
 
 /**
@@ -113,7 +47,7 @@ export interface SNodeSchema extends SShapeElementSchema {
  */
 export class SNode extends SShapeElement implements Selectable, Fadeable, Hoverable {
     hoverFeedback: boolean = false
-    children: SCompartmentElement[]
+    children: SChildElement[]
     layout?: string
     selected: boolean = false
     opacity: number = 1
@@ -178,12 +112,6 @@ export class SEdge extends SChildElement implements Fadeable {
     }
 }
 
-export type SGraphElementSchema = SNodeSchema | SEdgeSchema
-export type SGraphElement = SNode | SEdge
-export type SCompartmentElementSchema = SCompartmentSchema | SLabelSchema
-export type SCompartmentElement = SCompartment | SLabel
-
-
 /**
  * Serializable schema for SLabel.
  */
@@ -218,24 +146,11 @@ export interface SCompartmentSchema extends SShapeElementSchema {
  * or `hbox` layout is used to arrange these children.
  */
 export class SCompartment extends SShapeElement implements Layouting, Fadeable {
-    children: SCompartmentElement[]
+    children: SChildElement[]
     layout: string
     opacity = 1
 
     hasFeature(feature: symbol) {
         return feature === boundsFeature || feature === layoutFeature ||  feature === fadeFeature
-    }
-}
-
-export interface SButtonSchema extends SShapeElementSchema {
-    pressed: boolean
-    enabled: boolean
-}
-
-export class SButton extends SShapeElement {
-    enabled = true
-
-    hasFeature(feature: symbol) {
-        return feature === boundsFeature ||  feature === fadeFeature
     }
 }

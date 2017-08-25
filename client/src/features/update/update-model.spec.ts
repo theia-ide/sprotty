@@ -14,7 +14,7 @@ import { SModelElement, SModelElementSchema, SModelRoot, SModelRootSchema } from
 import { CommandExecutionContext } from "../../base/commands/command"
 import { AnimationFrameSyncer } from "../../base/animations/animation-frame-syncer"
 import { CompoundAnimation } from "../../base/animations/animation"
-import { SNodeSchema, SGraphSchema } from "../../graph/sgraph"
+import { SNodeSchema, SNode, SGraphSchema } from "../../graph/sgraph"
 import { SGraphFactory } from "../../graph/sgraph-factory"
 import { FadeAnimation } from "../../features/fade/fade"
 import { MoveAnimation } from "../../features/move/move"
@@ -313,7 +313,7 @@ describe('UpdateModelCommand', () => {
                     type: 'node',
                     id: 'child1',
                     position: { x: 150, y: 200 }
-                }
+                } as SNode
             ]
         }
         compare(expected, newModel)

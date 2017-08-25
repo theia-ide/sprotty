@@ -6,7 +6,7 @@
 */
 
 import { InstanceRegistry } from '../../utils/registry'
-import { SButton } from '../../graph/sgraph'
+import { SButton } from './model'
 import { Action } from '../../base/actions/action'
 import { injectable, multiInject, optional } from 'inversify'
 import { TYPES } from '../../base/types'
