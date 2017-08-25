@@ -8,7 +8,7 @@
 buildscript {
 	repositories.jcenter()
 	dependencies {
-		classpath 'org.xtext:xtext-gradle-plugin:1.0.17'
+		classpath 'org.xtext:xtext-gradle-plugin:1.0.19'
 	}
 }
 
@@ -39,4 +39,10 @@ configure(subprojects.findAll {it.file('src').exists()}) {
 		apply plugin: 'maven'
 		apply from: "${rootDir}/gradle/maven-deployment.gradle"
 	}
+}
+
+task clean(type: Delete) {
+	group 'Build'
+	description 'Deletes the local repositories'
+	delete 'build'
 }
