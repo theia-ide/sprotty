@@ -3,22 +3,32 @@ node {
         [$class: 'BuildDiscarderProperty', strategy: [$class: 'LogRotator', numToKeepStr: '15']]
     ])
     
-    stage 'Checkout'
-    checkout scm
-    
-    stage 'npm Build'
-    dir('client') {
-        sh "npm install"
-        sh "npm run build"
-        sh "npm run examples:build"
-        sh "npm test"
+    stage('Checkout') {
+        checkout scm
     }
-    step([$class: 'JUnitResultArchiver', testResults: 'client/artifacts/test/xunit.xml'])
-    archive 'client/artifacts/coverage/**'
     
-    stage 'Gradle Build'
-    dir('server') {
-        sh "./gradlew clean build createLocalMavenRepo --refresh-dependencies --continue"
+    stage('npm Build') {
+        try {
+            dir('client') {
+                sh "npm install"
+                sh "npm run build"
+                sh "npm run examples:build"
+                sh "npm test"
+            }
+        } finally {
+            step([$class: 'JUnitResultArchiver', testResults: 'client/artifacts/test/xunit.xml'])
+            archive 'client/artifacts/coverage/**'
+        }
     }
-    archive 'server/build/maven-repository/**'
+    
+    stage('Gradle Build') {
+        try {
+            dir('server') {
+                sh "./gradlew clean build createLocalMavenRepo --refresh-dependencies --continue"
+            }
+        } finally {
+            step([$class: 'JUnitResultArchiver', testResults: 'server/**/build/test-results/test/*.xml'])
+            archive 'server/build/maven-repository/**'
+        }
+    }
 }
