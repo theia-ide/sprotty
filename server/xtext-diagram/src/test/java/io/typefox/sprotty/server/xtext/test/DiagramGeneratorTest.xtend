@@ -42,6 +42,7 @@ class DiagramGeneratorTest extends AbstractDiagramServerTest {
     		  resource: graph.testlang
     		  options: { sourceUri: graph.testlang }
     		  model: SGraph [
+    		    revision = 0
     		    type = "graph"
     		    id = "graph"
     		    children = ArrayList (
@@ -84,6 +85,7 @@ class DiagramGeneratorTest extends AbstractDiagramServerTest {
     		  resource: graph.testlang
     		  options: { sourceUri: graph.testlang }
     		  model: SGraph [
+    		    revision = 0
     		    type = "graph"
     		    id = "graph"
     		    children = ArrayList (
@@ -101,6 +103,7 @@ class DiagramGeneratorTest extends AbstractDiagramServerTest {
     		  resource: graph.testlang
     		  options: { sourceUri: graph.testlang }
     		  model: SGraph [
+    		    revision = 1
     		    type = "graph"
     		    id = "graph"
     		    children = ArrayList (
