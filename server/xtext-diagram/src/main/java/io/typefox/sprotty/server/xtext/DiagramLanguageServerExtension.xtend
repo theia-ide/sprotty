@@ -43,6 +43,8 @@ class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguage
 	
 	@Inject Provider<IDiagramGenerator> diagramGeneratorProvider
 	
+	DeferredDiagramUpdater updater
+
 	@Accessors(PROTECTED_GETTER)
 	val Map<String, IDiagramServer> diagramServers = newLinkedHashMap
 
@@ -52,11 +54,11 @@ class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguage
 	
 	override initialize(ILanguageServerAccess access) {
 		this.languageServerAccess = access
-		access.addBuildListener[ deltas |
+		updater = new DeferredDiagramUpdater([it | doUpdateDiagrams(it)])
+		access.addBuildListener [ deltas |
 			updateDiagrams(deltas.map[uri].toSet)
 		]
 	}
-	
 	def ILanguageServerAccess getLanguageServerAccess() {
 		languageServerAccess
 	}
@@ -126,42 +128,40 @@ class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguage
 	/**
 	 * Update the diagrams for the given URIs using the configured diagram generator.
 	 */
-	def void updateDiagrams(Collection<URI> uris) {
+	def void updateDiagrams(Collection<? extends URI> uris) {
+		updater.updateLater(uris)
+	}
+
+	protected def doUpdateDiagrams(Collection<? extends URI> uris) {
 		for (uri : uris) {
 			val path = uri.toPath
 			val diagramServers = findDiagramServersByUri(path)
-			if (!diagramServers.empty) {
-				path.doRead [ context |
-					if (context.resource.shouldGenerate(context.cancelChecker)) {
-						val diagramGenerator = diagramGeneratorProvider.get
-						return diagramServers.map[it -> diagramGenerator.generate(context.resource, diagramState, context.cancelChecker)]
-					} else
-						return emptyList
-				].thenAccept[ resultList |
-					resultList.filter[value !== null].forEach[key.updateModel(value)]
-				].exceptionally[ throwable |
-					LOG.error('Error while processing build results', throwable)
-					return null
-				]
-			}
-		}
-	}
-	
+			doUpdateDiagrams(path, diagramServers)
+		}		
+	} 
+
 	/**
 	 * Update the diagram for the given diagram server using the configured diagram generator.
 	 */
 	def void updateDiagram(LanguageAwareDiagramServer diagramServer) {
 		val path = diagramServer.sourceUri
-		if (path !== null) {
+		if (path !== null) 
+			doUpdateDiagrams(path, #[diagramServer])
+	}
+
+	protected def doUpdateDiagrams(String path, List<? extends ILanguageAwareDiagramServer> diagramServers) {
+		if (!diagramServers.empty) {
 			path.doRead [ context |
 				if (context.resource.shouldGenerate(context.cancelChecker)) {
 					val diagramGenerator = diagramGeneratorProvider.get
-					return diagramGenerator.generate(context.resource, diagramServer.diagramState, context.cancelChecker)
-				}
-			].thenAccept[ result |
-				if (result !== null)
-					diagramServer.updateModel(result)
-			].exceptionally[ throwable |
+					return diagramServers.map [
+						it -> diagramGenerator.generate(context.resource, diagramState, context.cancelChecker)
+					]
+				} else
+					return emptyList
+			].thenAccept [ resultList |
+				resultList.filter[value !== null].forEach[key.updateModel(value)]
+			].exceptionally [ throwable |
 				LOG.error('Error while processing build results', throwable)
 				return null
 			]
