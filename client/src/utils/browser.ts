@@ -25,7 +25,7 @@ export function isCrossSite(url: string): boolean {
         let baseURL: string = ''
         if (window.location.protocol)
             baseURL += window.location.protocol + '//'
-        if (window.location.host) 
+        if (window.location.host)
             baseURL += window.location.host
         return baseURL.length > 0 && !url.startsWith(baseURL)
     }

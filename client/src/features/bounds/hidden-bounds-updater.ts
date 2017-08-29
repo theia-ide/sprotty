@@ -56,7 +56,7 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
                 alignmentChanged: false
             })
         }
-        if (element instanceof SModelRoot) 
+        if (element instanceof SModelRoot)
             this.root = element
         return vnode
     }

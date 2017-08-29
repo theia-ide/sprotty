@@ -107,10 +107,10 @@ let defaultContainerModule = new ContainerModule(bind => {
         context.container.get(IdDecorator)).inSingletonScope()
     bind(MouseTool).toSelf().inSingletonScope()
     bind(TYPES.IVNodeDecorator).toDynamicValue(context =>
-        context.container.get(MouseTool)).inSingletonScope
+        context.container.get(MouseTool)).inSingletonScope()
     bind(KeyTool).toSelf().inSingletonScope()
     bind(TYPES.IVNodeDecorator).toDynamicValue(context =>
-        context.container.get(KeyTool)).inSingletonScope
+        context.container.get(KeyTool)).inSingletonScope()
     bind(FocusFixDecorator).toSelf().inSingletonScope()
     bind(TYPES.IVNodeDecorator).toDynamicValue(context =>
         context.container.get(FocusFixDecorator)).inSingletonScope()

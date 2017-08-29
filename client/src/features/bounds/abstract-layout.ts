@@ -1,4 +1,9 @@
-
+/*
+ * Copyright (C) 2017 TypeFox and others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ */
 
 import { Bounds, EMPTY_BOUNDS, isValidDimension, Dimension, Point } from "../../utils/geometry"
 import { SParentElement, SModelElement, SChildElement } from "../../base/model/smodel"
@@ -71,7 +76,7 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
 
     protected abstract getChildrenSize(container: SParentElement & Layouting,
                                containerOptions: T,
-                               layouter: StatefulLayouter): Dimension;
+                               layouter: StatefulLayouter): Dimension
 
     protected layoutChildren(container: SParentElement & Layouting,
                             layouter: StatefulLayouter,
