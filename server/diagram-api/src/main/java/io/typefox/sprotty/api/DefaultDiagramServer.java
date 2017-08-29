@@ -161,24 +161,24 @@ public class DefaultDiagramServer implements IDiagramServer {
 				throw new NullPointerException();
 			newRoot.setRevision(revision++);
 			currentRoot = newRoot;
-			submitModel(newRoot, false);
 		}
+		submitModel(newRoot, false);
 	}
 	
 	@Override
 	public void updateModel(SModelRoot newRoot) {
-		synchronized(modelLock) {
-			if (newRoot == null) {
-				submitModel(currentRoot, true);
-			} else {
+		if (newRoot == null) {
+			submitModel(currentRoot, true);
+		} else {
+			synchronized(modelLock) {
 				if (needsServerLayout(newRoot)) {
 					LayoutUtil.copyLayoutData(currentRoot, newRoot);
 				}
 				newRoot.setRevision(revision++);
 				currentRoot = newRoot;
 			}
-			submitModel(newRoot, true);
 		}
+		submitModel(newRoot, true);
 	}
 	
 	@Override
@@ -246,13 +246,17 @@ public class DefaultDiagramServer implements IDiagramServer {
 					layoutEngine.layout(newRoot);
 				}
 			}
-			if (update) {
-				dispatch(new UpdateModelAction(newRoot));
-			} else {
-				dispatch(new SetModelAction(newRoot));
-			}
-			if (listener != null) {
-				listener.modelSubmitted(newRoot, this);
+			synchronized (modelLock) {
+				if(newRoot.getRevision() == revision) {
+					if (update) {
+						dispatch(new UpdateModelAction(newRoot));
+					} else {
+						dispatch(new SetModelAction(newRoot));
+					}
+					if (listener != null) {
+						listener.modelSubmitted(newRoot, this);
+					}
+				}
 			}
 		}
 	}
