@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Direction, LocalModelSource, TYPES, UpdateModelAction, IActionDispatcher } from "../../../src"
+import { Direction, LocalModelSource, TYPES, UpdateModelAction, IActionDispatcher, SLabelSchema } from "../../../src"
 import {
     ChannelSchema, CoreSchema, CrossbarSchema, ProcessorSchema
 } from './chipmodel';
@@ -33,7 +33,7 @@ export default function runMulticore() {
                     id: 'nr_' + pos,
 				    type: 'label:heading',
 				    text: '' + pos
-                }]
+                } as SLabelSchema]
             })
             channels.push(createChannel(i, j, Direction.up))
             channels.push(createChannel(i, j, Direction.down))

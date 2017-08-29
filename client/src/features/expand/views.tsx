@@ -10,7 +10,7 @@ import { VNode } from 'snabbdom/vnode'
 import { IView, RenderingContext } from '../../base/views/view'
 import { isExpandable } from './model'
 import { findParentByFeature } from '../../base/model/smodel-utils'
-import { SButton } from '../../graph/sgraph'
+import { SButton } from '../button/model'
 
 const JSX = {createElement: snabbdom.svg}
 

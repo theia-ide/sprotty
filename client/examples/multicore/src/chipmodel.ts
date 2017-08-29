@@ -6,7 +6,7 @@
  */
 
 import {
-    SCompartmentElementSchema, SShapeElement, SChildElement, SModelElementSchema, SModelRootSchema,
+    SShapeElement, SChildElement, SModelElementSchema, SModelRootSchema,
     Bounds, Direction, BoundsAware, boundsFeature, Fadeable, fadeFeature, layoutFeature, Layouting, Selectable,
     selectFeature, ViewportRootElement, hoverFeedbackFeature, Hoverable, popupFeature
 } from '../../../src'
@@ -47,7 +47,7 @@ export interface CoreSchema extends SModelElementSchema {
     selected?: boolean
     layout: string
     resizeContainer: boolean
-    children: SCompartmentElementSchema[]
+    children: SModelElementSchema[]
 }
 
 export class Core extends SShapeElement implements Selectable, Fadeable, Hoverable, Layouting {

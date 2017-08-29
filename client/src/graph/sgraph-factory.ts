@@ -12,8 +12,9 @@ import {
 } from "../base/model/smodel"
 import { getBasicType } from "../base/model/smodel-utils"
 import {
-    SCompartment, SEdge, SEdgeSchema, SGraph, SGraphSchema, SLabel, SLabelSchema, SNode, SNodeSchema, SPortSchema, SPort, SButton, SButtonSchema
+    SCompartment, SEdge, SEdgeSchema, SGraph, SGraphSchema, SLabel, SLabelSchema, SNode, SNodeSchema, SPortSchema, SPort
 } from "./sgraph"
+import { SButton, SButtonSchema } from '../features/button/model'
 
 @injectable()
 export class SGraphFactory extends SModelFactory {

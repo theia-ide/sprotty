@@ -54,6 +54,9 @@ export * from "./features/bounds/vbox-layout"
 export * from "./features/bounds/hbox-layout"
 export * from "./features/bounds/stack-layout"
 
+export * from "./features/button/button-handler"
+export * from "./features/button/model"
+
 export * from "./features/expand/expand"
 export * from "./features/expand/model"
 export * from "./features/expand/views"
@@ -99,8 +102,9 @@ import hoverModule from "./features/hover/di.config"
 import exportModule from "./features/export/di.config"
 import expandModule from "./features/expand/di.config"
 import openModule from "./features/open/di.config"
+import buttonModule from "./features/button/di.config"
 
-export { moveModule, boundsModule, fadeModule, selectModule, undoRedoModule, viewportModule, hoverModule, exportModule, expandModule, openModule }
+export { moveModule, boundsModule, fadeModule, selectModule, undoRedoModule, viewportModule, hoverModule, exportModule, expandModule, openModule, buttonModule }
 
 
 // ------------------ Graph ------------------
