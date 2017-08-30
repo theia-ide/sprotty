@@ -53,7 +53,7 @@ export class ForwardingLogger implements ILogger {
         }
     }
 
-    protected forward(thisArg: any, message: string, logLevel: LogLevel, ...params: any[]) {
+    protected forward(thisArg: any, message: string, logLevel: LogLevel, params: any[]) {
         const date = new Date()
         const action = new LoggingAction(
             LogLevel[logLevel],
