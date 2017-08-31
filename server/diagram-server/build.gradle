@@ -10,6 +10,6 @@ description = "JSON and Websocket implementations for connecting a diagram serve
 
 dependencies {
     compile project(':diagram-api')
-    compile "com.google.code.gson:gson:$versions.gson"
-    compile "javax.websocket:javax.websocket-api:$versions.websocket"
+    compile "com.google.code.gson:gson:${versions.gson}"
+    compile "javax.websocket:javax.websocket-api:${versions.websocket}"
 }

@@ -10,6 +10,7 @@ description = "Bridge to automatic layout libraries such as ELK"
 
 dependencies {
     compile project(':diagram-api')
-    compile "org.eclipse.elk:org.eclipse.elk.core:$versions.elk"
-    compile "org.eclipse.emf:org.eclipse.emf.common:2.12.0" // TODO this should be a dependency of ELK
+    compile "org.eclipse.elk:org.eclipse.elk.core:${versions.elk}"
+    testCompile "org.eclipse.elk:org.eclipse.elk.graph.text:${versions.elk}"
+    testCompile "junit:junit:${versions.junit}"
 }

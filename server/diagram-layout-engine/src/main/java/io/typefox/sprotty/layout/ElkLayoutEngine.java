@@ -110,7 +110,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	 */
 	protected ElkNode createGraph(SGraph sgraph) {
 		ElkNode elkGraph = factory.createElkNode();
-		elkGraph.setIdentifier(sgraph.getId());
+		elkGraph.setIdentifier(SprottyLayoutConfigurator.toElkId(sgraph.getId()));
 		elkGraph.setProperty(P_TYPE, sgraph.getType());
 		return elkGraph;
 	}
@@ -208,7 +208,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	 */
 	protected ElkNode createNode(SNode snode) {
 		ElkNode elkNode = factory.createElkNode();
-		elkNode.setIdentifier(snode.getId());
+		elkNode.setIdentifier(SprottyLayoutConfigurator.toElkId(snode.getId()));
 		elkNode.setProperty(P_TYPE, snode.getType());
 		applyBounds(snode, elkNode);
 		return elkNode;
@@ -219,7 +219,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	 */
 	protected ElkPort createPort(SPort sport) {
 		ElkPort elkPort = factory.createElkPort();
-		elkPort.setIdentifier(sport.getId());
+		elkPort.setIdentifier(SprottyLayoutConfigurator.toElkId(sport.getId()));
 		elkPort.setProperty(P_TYPE, sport.getType());
 		applyBounds(sport, elkPort);
 		return elkPort;
@@ -230,7 +230,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	 */
 	protected ElkEdge createEdge(SEdge sedge) {
 		ElkEdge elkEdge = factory.createElkEdge();
-		elkEdge.setIdentifier(sedge.getId());
+		elkEdge.setIdentifier(SprottyLayoutConfigurator.toElkId(sedge.getId()));
 		elkEdge.setProperty(P_TYPE, sedge.getType());
 		// The source and target of the edge are resolved later
 		return elkEdge;
@@ -241,7 +241,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	 */
 	protected ElkLabel createLabel(SLabel slabel) {
 		ElkLabel elkLabel = factory.createElkLabel();
-		elkLabel.setIdentifier(slabel.getId());
+		elkLabel.setIdentifier(SprottyLayoutConfigurator.toElkId(slabel.getId()));
 		elkLabel.setProperty(P_TYPE, slabel.getType());
 		applyBounds(slabel, elkLabel);
 		return elkLabel;
