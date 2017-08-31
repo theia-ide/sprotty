@@ -9,6 +9,7 @@ package io.typefox.sprotty.example.multicore.web.diagram
 import com.google.common.collect.BiMap
 import com.google.common.collect.HashBiMap
 import com.google.inject.Singleton
+import io.typefox.sprotty.api.LayoutOptions
 import io.typefox.sprotty.api.SCompartment
 import io.typefox.sprotty.api.SLabel
 import io.typefox.sprotty.api.SModelElement
@@ -20,12 +21,14 @@ import io.typefox.sprotty.example.multicore.multicoreAllocation.Task
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskAllocation
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskFinished
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskRunning
+import java.util.ArrayList
 import java.util.Set
 import org.eclipse.emf.ecore.EObject
 import org.eclipse.xtext.util.CancelIndicator
 
+import static io.typefox.sprotty.api.SModelUtil.*
+
 import static extension org.eclipse.xtext.EcoreUtil2.*
-import io.typefox.sprotty.api.LayoutOptions
 
 @Singleton
 class MulticoreAllocationDiagramGenerator {
@@ -110,9 +113,7 @@ class MulticoreAllocationDiagramGenerator {
 	}
 	
 	private def Processor createProcessor(int dimension) {
-		new Processor => [
-		    type = 'processor'
-		    id = 'processor'
+		create(Processor, 'processor', 'processor') [
 		    rows = dimension
 		    columns = dimension
 		    children = newArrayList
@@ -129,9 +130,7 @@ class MulticoreAllocationDiagramGenerator {
 	
 	private def createCore(int coreIndex, int rowParam, int columnParam,  
 			int kernelIndex, TaskAllocation taskAllocation, boolean selectedParam) {
-		val core = new Core [
-	        id = 'core_' + coreIndex
-	        type = 'core'
+		create(Core, 'core_' + coreIndex, 'core') [
 	        row = rowParam
 	        column = columnParam
 	        kernelNr = kernelIndex
@@ -150,7 +149,6 @@ class MulticoreAllocationDiagramGenerator {
 			if (selectedParam)
 				selected = selectedParam
 		]
-        return core
 	}
 	
 	private def String padLeft(int n) {
@@ -164,53 +162,36 @@ class MulticoreAllocationDiagramGenerator {
             '' + n
     }
 	
-	
 	private def createInfoCompartment(TaskAllocation task, int coreIndex, int kernelIndex) {
 		val result = <SModelElement>newArrayList
 		// hack: find better way to determine if task has finished
 		if (task.programCounter.equals('0xFFFF')) {
-			result += new SLabel [
-				id = 't_' + coreIndex
-				type = 'label:info' 				
+			result += create(SLabel, 't_' + coreIndex, 'label:info') [
 				text = 'task: ' + task.task.name 
 			]
-			result += new SLabel [
-				id = 'f_' + coreIndex
-				type = 'label:info' 				
+			result += create(SLabel, 'f_' + coreIndex, 'label:info') [
 				text =  'Task Finished' 
 			]
 		} else {
 			val stackBeginAddr = Integer.parseInt(task.task.kernel.stackBeginAddr.substring(2), 16) as int
 			val currentStackPointer = Integer.parseInt(task.stackPointer.substring(2), 16) as int
-			result += new SLabel [
-				id = 't_' + coreIndex
-				type = 'label:info' 								
+			result += create(SLabel, 't_' + coreIndex, 'label:info') [
 				text = 'task: ' + task.task.name
 			]
-			result += new SLabel [
-				id = 'f_' + coreIndex
-				type = 'label:info' 								
+			result += create(SLabel, 'f_' + coreIndex, 'label:info') [
 				text = 'file: ' + task.sourceFile
 			]
-			result += new SLabel [
-				id = 'pc_' + coreIndex
-				type = 'label:info' 								
+			result += create(SLabel, 'pc_' + coreIndex, 'label:info') [
 				text = '$pc: ' + task.programCounter
 			]
-			result += new SLabel [
-				id = 'sp_' + coreIndex
-				type = 'label:info' 								
+			result += create(SLabel, 'sp_' + coreIndex, 'label:info') [
 				text = '$sp: ' + task.stackPointer
 			]
-			result += new SLabel [
-				id = 'st_' + coreIndex
-				type = 'label:info' 								
+			result += create(SLabel, 'st_' + coreIndex, 'label:info') [
 				text = 'stack used: ' + (stackBeginAddr - currentStackPointer) //+ ' (' + percentStackUsedFormatted + '%)' 
 			]
 		}
-		return new SCompartment [
-			id = 'comp_' + coreIndex
-			type = 'comp'
+		return create(SCompartment, 'comp_' + coreIndex, 'comp') [
 			layout = 'vbox'
 			layoutOptions = new LayoutOptions [
 				HAlign = 'left'
@@ -225,31 +206,25 @@ class MulticoreAllocationDiagramGenerator {
 	
 	private def createChannel(int rowParam, int columnParam, CoreDirection directionParam) {
 	    val pos = rowParam + '_' + columnParam
-	    val channel = new Channel
-        channel.id = 'channel_' + directionParam + '_' + pos
-        channel.type = 'channel'
-        channel.column = columnParam
-        channel.row = rowParam
-        channel.direction = directionParam
-	    return channel
+	    create(Channel, 'channel_' + directionParam + '_' + pos, 'channel') [
+	        column = columnParam
+	        row = rowParam
+	        direction = directionParam
+	    ]
 	}
 	
 	private def createCrossbar(CoreDirection directionParam) {
-		val crossbar = new Crossbar
-	    crossbar.id = 'cb_' + directionParam
-	    crossbar.type = 'crossbar'
-	    crossbar.direction = directionParam
-		return crossbar
+		create(Crossbar, 'cb_' + directionParam, 'crossbar') [
+	    	direction = directionParam
+		]
 	}
 	
 	def BiMap<EObject, SModelElement> generateFlowView(Program program, EObject selection, CancelIndicator cancelIndicator) {
 		val kernels = program.declarations.filter(Kernel).toList
 		
 		val BiMap<EObject, SModelElement> mapping = HashBiMap.create()
-		val flow = new Flow => [
-			type = 'flow'
-			id = 'flow'
-			children = newArrayList
+		val flow = create(Flow, 'flow', 'flow') [
+			children = new ArrayList
 		]
 		mapping.put(program, flow)
 		if (program !== null) {
@@ -294,9 +269,7 @@ class MulticoreAllocationDiagramGenerator {
 	}
 	
 	private def createTask(Task declaration, Step step, TaskAllocation taskAllocation, int kernelIndex) {
-		val tnode = new TaskNode
-		tnode.type = 'task'
-		tnode.id = 'task_' + declaration.name
+		val tnode = create(TaskNode, 'task_' + declaration.name, 'task')
 		tnode.name = declaration.name
 		tnode.kernelNr = kernelIndex
 		if (step !== null) {
@@ -311,18 +284,14 @@ class MulticoreAllocationDiagramGenerator {
 	}
 	
 	private def createBarrier(Barrier declaration) {
-		val bnode = new BarrierNode
-		bnode.type = 'barrier'
-		bnode.id = 'barrier_' + declaration.name
-		bnode.name = declaration.name
-		return bnode
+		create(BarrierNode, 'barrier_' + declaration.name, 'barrier') [
+			name = declaration.name
+		]
 	}
 	
 	private def createFlow(String sourceId, String targetId, Set<String> assignedFlowIds) {
-		val edge = new FlowEdge
-		edge.type = 'edge'
 		val baseId = 'flow_' + sourceId + '--' + targetId
-		edge.id = baseId
+		val edge = create(FlowEdge, baseId, 'edge')
 		var i = 2
 		while (assignedFlowIds.contains(edge.id)) {
 			edge.id = baseId + '_' + (i++)

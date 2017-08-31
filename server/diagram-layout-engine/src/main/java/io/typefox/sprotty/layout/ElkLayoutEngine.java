@@ -7,6 +7,7 @@
 package io.typefox.sprotty.layout;
 
 import java.util.ArrayList;
+import java.util.LinkedList;
 import java.util.List;
 import java.util.Map;
 
@@ -29,6 +30,7 @@ import org.eclipse.elk.graph.ElkShape;
 import org.eclipse.elk.graph.properties.IProperty;
 import org.eclipse.elk.graph.properties.Property;
 import org.eclipse.elk.graph.util.ElkGraphUtil;
+import org.eclipse.emf.ecore.EObject;
 
 import com.google.common.collect.Maps;
 
@@ -93,13 +95,14 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	 * Transform a sprotty graph to an ELK graph, including all contents.
 	 */
 	protected LayoutContext transformGraph(SGraph sgraph) {
-		LayoutContext result = new LayoutContext();
-		result.sgraph = sgraph;
+		LayoutContext context = new LayoutContext();
+		context.sgraph = sgraph;
 		ElkNode rootNode = createGraph(sgraph);
-		result.elkGraph = rootNode;
-		processChildren(sgraph, rootNode, result);
-		resolveReferences(result);
-		return result;
+		context.elkGraph = rootNode;
+		context.shapeMap.put(sgraph, rootNode);
+		processChildren(sgraph, rootNode, context);
+		resolveReferences(context);
+		return context;
 	}
 	
 	/**
@@ -107,7 +110,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	 */
 	protected ElkNode createGraph(SGraph sgraph) {
 		ElkNode elkGraph = factory.createElkNode();
-		elkGraph.setIdentifier(sgraph.getId());
+		elkGraph.setIdentifier(SprottyLayoutConfigurator.toElkId(sgraph.getId()));
 		elkGraph.setProperty(P_TYPE, sgraph.getType());
 		return elkGraph;
 	}
@@ -118,6 +121,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	protected void processChildren(SModelElement element, ElkGraphElement parent, LayoutContext context) {
 		if (element.getChildren() != null) {
 			for (SModelElement schild : element.getChildren()) {
+				context.parentMap.put(schild, element);
 				if (shouldInclude(schild, element, context)) {
 					ElkGraphElement elkChild = null;
 					if (schild instanceof SNode) {
@@ -125,14 +129,14 @@ public class ElkLayoutEngine implements ILayoutEngine {
 						ElkNode elkNode = createNode(snode);
 						if (parent instanceof ElkNode)
 							elkNode.setParent((ElkNode) parent);
-						context.connectableMap.put(snode, elkNode);
+						context.shapeMap.put(snode, elkNode);
 						elkChild = elkNode;
 					} else if (schild instanceof SPort) {
 						SPort sport = (SPort) schild;
 						ElkPort elkPort = createPort(sport);
 						if (parent instanceof ElkNode)
 							elkPort.setParent((ElkNode) parent);
-						context.connectableMap.put(sport, elkPort);
+						context.shapeMap.put(sport, elkPort);
 						elkChild = elkPort;
 					} else if (schild instanceof SEdge) {
 						SEdge sedge = (SEdge) schild;
@@ -144,7 +148,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 						SLabel slabel = (SLabel) schild;
 						ElkLabel elkLabel = createLabel(slabel);
 						elkLabel.setParent(parent);
-						context.labelMap.put(slabel, elkLabel);
+						context.shapeMap.put(slabel, elkLabel);
 						elkChild = elkLabel;
 					}
 					if (elkChild != null) {
@@ -171,11 +175,11 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	 * Resolve cross-references in the ELK graph.
 	 */
 	protected void resolveReferences(LayoutContext context) {
-		Map<String, ElkConnectableShape> id2NodeMap = Maps.newHashMapWithExpectedSize(context.connectableMap.size());
-		for (Map.Entry<SModelElement, ElkConnectableShape> entry : context.connectableMap.entrySet()) {
+		Map<String, ElkConnectableShape> id2NodeMap = Maps.newHashMapWithExpectedSize(context.shapeMap.size());
+		for (Map.Entry<SModelElement, ElkShape> entry : context.shapeMap.entrySet()) {
 			String id = entry.getKey().getId();
-			if (id != null)
-				id2NodeMap.put(id, entry.getValue());
+			if (id != null && entry.getValue() instanceof ElkConnectableShape)
+				id2NodeMap.put(id, (ElkConnectableShape) entry.getValue());
 		}
 		for (Map.Entry<SEdge, ElkEdge> entry : context.edgeMap.entrySet()) {
 			resolveReferences(entry.getValue(), entry.getKey(), id2NodeMap, context);
@@ -204,7 +208,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	 */
 	protected ElkNode createNode(SNode snode) {
 		ElkNode elkNode = factory.createElkNode();
-		elkNode.setIdentifier(snode.getId());
+		elkNode.setIdentifier(SprottyLayoutConfigurator.toElkId(snode.getId()));
 		elkNode.setProperty(P_TYPE, snode.getType());
 		applyBounds(snode, elkNode);
 		return elkNode;
@@ -215,7 +219,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	 */
 	protected ElkPort createPort(SPort sport) {
 		ElkPort elkPort = factory.createElkPort();
-		elkPort.setIdentifier(sport.getId());
+		elkPort.setIdentifier(SprottyLayoutConfigurator.toElkId(sport.getId()));
 		elkPort.setProperty(P_TYPE, sport.getType());
 		applyBounds(sport, elkPort);
 		return elkPort;
@@ -226,7 +230,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	 */
 	protected ElkEdge createEdge(SEdge sedge) {
 		ElkEdge elkEdge = factory.createElkEdge();
-		elkEdge.setIdentifier(sedge.getId());
+		elkEdge.setIdentifier(SprottyLayoutConfigurator.toElkId(sedge.getId()));
 		elkEdge.setProperty(P_TYPE, sedge.getType());
 		// The source and target of the edge are resolved later
 		return elkEdge;
@@ -237,7 +241,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	 */
 	protected ElkLabel createLabel(SLabel slabel) {
 		ElkLabel elkLabel = factory.createElkLabel();
-		elkLabel.setIdentifier(slabel.getId());
+		elkLabel.setIdentifier(SprottyLayoutConfigurator.toElkId(slabel.getId()));
 		elkLabel.setProperty(P_TYPE, slabel.getType());
 		applyBounds(slabel, elkLabel);
 		return elkLabel;
@@ -299,27 +303,27 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	 */
 	protected void transferLayout(SModelElement element, LayoutContext context) {
 		if (element instanceof SGraph) {
-			transferGraphLayout((SGraph) element, context.elkGraph);
+			transferGraphLayout((SGraph) element, context.elkGraph, context);
 		} else if (element instanceof SNode) {
 			SNode snode = (SNode) element;
-			ElkNode elkNode = (ElkNode) context.connectableMap.get(snode);
+			ElkNode elkNode = (ElkNode) context.shapeMap.get(snode);
 			if (elkNode != null)
-				transferNodeLayout(snode, elkNode);
+				transferNodeLayout(snode, elkNode, context);
 		} else if (element instanceof SPort) {
 			SPort sport = (SPort) element;
-			ElkPort elkPort = (ElkPort) context.connectableMap.get(sport);
+			ElkPort elkPort = (ElkPort) context.shapeMap.get(sport);
 			if (elkPort != null)
-				transferPortLayout(sport, elkPort);
+				transferPortLayout(sport, elkPort, context);
 		} else if (element instanceof SEdge) {
 			SEdge sedge = (SEdge) element;
 			ElkEdge elkEdge = context.edgeMap.get(sedge);
 			if (elkEdge != null)
-				transferEdgeLayout(sedge, elkEdge);
+				transferEdgeLayout(sedge, elkEdge, context);
 		} else if (element instanceof SLabel) {
 			SLabel slabel = (SLabel) element;
-			ElkLabel elkLabel = context.labelMap.get(slabel);
+			ElkLabel elkLabel = (ElkLabel) context.shapeMap.get(slabel);
 			if (elkLabel != null)
-				transferLabelLayout(slabel, elkLabel);
+				transferLabelLayout(slabel, elkLabel, context);
 		}
 		if (element.getChildren() != null) {
 			for (SModelElement child: element.getChildren()) {
@@ -331,7 +335,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	/**
 	 * Apply the computed ELK layout to the given sprotty graph.
 	 */
-	protected void transferGraphLayout(SGraph sgraph, ElkNode elkGraph) {
+	protected void transferGraphLayout(SGraph sgraph, ElkNode elkGraph, LayoutContext context) {
 		sgraph.setPosition(new Point(elkGraph.getX(), elkGraph.getY()));
 		sgraph.setSize(new Dimension(elkGraph.getWidth(), elkGraph.getHeight()));
 	}
@@ -339,50 +343,138 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	/**
 	 * Apply the computed ELK layout to the given sprotty node.
 	 */
-	protected void transferNodeLayout(SNode snode, ElkNode elkNode) {
-		snode.setPosition(new Point(elkNode.getX(), elkNode.getY()));
+	protected void transferNodeLayout(SNode snode, ElkNode elkNode, LayoutContext context) {
+		Point offset = getOffset(snode, elkNode, context);
+		snode.setPosition(new Point(elkNode.getX() + offset.getX(), elkNode.getY() + offset.getY()));
 		snode.setSize(new Dimension(elkNode.getWidth(), elkNode.getHeight()));
 	}
 	
 	/**
 	 * Apply the computed ELK layout to the given sprotty port.
 	 */
-	protected void transferPortLayout(SPort sport, ElkPort elkPort) {
-		sport.setPosition(new Point(elkPort.getX(), elkPort.getY()));
+	protected void transferPortLayout(SPort sport, ElkPort elkPort, LayoutContext context) {
+		Point offset = getOffset(sport, elkPort, context);
+		sport.setPosition(new Point(elkPort.getX() + offset.getX(), elkPort.getY() + offset.getY()));
 		sport.setSize(new Dimension(elkPort.getWidth(), elkPort.getHeight()));
 	}
 	
 	/**
 	 * Apply the computed ELK layout to the given sprotty label.
 	 */
-	protected void transferLabelLayout(SLabel slabel, ElkLabel elkLabel) {
-		slabel.setPosition(new Point(elkLabel.getX(), elkLabel.getY()));
+	protected void transferLabelLayout(SLabel slabel, ElkLabel elkLabel, LayoutContext context) {
+		Point offset = getOffset(slabel, elkLabel, context);
+		slabel.setPosition(new Point(elkLabel.getX() + offset.getX(), elkLabel.getY() + offset.getY()));
 		slabel.setSize(new Dimension(elkLabel.getWidth(), elkLabel.getHeight()));
 	}
 	
 	/**
 	 * Apply the computed ELK layout to the given sprotty edge.
 	 */
-	protected void transferEdgeLayout(SEdge sedge, ElkEdge elkEdge) {
+	protected void transferEdgeLayout(SEdge sedge, ElkEdge elkEdge, LayoutContext context) {
 		if (!elkEdge.getSections().isEmpty()) {
+			Point offset = getOffset(sedge, elkEdge, context);
 			ElkEdgeSection section = elkEdge.getSections().get(0);
 			List<Point> routingPoints = new ArrayList<>();
-			Point p1 = new Point();
-			p1.setX(section.getStartX());
-			p1.setY(section.getStartY());
+			Point p1 = new Point(section.getStartX() + offset.getX(), section.getStartY() + offset.getY());
 			routingPoints.add(p1);
 			for (ElkBendPoint bendPoint : section.getBendPoints()) {
-				Point p2 = new Point();
-				p2.setX(bendPoint.getX());
-				p2.setY(bendPoint.getY());
+				Point p2 = new Point(bendPoint.getX() + offset.getX(), bendPoint.getY() + offset.getY());
 				routingPoints.add(p2);
 			}
-			Point p3 = new Point();
-			p3.setX(section.getEndX());
-			p3.setY(section.getEndY());
+			Point p3 = new Point(section.getEndX() + offset.getX(), section.getEndY() + offset.getY());
 			routingPoints.add(p3);
 			sedge.setRoutingPoints(routingPoints);
 		}
+	}
+	
+	/**
+	 * Compute the offset for applying a computed ELK layout to a sprotty model element. Such an offset can
+	 * occur when the two elements are put into containers with different coordinate systems.
+	 */
+	protected Point getOffset(SModelElement selem, ElkGraphElement elkElem, LayoutContext context) {
+		// Build a list of parents of the sprotty model element
+		LinkedList<SModelElement> sParents = null;
+		SModelElement currentSParent = selem;
+		while (currentSParent != null) {
+			currentSParent = context.parentMap.get(currentSParent);
+			if (currentSParent != null) {
+				ElkShape shapeForSParent = context.shapeMap.get(currentSParent);
+				if (shapeForSParent == elkElem.eContainer()) {
+					// Shortcut: the current sprotty parent matches the ELK container 
+					double x = 0, y = 0;
+					if (sParents != null) {
+						for (SModelElement sParent : sParents) {
+							if (sParent instanceof BoundsAware) {
+								Point position = ((BoundsAware) sParent).getPosition();
+								x -= position.getX();
+								y -= position.getY();
+							}
+						}
+					}
+					return new Point(x, y);
+				}
+				if (sParents == null)
+					sParents = new LinkedList<>();
+				sParents.addFirst(currentSParent);
+			}
+		}
+		
+		// Build a list of parents of the ELK graph element
+		LinkedList<EObject> elkParents = new LinkedList<>();
+		EObject currentElkParent = elkElem;
+		while (currentElkParent != null) {
+			currentElkParent = currentElkParent.eContainer();
+			if (currentElkParent != null) {
+				elkParents.addFirst(currentElkParent);
+			}
+		}
+		
+		boolean foundMismatch = false;
+		do {
+			// Find the next sprotty parent that is connected to a shape
+			ElkShape shapeForSParent = null;
+			int nextSParentIndex = 0;
+			while (shapeForSParent == null && nextSParentIndex < sParents.size()) {
+				shapeForSParent = context.shapeMap.get(sParents.get(nextSParentIndex++));
+			}
+			// Find the next ELK parent that is a shape
+			ElkShape elkParentShape = null;
+			while (elkParentShape == null && !elkParents.isEmpty()) {
+				EObject elkParent = elkParents.getFirst();
+				if (elkParent instanceof ElkShape)
+					elkParentShape = (ElkShape) elkParent;
+				else
+					elkParents.removeFirst();
+			}
+			// Remove the current parents if they match
+			if (shapeForSParent != null && shapeForSParent == elkParentShape) {
+				for (int i = 0; i < nextSParentIndex; i++) {
+					sParents.removeFirst();
+				}
+				elkParents.removeFirst();
+			} else {
+				foundMismatch = true;
+			}
+		} while (!foundMismatch && !sParents.isEmpty() && !elkParents.isEmpty());
+		
+		double x = 0, y = 0;
+		// Add the remaining ELK shapes to the offset
+		for (EObject elkParent : elkParents) {
+			if (elkParent instanceof ElkShape) {
+				ElkShape elkShape = (ElkShape) elkParent;
+				x += elkShape.getX();
+				y += elkShape.getY();
+			}
+		}
+		// Subtract the remaining sprotty shapes from the offset
+		for (SModelElement sParent : sParents) {
+			if (sParent instanceof BoundsAware) {
+				Point position = ((BoundsAware) sParent).getPosition();
+				x -= position.getX();
+				y -= position.getY();
+			}
+		}
+		return new Point(x, y);
 	}
 	
 	/**
@@ -391,9 +483,9 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	protected static class LayoutContext {
 		public SGraph sgraph;
 		public ElkNode elkGraph;
-		public final Map<SModelElement, ElkConnectableShape> connectableMap = Maps.newLinkedHashMap();
+		public final Map<SModelElement, SModelElement> parentMap = Maps.newHashMap();
+		public final Map<SModelElement, ElkShape> shapeMap = Maps.newLinkedHashMap();
 		public final Map<SEdge, ElkEdge> edgeMap = Maps.newLinkedHashMap();
-		public final Map<SLabel, ElkLabel> labelMap = Maps.newLinkedHashMap();
 	}
 
 }

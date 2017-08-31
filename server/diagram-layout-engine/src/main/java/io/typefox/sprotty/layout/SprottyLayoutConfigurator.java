@@ -7,6 +7,7 @@
 package io.typefox.sprotty.layout;
 
 import java.util.Map;
+import java.util.regex.Pattern;
 
 import org.eclipse.elk.core.LayoutConfigurator;
 import org.eclipse.elk.graph.ElkGraphElement;
@@ -21,6 +22,15 @@ import com.google.common.collect.Maps;
  */
 public class SprottyLayoutConfigurator extends LayoutConfigurator {
 	
+	private static Pattern ID_REPLACE_PATTERN = Pattern.compile("\\W|^\\d");
+	
+	public static String toElkId(String sprottyId) {
+		if (sprottyId == null || sprottyId.isEmpty())
+			return null;
+		else
+			return ID_REPLACE_PATTERN.matcher(sprottyId).replaceAll("_");
+	}
+	
     private final Map<String, MapPropertyHolder> idOptionMap = Maps.newHashMap();
     private final Map<String, MapPropertyHolder> typeOptionMap = Maps.newHashMap();
     
@@ -28,16 +38,17 @@ public class SprottyLayoutConfigurator extends LayoutConfigurator {
      * Configure layout options for the model element with the given id.
      */
     public IPropertyHolder configureById(String id) {
-        MapPropertyHolder result = idOptionMap.get(id);
+    	String replacedId = toElkId(id);
+        MapPropertyHolder result = idOptionMap.get(replacedId);
         if (result == null) {
             result = new MapPropertyHolder();
-            idOptionMap.put(id, result);
+            idOptionMap.put(replacedId, result);
         }
         return result;
     }
     
     public final IPropertyHolder getPropertiesById(String id) {
-        return idOptionMap.get(id);
+        return idOptionMap.get(toElkId(id));
     }
     
     /**
