@@ -50,6 +50,10 @@ class Dimension {
 		this.width = other.width
 		this.height = other.height
 	}
+	
+	def boolean isValid() {
+		width >= 0 && height >= 0
+	}
 }
 
 /**
