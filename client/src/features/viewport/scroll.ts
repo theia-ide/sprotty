@@ -6,7 +6,7 @@
  */
 
 import { Point } from "../../utils/geometry"
-import { SModelElement } from "../../base/model/smodel"
+import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { MouseListener } from "../../base/views/mouse-tool"
 import { Action } from "../../base/actions/action"
 import { SModelExtension } from "../../base/model/smodel-extension"
@@ -56,6 +56,12 @@ export class ScrollMouseListener extends MouseListener {
                 return [new ViewportAction(viewport.id, newViewport, false)]
             }
         }
+        return []
+    }
+
+    mouseEnter(target: SModelElement, event: MouseEvent): Action[] {
+        if (target instanceof SModelRoot && event.buttons === 0)
+            this.lastScrollPosition = undefined
         return []
     }
 
