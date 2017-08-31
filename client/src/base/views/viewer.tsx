@@ -204,6 +204,7 @@ export class Viewer implements IViewer {
             } else {
                 copyClassesFromElement(placeholder, newVDOM)
             }
+            setClass(newVDOM, this.options.baseClass, true)
             setClass(newVDOM, this.options.hiddenClass, true)
             this.lastHiddenVDOM = this.patcher.call(this, placeholder, newVDOM)
         }
