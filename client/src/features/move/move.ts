@@ -197,7 +197,7 @@ export class MoveMouseListener extends MouseListener {
 
     mouseEnter(target: SModelElement, event: MouseEvent): Action[] {
         if (target instanceof SModelRoot && event.buttons === 0)
-            this.lastDragPosition = undefined
+            this.mouseUp(target, event)
         return []
     }
 

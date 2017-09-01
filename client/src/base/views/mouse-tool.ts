@@ -88,6 +88,10 @@ export class MouseTool implements IVNodeDecorator {
         this.handleEvent('mouseEnter', model, event)
     }
 
+    mouseLeave(model: SModelRoot, event: MouseEvent) {
+        this.handleEvent('mouseLeave', model, event)
+    }
+
     mouseDown(model: SModelRoot, event: MouseEvent) {
         this.handleEvent('mouseDown', model, event)
     }
@@ -111,8 +115,9 @@ export class MouseTool implements IVNodeDecorator {
     decorate(vnode: VNode, element: SModelElement) {
         if (element instanceof SModelRoot) {
             on(vnode, 'mouseover', this.mouseOver.bind(this), element)
-            on(vnode, 'mouseenter', this.mouseEnter.bind(this), element)
             on(vnode, 'mouseout', this.mouseOut.bind(this), element)
+            on(vnode, 'mouseenter', this.mouseEnter.bind(this), element)
+            on(vnode, 'mouseleave', this.mouseLeave.bind(this), element)
             on(vnode, 'mousedown', this.mouseDown.bind(this), element)
             on(vnode, 'mouseup', this.mouseUp.bind(this), element)
             on(vnode, 'mousemove', this.mouseMove.bind(this), element)
@@ -148,11 +153,15 @@ export class MouseListener {
         return []
     }
 
+    mouseOut(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
+        return []
+    }
+
     mouseEnter(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         return []
     }
 
-    mouseOut(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
+    mouseLeave(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         return []
     }
 

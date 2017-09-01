@@ -40,7 +40,9 @@ export class ScrollMouseListener extends MouseListener {
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): Action[] {
-        if (this.lastScrollPosition) {
+        if (event.buttons === 0)
+            this.mouseUp(target, event)
+        else if (this.lastScrollPosition) {
             const viewport = findParentByFeature(target, isViewport)
             if (viewport) {
                 const dx = (event.pageX - this.lastScrollPosition.x) / viewport.zoom
@@ -61,7 +63,7 @@ export class ScrollMouseListener extends MouseListener {
 
     mouseEnter(target: SModelElement, event: MouseEvent): Action[] {
         if (target instanceof SModelRoot && event.buttons === 0)
-            this.lastScrollPosition = undefined
+            this.mouseUp(target, event)
         return []
     }
 
