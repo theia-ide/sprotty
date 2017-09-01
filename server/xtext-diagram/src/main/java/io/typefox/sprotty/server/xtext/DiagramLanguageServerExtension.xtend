@@ -13,6 +13,7 @@ import io.typefox.sprotty.api.IDiagramServer
 import java.util.Collection
 import java.util.List
 import java.util.Map
+import java.util.concurrent.CompletableFuture
 import org.apache.log4j.Logger
 import org.eclipse.emf.common.util.URI
 import org.eclipse.emf.ecore.resource.Resource
@@ -149,23 +150,24 @@ class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguage
 			doUpdateDiagrams(path, #[diagramServer])
 	}
 
-	protected def doUpdateDiagrams(String path, List<? extends ILanguageAwareDiagramServer> diagramServers) {
-		if (!diagramServers.empty) {
-			path.doRead [ context |
-				if (context.resource.shouldGenerate(context.cancelChecker)) {
-					val diagramGenerator = diagramGeneratorProvider.get
-					return diagramServers.map [
-						it -> diagramGenerator.generate(context.resource, diagramState, context.cancelChecker)
-					]
-				} else
-					return emptyList
-			].thenAccept [ resultList |
-				resultList.filter[value !== null].forEach[key.updateModel(value)]
-			].exceptionally [ throwable |
-				LOG.error('Error while processing build results', throwable)
-				return null
-			]
+	protected def CompletableFuture<Void> doUpdateDiagrams(String path, List<? extends ILanguageAwareDiagramServer> diagramServers) {
+		if (diagramServers.empty) {
+			return CompletableFuture.completedFuture(null)
 		}
+		return path.doRead [ context |
+			if (context.resource.shouldGenerate(context.cancelChecker)) {
+				val diagramGenerator = diagramGeneratorProvider.get
+				return diagramServers.map [ server |
+					server -> diagramGenerator.generate(context.resource, server.diagramState, context.cancelChecker)
+				]
+			} else
+				return emptyList
+		].thenAccept [ resultList |
+			resultList.filter[value !== null].forEach[key.updateModel(value)]
+		].exceptionally [ throwable |
+			LOG.error('Error while processing build results', throwable)
+			return null
+		]
 	}
 
 	protected def boolean shouldGenerate(Resource resource, CancelIndicator cancelIndicator) {

@@ -37,12 +37,13 @@ class DiagramGeneratorTest extends AbstractDiagramServerTest {
     			put(LanguageAwareDiagramServer.OPTION_SOURCE_URI, sourceUri)
     		]
     	])
+    	waitForUpdates(sourceUri, 1)
     	assertGenerated('''
     		[{
     		  resource: graph.testlang
     		  options: { sourceUri: graph.testlang }
     		  model: SGraph [
-    		    revision = 0
+    		    revision = 1
     		    type = "graph"
     		    id = "graph"
     		    children = ArrayList (
@@ -80,12 +81,13 @@ class DiagramGeneratorTest extends AbstractDiagramServerTest {
     		new VersionedTextDocumentIdentifier => [uri = sourceUri],
     		#[new TextDocumentContentChangeEvent(new Range(new Position(1, 5), new Position(1, 8)), 3, 'baz')]
     	))
+    	waitForUpdates(sourceUri, 2)
     	assertGenerated('''
     		[{
     		  resource: graph.testlang
     		  options: { sourceUri: graph.testlang }
     		  model: SGraph [
-    		    revision = 0
+    		    revision = 1
     		    type = "graph"
     		    id = "graph"
     		    children = ArrayList (
@@ -103,7 +105,7 @@ class DiagramGeneratorTest extends AbstractDiagramServerTest {
     		  resource: graph.testlang
     		  options: { sourceUri: graph.testlang }
     		  model: SGraph [
-    		    revision = 1
+    		    revision = 2
     		    type = "graph"
     		    id = "graph"
     		    children = ArrayList (
