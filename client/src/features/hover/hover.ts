@@ -68,7 +68,7 @@ export class RequestPopupModelAction implements Action {
     static readonly KIND = 'requestPopupModel'
     readonly kind = RequestPopupModelAction.KIND
 
-    constructor(public elementId: string, public bounds: Bounds) {
+    constructor(public readonly elementId: string, public readonly bounds: Bounds) {
     }
 }
 
@@ -79,7 +79,7 @@ export class RequestPopupModelAction implements Action {
 export class SetPopupModelAction implements Action {
     readonly kind = SetPopupModelCommand.KIND
 
-    constructor(public newRoot: SModelRootSchema) {
+    constructor(public readonly newRoot: SModelRootSchema) {
     }
 }
 

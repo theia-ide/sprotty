@@ -16,7 +16,7 @@ import { ActionHandlerRegistry } from "../base/actions/action-handler"
 import { IActionDispatcher } from "../base/actions/action-dispatcher"
 import { ICommand } from "../base/commands/command"
 import { ViewerOptions } from "../base/views/viewer-options"
-import { SetModelCommand, RequestModelAction } from "../base/features/set-model"
+import { SetModelCommand } from "../base/features/set-model"
 import { UpdateModelCommand, UpdateModelAction } from "../features/update/update-model"
 import { ComputedBoundsAction, RequestBoundsCommand } from '../features/bounds/bounds-manipulation'
 import { RequestPopupModelAction } from "../features/hover/hover"
@@ -79,7 +79,6 @@ export abstract class DiagramServer extends ModelSource {
     }
 
     handle(action: Action): void | ICommand {
-        this.storeNewModel(action)
         const forwardToServer = this.handleLocally(action)
         if (forwardToServer) {
             const message: ActionMessage = {
@@ -105,6 +104,26 @@ export abstract class DiagramServer extends ModelSource {
         }
     }
 
+    /**
+     * Check whether the given action should be handled locally. Returns true if the action should
+     * still be sent to the server, and false if it's only handled locally.
+     */
+    protected handleLocally(action: Action): boolean {
+        this.storeNewModel(action)
+        switch (action.kind) {
+            case ComputedBoundsAction.KIND:
+                return this.handleComputedBounds(action as ComputedBoundsAction)
+            case RequestBoundsCommand.KIND:
+                return false
+            case ExportSvgAction.KIND:
+                return this.handleExportSvgAction(action as ExportSvgAction)
+        }
+        return true
+    }
+
+    /**
+     * Put the new model contained in the given action into the model storage, if there is any.
+     */
     protected storeNewModel(action: Action): void {
         if (action.kind === SetModelCommand.KIND
             || action.kind === UpdateModelCommand.KIND
@@ -117,50 +136,31 @@ export abstract class DiagramServer extends ModelSource {
         }
     }
 
-    protected handleLocally(action: Action): boolean {
-        switch (action.kind) {
-            case RequestModelAction.KIND:
-                return this.handleRequestModel(action as RequestModelAction)
-            case ComputedBoundsAction.KIND:
-                if (!this.viewerOptions.needsServerLayout)
-                    return this.handleComputedBounds(action as ComputedBoundsAction)
-                break
-            case RequestBoundsCommand.KIND:
-                return false
-            case ExportSvgAction.KIND:
-                return this.handleExportSvgAction(action as ExportSvgAction)
-        }
-        return true
-    }
-
-    protected handleRequestModel(action: RequestModelAction): boolean {
-        if (action.options === undefined)
-            action.options = {}
-        const viewerOptions = this.viewerOptions as { [key: string]: any }
-        for (const option in viewerOptions) {
-            if (!(option in action.options))
-                action.options[option] = String(viewerOptions[option])
-        }
-        return true
-    }
-
+    /**
+     * If the server requires to compute a layout, the computed bounds are forwarded. Otherwise they
+     * are applied to the current model locally and a model update is triggered.
+     */
     protected handleComputedBounds(action: ComputedBoundsAction): boolean {
-        const index = new SModelIndex()
-        index.add(this.currentRoot)
-        for (const b of action.bounds) {
-            const element = index.getById(b.elementId)
-            if (element !== undefined)
-                this.applyBounds(element, b.newBounds)
-        }
-        if (action.alignments !== undefined) {
-            for (const a of action.alignments) {
-                const element = index.getById(a.elementId)
+        if (this.viewerOptions.needsServerLayout) {
+            return true
+        } else {
+            const index = new SModelIndex()
+            index.add(this.currentRoot)
+            for (const b of action.bounds) {
+                const element = index.getById(b.elementId)
                 if (element !== undefined)
-                    this.applyAlignment(element, a.newAlignment)
+                    this.applyBounds(element, b.newBounds)
             }
+            if (action.alignments !== undefined) {
+                for (const a of action.alignments) {
+                    const element = index.getById(a.elementId)
+                    if (element !== undefined)
+                        this.applyAlignment(element, a.newAlignment)
+                }
+            }
+            this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
+            return false
         }
-        this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
-        return false
     }
 
     protected applyBounds(element: SModelElementSchema, newBounds: Bounds) {

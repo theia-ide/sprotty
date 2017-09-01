@@ -28,6 +28,7 @@ import { SButton } from '../button/model'
  */
 export class SelectAction implements Action {
     kind = SelectCommand.KIND
+    // TODO An action should not have mutable properties
     selectAll: boolean = false
     deselectAll: boolean = false
 

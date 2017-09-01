@@ -21,7 +21,7 @@ export class RequestModelAction implements Action {
     static readonly KIND = 'requestModel'
     readonly kind = RequestModelAction.KIND
 
-    constructor(public options?: { [key: string]: string }) {
+    constructor(public readonly options?: { [key: string]: string }) {
     }
 }
 
@@ -31,7 +31,8 @@ export class RequestModelAction implements Action {
 export class SetModelAction implements Action {
     readonly kind = SetModelCommand.KIND
 
-    constructor(public newRoot: SModelRootSchema, public isInitial: boolean = false) {
+    constructor(public readonly newRoot: SModelRootSchema,
+                public readonly isInitial: boolean = false) {
     }
 }
 
