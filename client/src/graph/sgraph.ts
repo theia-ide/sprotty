@@ -6,7 +6,7 @@
  */
 
 import { SChildElement, SModelElementSchema, SModelRootSchema } from '../base/model/smodel'
-import { boundsFeature, layoutFeature, Layouting, Alignable, alignFeature } from '../features/bounds/model'
+import { boundsFeature, layoutFeature, Alignable, alignFeature } from '../features/bounds/model'
 import { Fadeable, fadeFeature } from '../features/fade/model'
 import { Hoverable, hoverFeedbackFeature, popupFeature } from '../features/hover/model'
 import { moveFeature } from '../features/move/model'
@@ -49,6 +49,7 @@ export class SNode extends SShapeElement implements Selectable, Fadeable, Hovera
     hoverFeedback: boolean = false
     children: SChildElement[]
     layout?: string
+    layoutOptions?: {[key: string]: string | number | boolean}
     selected: boolean = false
     opacity: number = 1
 
@@ -145,9 +146,10 @@ export interface SCompartmentSchema extends SShapeElementSchema {
  * A compartment is used to group multiple child elements such as labels of a node. Usually a `vbox`
  * or `hbox` layout is used to arrange these children.
  */
-export class SCompartment extends SShapeElement implements Layouting, Fadeable {
+export class SCompartment extends SShapeElement implements Fadeable {
     children: SChildElement[]
-    layout: string
+    layout?: string
+    layoutOptions?: {[key: string]: string | number | boolean}
     opacity = 1
 
     hasFeature(feature: symbol) {

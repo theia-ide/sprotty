@@ -95,3 +95,13 @@ interface Alignable {
 	def Point getAlignment()
 	def void setAlignment(Point alignment)
 }
+
+/**
+ * Used to identify model elements that specify a <em>client</em> layout to apply to their children.
+ * The children of such elements are ignored by the server-side layout engine because they are
+ * already handled by the client.
+ */
+interface Layouting {
+	def String getLayout()
+	def LayoutOptions getLayoutOptions()
+}
