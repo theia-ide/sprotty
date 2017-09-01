@@ -15,6 +15,8 @@ import org.eclipse.elk.core.IGraphLayoutEngine;
 import org.eclipse.elk.core.RecursiveGraphLayoutEngine;
 import org.eclipse.elk.core.data.ILayoutMetaDataProvider;
 import org.eclipse.elk.core.data.LayoutMetaDataService;
+import org.eclipse.elk.core.math.ElkPadding;
+import org.eclipse.elk.core.options.CoreOptions;
 import org.eclipse.elk.core.util.BasicProgressMonitor;
 import org.eclipse.elk.core.util.ElkUtil;
 import org.eclipse.elk.graph.ElkBendPoint;
@@ -37,6 +39,7 @@ import com.google.common.collect.Maps;
 import io.typefox.sprotty.api.BoundsAware;
 import io.typefox.sprotty.api.Dimension;
 import io.typefox.sprotty.api.ILayoutEngine;
+import io.typefox.sprotty.api.Layouting;
 import io.typefox.sprotty.api.Point;
 import io.typefox.sprotty.api.SEdge;
 import io.typefox.sprotty.api.SGraph;
@@ -118,57 +121,104 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	/**
 	 * Transform the children of a sprotty model element to their ELK graph counterparts.
 	 */
-	protected void processChildren(SModelElement element, ElkGraphElement parent, LayoutContext context) {
-		if (element.getChildren() != null) {
-			for (SModelElement schild : element.getChildren()) {
-				context.parentMap.put(schild, element);
-				if (shouldInclude(schild, element, context)) {
-					ElkGraphElement elkChild = null;
+	protected int processChildren(SModelElement sParent, ElkGraphElement elkParent, LayoutContext context) {
+		int childrenCount = 0;
+		if (sParent.getChildren() != null) {
+			for (SModelElement schild : sParent.getChildren()) {
+				context.parentMap.put(schild, sParent);
+				ElkGraphElement elkChild = null;
+				if (shouldInclude(schild, sParent, elkParent, context)) {
 					if (schild instanceof SNode) {
 						SNode snode = (SNode) schild;
 						ElkNode elkNode = createNode(snode);
-						if (parent instanceof ElkNode)
-							elkNode.setParent((ElkNode) parent);
+						if (elkParent instanceof ElkNode) {
+							elkNode.setParent((ElkNode) elkParent);
+							childrenCount++;
+						}
 						context.shapeMap.put(snode, elkNode);
 						elkChild = elkNode;
 					} else if (schild instanceof SPort) {
 						SPort sport = (SPort) schild;
 						ElkPort elkPort = createPort(sport);
-						if (parent instanceof ElkNode)
-							elkPort.setParent((ElkNode) parent);
+						if (elkParent instanceof ElkNode) {
+							elkPort.setParent((ElkNode) elkParent);
+							childrenCount++;
+						}
 						context.shapeMap.put(sport, elkPort);
 						elkChild = elkPort;
 					} else if (schild instanceof SEdge) {
 						SEdge sedge = (SEdge) schild;
 						ElkEdge elkEdge = createEdge(sedge);
 						// The most suitable container for the edge is determined later
+						childrenCount++;
 						context.edgeMap.put(sedge, elkEdge);
 						elkChild = elkEdge;
 					} else if (schild instanceof SLabel) {
 						SLabel slabel = (SLabel) schild;
 						ElkLabel elkLabel = createLabel(slabel);
-						elkLabel.setParent(parent);
+						elkLabel.setParent(elkParent);
+						childrenCount++;
 						context.shapeMap.put(slabel, elkLabel);
 						elkChild = elkLabel;
 					}
-					if (elkChild != null) {
-						processChildren(schild, elkChild, context);
-					}
+				}
+				int grandChildrenCount = processChildren(schild, elkChild != null ? elkChild : elkParent, context);
+				childrenCount += grandChildrenCount;
+				if (grandChildrenCount > 0 && sParent instanceof Layouting && schild instanceof BoundsAware) {
+					handleClientLayout((BoundsAware) schild, (Layouting) sParent, elkParent, context);
 				}
 			}
 		}
+		return childrenCount;
 	}
 	
 	/**
 	 * Return true if the given model element should be included in the layout computation.
 	 */
-	protected boolean shouldInclude(SModelElement element, SModelElement parent, LayoutContext context) {
-		if (element instanceof SLabel)
-			// Omit node labels, since these are handled by the sprotty client layouts
-			return !(parent instanceof SNode);
-		else
-			// All other graph elements can only be contained in a node or in the graph (root node)
-			return parent instanceof SNode || parent instanceof SGraph;
+	protected boolean shouldInclude(SModelElement element, SModelElement sParent, ElkGraphElement elkParent, LayoutContext context) {
+		if (sParent instanceof Layouting) {
+			// If the parent has configured a client layout, we ignore its direct children in the server layout
+			String layout = ((Layouting) sParent).getLayout();
+			if (layout != null && !layout.isEmpty())
+				return false;
+		}
+		if (element instanceof SNode || element instanceof SPort)
+			// Nodes and ports can only be contained in a node
+			return elkParent instanceof ElkNode;
+		return true;
+	}
+	
+	/**
+	 * Consider the layout computed by the client by configuring appropriate ELK layout options.
+	 */
+	protected void handleClientLayout(BoundsAware element, Layouting sParent, ElkGraphElement elkParent, LayoutContext context) {
+		String layout = sParent.getLayout();
+		if (layout != null && !layout.isEmpty()) {
+			Point position = element.getPosition();
+			if (position == null)
+				position = new Point();
+			Dimension size = element.getSize();
+			if (size == null)
+				size = new Dimension();
+			ElkPadding padding = new ElkPadding();
+			padding.setLeft(position.getX());
+			padding.setTop(position.getY());
+			if (sParent instanceof BoundsAware) {
+				Dimension parentSize = ((BoundsAware) sParent).getSize();
+				if (parentSize != null) {
+					padding.setRight(parentSize.getWidth() - position.getX() - size.getWidth());
+					padding.setBottom(parentSize.getHeight() - position.getY() - size.getHeight());
+				}
+			}
+			if (elkParent.hasProperty(CoreOptions.PADDING)) {
+				// Add the previously computed padding to the current one.
+				// NOTE: This makes sense only if there are multiple _nested_ layouting containers of which the deepest
+				//       one contains actual graph elements. Multiple compartments that contain graph elements but are
+				//       not nested into each other cannot be mapped properly to the ELK graph format.
+				padding.add(elkParent.getProperty(CoreOptions.PADDING));
+			}
+			elkParent.setProperty(CoreOptions.PADDING, padding);
+		}
 	}
 	
 	/**
@@ -243,6 +293,7 @@ public class ElkLayoutEngine implements ILayoutEngine {
 		ElkLabel elkLabel = factory.createElkLabel();
 		elkLabel.setIdentifier(SprottyLayoutConfigurator.toElkId(slabel.getId()));
 		elkLabel.setProperty(P_TYPE, slabel.getType());
+		elkLabel.setText(slabel.getText());
 		applyBounds(slabel, elkLabel);
 		return elkLabel;
 	}
