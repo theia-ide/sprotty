@@ -66,7 +66,7 @@ export class CanvasBoundsInitializer implements IVNodeDecorator {
 export class InitializeCanvasBoundsAction implements Action {
     readonly kind = InitializeCanvasBoundsCommand.KIND
 
-    constructor(public newCanvasBounds: Bounds) {
+    constructor(public readonly newCanvasBounds: Bounds) {
     }
 }
 

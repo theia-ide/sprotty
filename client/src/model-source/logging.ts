@@ -15,8 +15,11 @@ export class LoggingAction implements Action {
     static readonly KIND = 'logging'
     readonly kind = LoggingAction.KIND
 
-    constructor(public severity: string, public time: string, public caller: string,
-        public message: string, public params: string[]) {
+    constructor(public readonly severity: string,
+                public readonly time: string,
+                public readonly caller: string,
+                public readonly message: string,
+                public readonly params: string[]) {
     }
 }
 

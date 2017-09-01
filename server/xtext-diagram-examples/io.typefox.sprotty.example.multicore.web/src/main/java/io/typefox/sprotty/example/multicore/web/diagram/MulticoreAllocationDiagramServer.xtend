@@ -21,13 +21,6 @@ class MulticoreAllocationDiagramServer extends DefaultDiagramServer {
 	@Accessors
 	BiMap<EObject, SModelElement> modelMapping
 	
-	override protected needsClientLayout(SModelRoot root) {
-		switch root.type {
-			case 'processor': true
-			default: false
-		}
-	}
-	
 	override protected needsServerLayout(SModelRoot root) {
 		switch root.type {
 			case 'flow': true

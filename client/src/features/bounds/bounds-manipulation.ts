@@ -18,7 +18,7 @@ import { BoundsAware, isBoundsAware, Alignable } from './model'
 export class SetBoundsAction implements Action {
     readonly kind = SetBoundsCommand.KIND
 
-    constructor(public bounds: ElementAndBounds[]) {
+    constructor(public readonly bounds: ElementAndBounds[]) {
     }
 }
 
@@ -31,7 +31,7 @@ export class SetBoundsAction implements Action {
 export class RequestBoundsAction implements Action {
     readonly kind = RequestBoundsCommand.KIND
 
-    constructor(public newRoot: SModelRootSchema) {
+    constructor(public readonly newRoot: SModelRootSchema) {
     }
 }
 
@@ -47,7 +47,9 @@ export class ComputedBoundsAction implements Action {
 
     readonly kind = ComputedBoundsAction.KIND
 
-    constructor(public bounds: ElementAndBounds[], public revision?: number, public alignments?: ElementAndAlignment[]) {
+    constructor(public readonly bounds: ElementAndBounds[],
+                public readonly revision?: number,
+                public readonly alignments?: ElementAndAlignment[]) {
     }
 }
 

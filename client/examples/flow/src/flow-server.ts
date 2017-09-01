@@ -46,7 +46,10 @@ export function setupFlow(websocket: WebSocket) {
             if (xtextServices !== undefined) {
                 const resourceId = xtextServices.options.resourceId
                 diagramServer.clientId = resourceId + '_flow'
-                diagramServer.handle(new RequestModelAction({ resourceId }))
+                diagramServer.handle(new RequestModelAction({
+                    resourceId: resourceId,
+                    needsClientLayout: 'false'
+                }))
             } else {
                 setTimeout(run, 50)
             }

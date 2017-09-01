@@ -79,22 +79,15 @@ export abstract class DiagramServer extends ModelSource {
     }
 
     handle(action: Action): void | ICommand {
-        this.storeNewModel(action)
-        if (action.kind === ExportSvgAction.KIND)
-            return this.handleExportSvgAction(action as ExportSvgAction)
-
-        if (action.kind === ComputedBoundsAction.KIND && !this.viewerOptions.needsServerLayout)
-            return this.handleComputedBounds(action as ComputedBoundsAction)
-
-        if (action.kind === RequestBoundsCommand.KIND)
-            return
-
-        const message: ActionMessage = {
-            clientId: this.clientId,
-            action: action
+        const forwardToServer = this.handleLocally(action)
+        if (forwardToServer) {
+            const message: ActionMessage = {
+                clientId: this.clientId,
+                action: action
+            }
+            this.logger.log(this, 'sending', message)
+            this.sendMessage(message)
         }
-        this.logger.log(this, 'sending', message)
-        this.sendMessage(message)
     }
 
     protected abstract sendMessage(message: ActionMessage): void
@@ -111,6 +104,26 @@ export abstract class DiagramServer extends ModelSource {
         }
     }
 
+    /**
+     * Check whether the given action should be handled locally. Returns true if the action should
+     * still be sent to the server, and false if it's only handled locally.
+     */
+    protected handleLocally(action: Action): boolean {
+        this.storeNewModel(action)
+        switch (action.kind) {
+            case ComputedBoundsAction.KIND:
+                return this.handleComputedBounds(action as ComputedBoundsAction)
+            case RequestBoundsCommand.KIND:
+                return false
+            case ExportSvgAction.KIND:
+                return this.handleExportSvgAction(action as ExportSvgAction)
+        }
+        return true
+    }
+
+    /**
+     * Put the new model contained in the given action into the model storage, if there is any.
+     */
     protected storeNewModel(action: Action): void {
         if (action.kind === SetModelCommand.KIND
             || action.kind === UpdateModelCommand.KIND
@@ -123,22 +136,31 @@ export abstract class DiagramServer extends ModelSource {
         }
     }
 
-    protected handleComputedBounds(action: ComputedBoundsAction): ICommand | void {
-        const index = new SModelIndex()
-        index.add(this.currentRoot)
-        for (const b of action.bounds) {
-            const element = index.getById(b.elementId)
-            if (element !== undefined)
-                this.applyBounds(element, b.newBounds)
-        }
-        if (action.alignments !== undefined) {
-            for (const a of action.alignments) {
-                const element = index.getById(a.elementId)
+    /**
+     * If the server requires to compute a layout, the computed bounds are forwarded. Otherwise they
+     * are applied to the current model locally and a model update is triggered.
+     */
+    protected handleComputedBounds(action: ComputedBoundsAction): boolean {
+        if (this.viewerOptions.needsServerLayout) {
+            return true
+        } else {
+            const index = new SModelIndex()
+            index.add(this.currentRoot)
+            for (const b of action.bounds) {
+                const element = index.getById(b.elementId)
                 if (element !== undefined)
-                    this.applyAlignment(element, a.newAlignment)
+                    this.applyBounds(element, b.newBounds)
             }
+            if (action.alignments !== undefined) {
+                for (const a of action.alignments) {
+                    const element = index.getById(a.elementId)
+                    if (element !== undefined)
+                        this.applyAlignment(element, a.newAlignment)
+                }
+            }
+            this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
+            return false
         }
-        this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
     }
 
     protected applyBounds(element: SModelElementSchema, newBounds: Bounds) {
@@ -152,8 +174,9 @@ export abstract class DiagramServer extends ModelSource {
         e.alignment = { x: newAlignment.x, y: newAlignment.y }
     }
 
-    protected handleExportSvgAction(action: ExportSvgAction): void {
+    protected handleExportSvgAction(action: ExportSvgAction): boolean {
         const blob = new Blob([action.svg], {type: "text/plain;charset=utf-8"})
         saveAs(blob, "diagram.svg")
+        return false
     }
 }

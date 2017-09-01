@@ -30,7 +30,7 @@ export class UpdateModelAction implements Action {
     matches?: Match[]
     animate?: boolean = true
 
-    constructor(public newRoot?: SModelRootSchema) {
+    constructor(public readonly newRoot?: SModelRootSchema) {
     }
 }
 
