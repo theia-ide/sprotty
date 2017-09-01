@@ -24,7 +24,7 @@ node {
     stage('Gradle Build') {
         try {
             dir('server') {
-                sh "./gradlew clean build createLocalMavenRepo --refresh-dependencies --continue"
+                sh "./gradlew clean build createLocalMavenRepo -PignoreTestFailures=true --refresh-dependencies --continue"
             }
         } finally {
             step([$class: 'JUnitResultArchiver', testResults: 'server/**/build/test-results/test/*.xml'])

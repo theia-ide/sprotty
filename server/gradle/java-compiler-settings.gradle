@@ -26,3 +26,9 @@ task javadocJar(type: Jar, dependsOn: javadoc) {
 }
 
 artifacts.archives sourcesJar, javadocJar
+
+if (findProperty('ignoreTestFailures') == 'true') {
+	tasks.withType(Test) {
+		ignoreFailures = true
+	}
+}
