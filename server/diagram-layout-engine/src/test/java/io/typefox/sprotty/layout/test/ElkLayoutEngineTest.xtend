@@ -7,7 +7,9 @@
 package io.typefox.sprotty.layout.test
 
 import com.google.inject.Inject
+import io.typefox.sprotty.api.Dimension
 import io.typefox.sprotty.api.Point
+import io.typefox.sprotty.api.SCompartment
 import io.typefox.sprotty.api.SEdge
 import io.typefox.sprotty.api.SGraph
 import io.typefox.sprotty.api.SLabel
@@ -59,13 +61,9 @@ class ElkLayoutEngineTest extends AbstractElkTest {
 	def void testTransformGraphElements() {
 		val model = create(SGraph, 'g') [
 			addChild(SNode) [
-				addChild(SLabel) [
-					text = 'Foo'
-				]
+				addChild(SLabel) [ text = 'Foo' ]
 				addChild(SPort) [
-					addChild(SLabel) [
-						text = 'Bar'
-					]
+					addChild(SLabel) [ text = 'Bar' ]
 				]
 			]
 			addChild(SNode)
@@ -82,9 +80,12 @@ class ElkLayoutEngineTest extends AbstractElkTest {
 			type: ^graph
 			node g_node0 {
 				type: ^node
+				label g_node0_label0: "Foo" {
+					type: ^label
+				}
 				port g_node0_port1 {
 					type: ^port
-					label g_node0_port1_label0: "" {
+					label g_node0_port1_label0: "Bar" {
 						type: ^label
 					}
 				}
@@ -94,8 +95,82 @@ class ElkLayoutEngineTest extends AbstractElkTest {
 			}
 			edge g_edge2: g_node0.g_node0_port1 -> g_node1 {
 				type: ^edge
-				label g_edge2_label0: "" {
+				label g_edge2_label0: "Baz" {
 					type: ^label
+				}
+			}
+		''')
+	}
+	
+	@Test
+	def void testTransformCompartments1() {
+		val model = create(SGraph, 'g') [
+			addChild(SNode) [
+				layout = 'vbox'
+				position = new Point(100, 100)
+				size = new Dimension(35, 35)
+				addChild(SLabel) // Skipped because the parent node has a client layout
+				addChild(SCompartment) [
+					layout = 'hbox'
+					position = new Point(0, 10)
+					size = new Dimension(5, 5)
+					addChild(SLabel) // Skipped because the parent compartment has a client layout
+				]
+				addChild(SCompartment) [
+					position = new Point(10, 10)
+					size = new Dimension(15, 15)
+					addChild(SLabel) [ text = "Foo" ]
+				]
+			]
+		]
+		engine.getTransformedGraph(model).assertSerializedTo('''
+			graph g
+			type: ^graph
+			node g_node0 {
+				layout [
+					position: 100, 100
+					size: 35, 35
+				]
+				type: ^node
+				elk.padding: "[top=10.0,left=10.0,bottom=10.0,right=10.0]"
+				label g_node0_comp2_label0: "Foo" {
+					type: ^label
+				}
+			}
+		''')
+	}
+	
+	@Test
+	def void testTransformCompartments2() {
+		val model = create(SGraph, 'g') [
+			addChild(SNode) [
+				layout = 'vbox'
+				position = new Point(100, 100)
+				size = new Dimension(55, 55)
+				addChild(SCompartment) [
+					layout = 'hbox'
+					position = new Point(10, 10)
+					size = new Dimension(35, 35)
+					addChild(SCompartment) [
+						position = new Point(10, 10)
+						size = new Dimension(15, 15)
+						addChild(SNode)
+					]
+				]
+			]
+		]
+		engine.getTransformedGraph(model).assertSerializedTo('''
+			graph g
+			type: ^graph
+			node g_node0 {
+				layout [
+					position: 100, 100
+					size: 55, 55
+				]
+				type: ^node
+				elk.padding: "[top=20.0,left=20.0,bottom=20.0,right=20.0]"
+				node g_node0_comp0_comp0_node0 {
+					type: ^node
 				}
 			}
 		''')
@@ -115,7 +190,7 @@ class ElkLayoutEngineTest extends AbstractElkTest {
 				addChild(SNode) [
 					position = new Point => [ x = 10; y = 10]
 				]
-				addChild(SEdge) [
+				addChild(SEdge) [   // Added as child of 'g' in the ELK graph
 					sourceId = 'g/node0/node0'
 					targetId = 'g/node1/node0'
 				]
@@ -163,7 +238,7 @@ class ElkLayoutEngineTest extends AbstractElkTest {
 			]
 			addChild(SNode) [
 				position = new Point => [ x = 10; y = 40]
-				addChild(SEdge) [
+				addChild(SEdge) [   // Added as child of 'g/node0' in the ELK graph
 					sourceId = 'g/node0/node0'
 					targetId = 'g/node0/node1'
 				]

@@ -22,9 +22,12 @@ export interface BoundsAware extends SModelExtension {
     bounds: Bounds
 }
 
+/**
+ * Used to identify model elements that specify a layout to apply to their children.
+ */
 export interface Layouting extends SModelExtension, BoundsAware {
     layout: string
-    layoutOptions?: any
+    layoutOptions?: {[key: string]: string | number | boolean}
 }
 
 /**

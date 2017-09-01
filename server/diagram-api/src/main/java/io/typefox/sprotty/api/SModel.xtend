@@ -68,7 +68,7 @@ class SGraph extends SModelRoot implements BoundsAware {
  */
 @Accessors
 @ToString(skipNulls = true)
-class SNode extends SModelElement implements BoundsAware  {
+class SNode extends SModelElement implements BoundsAware, Layouting  {
 	Point position
 	Dimension size
 	String layout
@@ -138,7 +138,7 @@ class SLabel extends SModelElement implements BoundsAware, Alignable {
  */
 @Accessors
 @ToString(skipNulls = true)
-class SCompartment extends SModelElement implements BoundsAware {
+class SCompartment extends SModelElement implements BoundsAware, Layouting {
 	Point position
 	Dimension size
 	String layout
