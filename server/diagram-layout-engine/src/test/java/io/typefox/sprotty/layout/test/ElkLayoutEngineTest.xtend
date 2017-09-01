@@ -109,17 +109,17 @@ class ElkLayoutEngineTest extends AbstractElkTest {
 				layout = 'vbox'
 				position = new Point(100, 100)
 				size = new Dimension(35, 35)
-				addChild(SNode) // Skipped because the parent node has a client layout
+				addChild(SLabel) // Skipped because the parent node has a client layout
 				addChild(SCompartment) [
 					layout = 'hbox'
 					position = new Point(0, 10)
 					size = new Dimension(5, 5)
-					addChild(SNode) // Skipped because the parent compartment has a client layout
+					addChild(SLabel) // Skipped because the parent compartment has a client layout
 				]
 				addChild(SCompartment) [
 					position = new Point(10, 10)
 					size = new Dimension(15, 15)
-					addChild(SNode)
+					addChild(SLabel) [ text = "Foo" ]
 				]
 			]
 		]
@@ -133,8 +133,8 @@ class ElkLayoutEngineTest extends AbstractElkTest {
 				]
 				type: ^node
 				elk.padding: "[top=10.0,left=10.0,bottom=10.0,right=10.0]"
-				node g_node0_comp2_node0 {
-					type: ^node
+				label g_node0_comp2_label0: "Foo" {
+					type: ^label
 				}
 			}
 		''')

@@ -176,15 +176,18 @@ public class ElkLayoutEngine implements ILayoutEngine {
 	 * Return true if the given model element should be included in the layout computation.
 	 */
 	protected boolean shouldInclude(SModelElement element, SModelElement sParent, ElkGraphElement elkParent, LayoutContext context) {
-		if (sParent instanceof Layouting) {
+		if (element instanceof SNode || element instanceof SPort)
+			// Nodes and ports can only be contained in a node
+			return elkParent instanceof ElkNode;
+		else if (element instanceof SEdge)
+			// Edges are automatically put into their most suitable container
+			return true;
+		else if (sParent instanceof Layouting) {
 			// If the parent has configured a client layout, we ignore its direct children in the server layout
 			String layout = ((Layouting) sParent).getLayout();
 			if (layout != null && !layout.isEmpty())
 				return false;
 		}
-		if (element instanceof SNode || element instanceof SPort)
-			// Nodes and ports can only be contained in a node
-			return elkParent instanceof ElkNode;
 		return true;
 	}
 	

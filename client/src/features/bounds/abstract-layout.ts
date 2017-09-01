@@ -7,6 +7,7 @@
 
 import { Bounds, EMPTY_BOUNDS, isValidDimension, Dimension, Point } from "../../utils/geometry"
 import { SParentElement, SModelElement, SChildElement } from "../../base/model/smodel"
+import { SNode, SPort, SEdge } from '../../graph/sgraph'
 import { isLayouting, Layouting, isBoundsAware } from "./model"
 import { ILayout, StatefulLayouter } from './layout'
 import { AbstractLayoutOptions, HAlignment, VAlignment } from './layout-options'
@@ -88,17 +89,24 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
             y: containerOptions.paddingTop + 0.5 * (maxHeight - (maxHeight / containerOptions.paddingFactor))}
         container.children.forEach(
             child => {
-                const boundsData = layouter.getBoundsData(child)
-                const bounds = boundsData.bounds
-                const childOptions = this.getChildLayoutOptions(child, containerOptions)
-                if (bounds !== undefined && isValidDimension(bounds)) {
-                    currentOffset = this.layoutChild(child, boundsData, bounds,
-                        childOptions, containerOptions, currentOffset,
-                        maxWidth, maxHeight)
+                if (this.isLayoutChild(child)) {
+                    const boundsData = layouter.getBoundsData(child)
+                    const bounds = boundsData.bounds
+                    const childOptions = this.getChildLayoutOptions(child, containerOptions)
+                    if (bounds !== undefined && isValidDimension(bounds)) {
+                        currentOffset = this.layoutChild(child, boundsData, bounds,
+                            childOptions, containerOptions, currentOffset,
+                            maxWidth, maxHeight)
+                    }
                 }
             }
         )
         return currentOffset
+    }
+
+    protected isLayoutChild(child: SChildElement): boolean {
+        // Nodes, ports, and edges are handled by the server-side layout
+        return !(child instanceof SNode || child instanceof SPort || child instanceof SEdge)
     }
 
     protected getDx(hAlign: HAlignment, bounds: Bounds, maxWidth: number): number {
