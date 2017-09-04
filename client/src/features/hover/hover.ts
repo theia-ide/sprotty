@@ -227,8 +227,9 @@ export class HoverMouseListener extends AbstractHoverMouseListener {
         if (!this.state.popupOpen)
             this.stopMouseOverTimer()
 
-        if (isHoverable(target))
-            result.push(new HoverFeedbackAction(target.id, false))
+        const hoverTarget = findParentByFeature(target, isHoverable)
+        if (hoverTarget !== undefined)
+            result.push(new HoverFeedbackAction(hoverTarget.id, false))
 
         return result
     }
