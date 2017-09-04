@@ -9,7 +9,7 @@ import { SParentElement } from '../..';
 import 'mocha';
 import { expect } from "chai"
 import { SModelElement } from '../../base/model/smodel'
-import { SNode } from '../../graph/sgraph'
+import { SNode, SLabel } from '../../graph/sgraph'
 import { StatefulLayouter, LayoutRegistry } from './layout'
 import { BoundsData } from './hidden-bounds-updater'
 import { EMPTY_DIMENSION } from '../../utils/geometry'
@@ -28,6 +28,14 @@ describe('HBoxLayouter', () => {
             x: 0, y: 0, width: size.width, height: size.height
         }
         return node
+    }
+
+    function slabel(size: Dimension): SLabel {
+        const label = new SLabel()
+        label.bounds = {
+            x: 0, y: 0, width: size.width, height: size.height
+        }
+        return label
     }
 
     function addToMap(element: SModelElement) {
@@ -50,9 +58,9 @@ describe('HBoxLayouter', () => {
     function createModel(): SNode {
         const model = snode(EMPTY_DIMENSION)
         model.children = [
-            snode({ width: 1, height: 2 }),
-            snode({ width: 2, height: 1 }),
-            snode({ width: 3, height: 3 })
+            slabel({ width: 1, height: 2 }),
+            slabel({ width: 2, height: 1 }),
+            slabel({ width: 3, height: 3 })
         ]
         model.layout = 'hbox'
         return model
