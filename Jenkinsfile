@@ -11,15 +11,14 @@ node {
         try {
             dir('client') {
                 sh "npm install"
+                sh "npm run clean"
                 sh "npm run build"
                 sh "npm run examples:build"
-                set +e  // Ignore test failures
-                sh "npm test"
+                sh "npm test || true" // Ignore test failures
             }
         } finally {
             step([$class: 'JUnitResultArchiver', testResults: 'client/artifacts/test/xunit.xml'])
             archive 'client/artifacts/coverage/**'
-            set -e
         }
     }
     
