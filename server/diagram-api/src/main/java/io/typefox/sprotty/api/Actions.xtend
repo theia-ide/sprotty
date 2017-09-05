@@ -356,13 +356,26 @@ class OpenAction implements Action {
 @Accessors
 @EqualsHashCode
 @ToString(skipNulls = true)
-class RequestExportSvg implements Action {
-	public static val KIND = 'open'
+class RequestExportSvgAction implements Action {
+	public static val KIND = 'requestExportSvg'
 	String kind = KIND
 	
 	new() {}
+	new(Consumer<RequestExportSvgAction> initializer) {
+		initializer.accept(this)
+	}
+}
 
-	new(Consumer<RequestExportSvg> initializer) {
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
+class ExportSvgAction implements Action {
+    public static val KIND = 'exportSvg'
+    String svg
+    String kind = KIND
+
+	new() {}
+	new(Consumer<ExportSvgAction> initializer) {
 		initializer.accept(this)
 	}
 }
