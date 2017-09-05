@@ -20,6 +20,7 @@
 }
 
 .sprotty-popup {
+    font-family: "Helvetica Neue", Helvetica, Arial, sans-serif;
     position: absolute;
     background: white;
     border-radius: 5px;
