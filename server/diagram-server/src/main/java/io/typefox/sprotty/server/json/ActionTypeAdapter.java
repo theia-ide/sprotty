@@ -23,6 +23,7 @@ import io.typefox.sprotty.api.ComputedBoundsAction;
 import io.typefox.sprotty.api.FitToScreenAction;
 import io.typefox.sprotty.api.OpenAction;
 import io.typefox.sprotty.api.RequestBoundsAction;
+import io.typefox.sprotty.api.RequestExportSvg;
 import io.typefox.sprotty.api.RequestModelAction;
 import io.typefox.sprotty.api.RequestPopupModelAction;
 import io.typefox.sprotty.api.SelectAction;
@@ -73,6 +74,7 @@ public class ActionTypeAdapter extends PropertyBasedTypeAdapter<Action> {
 			addActionKind(SetPopupModelAction.KIND, SetPopupModelAction.class);
 			addActionKind(CollapseExpandAction.KIND, CollapseExpandAction.class);
 			addActionKind(OpenAction.KIND, OpenAction.class);
+			addActionKind(RequestExportSvg.KIND, RequestExportSvg.class);
 		}
 		
 		public void addActionKind(String kind, Class<? extends Action> clazz) {

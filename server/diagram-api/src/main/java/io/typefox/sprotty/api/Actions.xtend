@@ -352,3 +352,17 @@ class OpenAction implements Action {
 		initializer.accept(this)
 	}
 }
+
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
+class RequestExportSvg implements Action {
+	public static val KIND = 'open'
+	String kind = KIND
+	
+	new() {}
+
+	new(Consumer<RequestExportSvg> initializer) {
+		initializer.accept(this)
+	}
+}
