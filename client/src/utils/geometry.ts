@@ -155,6 +155,17 @@ export function manhattanDistance(a: Point, b: Point): number {
     return Math.abs(b.x - a.x) + Math.abs(b.y - a.y)
 }
 
+/**
+ * Returns the distance between two points in a grid, using a
+ * strictly vertical and/or horizontal path (versus straight line)
+ * @param {Point} a - First point
+ * @param {Point} b - Second point
+ * @returns {number} The manhattan distance
+ */
+export function maxDistance(a: Point, b: Point): number {
+    return Math.max(Math.abs(b.x - a.x), Math.abs(b.y - a.y))
+}
+
 // range (-PI, PI]
 export function angle(a: Point, b: Point): number {
   return Math.atan2(b.y - a.y, b.x - a.x)

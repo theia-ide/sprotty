@@ -7,7 +7,7 @@
 
 import * as snabbdom from "snabbdom-jsx"
 import { VNode } from "snabbdom/vnode"
-import { center, manhattanDistance, Point } from "../utils/geometry"
+import { center, maxDistance, Point } from "../utils/geometry"
 import { setAttr } from '../base/views/vnode-utils'
 import { RenderingContext, IView } from "../base/views/view"
 import { SModelElement, SChildElement } from "../base/model/smodel"
@@ -34,12 +34,16 @@ export class SGraphView implements IView {
 export abstract class AnchorableView implements IView {
     abstract render(model: SModelElement, context: RenderingContext): VNode
 
-    abstract getAnchor(model: SNode | SPort, refPoint: Point): Point
+    abstract getAnchor(model: SNode | SPort, refPoint: Point, anchorCorrection: number): Point
 
-    getTranslatedAnchor(viewModel: SNode | SPort, refPoint: Point, refModel: SChildElement, targetModel?: SChildElement): Point {
+    getStrokeWidth(model: SNode | SPort): number {
+        return 0
+    }
+
+    getTranslatedAnchor(viewModel: SNode | SPort, refPoint: Point, refModel: SChildElement, anchorCorrection: number, targetModel?: SChildElement): Point {
         const refContainer = refModel.parent
         const viewContainer = viewModel.parent
-        const anchor = this.getAnchor(viewModel, translatePoint(refPoint, refContainer, viewContainer))
+        const anchor = this.getAnchor(viewModel, translatePoint(refPoint, refContainer, viewContainer), anchorCorrection)
         const targetContainer = targetModel !== undefined ? targetModel.parent : refContainer
         return translatePoint(anchor, viewContainer, targetContainer)
     }
@@ -80,18 +84,21 @@ export class PolylineEdgeView implements IView {
         if (edge.routingPoints !== undefined && edge.routingPoints.length >= 1) {
             // Use the first routing point as start anchor reference
             let p0 = edge.routingPoints[0]
-            sourceAnchor = sourceView.getTranslatedAnchor(source, p0, edge)
+            sourceAnchor = sourceView.getTranslatedAnchor(source, p0, edge, this.getSourceAnchorCorrection(edge))
         } else {
             // Use the target center as start anchor reference
             const reference = center(target.bounds)
-            sourceAnchor = sourceView.getTranslatedAnchor(source, reference, target, edge)
+            sourceAnchor = sourceView.getTranslatedAnchor(source, reference, target, this.getSourceAnchorCorrection(edge))
         }
         const result: Point[] = [sourceAnchor]
         let previousPoint = sourceAnchor
 
         for (let i = 0; i < edge.routingPoints.length - 1; i++) {
             const p = edge.routingPoints[i]
-            if (manhattanDistance(previousPoint, p) >= this.minimalPointDistance) {
+            const minDistance = this.minimalPointDistance + ((i === 0)
+                ? this.getSourceAnchorCorrection(edge) + sourceView.getStrokeWidth(source)
+                : 0)
+            if (maxDistance(previousPoint, p) >= minDistance) {
                 result.push(p)
                 previousPoint = p
             }
@@ -101,15 +108,16 @@ export class PolylineEdgeView implements IView {
         if (edge.routingPoints && edge.routingPoints.length >= 2) {
             // Use the last routing point as end anchor reference
             let pn = edge.routingPoints[edge.routingPoints.length - 1]
-            targetAnchor = targetView.getTranslatedAnchor(target, pn, edge)
-            if (manhattanDistance(previousPoint, pn) >= this.minimalPointDistance
-                    && manhattanDistance(pn, targetAnchor) >= this.minimalPointDistance) {
+            targetAnchor = targetView.getTranslatedAnchor(target, pn, edge, this.getTargetAnchorCorrection(edge))
+            const minDistance = this.minimalPointDistance + this.getTargetAnchorCorrection(edge) + targetView.getStrokeWidth(source)
+            if (maxDistance(previousPoint, pn) >= this.minimalPointDistance
+                    && maxDistance(pn, targetAnchor) >= minDistance) {
                 result.push(pn)
             }
         } else {
             // Use the source center as end anchor reference
             const reference = center(source.bounds)
-            targetAnchor = targetView.getTranslatedAnchor(target, reference, source, edge)
+            targetAnchor = targetView.getTranslatedAnchor(target, reference, source, this.getTargetAnchorCorrection(edge), edge)
         }
         result.push(targetAnchor)
         return result
@@ -131,6 +139,14 @@ export class PolylineEdgeView implements IView {
 
     protected renderDanglingEdge(message: string, edge: SEdge, context: RenderingContext): VNode {
         return <text class-dangling-edge={true} title={message}>?</text>
+    }
+
+    protected getSourceAnchorCorrection(edge: SEdge): number {
+        return 0
+    }
+
+    protected getTargetAnchorCorrection(edge: SEdge): number {
+        return 0
     }
 }
 

@@ -12,7 +12,6 @@ import { IView, RenderingContext } from "../base/views/view"
 import { AnchorableView } from "../graph/views"
 import { SNode, SPort } from "../graph/sgraph"
 import { ViewportRootElement } from "../features/viewport/viewport-root"
-
 const JSX = {createElement: snabbdom.svg}
 
 export class SvgViewportView implements IView {
@@ -43,7 +42,7 @@ export class CircularNodeView extends AnchorableView {
             return 0
     }
 
-    getAnchor(node: SNode | SPort, refPoint: Point): Point {
+    getAnchor(node: SNode | SPort, refPoint: Point, anchorCorrection: number): Point {
         const radius = this.getRadius(node)
         const cx = node.position.x + radius
         const cy = node.position.y + radius
@@ -52,9 +51,10 @@ export class CircularNodeView extends AnchorableView {
         const distance = Math.sqrt(dx * dx + dy * dy)
         const normX = (dx / distance) || 0
         const normY = (dy / distance) || 0
+        const strokeCorrection = 0.5 * this.getStrokeWidth(node)
         return {
-            x: cx - normX * radius,
-            y: cy - normY * radius
+            x: cx - normX * (radius + strokeCorrection + anchorCorrection),
+            y: cy - normY * (radius + strokeCorrection + anchorCorrection)
         }
     }
 }
@@ -68,25 +68,26 @@ export class RectangularNodeView extends AnchorableView {
         </g>
     }
 
-    getAnchor(node: SNode | SPort, refPoint: Point): Point {
+    getAnchor(node: SNode | SPort, refPoint: Point, anchorCorrection: number): Point {
         const bounds = node.bounds
+        const correction = 0.5 * this.getStrokeWidth(node) + anchorCorrection
         const c = center(bounds)
         const finder = new NearestPointFinder(c, refPoint)
         if (!almostEquals(c.y, refPoint.y)) {
             const xTop = this.getXIntersection(bounds.y, c, refPoint)
             if (xTop >= bounds.x && xTop <= bounds.x + bounds.width)
-                finder.addCandidate(xTop, bounds.y)
+                finder.addCandidate(xTop, bounds.y - correction)
             const xBottom = this.getXIntersection(bounds.y + bounds.height, c, refPoint)
             if (xBottom >= bounds.x && xBottom <= bounds.x + bounds.width)
-                finder.addCandidate(xBottom, bounds.y + bounds.height)
+                finder.addCandidate(xBottom, bounds.y + bounds.height + correction)
         }
         if (!almostEquals(c.x, refPoint.x)) {
             const yLeft = this.getYIntersection(bounds.x, c, refPoint)
             if (yLeft >= bounds.y  && yLeft <= bounds.y + bounds.height)
-                finder.addCandidate(bounds.x, yLeft)
+                finder.addCandidate(bounds.x - correction, yLeft)
             const yRight = this.getYIntersection(bounds.x + bounds.width, c, refPoint)
             if (yRight >= bounds.y  && yRight <= bounds.y + bounds.height)
-                finder.addCandidate(bounds.x + bounds.width, yRight)
+                finder.addCandidate(bounds.x + bounds.width + correction, yRight)
         }
         return finder.best
     }
