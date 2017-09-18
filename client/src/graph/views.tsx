@@ -40,7 +40,7 @@ export abstract class AnchorableView implements IView {
         return 0
     }
 
-    getTranslatedAnchor(viewModel: SNode | SPort, refPoint: Point, refModel: SChildElement, anchorCorrection: number, targetModel?: SChildElement): Point {
+    getTranslatedAnchor(viewModel: SNode | SPort, refPoint: Point, refModel: SChildElement, anchorCorrection: number = 0, targetModel?: SChildElement): Point {
         const refContainer = refModel.parent
         const viewContainer = viewModel.parent
         const anchor = this.getAnchor(viewModel, translatePoint(refPoint, refContainer, viewContainer), anchorCorrection)

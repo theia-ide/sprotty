@@ -173,7 +173,7 @@ describe('AnchorableView', () => {
         const sourcePort = model.index.getById('port1') as SPort
         const targetPort = model.index.getById('port2') as SPort
         const refPoint = { x: 10, y: 5 }
-        const translated = rectView.getTranslatedAnchor(targetPort, refPoint, sourcePort, edge)
+        const translated = rectView.getTranslatedAnchor(targetPort, refPoint, sourcePort, 0, edge)
         expect(translated).to.deep.equal({ x: 28, y: 15, width: -1, height: -1 })
     })
 })
