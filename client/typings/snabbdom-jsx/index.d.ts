@@ -1,3 +1,6 @@
+// These typings might not be necessary after this is fixed:
+// https://github.com/yelouafi/snabbdom-jsx/issues/22
+
 declare module "snabbdom-jsx" {
 
     import { VNode } from "snabbdom/vnode";
