@@ -4,7 +4,7 @@
     "module": "commonjs",
     "outDir": "lib",
     "lib": [
-      "es6", "dom"
+      "es5", "es2016", "dom"
     ],
     "types": [
       "node", "reflect-metadata"

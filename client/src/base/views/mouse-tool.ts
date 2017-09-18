@@ -41,7 +41,7 @@ export class MouseTool implements IVNodeDecorator {
                 if (element !== undefined)
                     return element
             }
-            target = target.parentElement as Element
+            target = target.parentNode as Element
         }
         return undefined
     }

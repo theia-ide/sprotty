@@ -173,7 +173,7 @@ export class Viewer implements IViewer {
             const lastRootVNode = this.lastVDOM.children[0]
             if (typeof lastRootVNode === 'object') {
                 const lastElement = (lastRootVNode as VNode).elm
-                if (lastElement)
+                if (lastElement && typeof (lastElement as any).focus === 'function')
                     (lastElement as any).focus()
             }
         }
