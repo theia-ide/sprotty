@@ -2,7 +2,10 @@ var CircularDependencyPlugin = require('circular-dependency-plugin');
 
 module.exports = {
     entry: [
-        'core-js/es6', 
+        'core-js/es6/map', 
+        'core-js/es6/promise', 
+        'core-js/es6/string', 
+        'core-js/es6/symbol', 
         './examples/app.ts'],
     devtool: 'source-map',
     output: {
