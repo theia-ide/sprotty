@@ -5,12 +5,23 @@
 * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import { SNode, Expandable, expandFeature } from "../../../src"
+import { SNode, SShapeElement, Expandable, boundsFeature, expandFeature, fadeFeature, layoutFeature } from "../../../src"
 
 export class ClassNode extends SNode implements Expandable {
     expanded: boolean = false
 
     hasFeature(feature: symbol) {
         return feature === expandFeature || super.hasFeature(feature)
+    }
+}
+
+export class Icon extends SShapeElement {
+    size = {
+        width: 32,
+        height: 32
+    }
+
+    hasFeature(feature: symbol): boolean {
+        return feature === boundsFeature || feature === layoutFeature || feature === fadeFeature
     }
 }

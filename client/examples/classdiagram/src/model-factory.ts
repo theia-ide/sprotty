@@ -9,11 +9,13 @@ import {
     SGraphFactory, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, SChildElement,
     getBasicType, HtmlRoot, HtmlRootSchema, PreRenderedElement, PreRenderedElementSchema
 } from "../../../src"
-import { ClassNode } from './model'
+import { ClassNode, Icon } from './model'
 
 export class ClassDiagramFactory extends SGraphFactory {
 
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
+        if (this.isIconSchema(schema)) 
+            return this.initializeChild(new Icon(), schema, parent)
         if (this.isNodeSchema(schema))
             return this.initializeChild(new ClassNode(), schema, parent)
         if (this.isPreRenderedSchema(schema))
@@ -27,6 +29,10 @@ export class ClassDiagramFactory extends SGraphFactory {
             return this.initializeRoot(new HtmlRoot(), schema)
         else
             return super.createRoot(schema)
+    }
+
+    isIconSchema(schema: SModelElementSchema) {
+        return getBasicType(schema) === 'icon'
     }
 
     isHtmlRootSchema(schema: SModelElementSchema): schema is HtmlRootSchema {

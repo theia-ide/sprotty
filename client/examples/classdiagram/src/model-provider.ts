@@ -30,9 +30,21 @@ export class ModelProvider implements StateAwareModelProvider {
                     children: [
                         {
                             id: 'node0_icon',
-                            type: 'label:icon',
-                            text: 'C'
-                        }, {
+                            type: 'icon',
+                            layout: 'stack', 
+                            layoutOptions: {
+                                hAlign: 'center',
+                                resizeContainer: false
+                            },
+                            children: [
+                                {
+                                    id: 'node0_ticon',
+                                    type: 'label:icon',
+                                    text: 'C'
+                                }
+                            ]
+                        },
+                        {
                             id: 'node0_classname',
                             type: 'label:heading',
                             text: 'Foo'
@@ -89,11 +101,23 @@ export class ModelProvider implements StateAwareModelProvider {
                     id: 'node1_header',
                     type: 'comp:header',
                     layout: 'hbox',
-                    children: [{
-                        id: 'node1_icon',
-                        type: 'label:icon',
-                        text: 'C'
-                    }, {
+                    children: [
+                        {
+                            id: 'node1_icon',
+                            type: 'icon',
+                            layout: 'stack',
+                            layoutOptions: {
+                                hAlign: 'center',
+                                resizeContainer: false
+                            },
+                            children: [
+                                {
+                                    id: 'node1_ticon',
+                                    type: 'label:icon',
+                                    text: 'C'
+                                }, 
+                            ]
+                        }, {
                         id: 'node1_classname',
                         type: 'label:heading',
                         text: 'Bar'

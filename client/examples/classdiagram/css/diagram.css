@@ -77,8 +77,6 @@
 
 text.icon {
     fill: #fff;
-    text-anchor: middle;
-    dominant-baseline: central;
 }
 
 .button {
