@@ -62,17 +62,30 @@ class SGraph extends SModelRoot implements BoundsAware {
 }
 
 /**
+ * Superclass for a lot of 
+ */
+@Accessors
+@ToString(skipNulls = true)
+class SShapeElement extends SModelElement implements BoundsAware {
+	Point position
+	Dimension size
+	LayoutOptions layoutOptions
+	
+	new() {}
+	new(Consumer<SShapeElement> initializer) {
+		initializer.accept(this)
+	}
+}
+
+/**
  * Model element class for nodes, which are connectable entities in a graph. A node can be connected to
  * another node via an SEdge. Such a connection can be direct, i.e. the node is the source or target of
  * the edge, or indirect through a port, i.e. it contains an SPort which is the source or target of the edge.
  */
 @Accessors
 @ToString(skipNulls = true)
-class SNode extends SModelElement implements BoundsAware, Layouting  {
-	Point position
-	Dimension size
+class SNode extends SShapeElement implements Layouting {
 	String layout
-	LayoutOptions layoutOptions
 	
 	new() {}
 	new(Consumer<SNode> initializer) {
@@ -85,11 +98,7 @@ class SNode extends SModelElement implements BoundsAware, Layouting  {
  */
 @Accessors
 @ToString(skipNulls = true)
-class SPort extends SModelElement implements BoundsAware  {
-	Point position
-	Dimension size
-	LayoutOptions layoutOptions
-	
+class SPort extends SShapeElement {
 	new() {}
 	new(Consumer<SPort> initializer) {
 		initializer.accept(this)
@@ -119,12 +128,9 @@ class SEdge extends SModelElement {
  */
 @Accessors
 @ToString(skipNulls = true)
-class SLabel extends SModelElement implements BoundsAware, Alignable {
-	Point position
-	Dimension size
+class SLabel extends SShapeElement implements Alignable {
 	String text
 	Point alignment
-	LayoutOptions layoutOptions
 	
 	new() {}
 	new(Consumer<SLabel> initializer) {
@@ -138,11 +144,8 @@ class SLabel extends SModelElement implements BoundsAware, Alignable {
  */
 @Accessors
 @ToString(skipNulls = true)
-class SCompartment extends SModelElement implements BoundsAware, Layouting {
-	Point position
-	Dimension size
+class SCompartment extends SShapeElement implements Layouting {
 	String layout
-	LayoutOptions layoutOptions
 	
 	new() {}
 	new(Consumer<SCompartment> initializer) {
@@ -156,9 +159,7 @@ class SCompartment extends SModelElement implements BoundsAware, Layouting {
  */
 @Accessors
 @ToString(skipNulls = true)
-class SButton extends SModelElement implements BoundsAware {
-	Point position
-	Dimension size
+class SButton extends SShapeElement implements BoundsAware {
 	Boolean enabled
 	
 	new() {}
