@@ -80,8 +80,8 @@ export class SvgExporter {
         for (let i = 0; i < source.childNodes.length; ++i) {
             const sourceChild = source.childNodes[i]
             const targetChild = target.childNodes[i]
-            if (sourceChild instanceof Element && targetChild instanceof Element)
-                this.copyStyles(sourceChild, targetChild, [])
+            if (sourceChild instanceof Element)
+                this.copyStyles(sourceChild, targetChild as Element, [])
         }
     }
 
