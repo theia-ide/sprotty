@@ -94,7 +94,7 @@ export class SvgExporter {
                         this.log.warn(this, styleSheet.href + ' is a cross-site css which cannot be inspected by some browsers. SVG may lack some styles.')
                 }
             }
-            // IE has its own way of listing imported stylesheets 
+            // IE has its own way of listing imported stylesheets
             const imports = (styleSheet as any)['imports'] as StyleSheetList
             if (imports !== undefined) {
                 css += this.createStylesFromCSS(imports)
