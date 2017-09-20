@@ -36,43 +36,53 @@ export class SvgExporter {
             const div = document.getElementById(this.options.hiddenDiv)
             if (div !== null && div.firstElementChild && div.firstElementChild.tagName === 'svg') {
                 const svgElement = div.firstElementChild as SVGSVGElement
-                this.prepareSvg(svgElement, root)
-                const svg = div.innerHTML
+                const svg = this.createSvg(svgElement, root)
                 this.actionDispatcher.dispatch(new ExportSvgAction(svg))
             }
         }
     }
 
-    protected prepareSvg(svgElement: SVGSVGElement, root: SModelRoot) {
-        const defs = this.getChild(svgElement, 'defs')
-        defs.appendChild(this.createStyleFromCSS(svgElement))
+    protected createSvg(svgElementOrig: SVGSVGElement, root: SModelRoot): string {
+        const stylesFromCSS = this.createStylesFromCSS(svgElementOrig)
+        const serializer = new XMLSerializer()
+        const svgCopy = serializer.serializeToString(svgElementOrig)
+        const parser = new DOMParser()
+        const svgDocument = parser.parseFromString(svgCopy, "image/svg+xml")
+        const svgElement = svgDocument.rootElement
+        const style = this.getChild(svgDocument, svgElement, 'style')
+        style.setAttribute('type', 'text/css')
+        const stylesCData = svgDocument.createCDATASection(stylesFromCSS)
+        style.appendChild(stylesCData)
+        const defs = this.getChild(svgDocument, svgElement, 'defs')
+        defs.appendChild(style)
         svgElement.setAttribute('version', '1.1')
-        svgElement.setAttribute('xmlns', 'http://www.w3.org/2000/svg')
         svgElement.removeAttribute('opacity')
-        svgElement.setAttribute('class', 'sprotty ' + svgElement.getAttribute('class'))
+        if (!svgElement.classList.contains('sprotty')) 
+            svgElement.classList.add('sprotty')
         const bounds = this.getBounds(root)
         svgElement.setAttribute('viewBox', `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`)
+        return serializer.serializeToString(svgElement)
     }
 
-    protected getChild(svgElement: SVGSVGElement, tagName: string): HTMLElement {
+    protected getChild(svgDocument: Document, svgElement: SVGSVGElement, tagName: string): HTMLElement {
         if (svgElement.children) {
             for (let i = 0; i < svgElement.children.length; ++i) {
                 const child = svgElement.children.item(i)
                 if (child.tagName === tagName)
                     return child as HTMLElement
             }
-            const defs = document.createElement(tagName)
+            const defs = svgDocument.createElement(tagName)
             svgElement.insertBefore(defs, svgElement.firstChild)
             return defs
         } else {
-            const defs = document.createElement(tagName)
+            const defs = svgDocument.createElement(tagName)
             svgElement.appendChild(defs)
             return defs
         }
     }
 
-    protected createStyleFromCSS(svgElement: SVGSVGElement): Element {
-        let css = '<![CDATA['
+    protected createStylesFromCSS(svgElement: SVGSVGElement): string {
+        let css = ''
         for (let i = 0; i < document.styleSheets.length; ++i) {
             const styleSheet = document.styleSheets.item(i) as CSSStyleSheet
             if (this.isExported(styleSheet)) {
@@ -85,11 +95,7 @@ export class SvgExporter {
                 }
             }
         }
-        css += ']]>'
-        const style = this.getChild(svgElement, 'style')
-        style.setAttribute('type', 'text/css')
-        style.innerText = css
-        return style
+        return css
     }
 
     /**
