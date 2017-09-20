@@ -5,12 +5,12 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import * as snabbdom from "snabbdom-jsx"
+import * as snabbdom from 'snabbdom-jsx';
 import { VNode } from "snabbdom/vnode"
 import { center, maxDistance, Point } from "../utils/geometry"
 import { setAttr } from '../base/views/vnode-utils'
 import { RenderingContext, IView } from "../base/views/view"
-import { SModelElement, SChildElement } from "../base/model/smodel"
+import { SModelElement, SParentElement } from "../base/model/smodel"
 import { getSubType, translatePoint } from "../base/model/smodel-utils"
 import { SCompartment, SEdge, SGraph, SLabel, SNode, SPort } from "./sgraph"
 
@@ -40,12 +40,11 @@ export abstract class AnchorableView implements IView {
         return 0
     }
 
-    getTranslatedAnchor(viewModel: SNode | SPort, refPoint: Point, refModel: SChildElement, anchorCorrection: number = 0, targetModel?: SChildElement): Point {
-        const refContainer = refModel.parent
-        const viewContainer = viewModel.parent
-        const anchor = this.getAnchor(viewModel, translatePoint(refPoint, refContainer, viewContainer), anchorCorrection)
-        const targetContainer = targetModel !== undefined ? targetModel.parent : refContainer
-        return translatePoint(anchor, viewContainer, targetContainer)
+    getTranslatedAnchor(node: SNode | SPort, refPoint: Point, refContainer: SParentElement, anchorCorrection: number = 0, edge: SEdge): Point {
+        const viewContainer = node.parent
+        const anchor = this.getAnchor(node, translatePoint(refPoint, refContainer, viewContainer), anchorCorrection)
+        const edgeContainer = edge.parent
+        return translatePoint(anchor, viewContainer, edgeContainer)
     }
 }
 
@@ -84,11 +83,11 @@ export class PolylineEdgeView implements IView {
         if (edge.routingPoints !== undefined && edge.routingPoints.length >= 1) {
             // Use the first routing point as start anchor reference
             let p0 = edge.routingPoints[0]
-            sourceAnchor = sourceView.getTranslatedAnchor(source, p0, edge, this.getSourceAnchorCorrection(edge))
+            sourceAnchor = sourceView.getTranslatedAnchor(source, p0, edge.parent, this.getSourceAnchorCorrection(edge), edge)
         } else {
             // Use the target center as start anchor reference
             const reference = center(target.bounds)
-            sourceAnchor = sourceView.getTranslatedAnchor(source, reference, target, this.getSourceAnchorCorrection(edge))
+            sourceAnchor = sourceView.getTranslatedAnchor(source, reference, target.parent, this.getSourceAnchorCorrection(edge), edge)
         }
         const result: Point[] = [sourceAnchor]
         let previousPoint = sourceAnchor
@@ -108,7 +107,7 @@ export class PolylineEdgeView implements IView {
         if (edge.routingPoints && edge.routingPoints.length >= 2) {
             // Use the last routing point as end anchor reference
             let pn = edge.routingPoints[edge.routingPoints.length - 1]
-            targetAnchor = targetView.getTranslatedAnchor(target, pn, edge, this.getTargetAnchorCorrection(edge))
+            targetAnchor = targetView.getTranslatedAnchor(target, pn, edge.parent, this.getTargetAnchorCorrection(edge), edge)
             const minDistance = this.minimalPointDistance + this.getTargetAnchorCorrection(edge) + targetView.getStrokeWidth(source)
             if (maxDistance(previousPoint, pn) >= this.minimalPointDistance
                     && maxDistance(pn, targetAnchor) >= minDistance) {
@@ -117,7 +116,7 @@ export class PolylineEdgeView implements IView {
         } else {
             // Use the source center as end anchor reference
             const reference = center(source.bounds)
-            targetAnchor = targetView.getTranslatedAnchor(target, reference, source, this.getTargetAnchorCorrection(edge), edge)
+            targetAnchor = targetView.getTranslatedAnchor(target, reference, source.parent, this.getTargetAnchorCorrection(edge), edge)
         }
         result.push(targetAnchor)
         return result

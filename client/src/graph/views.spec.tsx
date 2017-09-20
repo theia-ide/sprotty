@@ -156,7 +156,7 @@ describe('AnchorableView', () => {
         const edge = model.index.getById('edge1') as SEdge
         const sourcePort = model.index.getById('port1') as SPort
         const refPoint = { x: 30, y: 15 }
-        const translated = rectView.getTranslatedAnchor(sourcePort, refPoint, edge)
+        const translated = rectView.getTranslatedAnchor(sourcePort, refPoint, edge.parent, 0, edge)
         expect(translated).to.deep.equal({ x: 22, y: 15, width: -1, height: -1 })
     })
     
@@ -164,7 +164,7 @@ describe('AnchorableView', () => {
         const edge = model.index.getById('edge1') as SEdge
         const targetPort = model.index.getById('port2') as SPort
         const refPoint = { x: 20, y: 15 }
-        const translated = rectView.getTranslatedAnchor(targetPort, refPoint, edge)
+        const translated = rectView.getTranslatedAnchor(targetPort, refPoint, edge.parent, 0, edge)
         expect(translated).to.deep.equal({ x: 28, y: 15, width: -1, height: -1 })
     })
     
@@ -173,7 +173,7 @@ describe('AnchorableView', () => {
         const sourcePort = model.index.getById('port1') as SPort
         const targetPort = model.index.getById('port2') as SPort
         const refPoint = { x: 10, y: 5 }
-        const translated = rectView.getTranslatedAnchor(targetPort, refPoint, sourcePort, 0, edge)
+        const translated = rectView.getTranslatedAnchor(targetPort, refPoint, sourcePort.parent, 0, edge)
         expect(translated).to.deep.equal({ x: 28, y: 15, width: -1, height: -1 })
     })
 })
