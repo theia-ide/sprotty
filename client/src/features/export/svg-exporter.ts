@@ -43,7 +43,7 @@ export class SvgExporter {
     }
 
     protected createSvg(svgElementOrig: SVGSVGElement, root: SModelRoot): string {
-        const stylesFromCSS = this.createStylesFromCSS(svgElementOrig)
+        const stylesFromCSS = this.createStylesFromCSS(document.styleSheets)
         const serializer = new XMLSerializer()
         const svgCopy = serializer.serializeToString(svgElementOrig)
         const parser = new DOMParser()
@@ -81,10 +81,10 @@ export class SvgExporter {
         }
     }
 
-    protected createStylesFromCSS(svgElement: SVGSVGElement): string {
+    protected createStylesFromCSS(styleSheets: StyleSheetList): string {
         let css = ''
-        for (let i = 0; i < document.styleSheets.length; ++i) {
-            const styleSheet = document.styleSheets.item(i) as CSSStyleSheet
+        for (let i = 0; i < styleSheets.length; ++i) {
+            const styleSheet = styleSheets.item(i) as CSSStyleSheet
             if (this.isExported(styleSheet)) {
                 if (styleSheet.cssRules) {
                     for (let j = 0; j < styleSheet.cssRules.length; ++j)
@@ -93,6 +93,11 @@ export class SvgExporter {
                     if (isCrossSite(styleSheet.href))
                         this.log.warn(this, styleSheet.href + ' is a cross-site css which cannot be inspected by some browsers. SVG may lack some styles.')
                 }
+            }
+            // IE has its own way of listing imported stylesheets 
+            const imports = (styleSheet as any)['imports'] as StyleSheetList
+            if (imports !== undefined) {
+                css += this.createStylesFromCSS(imports)
             }
         }
         return css
