@@ -57,7 +57,7 @@ export class SvgExporter {
         defs.appendChild(style)
         svgElement.setAttribute('version', '1.1')
         svgElement.removeAttribute('opacity')
-        if (!svgElement.classList.contains('sprotty')) 
+        if (!svgElement.classList.contains('sprotty'))
             svgElement.classList.add('sprotty')
         const bounds = this.getBounds(root)
         svgElement.setAttribute('viewBox', `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`)
