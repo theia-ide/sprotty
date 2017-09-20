@@ -13,7 +13,6 @@ import { TYPES } from '../../base/types'
 import { SModelRoot } from '../../base/model/smodel'
 import { Bounds, combine, EMPTY_BOUNDS } from '../../utils/geometry'
 import { ILogger } from '../../utils/logging'
-import { isCrossSite } from '../../utils/browser'
 import { injectable, inject } from "inversify"
 
 export class ExportSvgAction implements Action {
@@ -43,84 +42,42 @@ export class SvgExporter {
     }
 
     protected createSvg(svgElementOrig: SVGSVGElement, root: SModelRoot): string {
-        const stylesFromCSS = this.createStylesFromCSS(document.styleSheets)
         const serializer = new XMLSerializer()
         const svgCopy = serializer.serializeToString(svgElementOrig)
-        const parser = new DOMParser()
-        const svgDocument = parser.parseFromString(svgCopy, "image/svg+xml")
-        const svgElement = svgDocument.rootElement
-        const style = this.getChild(svgDocument, svgElement, 'style')
-        style.setAttribute('type', 'text/css')
-        const stylesCData = svgDocument.createCDATASection(stylesFromCSS)
-        style.appendChild(stylesCData)
-        const defs = this.getChild(svgDocument, svgElement, 'defs')
-        defs.appendChild(style)
-        svgElement.setAttribute('version', '1.1')
-        svgElement.removeAttribute('opacity')
-        if (!svgElement.classList.contains('sprotty'))
-            svgElement.classList.add('sprotty')
+        const iframe = document.createElement('iframe') as HTMLIFrameElement
+        document.body.appendChild(iframe)
+        const docCopy = iframe.contentWindow.document
+        docCopy.open()
+        docCopy.write(svgCopy)
+        docCopy.close()
+        const svgElementNew = docCopy.getElementById(svgElementOrig.id)!
+        svgElementNew.removeAttribute('opacity')
+        this.copyStyles(svgElementOrig, svgElementNew, ['width', 'height', 'opacity'])
+        svgElementNew.setAttribute('version', '1.1')
         const bounds = this.getBounds(root)
-        svgElement.setAttribute('viewBox', `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`)
-        return serializer.serializeToString(svgElement)
+        svgElementNew.setAttribute('viewBox', `${bounds.x} ${bounds.y} ${bounds.width} ${bounds.height}`)
+        const svgCode = serializer.serializeToString(svgElementNew)
+        document.body.removeChild(iframe)
+        return svgCode
     }
 
-    protected getChild(svgDocument: Document, svgElement: SVGSVGElement, tagName: string): HTMLElement {
-        if (svgElement.children) {
-            for (let i = 0; i < svgElement.children.length; ++i) {
-                const child = svgElement.children.item(i)
-                if (child.tagName === tagName)
-                    return child as HTMLElement
-            }
-            const defs = svgDocument.createElement(tagName)
-            svgElement.insertBefore(defs, svgElement.firstChild)
-            return defs
-        } else {
-            const defs = svgDocument.createElement(tagName)
-            svgElement.appendChild(defs)
-            return defs
-        }
-    }
-
-    protected createStylesFromCSS(styleSheets: StyleSheetList): string {
-        let css = ''
-        for (let i = 0; i < styleSheets.length; ++i) {
-            const styleSheet = styleSheets.item(i) as CSSStyleSheet
-            if (this.isExported(styleSheet)) {
-                if (styleSheet.cssRules) {
-                    for (let j = 0; j < styleSheet.cssRules.length; ++j)
-                        css = css + styleSheet.cssRules.item(j).cssText + ' '
-                } else {
-                    if (isCrossSite(styleSheet.href))
-                        this.log.warn(this, styleSheet.href + ' is a cross-site css which cannot be inspected by some browsers. SVG may lack some styles.')
+    protected copyStyles(source: Element, target: Element, skipedProperties: string[]) {
+        const sourceStyle = getComputedStyle(source)
+        const targetStyle = getComputedStyle(target)
+        let diffStyle = ''
+        for (let i = 0; i < sourceStyle.length; i++) {
+            const key = sourceStyle[i]
+            if (skipedProperties.indexOf(key) === -1) {
+                const value = sourceStyle.getPropertyValue(key)
+                if (targetStyle.getPropertyValue(key) !== value) {
+                    diffStyle += key + ":" + value + ";"
                 }
             }
-            // IE has its own way of listing imported stylesheets
-            const imports = (styleSheet as any)['imports'] as StyleSheetList
-            if (imports !== undefined) {
-                css += this.createStylesFromCSS(imports)
-            }
         }
-        return css
-    }
-
-    /**
-     * By default, only CSS rules from files
-     * 1) with a specific comment
-     * 2) with standard file names
-     * are exported.
-     */
-    protected isExported(styleSheet: CSSStyleSheet) {
-        return this.isStandardSprottyStylesheet(styleSheet) || this.hasExportComment(styleSheet)
-    }
-
-    protected isStandardSprottyStylesheet(styleSheet: CSSStyleSheet) {
-        return styleSheet.href && (styleSheet.href.endsWith('sprotty.css') || styleSheet.href.endsWith('diagram.css'))
-    }
-
-    protected hasExportComment(styleSheet: CSSStyleSheet) {
-        return styleSheet.ownerNode
-            && (styleSheet.ownerNode as any).innerHTML
-            && (styleSheet.ownerNode as any).innerHTML.indexOf('/* sprotty SVG export */') !== -1
+        if (diffStyle !== '')
+            target.setAttribute('style', diffStyle)
+        for (let i = 0; i < source.children.length; ++i)
+            this.copyStyles(source.children[i], target.children[i], [])
     }
 
     protected getBounds(root: SModelRoot) {
