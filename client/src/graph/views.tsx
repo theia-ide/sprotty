@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import * as snabbdom from 'snabbdom-jsx';
+import * as snabbdom from 'snabbdom-jsx'
 import { VNode } from "snabbdom/vnode"
 import { center, maxDistance, Point } from "../utils/geometry"
 import { setAttr } from '../base/views/vnode-utils'
