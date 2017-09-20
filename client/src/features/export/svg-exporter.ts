@@ -78,7 +78,10 @@ export class SvgExporter {
             target.setAttribute('style', diffStyle)
         // IE doesn't retrun anything on source.children
         for (let i = 0; i < source.childNodes.length; ++i) {
-            this.copyStyles(source.childNodes[i] as Element, target.childNodes[i] as Element, [])
+            const sourceChild = source.childNodes[i]
+            const targetChild = target.childNodes[i]
+            if (sourceChild instanceof Element && targetChild instanceof Element)
+                this.copyStyles(sourceChild, targetChild, [])
         }
     }
 
