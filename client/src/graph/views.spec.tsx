@@ -5,10 +5,10 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import "reflect-metadata"
-import "mocha"
+import 'reflect-metadata';
+import 'mocha';
 import { expect } from "chai"
-import * as snabbdom from "snabbdom-jsx"
+import * as snabbdom from 'snabbdom-jsx';
 import { Container } from "inversify"
 import { VNode } from "snabbdom/vnode"
 import { TYPES } from "../base/types"
@@ -16,12 +16,14 @@ import { IVNodeDecorator } from '../base/views/vnode-decorators'
 import { CircularNodeView, RectangularNodeView } from "../lib/svg-views"
 import { RenderingContext, ViewRegistry } from "../base/views/view"
 import { ModelRendererFactory } from "../base/views/viewer"
-import { SGraphView, PolylineEdgeView } from "./views"
+import { AnchorableView, PolylineEdgeView, SGraphView } from './views';
+import { SModelElement, SParentElement } from "../base/model/smodel"
 import { SEdge, SGraph, SNode, SNodeSchema, SEdgeSchema, SPortSchema, SPort } from "./sgraph"
 import { SGraphFactory } from "./sgraph-factory"
 import defaultModule from "../base/di.config"
 import selectModule from "../features/select/di.config"
 import moveModule from "../features/move/di.config"
+import { Point } from "../utils/geometry"
 
 const toHTML = require('snabbdom-to-html')
 const JSX = {createElement: snabbdom.svg}
@@ -175,5 +177,83 @@ describe('AnchorableView', () => {
         const refPoint = { x: 10, y: 5 }
         const translated = rectView.getTranslatedAnchor(targetPort, refPoint, sourcePort.parent, 0, edge)
         expect(translated).to.deep.equal({ x: 28, y: 15, width: -1, height: -1 })
+    })
+})
+
+describe('PolylineEdgeView', () => {
+    const factory = new SGraphFactory()
+    const model = factory.createRoot({
+        type: 'graph',
+        id: 'graph',
+        children: [
+            {
+                type: 'node',
+                id: 'node1',
+                position: { x: 10, y: 10 },
+                size: { width: 10, height: 10 },
+                children: [
+                    {
+                        type: 'port',
+                        id: 'port1',
+                        position: { x: 10, y: 4 },
+                        size: { width: 2, height: 2 }
+                    } as SPortSchema,
+                    {
+                        type: 'edge',
+                        id: 'edge1',
+                        sourceId: 'port1',
+                        targetId: 'port2'
+                    } as SEdgeSchema
+                ]
+            } as SNodeSchema,
+            {
+                type: 'node',
+                id: 'node2',
+                position: { x: 30, y: 20 },
+                size: { width: 10, height: 10 },
+                children: [
+                    {
+                        type: 'port',
+                        id: 'port2',
+                        position: { x: -2, y: 4 },
+                        size: { width: 2, height: 2 }
+                    } as SPortSchema,
+                    {
+                        type: 'edge',
+                        id: 'edge2',
+                        sourceId: 'port1',
+                        targetId: 'port2'
+                    } as SEdgeSchema
+                ]
+            } as SNodeSchema,
+        ]
+    })
+
+    const edgeView = new PolylineEdgeView()
+    const context = {
+        viewRegistry: new ViewRegistry,
+        decorate: function(vnode: VNode, element: SModelElement): VNode { return vnode },
+        renderElement: function(element: SModelElement): VNode { return <g></g> },
+        renderChildren: function(element: SParentElement): VNode[] { return []}
+    } as RenderingContext
+    class PortView extends AnchorableView {
+        public render(model: SModelElement, context: RenderingContext): VNode {
+            return <g/>
+        }
+
+        public getAnchor(model: SNode | SPort, refPoint: Point, anchorCorrection: number): Point {
+            return model.position
+        }
+    } 
+    context.viewRegistry.register('port', PortView)
+
+    it('correctly translates edge source and target position', () => {
+        const edge = model.index.getById('edge1') as SEdge
+        expect(toHTML(edgeView.render(edge, context))).to.equal('<g><path class="edge" d="M 10,4 L 18,14" /></g>')
+    })
+    
+    it('correctly translates edge target and source position', () => {
+        const edge = model.index.getById('edge2') as SEdge
+        expect(toHTML(edgeView.render(edge, context))).to.equal('<g><path class="edge" d="M -10,-6 L -2,4" /></g>')
     })
 })
