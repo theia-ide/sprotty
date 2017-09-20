@@ -76,11 +76,13 @@ export class SvgExporter {
         }
         if (diffStyle !== '')
             target.setAttribute('style', diffStyle)
-        for (let i = 0; i < source.children.length; ++i)
-            this.copyStyles(source.children[i], target.children[i], [])
+        // IE doesn't retrun anything on source.children
+        for (let i = 0; i < source.childNodes.length; ++i) {
+            this.copyStyles(source.childNodes[i] as Element, target.childNodes[i] as Element, [])
+        }
     }
 
-    protected getBounds(root: SModelRoot) {
+    protected getBounds(root: SModelRoot) {
         let allBounds: Bounds[] = [ EMPTY_BOUNDS ]
         root.children.forEach(element => {
             if (isBoundsAware(element)) {
