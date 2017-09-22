@@ -35,4 +35,5 @@ public interface IDiagramState {
 	 * @return the IDs of the currently selected {@link SModelElement}s.
 	 */
 	Set<String> getSelectedElements();
+	
 }

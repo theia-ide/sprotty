@@ -379,3 +379,22 @@ class ExportSvgAction implements Action {
 		initializer.accept(this)
 	}
 }
+
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
+class ServerStatusAction implements Action {
+    public static val KIND = 'serverStatus'
+    String severity
+    String message
+    String kind = KIND
+
+	new() {}
+	new(Consumer<ServerStatusAction> initializer) {
+		initializer.accept(this)
+	}
+	new(ServerStatus status) {
+		this.severity = status.severity.toString
+		this.message = status.message
+	}
+}

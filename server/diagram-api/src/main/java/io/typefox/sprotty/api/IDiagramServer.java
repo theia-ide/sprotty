@@ -68,6 +68,14 @@ public interface IDiagramServer extends Consumer<ActionMessage> {
 	void updateModel(SModelRoot root);
 	
 	/**
+	 * Set the current status popup model and send an update to the client, if a remote endpoint has 
+	 * been configured.
+	 * 
+	 * <p>The root parameter can be {@code null}, in which case the current popup model is cleared.</p> 
+	 */
+	void setStatus(ServerStatus status);
+	
+	/**
 	 * The options received from the client with the last {@link RequestModelAction}. These options
 	 * can be used to control diagram creation. If no such action has been received yet, or the action did
 	 * not contain any options, an empty map is returned.

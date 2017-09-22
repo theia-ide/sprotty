@@ -39,6 +39,16 @@ export function isActionMessage(object: any): object is ActionMessage {
 }
 
 /**
+ * Sent by the external server when to signal a state change.
+ */
+export class ServerStatusAction {
+    static KIND = 'serverStatus'
+    kind = ServerStatusAction.KIND
+    severity: string
+    message: string
+}
+
+/**
  * A ModelSource that communicates with an external model provider, e.g.
  * a model editor.
  *
@@ -76,6 +86,7 @@ export abstract class DiagramServer extends ModelSource {
         registry.register(RequestPopupModelAction.KIND, this)
         registry.register(CollapseExpandAction.KIND, this)
         registry.register(OpenAction.KIND, this)
+        registry.register(ServerStatusAction.KIND, this)
     }
 
     handle(action: Action): void | ICommand {
@@ -117,6 +128,8 @@ export abstract class DiagramServer extends ModelSource {
                 return false
             case ExportSvgAction.KIND:
                 return this.handleExportSvgAction(action as ExportSvgAction)
+            case ServerStatusAction.KIND:
+                return this.handleServerStateAction(action as ServerStatusAction)
         }
         return true
     }
@@ -177,6 +190,10 @@ export abstract class DiagramServer extends ModelSource {
     protected handleExportSvgAction(action: ExportSvgAction): boolean {
         const blob = new Blob([action.svg], {type: "text/plain;charset=utf-8"})
         saveAs(blob, "diagram.svg")
+        return false
+    }
+
+    protected handleServerStateAction(action: ServerStatusAction): boolean {
         return false
     }
 }

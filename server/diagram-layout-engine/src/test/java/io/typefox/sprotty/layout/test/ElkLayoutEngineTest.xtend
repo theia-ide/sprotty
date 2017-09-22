@@ -272,4 +272,102 @@ class ElkLayoutEngineTest extends AbstractElkTest {
 		''')
 	}
 	
+	@Test
+	def void testLayoutCrossHierarchyEdge3() {
+		val model = create(SGraph, 'g') [
+			addChild(SNode) [
+				position = new Point => [ x = 10; y = 10]
+				addChild(SNode) [
+					position = new Point => [ x = 10; y = 10]
+				]
+			]
+			addChild(SNode) [
+				position = new Point => [ x = 40; y = 10]
+				addChild(SNode) [
+					position = new Point => [ x = 10; y = 10]
+				]
+				addChild(SEdge) [   // Added as child of 'g' in the ELK graph
+					sourceId = 'g/node1/node0'
+					targetId = 'g/node0/node0'
+				]
+			]
+		]
+		engine.layout(model) [
+			val bendPoint = new KVectorChain(new KVector(50, 20), new KVector(35, 25), new KVector(20, 20))
+			configureById('g/node1/edge1').setProperty(CoreOptions.BEND_POINTS, bendPoint)
+		]
+		model.children.get(1).children.get(1).assertSerializedTo('''
+			SEdge [
+			  sourceId = "g/node1/node0"
+			  targetId = "g/node0/node0"
+			  routingPoints = ArrayList (
+			    Point [
+			      x = 10.0
+			      y = 10.0
+			    ],
+			    Point [
+			      x = -5.0
+			      y = 15.0
+			    ],
+			    Point [
+			      x = -20.0
+			      y = 10.0
+			    ]
+			  )
+			  type = "edge"
+			  id = "g/node1/edge1"
+			]
+		''')
+	}
+	
+	@Test
+	def void testLayoutCrossHierarchyEdge4() {
+		val model = create(SGraph, 'g') [
+			addChild(SNode) [
+				position = new Point => [ x = 10; y = 10]
+				addChild(SNode) [
+					position = new Point => [ x = 10; y = 10]
+				]
+				addChild(SEdge) [   // Added as child of 'g' in the ELK graph
+					sourceId = 'g/node0/node0'
+					targetId = 'g/node1/node0'
+				]
+			]
+			addChild(SNode) [
+				position = new Point => [ x = 40; y = 10]
+				addChild(SNode) [
+					position = new Point => [ x = 10; y = 10]
+				]
+			]
+		]
+		engine.layout(model) [
+			val bendPoint = new KVectorChain(new KVector(20, 20), new KVector(35, 25), new KVector(50, 20))
+			configureById('g/node0/edge1').setProperty(CoreOptions.BEND_POINTS, bendPoint)
+		]
+		model.children.get(0).children.get(1).assertSerializedTo('''
+			SEdge [
+			  sourceId = "g/node0/node0"
+			  targetId = "g/node1/node0"
+			  routingPoints = ArrayList (
+			    Point [
+			      x = 10.0
+			      y = 10.0
+			    ],
+			    Point [
+			      x = 25.0
+			      y = 15.0
+			    ],
+			    Point [
+			      x = 40.0
+			      y = 10.0
+			    ]
+			  )
+			  type = "edge"
+			  id = "g/node0/edge1"
+			]
+		''')
+	}
+	
+	
+	
 }

@@ -52,6 +52,8 @@ public class DefaultDiagramServer implements IDiagramServer {
 
 	private int revision = 0;
 	
+	private ServerStatus status;
+	
 	public DefaultDiagramServer() {
 		currentRoot = new SModelRoot();
 		currentRoot.setType("NONE");
@@ -180,6 +182,15 @@ public class DefaultDiagramServer implements IDiagramServer {
 			newRoot.setRevision(++revision);
 		}
 		submitModel(newRoot, true);
+	}
+	
+	public ServerStatus getStatus() {
+		return status;
+	}
+	
+	public void setStatus(ServerStatus status) {
+		this.status = status;
+		dispatch(new ServerStatusAction(status));
 	}
 	
 	@Override

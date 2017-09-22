@@ -10,6 +10,7 @@ import com.google.inject.Inject
 import com.google.inject.Provider
 import io.typefox.sprotty.api.ActionMessage
 import io.typefox.sprotty.api.IDiagramServer
+import io.typefox.sprotty.api.ServerStatus
 import java.util.Collection
 import java.util.List
 import java.util.Map
@@ -27,6 +28,8 @@ import org.eclipse.xtext.ide.server.UriExtensions
 import org.eclipse.xtext.util.CancelIndicator
 import org.eclipse.xtext.validation.CheckMode
 import org.eclipse.xtext.validation.IResourceValidator
+
+import static io.typefox.sprotty.api.ServerStatus.Severity.*
 
 /**
  * An extension of the <a href="https://github.com/Microsoft/language-server-protocol">Language Server Protocol (LSP)</a>
@@ -155,13 +158,18 @@ class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguage
 			return CompletableFuture.completedFuture(null)
 		}
 		return path.doRead [ context |
-			if (context.resource.shouldGenerate(context.cancelChecker)) {
-				val diagramGenerator = diagramGeneratorProvider.get
-				return diagramServers.map [ server |
-					server -> diagramGenerator.generate(context.resource, server.diagramState, context.cancelChecker)
-				]
-			} else
-				return emptyList
+			val status = context.resource.shouldGenerate(context.cancelChecker)
+			return diagramServers.map [ server |
+				server -> {
+					server.status = status
+					if (status.severity !== ERROR) {
+						val diagramGenerator = diagramGeneratorProvider.get
+						diagramGenerator.generate(context.resource, server.diagramState, context.cancelChecker)
+					} else {
+						null
+					}
+				}
+			]
 		].thenAccept [ resultList |
 			resultList.filter[value !== null].forEach[key.updateModel(value)]
 		].exceptionally [ throwable |
@@ -170,11 +178,14 @@ class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguage
 		]
 	}
 
-	protected def boolean shouldGenerate(Resource resource, CancelIndicator cancelIndicator) {
+	protected def ServerStatus shouldGenerate(Resource resource, CancelIndicator cancelIndicator) {
 		if (resource === null)
-			return false
+			return new ServerStatus(ERROR, 'Cannot update diagram: Model does not exist')
 		val issues = resource.validate(CheckMode.NORMAL_AND_FAST, cancelIndicator)
-		return !issues.exists[severity == Severity.ERROR]
+		if (issues.exists[severity == Severity.ERROR]) 
+			return new ServerStatus(ERROR, 'Cannot update diagram: Model has errors')
+		if (issues.exists[severity == Severity.WARNING]) 
+			return new ServerStatus(WARNING, 'Model has warnings')
+		return ServerStatus.OK
 	}
-	
 }
