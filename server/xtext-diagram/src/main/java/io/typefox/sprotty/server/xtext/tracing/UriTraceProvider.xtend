@@ -37,10 +37,10 @@ class UriTraceProvider implements ITraceProvider {
 	override Traceable findTracable(SModelRoot root, EObject element) {
 		val containerChain = newArrayList
 		var currentContainer = element
-		do {
+		while(currentContainer !== null) {
 			containerChain.add(currentContainer)
 			currentContainer = currentContainer.eContainer
-		} while(currentContainer !== null)
+		} 
 		val uri2container = containerChain.toMap[URI.toPath]
 		val results = newHashMap
 		doFindTraceable(root, uri2container) [
