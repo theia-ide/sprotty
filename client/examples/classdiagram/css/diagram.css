@@ -5,25 +5,25 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-.node {
+.sprotty-node {
     fill: #cdc;
     stroke: #152;
     stroke-width: 0;
     font-weight: bold;
 }
 
-.comp {
+.sprotty-comp {
     line-height: 3px;
     font-weight: normal;
     text-align: left;
 }
 
-.graph {
+.sprotty-graph {
     font-size: 15pt;
 }
 
 
-.label {
+.sprotty-label {
     stroke-width: 0;
     fill: #000;
     font-weight: inherit;
@@ -31,22 +31,22 @@
     font-size: 100%;
 }
 
-.heading.label {
+.sprotty-label.heading {
     font-weight: bold;
 }
 
-.edge {
+.sprotty-edge {
     fill: none;
     stroke: #488;
     stroke-width: 2;
 }
 
-.node.selected {
+.sprotty-node.selected {
     stroke: #152;
     stroke-width: 5;
 }
 
-.missing {
+.sprotty-missing {
     stroke-width: 1;
     stroke: #f00;
     fill: #f00;
@@ -59,25 +59,25 @@
     stroke-width: 3;
 }
 
-.popup-title {
+.sprotty-popup-title {
     font-weight: bold;
     margin-bottom: 10px;
 }
 
-.popup-body > p {
+.sprotty-popup-body > p {
     margin-bottom: 2px;
 }
 
-.icon {
+.sprotty-icon {
     fill: #153;
     stroke-width: 0;
 }
 
-text.icon {
+.sprotty-label.icon {
     fill: #fff;
 }
 
-.button {
+.sprotty-button {
     fill: #152;
     stroke-width: 0;
 }

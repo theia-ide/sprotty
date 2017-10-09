@@ -85,13 +85,13 @@ class MulticoreAllocationPopupModelFactory implements IPopupModelFactory {
 				new PreRenderedElement[
 					type = 'pre-rendered'
 					id = 'popup-title'
-					code = '''<div class="popup-title">«title»</div>'''
+					code = '''<div class="sprotty-popup-title">«title»</div>'''
 				],
 				new PreRenderedElement[
 					type = 'pre-rendered'
 					id = 'popup-body'
 					code = '''
-						<div class="popup-body">
+						<div class="sprotty-popup-body">
 							«FOR text : body»
 								<p>«text»</p>
 							«ENDFOR»

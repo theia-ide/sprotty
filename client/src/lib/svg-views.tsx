@@ -29,7 +29,7 @@ export class CircularNodeView extends AnchorableView {
     render(node: SNode | SPort, context: RenderingContext): VNode {
         const radius = this.getRadius(node)
         return <g>
-            <circle class-node={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
+            <circle class-sprotty-node={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
                     r={radius} cx={radius} cy={radius}></circle>
         </g>
     }
@@ -63,7 +63,7 @@ export class RectangularNodeView extends AnchorableView {
 
     render(node: SNode | SPort, context: RenderingContext): VNode {
         return <g>
-            <rect class-node={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
+            <rect class-sprotty-node={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
                   x="0" y="0" width={node.size.width} height={node.size.height}></rect>
         </g>
     }

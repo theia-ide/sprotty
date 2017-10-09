@@ -18,7 +18,7 @@ const JSX = {createElement: snabbdom.svg}
 export class ClassNodeView extends RectangularNodeView {
     render(node: ClassNode, context: RenderingContext): VNode {
         return <g class-node={true}>
-            <rect class-node={true} class-selected={node.selected} class-mouseover={node.hoverFeedback}
+            <rect class-sprotty-node={true} class-selected={node.selected} class-mouseover={node.hoverFeedback}
                   x={0} y={0}
                   width={Math.max(0, node.bounds.width)} height={Math.max(0, node.bounds.height)} />
             {context.renderChildren(node)}
@@ -31,7 +31,7 @@ export class IconView implements IView {
     render(element: Icon, context: RenderingContext): VNode {
         const radius = this.getRadius()
         return <g>
-            <circle class-icon={true} r={radius} cx={radius} cy={radius}></circle>
+            <circle class-sprotty-icon={true} r={radius} cx={radius} cy={radius}></circle>
             {context.renderChildren(element)}
         </g>
     }

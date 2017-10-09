@@ -5,29 +5,29 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-.node {
+.sprotty-node {
     fill: #aae;
     stroke: #66b;
     stroke-width: 3;
 }
 
-.text {
+.sprotty-text {
     font-size: 16pt;
     text-anchor: middle;
 }
 
-.edge {
+.sprotty-edge {
     fill: none;
     stroke: #488;
     stroke-width: 2;
 }
 
-.node.selected {
+.sprotty-node.selected {
     stroke: #dd8;
     stroke-width: 6;
 }
 
-.missing {
+.sprotty-missing {
     stroke-width: 1;
     stroke: #f00;
     fill: #f00;

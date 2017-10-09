@@ -23,7 +23,7 @@ export class SGraphView implements IView {
 
     render(model: SGraph, context: RenderingContext): VNode {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`
-        return <svg class-graph={true}>
+        return <svg class-sprotty-graph={true}>
             <g transform={transform}>
                 {context.renderChildren(model)}
             </g>
@@ -129,7 +129,7 @@ export class PolylineEdgeView implements IView {
             const p = segments[i]
             path += ` L ${p.x},${p.y}`
         }
-        return <path class-edge={true} d={path}/>
+        return <path class-sprotty-edge={true} d={path}/>
     }
 
     protected renderAdditionals(edge: SEdge, segments: Point[], context: RenderingContext): VNode[] {
@@ -137,7 +137,7 @@ export class PolylineEdgeView implements IView {
     }
 
     protected renderDanglingEdge(message: string, edge: SEdge, context: RenderingContext): VNode {
-        return <text class-dangling-edge={true} title={message}>?</text>
+        return <text class-sprotty-edge-dangling={true} title={message}>?</text>
     }
 
     protected getSourceAnchorCorrection(edge: SEdge): number {
@@ -151,8 +151,10 @@ export class PolylineEdgeView implements IView {
 
 export class SLabelView implements IView {
     render(label: SLabel, context: RenderingContext): VNode {
-        const vnode = <text class-label={true}>{label.text}</text>
-        setAttr(vnode, 'class', getSubType(label))
+        const vnode = <text class-sprotty-label={true}>{label.text}</text>
+        const subType = getSubType(label)
+        if (subType)
+            setAttr(vnode, 'class', subType)
         return vnode
     }
 }
@@ -160,10 +162,12 @@ export class SLabelView implements IView {
 export class SCompartmentView implements IView {
     render(model: SCompartment, context: RenderingContext): VNode {
         const translate = `translate(${model.bounds.x}, ${model.bounds.y})`
-        const vnode = <g transform={translate} class-comp="{true}">
+        const vnode = <g transform={translate} class-sprotty-comp="{true}">
             {context.renderChildren(model)}
         </g>
-        setAttr(vnode, 'class', getSubType(model))
+        const subType = getSubType(model)
+        if (subType)
+            setAttr(vnode, 'class', subType)
         return vnode
     }
 }

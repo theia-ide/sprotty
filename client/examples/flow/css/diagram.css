@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-.node {
+.sprotty-node {
     stroke: #444;
     stroke-width: 1;
 }
@@ -25,13 +25,13 @@
     fill: #f4daa6;
 }
 
-.edge {
+.sprotty-edge {
     fill: none;
     stroke: #222;
     stroke-width: 1;
 }
 
-.edge.arrow {
+.sprotty-edge.arrow {
     fill: #888;
 }
 
@@ -52,7 +52,7 @@
     stroke: #f4daa6;
 }
 
-.missing {
+.sprotty-missing {
     stroke-width: 1;
     stroke: #f00;
     fill: #f00;
@@ -60,11 +60,11 @@
     font-size: 14pt;
 }
 
-.popup-title {
+.sprotty-popup-title {
     font-weight: bold;
     margin-bottom: 10px;
 }
 
-.popup-body > p {
+.sprotty-popup-body > p {
     margin-bottom: 2px;
 }

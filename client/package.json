@@ -84,12 +84,12 @@
   },
   "scripts": {
     "clean": "rimraf lib artifacts",
-    "build": "tsc && npm run lint",
+    "build": "tsc && yarn run lint",
     "lint": "tslint -c ./tslint.json --project ./tsconfig.json",
     "watch": "tsc -w -p ./tsconfig.json",
     "test": "jenkins-mocha --opts ./mocha.opts",
-    "prepare": "npm run clean && npm run build",
-    "prepublishOnly": "npm run test",
+    "prepare": "yarn run clean && yarn run build",
+    "prepublishOnly": "yarn run test",
     "examples:build": "webpack --progress",
     "examples:watch": "webpack --progress --watch"
   }

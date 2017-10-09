@@ -33,7 +33,7 @@ describe('graph views', () => {
         render(node: SNode, context: RenderingContext): VNode {
             const radius = this.getRadius(node)
             return <g>
-                    <circle class-node={true} class-selected={node.selected} r={radius} cx={radius} cy={radius} />
+                    <circle class-sprotty-node={true} class-selected={node.selected} r={radius} cx={radius} cy={radius} />
                 </g>
         }
         protected getRadius(node: SNode) {
@@ -62,7 +62,7 @@ describe('graph views', () => {
         const view = new SGraphView()
         const vnode = view.render(graph, context)
         const html = toHTML(vnode)
-        expect(html).to.be.equal('<svg class="graph"><g transform="scale(1) translate(0,0)"></g></svg>')
+        expect(html).to.be.equal('<svg class="sprotty-graph"><g transform="scale(1) translate(0,0)"></g></svg>')
     })
 
     const node0 = {id: 'node0', type: 'node:circle', position: { x: 100, y: 100 } }
@@ -75,29 +75,29 @@ describe('graph views', () => {
         const vnode = view.render(graph.index.getById('edge0') as SEdge, context)
         const html = toHTML(vnode)
         expect(html).to.be.equal(
-            '<g><path class="edge" d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" /></g>')
+            '<g><path class="sprotty-edge" d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" /></g>')
     })
 
     it('render a circle node', () => {
         const view = new CircleNodeView()
         const vnode = view.render(graph.index.getById('node0') as SNode, context)
         const html = toHTML(vnode)
-        expect(html).to.be.equal('<g><circle class="node" r="40" cx="40" cy="40" /></g>')
+        expect(html).to.be.equal('<g><circle class="sprotty-node" r="40" cx="40" cy="40" /></g>')
     })
 
     it('render a whole graph', () => {
         const vnode = context.renderElement(graph)
         const html: string = toHTML(vnode)
-        const expectation = '<svg id="sprotty_graph" class="graph" tabindex="1002">'
+        const expectation = '<svg id="sprotty_graph" class="sprotty-graph" tabindex="1002">'
             + '<g transform="scale(1) translate(0,0)">'
             +   '<g id="sprotty_node0" transform="translate(100, 100)">'
-            +     '<circle class="node" r="40" cx="40" cy="40" />'
+            +     '<circle class="sprotty-node" r="40" cx="40" cy="40" />'
             +   '</g>'
             +   '<g id="sprotty_node1" class="selected" transform="translate(200, 150)">'
-            +     '<circle class="node selected" r="40" cx="40" cy="40" />'
+            +     '<circle class="sprotty-node selected" r="40" cx="40" cy="40" />'
             +   '</g>'
             +   '<g id="sprotty_edge0">'
-            +     '<path class="edge" d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" />'
+            +     '<path class="sprotty-edge" d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" />'
             +   '</g>'
             + '</g>'
             + '</svg>'
@@ -249,11 +249,11 @@ describe('PolylineEdgeView', () => {
 
     it('correctly translates edge source and target position', () => {
         const edge = model.index.getById('edge1') as SEdge
-        expect(toHTML(edgeView.render(edge, context))).to.equal('<g><path class="edge" d="M 10,4 L 18,14" /></g>')
+        expect(toHTML(edgeView.render(edge, context))).to.equal('<g><path class="sprotty-edge" d="M 10,4 L 18,14" /></g>')
     })
     
     it('correctly translates edge target and source position', () => {
         const edge = model.index.getById('edge2') as SEdge
-        expect(toHTML(edgeView.render(edge, context))).to.equal('<g><path class="edge" d="M -10,-6 L -2,4" /></g>')
+        expect(toHTML(edgeView.render(edge, context))).to.equal('<g><path class="sprotty-edge" d="M -10,-6 L -2,4" /></g>')
     })
 })
