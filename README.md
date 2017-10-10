@@ -19,8 +19,8 @@ git clone git@github.com:theia-ide/sprotty.git
 
 # build sprotty client and examples
 cd sprotty/client
-npm install
-npm run examples:build
+yarn
+yarn examples:build
 
 # build and run the sprotty server
 cd ../server
