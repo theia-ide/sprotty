@@ -60,7 +60,7 @@ export function isLayoutableChild(element: SModelElement): element is SParentEle
 export function isSizeable(element: SModelElement): element is SModelElement & BoundsAware {
     return element.hasFeature(boundsFeature) && isBoundsAware(element)
 }
-    
+
 export function isAlignable(element: SModelElement): element is SModelElement & Alignable {
     return 'alignment' in element
         && element.hasFeature(alignFeature)
