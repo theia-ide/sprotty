@@ -11,7 +11,7 @@ import { ILogger } from '../../utils/logging'
 import { InstanceRegistry } from "../../utils/registry"
 import { Bounds, EMPTY_BOUNDS } from "../../utils/geometry"
 import { SParentElement, SModelElement } from "../../base/model/smodel"
-import { isLayouting, Layouting } from "./model"
+import { isLayoutContainer, LayoutContainer } from "./model"
 import { BoundsData } from "./hidden-bounds-updater"
 import { VBoxLayouter } from "./vbox-layout"
 import { HBoxLayouter } from "./hbox-layout"
@@ -39,7 +39,7 @@ export class Layouter {
 
 export class StatefulLayouter {
 
-    private toBeLayouted: (SParentElement & Layouting)[]
+    private toBeLayouted: (SParentElement & LayoutContainer)[]
 
     constructor(private readonly element2boundsData: Map<SModelElement​​ , BoundsData>,
                 private readonly layoutRegistry: LayoutRegistry,
@@ -47,7 +47,7 @@ export class StatefulLayouter {
         this.toBeLayouted = []
         element2boundsData.forEach(
             (data, element) => {
-                if (isLayouting(element))
+                if (isLayoutContainer(element))
                     this.toBeLayouted.push(element)
             })
     }
@@ -55,7 +55,7 @@ export class StatefulLayouter {
     getBoundsData(element: SModelElement): BoundsData {
         let boundsData = this.element2boundsData.get(element)
         let bounds = (element as any).bounds
-        if (isLayouting(element) && this.toBeLayouted.indexOf(element) >= 0) {
+        if (isLayoutContainer(element) && this.toBeLayouted.indexOf(element) >= 0) {
             bounds = this.doLayout(element)
         }
         if (!boundsData) {
@@ -76,7 +76,7 @@ export class StatefulLayouter {
         }
     }
 
-    protected doLayout(element: SParentElement & Layouting): Bounds {
+    protected doLayout(element: SParentElement & LayoutContainer): Bounds {
         const index = this.toBeLayouted.indexOf(element)
         if (index >= 0)
             this.toBeLayouted.splice(index, 1)
@@ -94,6 +94,6 @@ export class StatefulLayouter {
 }
 
 export interface ILayout {
-    layout(container: SParentElement & Layouting,
+    layout(container: SParentElement & LayoutContainer,
            layouter: StatefulLayouter): void
 }

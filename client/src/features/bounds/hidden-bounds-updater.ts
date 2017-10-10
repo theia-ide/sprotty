@@ -13,7 +13,7 @@ import { SModelElement, SModelRoot } from "../../base/model/smodel"
 import { IVNodeDecorator } from "../../base/views/vnode-decorators"
 import { IActionDispatcher } from "../../base/actions/action-dispatcher"
 import { ComputedBoundsAction, ElementAndBounds, ElementAndAlignment } from './bounds-manipulation'
-import { BoundsAware, isSizeable, isLayouting, isAlignable } from "./model"
+import { BoundsAware, isSizeable, isLayoutContainer, isAlignable } from "./model"
 import { Layouter } from "./layout"
 import { isExportable } from "../export/model"
 
@@ -48,7 +48,7 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
     root: SModelRoot | undefined
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        if (isSizeable(element) || isLayouting(element)) {
+        if (isSizeable(element) || isLayoutContainer(element)) {
             this.element2boundsData.set(element, {
                 vnode: vnode,
                 bounds: element.bounds,

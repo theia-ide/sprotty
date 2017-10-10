@@ -12,7 +12,8 @@ import { findParentByFeature } from '../../base/model/smodel-utils'
 import { Locateable } from '../move/model'
 
 export const boundsFeature = Symbol('boundsFeature')
-export const layoutFeature = Symbol('layoutFeature')
+export const layoutContainerFeature = Symbol('layoutContainerFeature')
+export const layoutableChildFeature = Symbol('layoutableChildFeature')
 export const alignFeature = Symbol('alignFeature')
 
 /**
@@ -25,8 +26,11 @@ export interface BoundsAware extends SModelExtension {
 /**
  * Used to identify model elements that specify a layout to apply to their children.
  */
-export interface Layouting extends SModelExtension, BoundsAware {
+export interface LayoutContainer extends LayoutableChild {
     layout: string
+}
+
+export interface LayoutableChild extends SModelExtension, BoundsAware {
     layoutOptions?: {[key: string]: string | number | boolean}
 }
 
@@ -42,16 +46,21 @@ export function isBoundsAware(element: SModelElement): element is SModelElement 
     return 'bounds' in element
 }
 
-export function isLayouting(element: SModelElement): element is SParentElement & Layouting {
+export function isLayoutContainer(element: SModelElement): element is SParentElement & LayoutContainer {
     return 'layout' in element
         && isBoundsAware(element)
-        && element.hasFeature(layoutFeature)
+        && element.hasFeature(layoutContainerFeature)
+}
+
+export function isLayoutableChild(element: SModelElement): element is SParentElement & LayoutableChild {
+    return isBoundsAware(element)
+        && element.hasFeature(layoutableChildFeature)
 }
 
 export function isSizeable(element: SModelElement): element is SModelElement & BoundsAware {
     return element.hasFeature(boundsFeature) && isBoundsAware(element)
 }
-
+    
 export function isAlignable(element: SModelElement): element is SModelElement & Alignable {
     return 'alignment' in element
         && element.hasFeature(alignFeature)

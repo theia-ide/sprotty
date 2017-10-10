@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { boundsFeature, SShapeElement, SShapeElementSchema } from '../bounds/model'
+import { boundsFeature, layoutableChildFeature, SShapeElement, SShapeElementSchema } from '../bounds/model';
 import { fadeFeature } from '../fade/model'
 
 export interface SButtonSchema extends SShapeElementSchema {
@@ -17,6 +17,6 @@ export class SButton extends SShapeElement {
     enabled = true
 
     hasFeature(feature: symbol) {
-        return feature === boundsFeature ||  feature === fadeFeature
+        return feature === boundsFeature || feature === fadeFeature || feature === layoutableChildFeature
     }
 }

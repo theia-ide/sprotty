@@ -10,7 +10,7 @@ import { SParentElement, SChildElement } from "../../base/model/smodel"
 import { AbstractLayout } from './abstract-layout'
 import { AbstractLayoutOptions, HAlignment } from './layout-options'
 import { BoundsData } from './hidden-bounds-updater'
-import { Layouting } from './model'
+import { LayoutContainer } from './model'
 import { StatefulLayouter } from './layout'
 
 export interface VBoxLayoutOptions extends AbstractLayoutOptions {
@@ -25,7 +25,7 @@ export class VBoxLayouter extends AbstractLayout<VBoxLayoutOptions> {
 
     static KIND = 'vbox'
 
-    protected getChildrenSize(container: SParentElement & Layouting,
+    protected getChildrenSize(container: SParentElement & LayoutContainer,
                                containerOptions: VBoxLayoutOptions,
                                layouter: StatefulLayouter) {
         let maxWidth = -1

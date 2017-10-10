@@ -7,15 +7,14 @@
 
 import { Bounds, EMPTY_BOUNDS, isValidDimension, Dimension, Point } from "../../utils/geometry"
 import { SParentElement, SModelElement, SChildElement } from "../../base/model/smodel"
-import { SNode, SPort, SEdge } from '../../graph/sgraph'
-import { isLayouting, Layouting, isBoundsAware } from "./model"
+import { isLayoutContainer, isLayoutableChild, LayoutContainer, isBoundsAware } from "./model"
 import { ILayout, StatefulLayouter } from './layout'
 import { AbstractLayoutOptions, HAlignment, VAlignment } from './layout-options'
 import { BoundsData } from './hidden-bounds-updater'
 
 export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> implements ILayout {
 
-    layout(container: SParentElement & Layouting,
+    layout(container: SParentElement & LayoutContainer,
            layouter: StatefulLayouter) {
         const boundsData = layouter.getBoundsData(container)
         const options = this.getLayoutOptions(container)
@@ -40,7 +39,7 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
                                 currentOffset: Point,
                                 maxWidth: number, maxHeight: number): Point
 
-    protected getFinalContainerBounds(container: SParentElement & Layouting,
+    protected getFinalContainerBounds(container: SParentElement & LayoutContainer,
                                     lastOffset: Point,
                                     options: T,
                                     maxWidth: number,
@@ -61,7 +60,7 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
         while (true) {
             if (isBoundsAware(currentContainer)) {
                 const bounds = currentContainer.bounds
-                if (isLayouting(currentContainer) && layoutOptions.resizeContainer)
+                if (isLayoutContainer(currentContainer) && layoutOptions.resizeContainer)
                     layouter.log.error(currentContainer, 'Resizable container found while detecting fixed bounds')
                 if (isValidDimension(bounds))
                     return bounds
@@ -75,11 +74,11 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
         }
     }
 
-    protected abstract getChildrenSize(container: SParentElement & Layouting,
+    protected abstract getChildrenSize(container: SParentElement & LayoutContainer,
                                containerOptions: T,
                                layouter: StatefulLayouter): Dimension
 
-    protected layoutChildren(container: SParentElement & Layouting,
+    protected layoutChildren(container: SParentElement & LayoutContainer,
                             layouter: StatefulLayouter,
                             containerOptions: T,
                             maxWidth: number,
@@ -89,7 +88,7 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
             y: containerOptions.paddingTop + 0.5 * (maxHeight - (maxHeight / containerOptions.paddingFactor))}
         container.children.forEach(
             child => {
-                if (this.isLayoutChild(child)) {
+                if (isLayoutableChild(child)) {
                     const boundsData = layouter.getBoundsData(child)
                     const bounds = boundsData.bounds
                     const childOptions = this.getChildLayoutOptions(child, containerOptions)
@@ -102,11 +101,6 @@ export abstract class AbstractLayout<T extends AbstractLayoutOptions & Object> i
             }
         )
         return currentOffset
-    }
-
-    protected isLayoutChild(child: SChildElement): boolean {
-        // Nodes, ports, and edges are handled by the server-side layout
-        return !(child instanceof SNode || child instanceof SPort || child instanceof SEdge)
     }
 
     protected getDx(hAlign: HAlignment, bounds: Bounds, maxWidth: number): number {

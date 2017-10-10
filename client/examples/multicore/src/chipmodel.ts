@@ -7,8 +7,8 @@
 
 import {
     SShapeElement, SChildElement, SModelElementSchema, SModelRootSchema,
-    Bounds, Direction, BoundsAware, boundsFeature, Fadeable, fadeFeature, layoutFeature, Layouting, Selectable,
-    selectFeature, ViewportRootElement, hoverFeedbackFeature, Hoverable, popupFeature
+    Bounds, Direction, BoundsAware, boundsFeature, Fadeable, fadeFeature, 
+    layoutContainerFeature, LayoutContainer, Selectable, selectFeature, ViewportRootElement, hoverFeedbackFeature, Hoverable, popupFeature
 } from '../../../src'
 import { CORE_DISTANCE, CORE_WIDTH } from "./views"
 
@@ -50,7 +50,7 @@ export interface CoreSchema extends SModelElementSchema {
     children: SModelElementSchema[]
 }
 
-export class Core extends SShapeElement implements Selectable, Fadeable, Hoverable, Layouting {
+export class Core extends SShapeElement implements Selectable, Fadeable, Hoverable, LayoutContainer {
     hoverFeedback: boolean = false
     column: number = 0
     row: number = 0
@@ -61,8 +61,11 @@ export class Core extends SShapeElement implements Selectable, Fadeable, Hoverab
     resizeContainer: boolean = false
 
     hasFeature(feature: symbol): boolean {
-        return feature === selectFeature || feature === fadeFeature || feature === layoutFeature
-            || feature === hoverFeedbackFeature || feature == popupFeature
+        return feature === selectFeature
+            || feature === fadeFeature
+            || feature === layoutContainerFeature
+            || feature === hoverFeedbackFeature
+            || feature === popupFeature
     }
 }
 

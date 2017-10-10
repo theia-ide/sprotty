@@ -23,14 +23,14 @@ describe('base views', () => {
         const emptyView = new EmptyView()
         const vnode = emptyView.render(emptyRoot, context)
         const html = toHTML(vnode)
-        expect(html).to.be.equal('<svg class="empty"></svg>')
+        expect(html).to.be.equal('<svg class="sprotty-empty"></svg>')
     })
 
     const missingView = new MissingView
 
     it('missing view', () => {
         const vnode = missingView.render(emptyRoot, context)
-        expect(toHTML(vnode)).to.be.equal('<text class="missing" x="0" y="0">?EMPTY?</text>')
+        expect(toHTML(vnode)).to.be.equal('<text class="sprotty-missing" x="0" y="0">?EMPTY?</text>')
         const model = new SNode()
         model.bounds = {
             x: 42,
@@ -41,6 +41,6 @@ describe('base views', () => {
         model.id = 'foo'
         model.type = 'type'
         const vnode1 = missingView.render(model, context)
-        expect(toHTML(vnode1)).to.be.equal('<text class="missing" x="42" y="41">?foo?</text>')
+        expect(toHTML(vnode1)).to.be.equal('<text class="sprotty-missing" x="42" y="41">?foo?</text>')
     })
 })

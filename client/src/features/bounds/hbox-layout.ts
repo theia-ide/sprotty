@@ -10,7 +10,7 @@ import { SParentElement, SChildElement } from "../../base/model/smodel"
 import { AbstractLayout } from './abstract-layout'
 import { AbstractLayoutOptions, VAlignment } from './layout-options'
 import { BoundsData } from './hidden-bounds-updater'
-import { Layouting } from './model'
+import { LayoutContainer } from './model'
 import { StatefulLayouter } from './layout'
 
 export interface HBoxLayoutOptions extends AbstractLayoutOptions {
@@ -25,7 +25,7 @@ export class HBoxLayouter extends AbstractLayout<HBoxLayoutOptions> {
 
     static KIND = 'hbox'
 
-    protected getChildrenSize(container: SParentElement & Layouting,
+    protected getChildrenSize(container: SParentElement & LayoutContainer,
                                containerOptions: HBoxLayoutOptions,
                                layouter: StatefulLayouter) {
         let maxWidth = 0

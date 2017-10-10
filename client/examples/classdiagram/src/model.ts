@@ -4,8 +4,7 @@
 * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
 * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 */
-
-import { SNode, SShapeElement, Expandable, boundsFeature, expandFeature, fadeFeature, layoutFeature } from "../../../src"
+import { SNode, SShapeElement, Expandable, boundsFeature, expandFeature, fadeFeature, layoutContainerFeature, layoutableChildFeature } from "../../../src"
 
 export class ClassNode extends SNode implements Expandable {
     expanded: boolean = false
@@ -22,6 +21,6 @@ export class Icon extends SShapeElement {
     }
 
     hasFeature(feature: symbol): boolean {
-        return feature === boundsFeature || feature === layoutFeature || feature === fadeFeature
+        return feature === boundsFeature || feature === layoutContainerFeature || feature === layoutableChildFeature || feature === fadeFeature
     }
 }

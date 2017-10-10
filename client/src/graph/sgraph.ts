@@ -6,7 +6,7 @@
  */
 
 import { SChildElement, SModelElementSchema, SModelRootSchema } from '../base/model/smodel'
-import { boundsFeature, layoutFeature, Alignable, alignFeature } from '../features/bounds/model'
+import { boundsFeature, layoutContainerFeature, layoutableChildFeature, Alignable, alignFeature } from '../features/bounds/model'
 import { Fadeable, fadeFeature } from '../features/fade/model'
 import { Hoverable, hoverFeedbackFeature, popupFeature } from '../features/hover/model'
 import { moveFeature } from '../features/move/model'
@@ -55,7 +55,7 @@ export class SNode extends SShapeElement implements Selectable, Fadeable, Hovera
 
     hasFeature(feature: symbol): boolean {
         return feature === selectFeature || feature === moveFeature || feature === boundsFeature
-            || feature === layoutFeature || feature === fadeFeature || feature === hoverFeedbackFeature
+            || feature === layoutContainerFeature || feature === fadeFeature || feature === hoverFeedbackFeature
             || feature === popupFeature
     }
 }
@@ -131,7 +131,7 @@ export class SLabel extends SShapeElement implements Selectable, Alignable, Fade
     opacity = 1
 
     hasFeature(feature: symbol) {
-        return feature === boundsFeature || feature === alignFeature || feature === fadeFeature
+        return feature === boundsFeature || feature === alignFeature || feature === fadeFeature || feature === layoutableChildFeature
     }
 }
 
@@ -153,6 +153,6 @@ export class SCompartment extends SShapeElement implements Fadeable {
     opacity = 1
 
     hasFeature(feature: symbol) {
-        return feature === boundsFeature || feature === layoutFeature ||  feature === fadeFeature
+        return feature === boundsFeature || feature === layoutContainerFeature || feature === layoutableChildFeature || feature === fadeFeature
     }
 }
