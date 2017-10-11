@@ -10,6 +10,7 @@ import com.google.inject.Inject
 import io.typefox.sprotty.api.FitToScreenAction
 import io.typefox.sprotty.api.SModelElement
 import io.typefox.sprotty.api.SelectAction
+import io.typefox.sprotty.api.SelectAllAction
 import io.typefox.sprotty.server.xtext.DiagramLanguageServerExtension
 import io.typefox.sprotty.server.xtext.tracing.ITraceProvider
 import io.typefox.sprotty.server.xtext.tracing.TraceRegionProvider
@@ -30,9 +31,11 @@ class IdeHighlightService extends DefaultDocumentHighlightService {
 			val element = resource.getElementAtOffset(offset)
 			val traceable = server.model.findTracable(element)
 			if (traceable !== null) {
+				server.dispatch(new SelectAllAction [
+					select = false
+				])
 				server.dispatch(new SelectAction [
 					selectedElementsIDs = #[(traceable as SModelElement).id]
-					deselectAll = true
 				])
 				server.dispatch(new FitToScreenAction [
 					maxZoom = 1.0

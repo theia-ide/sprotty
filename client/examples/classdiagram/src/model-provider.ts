@@ -5,11 +5,11 @@
 * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
 */
 
-import { DiagramState, SModelRootSchema, SEdge, SGraphSchema, StateAwareModelProvider } from "../../../src"
 import { injectable } from 'inversify'
+import { DiagramState, SModelRootSchema, SEdge, SGraphSchema, IStateAwareModelProvider } from "../../../src"
 
 @injectable()
-export class ModelProvider implements StateAwareModelProvider {
+export class ModelProvider implements IStateAwareModelProvider {
 
     getModel(state?: DiagramState, currentRoot?: SModelRootSchema): SModelRootSchema {
         // Initialize model

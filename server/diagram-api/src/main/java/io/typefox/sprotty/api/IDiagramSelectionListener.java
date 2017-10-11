@@ -14,14 +14,14 @@ public interface IDiagramSelectionListener {
 	/**
 	 * Called whenever the client has notified a new selection.
 	 */
-	void selectionChanged(SelectAction action, IDiagramServer server);
+	void selectionChanged(Action action, IDiagramServer server);
 	
 	/**
 	 * An implementation that does nothing.
 	 */
 	public static class NullImpl implements IDiagramSelectionListener {
 		@Override
-		public void selectionChanged(SelectAction action, IDiagramServer server) {
+		public void selectionChanged(Action action, IDiagramServer server) {
 		}
 	}
 

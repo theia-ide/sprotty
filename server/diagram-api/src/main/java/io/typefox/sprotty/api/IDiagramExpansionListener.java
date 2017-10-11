@@ -14,7 +14,7 @@ public interface IDiagramExpansionListener {
 	/**
 	 * Called whenever the client has notified a change in the expansion state.
 	 */
-	void expansionChanged(CollapseExpandAction action, IDiagramServer server);
+	void expansionChanged(Action action, IDiagramServer server);
 
 	/**
 	 * An implementation that does nothing.
@@ -22,7 +22,7 @@ public interface IDiagramExpansionListener {
 	public static class NullImpl implements IDiagramExpansionListener {
 
 		@Override
-		public void expansionChanged(CollapseExpandAction action, IDiagramServer server) {
+		public void expansionChanged(Action action, IDiagramServer server) {
 		}
 	}
 }

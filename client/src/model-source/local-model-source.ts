@@ -22,13 +22,13 @@ import { RequestPopupModelAction, SetPopupModelAction } from "../features/hover/
 import { ModelSource } from "./model-source"
 import { ExportSvgAction } from '../features/export/svg-exporter'
 import { saveAs } from 'file-saver'
-import { CollapseExpandAction } from '../features/expand/expand'
+import { CollapseExpandAction, CollapseExpandAllAction } from '../features/expand/expand'
 import { DiagramState, ExpansionState } from './diagram-state'
 
 export type PopupModelFactory = (request: RequestPopupModelAction, element?: SModelElementSchema)
     => SModelRootSchema | undefined
 
-export interface StateAwareModelProvider  {
+export interface IStateAwareModelProvider  {
     getModel(diagramState: DiagramState, currentRoot?: SModelRootSchema): SModelRootSchema
 }
 
@@ -62,7 +62,7 @@ export class LocalModelSource extends ModelSource {
                 @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
                 @inject(TYPES.ViewerOptions) viewerOptions: ViewerOptions,
                 @inject(TYPES.PopupModelFactory)@optional() protected popupModelFactory?: PopupModelFactory,
-                @inject(TYPES.StateAwareModelProvider)@optional() protected modelProvider?: StateAwareModelProvider,
+                @inject(TYPES.StateAwareModelProvider)@optional() protected modelProvider?: IStateAwareModelProvider,
             ) {
         super(actionDispatcher, actionHandlerRegistry, viewerOptions)
     }
@@ -77,6 +77,7 @@ export class LocalModelSource extends ModelSource {
         registry.register(ComputedBoundsAction.KIND, this)
         registry.register(RequestPopupModelAction.KIND, this)
         registry.register(CollapseExpandAction.KIND, this)
+        registry.register(CollapseExpandAllAction.KIND, this)
     }
 
     setModel(newRoot: SModelRootSchema): void {
@@ -189,6 +190,9 @@ export class LocalModelSource extends ModelSource {
             case CollapseExpandAction.KIND:
                 this.handleCollapseExpandAction(action as CollapseExpandAction)
                 break
+            case CollapseExpandAllAction.KIND:
+                this.handleCollapseExpandAllAction(action as CollapseExpandAllAction)
+                break
         }
     }
 
@@ -248,6 +252,18 @@ export class LocalModelSource extends ModelSource {
     protected handleCollapseExpandAction(action: CollapseExpandAction): void {
         if (this.modelProvider !== undefined) {
             this.diagramState.expansionState.apply(action)
+            const expandedModel = this.modelProvider.getModel(this.diagramState, this.currentRoot)
+            this.updateModel(expandedModel)
+        }
+    }
+
+    protected handleCollapseExpandAllAction(action: CollapseExpandAllAction): void {
+        if (this.modelProvider !== undefined) {
+            if (action.expand) {
+                // Expanding all elements locally is currently not supported
+            } else {
+                this.diagramState.expansionState.collapseAll()
+            }
             const expandedModel = this.modelProvider.getModel(this.diagramState, this.currentRoot)
             this.updateModel(expandedModel)
         }

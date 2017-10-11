@@ -7,6 +7,7 @@
 package io.typefox.sprotty.server.xtext.ide
 
 import com.google.inject.Inject
+import io.typefox.sprotty.api.Action
 import io.typefox.sprotty.api.IDiagramSelectionListener
 import io.typefox.sprotty.api.IDiagramServer
 import io.typefox.sprotty.api.SModelIndex
@@ -27,27 +28,31 @@ class IdeDiagramSelectionListener implements IDiagramSelectionListener {
 
 	@Inject extension TraceRegionProvider
 	
-	override selectionChanged(SelectAction action, IDiagramServer server) {
-		if(server instanceof ILanguageAwareDiagramServer) {
-			val languageServerExtension = server.languageServerExtension
-			if(languageServerExtension instanceof IdeLanguageServerExtension) {
-				if(!action.deselectAll && action.selectedElementsIDs !== null && action.selectedElementsIDs.size === 1)  {
-					val id = action.selectedElementsIDs.head
-					val selectedElement = new SModelIndex(server.model).get(id)
-					if (selectedElement instanceof Traceable) {
-						selectedElement.withSource(server) [ element, context |
-							if(element !== null) {
-								val traceRegion = element.significantRegion
-								val start = context.document.getPosition(traceRegion.offset)
-						 		val end = context.document.getPosition(traceRegion.offset + traceRegion.length)
-						 		val uri = context.resource.URI.toPath
-								languageServerExtension.client.openInTextEditor(
-									new OpenInTextEditorMessage(new Location(uri, new Range(start, end)), false)
-								)
-						 		return null
-							}
-						]
-					}
+	override selectionChanged(Action action, IDiagramServer server) {
+		if (action instanceof SelectAction && server instanceof ILanguageAwareDiagramServer) {
+			selectionChanged(action as SelectAction, server as ILanguageAwareDiagramServer)
+		}
+	}
+	
+	private def selectionChanged(SelectAction action, ILanguageAwareDiagramServer server) {
+		val languageServerExtension = server.languageServerExtension
+		if (languageServerExtension instanceof IdeLanguageServerExtension) {
+			if (action.selectedElementsIDs !== null && action.selectedElementsIDs.size === 1)  {
+				val id = action.selectedElementsIDs.head
+				val selectedElement = new SModelIndex(server.model).get(id)
+				if (selectedElement instanceof Traceable) {
+					selectedElement.withSource(server) [ element, context |
+						if (element !== null) {
+							val traceRegion = element.significantRegion
+							val start = context.document.getPosition(traceRegion.offset)
+					 		val end = context.document.getPosition(traceRegion.offset + traceRegion.length)
+					 		val uri = context.resource.URI.toPath
+							languageServerExtension.client.openInTextEditor(
+								new OpenInTextEditorMessage(new Location(uri, new Range(start, end)), false)
+							)
+					 		return null
+						}
+					]
 				}
 			}
 		}

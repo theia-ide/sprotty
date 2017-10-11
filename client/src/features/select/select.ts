@@ -28,11 +28,22 @@ import { SButton } from '../button/model'
  */
 export class SelectAction implements Action {
     kind = SelectCommand.KIND
-    // TODO An action should not have mutable properties
-    selectAll: boolean = false
-    deselectAll: boolean = false
 
-    constructor(public readonly selectedElementsIDs: string[] = [], public readonly deselectedElementsIDs: string[] = []) {
+    constructor(public readonly selectedElementsIDs: string[] = [],
+                public readonly deselectedElementsIDs: string[] = []) {
+    }
+}
+
+/**
+ * Programmatic action for selecting or deselecting all elements.
+ */
+export class SelectAllAction implements Action {
+    kind = SelectAllCommand.KIND
+
+    /**
+     * If `select` is true, all elements are selected, othewise they are deselected.
+     */
+    constructor(public readonly select: boolean = true) {
     }
 }
 
@@ -54,37 +65,17 @@ export class SelectCommand extends Command {
     execute(context: CommandExecutionContext): SModelRoot {
         const selectedNodeIds: string[] = []
         const model = context.root
-        if (this.action.selectAll) {
-            const elementStack: SModelElement[] = [model]
-            do {
-                const element = elementStack.pop()!
-                if (element instanceof SParentElement) {
-                    for (const child of element.children) {
-                        elementStack.push(child)
-                    }
-                }
-                if (element instanceof SChildElement && isSelectable(element)) {
-                    this.selected.push({
-                        element: element,
-                        index: element.parent.children.indexOf(element)
-                    })
-                    if (element instanceof SNode)
-                        selectedNodeIds.push(element.id)
-                }
-            } while (elementStack.length > 0)
-        } else {
-            this.action.selectedElementsIDs.forEach(id => {
-                const element = model.index.getById(id)
-                if (element instanceof SChildElement && isSelectable(element)) {
-                    this.selected.push({
-                        element: element,
-                        index: element.parent.children.indexOf(element)
-                    })
-                    if (element instanceof SNode)
-                        selectedNodeIds.push(id)
-                }
-            })
-        }
+        this.action.selectedElementsIDs.forEach(id => {
+            const element = model.index.getById(id)
+            if (element instanceof SChildElement && isSelectable(element)) {
+                this.selected.push({
+                    element: element,
+                    index: element.parent.children.indexOf(element)
+                })
+                if (element instanceof SNode)
+                    selectedNodeIds.push(id)
+            }
+        })
         if (selectedNodeIds.length > 0) {
             const connectedEdges: ElementSelection[] = []
             model.index.all().forEach(
@@ -100,33 +91,15 @@ export class SelectCommand extends Command {
                 })
             this.selected = connectedEdges.concat(this.selected)
         }
-        if (this.action.deselectAll) {
-            const elementStack: SModelElement[] = [model]
-            do {
-                const element = elementStack.pop()!
-                if (element instanceof SParentElement) {
-                    for (const child of element.children) {
-                        elementStack.push(child)
-                    }
-                }
-                if (element instanceof SChildElement && isSelectable(element)) {
-                    this.deselected.push({
-                        element: element,
-                        index: element.parent.children.indexOf(element)
-                    })
-                }
-            } while (elementStack.length > 0)
-        } else {
-            this.action.deselectedElementsIDs.forEach(id => {
-                const element = model.index.getById(id)
-                if (element instanceof SChildElement && isSelectable(element)) {
-                    this.deselected.push({
-                        element: element,
-                        index: element.parent.children.indexOf(element)
-                    })
-                }
-            })
-        }
+        this.action.deselectedElementsIDs.forEach(id => {
+            const element = model.index.getById(id)
+            if (element instanceof SChildElement && isSelectable(element)) {
+                this.deselected.push({
+                    element: element,
+                    index: element.parent.children.indexOf(element)
+                })
+            }
+        })
         return this.redo(context)
     }
 
@@ -160,6 +133,46 @@ export class SelectCommand extends Command {
             if (isSelectable(selection.element))
                 selection.element.selected = true
         })
+        return context.root
+    }
+}
+
+export class SelectAllCommand extends Command {
+    static readonly KIND = 'allSelected'
+
+    protected previousSelection: { [key: string]: boolean } = {}
+
+    constructor(public action: SelectAllAction) {
+        super()
+    }
+
+    execute(context: CommandExecutionContext): SModelRoot {
+        this.selectAll(context.root, this.action.select)
+        return context.root
+    }
+
+    protected selectAll(element: SParentElement, newState: boolean): void {
+        if (isSelectable(element)) {
+            this.previousSelection[element.id] = element.selected
+            element.selected = newState
+        }
+        for (const child of element.children) {
+            this.selectAll(child, newState)
+        }
+    }
+
+    undo(context: CommandExecutionContext): SModelRoot {
+        const index = context.root.index
+        for (const id in this.previousSelection) {
+            const element = index.getById(id)
+            if (element !== undefined && isSelectable(element))
+                element.selected = this.previousSelection[id]
+        }
+        return context.root
+    }
+
+    redo(context: CommandExecutionContext): SModelRoot {
+        this.selectAll(context.root, this.action.select)
         return context.root
     }
 }

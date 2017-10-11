@@ -291,8 +291,14 @@ public class DefaultDiagramServer implements IDiagramServer {
 				case SelectAction.KIND:
 					handle((SelectAction) action);
 					break;
+				case SelectAllAction.KIND:
+					handle((SelectAllAction) action);
+					break;
 				case CollapseExpandAction.KIND:
 					handle((CollapseExpandAction) action);
+					break;
+				case CollapseExpandAllAction.KIND:
+					handle((CollapseExpandAllAction) action);
 					break;
 				case OpenAction.KIND:
 					handle((OpenAction) action);
@@ -302,7 +308,7 @@ public class DefaultDiagramServer implements IDiagramServer {
 	}
 	
 	/**
-	 * Called when a {@code RequestModelAction} is received.
+	 * Called when a {@link RequestModelAction} is received.
 	 */
 	protected void handle(RequestModelAction request) {
 		Map<String, String> options = request.getOptions();
@@ -319,7 +325,7 @@ public class DefaultDiagramServer implements IDiagramServer {
 	}
 	
 	/**
-	 * Called when a {@code ComputedBoundsAction} is received.
+	 * Called when a {@link ComputedBoundsAction} is received.
 	 */
 	protected void handle(ComputedBoundsAction computedBounds) {
 		synchronized(modelLock) {
@@ -342,7 +348,7 @@ public class DefaultDiagramServer implements IDiagramServer {
 	}
 	
 	/**
-	 * Called when a {@code RequestPopupModelAction} is received.
+	 * Called when a {@link RequestPopupModelAction} is received.
 	 */
 	protected void handle(RequestPopupModelAction request) {
 		SModelRoot model = getModel();
@@ -357,12 +363,9 @@ public class DefaultDiagramServer implements IDiagramServer {
 	}
 	
 	/**
-	 * Called when a {@code SelectAction} is received.
+	 * Called when a {@link SelectAction} is received.
 	 */
 	protected void handle(SelectAction action) {
-		if (action.getSelectAll() == Boolean.TRUE)
-			new SModelIndex(currentRoot).allIds().forEach(id -> selectedElements.add(id));
-		if (action.getDeselectAll() == Boolean.TRUE)
 			selectedElements.clear();
 		if (action.getDeselectedElementsIDs() != null)
 			selectedElements.removeAll(action.getDeselectedElementsIDs());
@@ -376,13 +379,29 @@ public class DefaultDiagramServer implements IDiagramServer {
 	}
 	
 	/**
-	 * Called when a {@code CollapseExpandAction} is received.
+	 * Called when a {@link SelectAllAction} is received.
+	 */
+	protected void handle(SelectAllAction action) {
+		if (action.isSelect())
+			new SModelIndex(currentRoot).allIds().forEach(id -> selectedElements.add(id));
+		else
+			selectedElements.clear();
+		
+		IDiagramSelectionListener selectionListener = getSelectionListener();
+		if (selectionListener != null) {
+			selectionListener.selectionChanged(action, this);
+		}
+	}
+	
+	/**
+	 * Called when a {@link CollapseExpandAction} is received.
 	 */
 	protected void handle(CollapseExpandAction action) {
 		if (action.getCollapseIds() != null)
 			expandedElements.removeAll(action.getCollapseIds());
 		if (action.getExpandIds() != null)
 			expandedElements.addAll(action.getExpandIds());
+		
 		IDiagramExpansionListener expansionListener = getExpansionListener();
 		if (expansionListener != null) {
 			expansionListener.expansionChanged(action, this);
@@ -390,7 +409,22 @@ public class DefaultDiagramServer implements IDiagramServer {
 	}
 	
 	/**
-	 * Called when a {@code OpenAction} is received.
+	 * Called when a {@link CollapseExpandAllAction} is received.
+	 */
+	protected void handle(CollapseExpandAllAction action) {
+		if (action.isExpand())
+			new SModelIndex(currentRoot).allIds().forEach(id -> expandedElements.add(id));
+		else
+			expandedElements.clear();
+		
+		IDiagramExpansionListener expansionListener = getExpansionListener();
+		if (expansionListener != null) {
+			expansionListener.expansionChanged(action, this);
+		}
+	}
+	
+	/**
+	 * Called when a {@link OpenAction} is received.
 	 */
 	protected void handle(OpenAction action) {
 		IDiagramOpenListener openListener = getOpenListener();
