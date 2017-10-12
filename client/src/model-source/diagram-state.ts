@@ -19,20 +19,25 @@ export class ExpansionState {
         this.initialize(root)
     }
 
+    protected initialize(element: SModelElementSchema): void {
+        if ((element as any).expanded)
+            this.expandedElementIds.push(element.id)
+        if (element.children !== undefined)
+            element.children.forEach(child => this.initialize(child))
+    }
+
     apply(action: CollapseExpandAction) {
         for (let collapsed of action.collapseIds) {
             const index = this.expandedElementIds.indexOf(collapsed)
             if (index !== -1)
                 this.expandedElementIds.splice(index, 1)
         }
-        for (let expanded of action.expandIds)
+        for (let expanded of action.expandIds) {
             this.expandedElementIds.push(expanded)
+        }
     }
 
-    protected initialize(element: SModelElementSchema): void {
-        if ((element as any).expanded)
-            this.expandedElementIds.push(element.id)
-        if (element.children !== undefined)
-            element.children.forEach(child => this.initialize(child))
+    collapseAll() {
+        this.expandedElementIds = []
     }
 }

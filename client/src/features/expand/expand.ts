@@ -12,11 +12,31 @@ import { isExpandable } from './model'
 import { IButtonHandler } from '../button/button-handler'
 import { injectable } from 'inversify'
 
+/**
+ * Sent from the client to the model source to recalculate a diagram when elements
+ * are collapsed/expanded by the client.
+ */
 export class CollapseExpandAction {
     static KIND = 'collapseExpand'
     kind = CollapseExpandAction.KIND
+
     constructor(public readonly expandIds: string[],
-                public readonly collapseIds: string[]) {}
+                public readonly collapseIds: string[]) {
+    }
+}
+
+/**
+ * Programmatic action for expanding or collapsing all elements.
+ */
+export class CollapseExpandAllAction {
+    static KIND = 'collapseExpandAll'
+    kind = CollapseExpandAllAction.KIND
+
+    /**
+     * If `expand` is true, all elements are expanded, othewise they are collapsed.
+     */
+    constructor(public readonly expand: boolean = true) {
+    }
 }
 
 @injectable()

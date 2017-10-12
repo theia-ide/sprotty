@@ -11,6 +11,7 @@ import io.typefox.sprotty.api.IDiagramServer
 import io.typefox.sprotty.api.IModelUpdateListener
 import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.api.SelectAction
+import io.typefox.sprotty.api.SelectAllAction
 
 class MulticoreAllocationUpdateListener implements IModelUpdateListener {
 	
@@ -28,9 +29,11 @@ class MulticoreAllocationUpdateListener implements IModelUpdateListener {
 					padding = 10.0
 				])
 			} else {
+				server.dispatch(new SelectAllAction [
+					select = false
+				])
 				server.dispatch(new SelectAction [
 					selectedElementsIDs = selectedNodes.map[id]
-					deselectAll = true
 				])
 				server.dispatch(new FitToScreenAction [
 					elementIds = selectedNodes.map[id]
@@ -48,9 +51,11 @@ class MulticoreAllocationUpdateListener implements IModelUpdateListener {
 				selectionChanged = selectedCores != oldRoot.children.filter(Core).filter[selected !== null && selected].toList
 			}
 			if (sizeChanged || selectionChanged) {
+				server.dispatch(new SelectAllAction [
+					select = false
+				])
 				server.dispatch(new SelectAction [
 					selectedElementsIDs = selectedCores.map[id]
-					deselectAll = true
 				])
 				server.dispatch(new FitToScreenAction [
 					elementIds = selectedCores.map[id]

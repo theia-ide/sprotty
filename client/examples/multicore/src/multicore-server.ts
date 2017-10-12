@@ -19,7 +19,7 @@ function getXtextServices(): any {
 class SelectionHandler implements IActionHandler {
     handle(action: SelectAction): void {
         const xtextService = getXtextServices()
-        if (xtextService !== undefined && !action.deselectAll) {
+        if (xtextService !== undefined) {
             const selectedElement = action.selectedElementsIDs.length > 0 ? action.selectedElementsIDs[0] : 'processor'
             xtextService.select({
                 elementId: selectedElement,

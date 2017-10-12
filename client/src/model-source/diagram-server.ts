@@ -23,7 +23,7 @@ import { RequestPopupModelAction } from "../features/hover/hover"
 import { ModelSource } from "./model-source"
 import { ExportSvgAction } from '../features/export/svg-exporter'
 import { saveAs } from 'file-saver'
-import { CollapseExpandAction } from '../features/expand/expand'
+import { CollapseExpandAction, CollapseExpandAllAction } from '../features/expand/expand'
 import { OpenAction } from '../features/open/open'
 
 /**
@@ -85,6 +85,7 @@ export abstract class DiagramServer extends ModelSource {
         registry.register(RequestBoundsCommand.KIND, this)
         registry.register(RequestPopupModelAction.KIND, this)
         registry.register(CollapseExpandAction.KIND, this)
+        registry.register(CollapseExpandAllAction.KIND, this)
         registry.register(OpenAction.KIND, this)
         registry.register(ServerStatusAction.KIND, this)
     }

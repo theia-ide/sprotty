@@ -214,13 +214,29 @@ class SelectAction implements Action {
 	public static val KIND = 'elementSelected'
 	String kind = KIND
 	
-	List<String> selectedElementsIDs
-	List<String> deselectedElementsIDs
-	Boolean selectAll
-	Boolean deselectAll
+	List<String> selectedElementsIDs = emptyList
+	List<String> deselectedElementsIDs = emptyList
 	
 	new() {}
 	new(Consumer<SelectAction> initializer) {
+		initializer.accept(this)
+	}
+}
+
+/**
+ * Programmatic action for selecting or deselecting all elements.
+ */
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
+class SelectAllAction implements Action {
+	public static val KIND = 'allSelected'
+	String kind = KIND
+	
+	boolean select = true
+	
+	new() {}
+	new(Consumer<SelectAllAction> initializer) {
 		initializer.accept(this)
 	}
 }
@@ -326,11 +342,29 @@ class CollapseExpandAction implements Action {
 	public static val KIND = 'collapseExpand'
 	String kind = KIND
 	
-	List<String> expandIds
-	List<String> collapseIds
+	List<String> expandIds = emptyList
+	List<String> collapseIds = emptyList
 	
 	new() {}
 	new(Consumer<CollapseExpandAction> initializer) {
+		initializer.accept(this)
+	}
+}
+
+/**
+ * Programmatic action for expanding or collapsing all elements.
+ */
+@Accessors
+@EqualsHashCode
+@ToString(skipNulls = true)
+class CollapseExpandAllAction implements Action {
+	public static val KIND = 'collapseExpandAll'
+	String kind = KIND
+	
+	boolean expand = true
+	
+	new() {}
+	new(Consumer<CollapseExpandAllAction> initializer) {
 		initializer.accept(this)
 	}
 }
