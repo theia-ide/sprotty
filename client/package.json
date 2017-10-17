@@ -51,20 +51,20 @@
     "src"
   ],
   "dependencies": {
-    "@types/file-saver": "0.0.1",
-    "core-js": "^2.5.1",
     "file-saver": "^1.3.3",
-    "inversify": "^4.2.0",
-    "snabbdom": "^0.6.4",
-    "snabbdom-jsx": "^0.3.1",
-    "snabbdom-virtualize": "^0.6.0"
+    "inversify": "^4.3.0",
+    "snabbdom": "^0.7.0",
+    "snabbdom-jsx": "^0.4.2",
+    "snabbdom-virtualize": "^0.7.0"
   },
   "devDependencies": {
     "@types/chai": "^4.0.1",
+    "@types/file-saver": "^0.0.1",
     "@types/mocha": "^2.2.41",
     "@types/node": "^8.0.14",
     "chai": "^4.1.0",
     "circular-dependency-plugin": "^2.0.0",
+    "core-js": "^2.5.1",
     "jenkins-mocha": "^4.1.2",
     "jsdom": "9.12.0",
     "jsdom-global": "2.1.1",

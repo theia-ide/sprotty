@@ -6,7 +6,7 @@
   version "4.0.4"
   resolved "https://registry.yarnpkg.com/@types/chai/-/chai-4.0.4.tgz#fe86315d9a66827feeb16f73bc954688ec950e18"
 
-"@types/file-saver@0.0.1":
+"@types/file-saver@^0.0.1":
   version "0.0.1"
   resolved "https://registry.yarnpkg.com/@types/file-saver/-/file-saver-0.0.1.tgz#3a3a37884b840e2c4c55770c9fa75a3e11784ef8"
 
@@ -1343,11 +1343,11 @@ html-encoding-sniffer@^1.0.1:
   dependencies:
     whatwg-encoding "^1.0.1"
 
-html-parse-stringify2@^1.2.1:
-  version "1.2.1"
-  resolved "https://registry.yarnpkg.com/html-parse-stringify2/-/html-parse-stringify2-1.2.1.tgz#3d97afe806eac2b4e6963d52d190cf2638cd9c56"
+html-parse-stringify2@^2:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/html-parse-stringify2/-/html-parse-stringify2-2.0.1.tgz#dc5670b7292ca158b7bc916c9a6735ac8872834a"
   dependencies:
-    void-elements "^1.0.0"
+    void-elements "^2.0.1"
 
 http-proxy-agent@^1.0.0:
   version "1.0.0"
@@ -1426,7 +1426,7 @@ invariant@^2.2.0, invariant@^2.2.2:
   dependencies:
     loose-envify "^1.0.0"
 
-inversify@^4.2.0:
+inversify@^4.3.0:
   version "4.3.0"
   resolved "https://registry.yarnpkg.com/inversify/-/inversify-4.3.0.tgz#d2ecd2ae18340e7f1ab5148a3e44b87080391366"
 
@@ -2881,9 +2881,11 @@ slide@^1.1.5:
   version "1.1.6"
   resolved "https://registry.yarnpkg.com/slide/-/slide-1.1.6.tgz#56eb027d65b4d2dce6cb2e2d32c4d4afc9e1d707"
 
-snabbdom-jsx@^0.3.1:
-  version "0.3.1"
-  resolved "https://registry.yarnpkg.com/snabbdom-jsx/-/snabbdom-jsx-0.3.1.tgz#3a8c58fd88da4b76a472c0ffd2f30566a5c3c172"
+snabbdom-jsx@^0.4.2:
+  version "0.4.2"
+  resolved "https://registry.yarnpkg.com/snabbdom-jsx/-/snabbdom-jsx-0.4.2.tgz#e580682d60b4cc1da9898c6a0bacfcd062a0cffc"
+  dependencies:
+    snabbdom "^0.7.0"
 
 snabbdom-to-html@^3.1.1:
   version "3.2.0"
@@ -2897,15 +2899,15 @@ snabbdom-to-html@^3.1.1:
     object-assign "^4.1.0"
     parse-sel "^1.0.0"
 
-snabbdom-virtualize@^0.6.0:
-  version "0.6.0"
-  resolved "https://registry.yarnpkg.com/snabbdom-virtualize/-/snabbdom-virtualize-0.6.0.tgz#e929450233ec883deb34b8fe4efe216fd131a2f1"
+snabbdom-virtualize@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/snabbdom-virtualize/-/snabbdom-virtualize-0.7.0.tgz#31f683338b66457bded8c1e22cdd8ed438c2a387"
   dependencies:
-    html-parse-stringify2 "^1.2.1"
+    html-parse-stringify2 "^2"
 
-snabbdom@^0.6.4:
-  version "0.6.9"
-  resolved "https://registry.yarnpkg.com/snabbdom/-/snabbdom-0.6.9.tgz#65a392f4c82ca7e8ec72aa0d2fa797cf5c73b8d7"
+snabbdom@^0.7.0:
+  version "0.7.0"
+  resolved "https://registry.yarnpkg.com/snabbdom/-/snabbdom-0.7.0.tgz#c09e2baa0f8d43d306a3aa7502b62fdde2b4154e"
 
 sntp@1.x.x:
   version "1.0.9"
@@ -3475,9 +3477,9 @@ vm-browserify@0.0.4:
   dependencies:
     indexof "0.0.1"
 
-void-elements@^1.0.0:
-  version "1.0.0"
-  resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-1.0.0.tgz#6e5db1e35d591f5ac690ce1a340f793a817b2c2a"
+void-elements@^2.0.1:
+  version "2.0.1"
+  resolved "https://registry.yarnpkg.com/void-elements/-/void-elements-2.0.1.tgz#c066afb582bb1cb4128d60ea92392e94d5e9dbec"
 
 watchpack@^1.3.1:
   version "1.4.0"
