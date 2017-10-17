@@ -5,14 +5,14 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-version = '0.2.0-SNAPSHOT'
+version = '0.3.0-SNAPSHOT'
 
 ext.versions = [
     guice: '3.0',
     xtext: '2.12.0',
     gson: '2.8.0',
     websocket: '1.0',
-    elk: '0.3.0-SNAPSHOT',
+    elk: '0.4.0-SNAPSHOT',
     slf4j: '1.7.24',
     log4j: '1.2.16',
     junit: '4.12',
