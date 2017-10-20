@@ -48,6 +48,8 @@ export class ServerStatusAction {
     message: string
 }
 
+const receivedFromServerProperty = '__receivedFromServer'
+
 /**
  * A ModelSource that communicates with an external model provider, e.g.
  * a model editor.
@@ -108,7 +110,8 @@ export abstract class DiagramServer extends ModelSource {
         const object = typeof(data) === 'string' ? JSON.parse(data) : data
         if (isActionMessage(object) && object.action) {
             if (!object.clientId || object.clientId === this.clientId) {
-                this.logger.log(this, 'receiving', object)
+                this.logger.log(this, 'receiving', object);
+                (object.action as any)[receivedFromServerProperty] = true
                 this.actionDispatcher.dispatch(object.action, this.storeNewModel.bind(this))
             }
         } else {
@@ -132,7 +135,7 @@ export abstract class DiagramServer extends ModelSource {
             case ServerStatusAction.KIND:
                 return this.handleServerStateAction(action as ServerStatusAction)
         }
-        return true
+        return !(action as any)[receivedFromServerProperty]
     }
 
     /**
