@@ -91,6 +91,7 @@
     "watch": "tsc -w -p ./tsconfig.json",
     "test": "jenkins-mocha --opts ./mocha.opts",
     "prepare": "yarn run clean && yarn run build",
+    "prepublishOnly": "yarn run test",
     "examples:build": "webpack --progress",
     "examples:watch": "webpack --progress --watch"
   }
