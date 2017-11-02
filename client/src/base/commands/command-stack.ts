@@ -128,6 +128,12 @@ export class CommandStack implements ICommandStack {
      */
     protected offStack: SystemCommand[] = []
 
+    get currentModel(): Promise<SModelRoot> {
+        return this.currentPromise.then(
+            state => state.root
+        )
+    }
+
     executeAll(commands: ICommand[]): Promise<SModelRoot> {
         commands.forEach(
             command => {
@@ -262,9 +268,7 @@ export class CommandStack implements ICommandStack {
                 }
             }
         )
-        return this.currentPromise.then(
-            state => state.root
-        )
+        return this.currentModel
     }
 
     /**
