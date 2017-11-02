@@ -30,8 +30,10 @@ export interface LayoutContainer extends LayoutableChild {
     layout: string
 }
 
+export type ModelLayoutOptions = {[key: string]: string | number | boolean}
+
 export interface LayoutableChild extends SModelExtension, BoundsAware {
-    layoutOptions?: {[key: string]: string | number | boolean}
+    layoutOptions?: ModelLayoutOptions
 }
 
 /**
@@ -92,16 +94,16 @@ export interface SShapeElementSchema extends SModelElementSchema {
     position?: Point
     size?: Dimension
     children?: SModelElementSchema[]
-    layoutOptions?: any
+    layoutOptions?: ModelLayoutOptions
 }
 
 /**
  * Abstract class for elements with a position and a size.
  */
-export abstract class SShapeElement extends SChildElement implements BoundsAware, Locateable {
+export abstract class SShapeElement extends SChildElement implements BoundsAware, Locateable, LayoutableChild {
     position: Point = ORIGIN_POINT
     size: Dimension = EMPTY_DIMENSION
-    layoutOptions?: any
+    layoutOptions?: ModelLayoutOptions
 
     get bounds(): Bounds {
         return {
