@@ -6,7 +6,7 @@
  */
 
 import { Bounds, EMPTY_BOUNDS, EMPTY_DIMENSION, Dimension, isBounds, ORIGIN_POINT, Point } from "../../utils/geometry"
-import { SModelElement, SModelElementSchema, SParentElement, SChildElement } from "../../base/model/smodel"
+import { SModelElement, SModelElementSchema, SParentElement, SChildElement, SModelRoot } from "../../base/model/smodel"
 import { SModelExtension } from "../../base/model/smodel-extension"
 import { findParentByFeature } from '../../base/model/smodel-utils'
 import { Locateable } from '../move/model'
@@ -77,6 +77,9 @@ export function getAbsoluteBounds(element: SModelElement): Bounds {
             current = parent
         }
         return bounds
+    } else if (element instanceof SModelRoot) {
+        const canvasBounds = element.canvasBounds
+        return { x: 0, y: 0, width: canvasBounds.width, height: canvasBounds.height }
     } else {
         return EMPTY_BOUNDS
     }

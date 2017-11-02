@@ -90,7 +90,7 @@ let defaultContainerModule = new ContainerModule(bind => {
         popupClosedClass: 'sprotty-popup-closed',
         needsClientLayout: true,
         needsServerLayout: false,
-        popupOpenDelay: 700,
+        popupOpenDelay: 1000,
         popupCloseDelay: 300
     })
     bind(TYPES.DOMHelper).to(DOMHelper).inSingletonScope()
