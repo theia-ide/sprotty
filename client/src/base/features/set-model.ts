@@ -50,8 +50,8 @@ export class SetModelCommand extends Command {
     execute(context: CommandExecutionContext): SModelRoot {
         this.oldRoot = context.modelFactory.createRoot(context.root)
         this.newRoot = context.modelFactory.createRoot(this.action.newRoot)
-        if (isValidDimension(this.oldRoot.canvasBounds)) {
-           this.newRoot.canvasBounds = this.oldRoot.canvasBounds
+        if (this.oldRoot.type === this.newRoot.type && isValidDimension(this.oldRoot.canvasBounds)) {
+            this.newRoot.canvasBounds = this.oldRoot.canvasBounds
         }
         return this.newRoot
     }

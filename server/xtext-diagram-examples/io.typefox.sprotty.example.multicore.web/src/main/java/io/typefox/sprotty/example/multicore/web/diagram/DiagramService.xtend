@@ -11,6 +11,7 @@ import com.google.inject.Provider
 import com.google.inject.Singleton
 import io.typefox.sprotty.api.IDiagramServer
 import io.typefox.sprotty.api.LayoutUtil
+import io.typefox.sprotty.api.SModelRoot
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Program
 import io.typefox.sprotty.example.multicore.multicoreAllocation.Step
 import io.typefox.sprotty.example.multicore.multicoreAllocation.TaskAllocation
@@ -55,6 +56,17 @@ class DiagramService extends AbstractCachedService<VoidResult> implements IDiagr
 			if (result === null) {
 				result = diagramServerProvider.get
 				result.clientId = clientId
+				if (clientId.endsWith('_processor')) {
+					result.model = new SModelRoot => [
+						type = 'processor'
+						id = 'EMPTY'
+					]
+				} else if (clientId.endsWith('_flow')) {
+					result.model = new SModelRoot => [
+						type = 'flow'
+						id = 'EMPTY'
+					]
+				}
 				diagramServers.put(clientId, result)
 			}
 			return result

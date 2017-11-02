@@ -82,7 +82,8 @@ export class UpdateModelCommand extends Command {
             else
                 return animationOrRoot
         } else {
-            newRoot.canvasBounds = oldRoot.canvasBounds
+            if (oldRoot.type === newRoot.type && isValidDimension(oldRoot.canvasBounds))
+                newRoot.canvasBounds = oldRoot.canvasBounds
             return newRoot
         }
     }
