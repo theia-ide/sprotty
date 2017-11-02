@@ -12,9 +12,6 @@ import * as snabbdom from 'snabbdom-jsx'
 
 const JSX = {createElement: snabbdom.svg}
 
-/**
- * A very simple example node consisting of a plain circle.
- */
 export class ClassNodeView extends RectangularNodeView {
     render(node: ClassNode, context: RenderingContext): VNode {
         return <g class-node={true}>
