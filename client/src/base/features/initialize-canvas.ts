@@ -73,7 +73,6 @@ export class InitializeCanvasBoundsAction implements Action {
 export class InitializeCanvasBoundsCommand extends SystemCommand {
     static readonly KIND: string  = 'initializeCanvasBounds'
 
-    private oldCanvasBounds: Bounds
     private newCanvasBounds: Bounds
 
     constructor(protected action: InitializeCanvasBoundsAction) {
@@ -81,7 +80,6 @@ export class InitializeCanvasBoundsCommand extends SystemCommand {
     }
 
     execute(context: CommandExecutionContext) {
-        this.oldCanvasBounds = context.root.canvasBounds
         this.newCanvasBounds = this.action.newCanvasBounds
         context.root.canvasBounds = this.newCanvasBounds
         return context.root

@@ -86,9 +86,11 @@ export abstract class BoundsAwareViewportCommand extends Command {
                     }
                 )
             }
-            const bounds = allBounds.reduce((b0, b1) => b0 === undefined ? b1 : combine(b0, b1), undefined)
-            if (isValidDimension(bounds))
-                this.newViewport = this.getNewViewport(bounds, model)
+            if (allBounds.length !== 0) {
+                const bounds = allBounds.reduce((b0, b1) => combine(b0, b1))
+                if (isValidDimension(bounds))
+                    this.newViewport = this.getNewViewport(bounds, model)
+            }
         }
     }
 
