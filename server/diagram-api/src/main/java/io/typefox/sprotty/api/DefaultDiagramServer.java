@@ -54,6 +54,8 @@ public class DefaultDiagramServer implements IDiagramServer {
 	
 	private ServerStatus status;
 	
+	private String lastSubmittedModelType;
+	
 	public DefaultDiagramServer() {
 		currentRoot = new SModelRoot();
 		currentRoot.setType("NONE");
@@ -244,30 +246,37 @@ public class DefaultDiagramServer implements IDiagramServer {
 	 * the {@code update} parameter.
 	 */
 	protected void submitModel(SModelRoot newRoot, boolean update) {
-		IModelUpdateListener listener = getModelUpdateListener();
 		if (needsClientLayout(newRoot)) {
 			dispatch(new RequestBoundsAction(newRoot));
+			IModelUpdateListener listener = getModelUpdateListener();
 			if (!needsServerLayout(newRoot) && listener != null) {
 				// In this case the client won't send us the computed bounds, so we trigger the listener immediately
 				listener.modelSubmitted(newRoot, this);
 			}
 		} else {
-			if (needsServerLayout(newRoot)) {
-				ILayoutEngine layoutEngine = getLayoutEngine();
-				if (layoutEngine != null) {
-					layoutEngine.layout(newRoot);
-				}
+			doSubmitModel(newRoot, update);
+		}
+	}
+	
+	private void doSubmitModel(SModelRoot newRoot, boolean update) {
+		if (needsServerLayout(newRoot)) {
+			ILayoutEngine layoutEngine = getLayoutEngine();
+			if (layoutEngine != null) {
+				layoutEngine.layout(newRoot);
 			}
-			synchronized (modelLock) {
-				if (newRoot.getRevision() == revision) {
-					if (update) {
-						dispatch(new UpdateModelAction(newRoot));
-					} else {
-						dispatch(new SetModelAction(newRoot));
-					}
-					if (listener != null) {
-						listener.modelSubmitted(newRoot, this);
-					}
+		}
+		synchronized (modelLock) {
+			if (newRoot.getRevision() == revision) {
+				String modelType = newRoot.getType();
+				if (update && modelType != null && modelType.equals(lastSubmittedModelType)) {
+					dispatch(new UpdateModelAction(newRoot));
+				} else {
+					dispatch(new SetModelAction(newRoot));
+				}
+				lastSubmittedModelType = modelType;
+				IModelUpdateListener listener = getModelUpdateListener();
+				if (listener != null) {
+					listener.modelSubmitted(newRoot, this);
 				}
 			}
 		}
@@ -332,17 +341,7 @@ public class DefaultDiagramServer implements IDiagramServer {
 			SModelRoot model = getModel();
 			if (model != null && model.getRevision() == computedBounds.getRevision()) {
 				LayoutUtil.applyBounds(model, computedBounds);
-				if (needsServerLayout(model)) {
-					ILayoutEngine layoutEngine = getLayoutEngine();
-					if (layoutEngine != null) {
-						layoutEngine.layout(model);
-					}
-				}
-				dispatch(new UpdateModelAction(model));
-				IModelUpdateListener listener = getModelUpdateListener();
-				if (listener != null) {
-					listener.modelSubmitted(model, this);
-				}
+				doSubmitModel(model, true);
 			}
 		}
 	}

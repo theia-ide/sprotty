@@ -7,7 +7,6 @@
 
 import { injectable } from "inversify"
 import { Action } from "../actions/action"
-import { isValidDimension } from "../../utils/geometry"
 import { SModelRoot, SModelRootSchema } from "../model/smodel"
 import { Command, CommandExecutionContext } from "../commands/command"
 import { InitializeCanvasBoundsCommand } from './initialize-canvas'
@@ -31,8 +30,7 @@ export class RequestModelAction implements Action {
 export class SetModelAction implements Action {
     readonly kind = SetModelCommand.KIND
 
-    constructor(public readonly newRoot: SModelRootSchema,
-                public readonly isInitial: boolean = false) {
+    constructor(public readonly newRoot: SModelRootSchema) {
     }
 }
 
@@ -50,9 +48,6 @@ export class SetModelCommand extends Command {
     execute(context: CommandExecutionContext): SModelRoot {
         this.oldRoot = context.modelFactory.createRoot(context.root)
         this.newRoot = context.modelFactory.createRoot(this.action.newRoot)
-        if (this.oldRoot.type === this.newRoot.type && isValidDimension(this.oldRoot.canvasBounds)) {
-            this.newRoot.canvasBounds = this.oldRoot.canvasBounds
-        }
         return this.newRoot
     }
 
@@ -65,9 +60,6 @@ export class SetModelCommand extends Command {
     }
 
     get blockUntilActionKind() {
-        if (this.action.isInitial)
-            return InitializeCanvasBoundsCommand.KIND
-        else
-            return undefined
+        return InitializeCanvasBoundsCommand.KIND
     }
 }

@@ -44,6 +44,8 @@ export class LocalModelSource extends ModelSource {
         id: 'ROOT'
     }
 
+    protected lastSubmittedModelType: string
+
     get model(): SModelRootSchema {
         return this.currentRoot
     }
@@ -101,14 +103,19 @@ export class LocalModelSource extends ModelSource {
         if (this.viewerOptions.needsClientLayout) {
             this.actionDispatcher.dispatch(new RequestBoundsAction(newRoot))
         } else {
-            if (update) {
-                this.actionDispatcher.dispatch(new UpdateModelAction(newRoot))
-            } else {
-                this.actionDispatcher.dispatch(new SetModelAction(newRoot))
-            }
-            if (this.onModelSubmitted !== undefined) {
-                this.onModelSubmitted(newRoot)
-            }
+            this.doSubmitModel(newRoot, update)
+        }
+    }
+
+    protected doSubmitModel(newRoot: SModelRootSchema, update: boolean): void {
+        if (update && newRoot.type === this.lastSubmittedModelType) {
+            this.actionDispatcher.dispatch(new UpdateModelAction(newRoot))
+        } else {
+            this.actionDispatcher.dispatch(new SetModelAction(newRoot))
+        }
+        this.lastSubmittedModelType = newRoot.type
+        if (this.onModelSubmitted !== undefined) {
+            this.onModelSubmitted(newRoot)
         }
     }
 
@@ -121,6 +128,7 @@ export class LocalModelSource extends ModelSource {
             const update = new UpdateModelAction()
             update.matches = matches
             this.actionDispatcher.dispatch(update)
+            this.lastSubmittedModelType = root.type
             if (this.onModelSubmitted !== undefined) {
                 this.onModelSubmitted(root)
             }
@@ -216,10 +224,7 @@ export class LocalModelSource extends ModelSource {
                     this.applyAlignment(element, a.newAlignment)
             }
         }
-        this.actionDispatcher.dispatch(new UpdateModelAction(root))
-        if (this.onModelSubmitted !== undefined) {
-            this.onModelSubmitted(root)
-        }
+        this.doSubmitModel(root, true)
     }
 
     protected applyBounds(element: SModelElementSchema, newBounds: Bounds) {
