@@ -96,12 +96,7 @@ describe('LocalModelSource', () => {
         modelSource.handle(new ComputedBoundsAction([
             {
                 elementId: 'child1',
-                newBounds: {
-                    x: 10,
-                    y: 10,
-                    width: 20,
-                    height: 20
-                }
+                newBounds: { x: 10, y: 10, width: 20, height: 20 }
             }
         ]))
         const root2: SModelRootSchema = {
@@ -115,13 +110,19 @@ describe('LocalModelSource', () => {
             ]
         }
         modelSource.updateModel(root2)
+        modelSource.handle(new ComputedBoundsAction([
+            {
+                elementId: 'bar',
+                newBounds: { x: 10, y: 10, width: 20, height: 20 }
+            }
+        ]))
 
-        expect(dispatcher.actions).to.have.lengthOf(3)
+        expect(dispatcher.actions).to.have.lengthOf(4)
         const action0 = dispatcher.actions[0] as RequestBoundsAction
         expect(action0).to.be.instanceOf(RequestBoundsAction)
         expect(action0.newRoot).to.equal(root1)
-        const action1 = dispatcher.actions[1] as UpdateModelAction
-        expect(action1).to.be.instanceOf(UpdateModelAction)
+        const action1 = dispatcher.actions[1] as SetModelAction
+        expect(action1).to.be.instanceOf(SetModelAction)
         expect(action1.newRoot).to.deep.equal({
             type: 'root',
             id: 'root',
@@ -137,6 +138,8 @@ describe('LocalModelSource', () => {
         const action2 = dispatcher.actions[2] as RequestBoundsAction
         expect(action2).to.be.instanceOf(RequestBoundsAction)
         expect(action2.newRoot).to.equal(root2)
+        const action3 = dispatcher.actions[3] as UpdateModelAction
+        expect(action3).to.be.instanceOf(UpdateModelAction)
     })
 
     it('adds and removes elements', () => {

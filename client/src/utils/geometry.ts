@@ -22,6 +22,32 @@ export const ORIGIN_POINT: Point = Object.freeze({
 })
 
 /**
+ * Adds two points.
+ * @param {Point} p1 - First point
+ * @param {Point} p2 - Second point
+ * @returns {Point} The sum of the two points
+ */
+export function add(p1: Point, p2: Point): Point {
+    return {
+        x: p1.x + p2.x,
+        y: p1.y + p2.y
+    }
+}
+
+/**
+ * Subtracts two points.
+ * @param {Point} p1 - First point
+ * @param {Point} p2 - Second point
+ * @returns {Point} The difference of the two points
+ */
+export function subtract(p1: Point, p2: Point): Point {
+    return {
+        x: p1.x - p2.x,
+        y: p1.y - p2.y
+    }
+}
+
+/**
  * The Dimension of an object is composed of its width and height.
  */
 export interface Dimension {

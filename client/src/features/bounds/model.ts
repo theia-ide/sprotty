@@ -6,7 +6,7 @@
  */
 
 import { Bounds, EMPTY_BOUNDS, EMPTY_DIMENSION, Dimension, isBounds, ORIGIN_POINT, Point } from "../../utils/geometry"
-import { SModelElement, SModelElementSchema, SParentElement, SChildElement } from "../../base/model/smodel"
+import { SModelElement, SModelElementSchema, SParentElement, SChildElement, SModelRoot } from "../../base/model/smodel"
 import { SModelExtension } from "../../base/model/smodel-extension"
 import { findParentByFeature } from '../../base/model/smodel-utils'
 import { Locateable } from '../move/model'
@@ -30,8 +30,10 @@ export interface LayoutContainer extends LayoutableChild {
     layout: string
 }
 
+export type ModelLayoutOptions = {[key: string]: string | number | boolean}
+
 export interface LayoutableChild extends SModelExtension, BoundsAware {
-    layoutOptions?: {[key: string]: string | number | boolean}
+    layoutOptions?: ModelLayoutOptions
 }
 
 /**
@@ -77,6 +79,9 @@ export function getAbsoluteBounds(element: SModelElement): Bounds {
             current = parent
         }
         return bounds
+    } else if (element instanceof SModelRoot) {
+        const canvasBounds = element.canvasBounds
+        return { x: 0, y: 0, width: canvasBounds.width, height: canvasBounds.height }
     } else {
         return EMPTY_BOUNDS
     }
@@ -89,16 +94,16 @@ export interface SShapeElementSchema extends SModelElementSchema {
     position?: Point
     size?: Dimension
     children?: SModelElementSchema[]
-    layoutOptions?: any
+    layoutOptions?: ModelLayoutOptions
 }
 
 /**
  * Abstract class for elements with a position and a size.
  */
-export abstract class SShapeElement extends SChildElement implements BoundsAware, Locateable {
+export abstract class SShapeElement extends SChildElement implements BoundsAware, Locateable, LayoutableChild {
     position: Point = ORIGIN_POINT
     size: Dimension = EMPTY_DIMENSION
-    layoutOptions?: any
+    layoutOptions?: ModelLayoutOptions
 
     get bounds(): Bounds {
         return {

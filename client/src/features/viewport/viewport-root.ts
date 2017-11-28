@@ -19,7 +19,7 @@ export class ViewportRootElement extends SModelRoot implements Viewport, Exporta
     zoom: number = 1
     export: boolean = false
 
-    hasFeature(feature: symbol) {
+    hasFeature(feature: symbol): boolean {
         return feature === viewportFeature || feature === exportFeature
     }
 

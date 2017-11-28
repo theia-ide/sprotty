@@ -16,7 +16,7 @@ import { ActionHandlerRegistry } from "../base/actions/action-handler"
 import { IActionDispatcher } from "../base/actions/action-dispatcher"
 import { ICommand } from "../base/commands/command"
 import { ViewerOptions } from "../base/views/viewer-options"
-import { SetModelCommand } from "../base/features/set-model"
+import { SetModelCommand, SetModelAction } from "../base/features/set-model"
 import { UpdateModelCommand, UpdateModelAction } from "../features/update/update-model"
 import { ComputedBoundsAction, RequestBoundsCommand } from '../features/bounds/bounds-manipulation'
 import { RequestPopupModelAction } from "../features/hover/hover"
@@ -62,10 +62,12 @@ export abstract class DiagramServer extends ModelSource {
 
     clientId: string
 
-    currentRoot: SModelRootSchema = {
+    protected currentRoot: SModelRootSchema = {
         type: 'NONE',
         id: 'ROOT'
     }
+
+    protected lastSubmittedModelType: string
 
     constructor(@inject(TYPES.IActionDispatcher) actionDispatcher: IActionDispatcher,
                 @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
@@ -110,8 +112,8 @@ export abstract class DiagramServer extends ModelSource {
         const object = typeof(data) === 'string' ? JSON.parse(data) : data
         if (isActionMessage(object) && object.action) {
             if (!object.clientId || object.clientId === this.clientId) {
-                this.logger.log(this, 'receiving', object);
                 (object.action as any)[receivedFromServerProperty] = true
+                this.logger.log(this, 'receiving', object)
                 this.actionDispatcher.dispatch(object.action, this.storeNewModel.bind(this))
             }
         } else {
@@ -148,6 +150,9 @@ export abstract class DiagramServer extends ModelSource {
             const newRoot = (action as any).newRoot
             if (newRoot) {
                 this.currentRoot = newRoot as SModelRootSchema
+                if (action.kind === SetModelCommand.KIND || action.kind === UpdateModelCommand.KIND) {
+                    this.lastSubmittedModelType = newRoot.type
+                }
                 this.storage.store(this.currentRoot)
             }
         }
@@ -162,7 +167,8 @@ export abstract class DiagramServer extends ModelSource {
             return true
         } else {
             const index = new SModelIndex()
-            index.add(this.currentRoot)
+            const root = this.currentRoot
+            index.add(root)
             for (const b of action.bounds) {
                 const element = index.getById(b.elementId)
                 if (element !== undefined)
@@ -175,7 +181,12 @@ export abstract class DiagramServer extends ModelSource {
                         this.applyAlignment(element, a.newAlignment)
                 }
             }
-            this.actionDispatcher.dispatch(new UpdateModelAction(this.currentRoot))
+            if (root.type === this.lastSubmittedModelType) {
+                this.actionDispatcher.dispatch(new UpdateModelAction(root))
+            } else {
+                this.actionDispatcher.dispatch(new SetModelAction(root))
+            }
+            this.lastSubmittedModelType = root.type
             return false
         }
     }

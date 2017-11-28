@@ -151,19 +151,21 @@ export abstract class AbstractHoverMouseListener extends MouseListener {
 @injectable()
 export class HoverMouseListener extends AbstractHoverMouseListener {
 
-    protected calculatePopupPosition(target: SModelElement, mousePosition: Point): Point {
-        let offset: Point = {x: -5, y: 20}
-        const maxDist = 150
+    protected computePopupBounds(target: SModelElement, mousePosition: Point): Bounds {
+        // Default position: below the mouse cursor
+        let offset: Point = { x: -5, y: 20 }
 
         const targetBounds = getAbsoluteBounds(target)
         const canvasBounds = target.root.canvasBounds
         const boundsInWindow = translate(targetBounds, canvasBounds)
         const distRight = boundsInWindow.x + boundsInWindow.width - mousePosition.x
         const distBottom = boundsInWindow.y + boundsInWindow.height - mousePosition.y
-        if (distBottom <= distRight && distBottom < maxDist) {
-            offset = {x: -5, y: Math.round(distBottom + 5)}
-        } else if (distRight <= distBottom && distRight < maxDist) {
-            offset = {x: Math.round(distRight + 5), y: -5}
+        if (distBottom <= distRight && this.allowSidePosition(target, 'below', distBottom)) {
+            // Put the popup below the target element
+            offset = { x: -5, y: Math.round(distBottom + 5) }
+        } else if (distRight <= distBottom && this.allowSidePosition(target, 'right', distRight)) {
+            // Put the popup right of the target element
+            offset = { x: Math.round(distRight + 5), y: -5 }
         }
         let leftPopupPosition = mousePosition.x + offset.x
         const canvasRightBorderPosition = canvasBounds.x + canvasBounds.width
@@ -175,21 +177,19 @@ export class HoverMouseListener extends AbstractHoverMouseListener {
         if (topPopupPosition > canvasBottomBorderPosition) {
             topPopupPosition = canvasBottomBorderPosition
         }
-        return {x: leftPopupPosition, y: topPopupPosition}
+        return { x: leftPopupPosition, y: topPopupPosition, width: -1, height: -1 }
+    }
+
+    protected allowSidePosition(target: SModelElement, side: 'above' | 'below' | 'left' | 'right', distance: number): boolean {
+        return !(target instanceof SModelRoot) && distance <= 150
     }
 
     protected startMouseOverTimer(target: SModelElement, event: MouseEvent): Promise<Action> {
         this.stopMouseOverTimer()
         return new Promise((resolve) => {
             this.state.mouseOverTimer = window.setTimeout(() => {
-                const popupPosition = this.calculatePopupPosition(target, {x: event.pageX, y: event.pageY})
-                resolve(new RequestPopupModelAction(target.id,
-                    {
-                        x: popupPosition.x,
-                        y: popupPosition.y,
-                        width: -1,
-                        height: -1
-                    }))
+                const popupBounds = this.computePopupBounds(target, {x: event.pageX, y: event.pageY})
+                resolve(new RequestPopupModelAction(target.id, popupBounds))
 
                 this.state.popupOpen = true
                 this.state.previousPopupElement = target
@@ -198,19 +198,18 @@ export class HoverMouseListener extends AbstractHoverMouseListener {
     }
 
     mouseOver(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        const state = this.state
         const result: (Action | Promise<Action>)[] = []
         const popupTarget = findParent(target, hasPopupFeature)
 
-        if (state.popupOpen && (popupTarget === undefined ||
-            state.previousPopupElement !== undefined && state.previousPopupElement.id !== popupTarget.id)) {
+        if (this.state.popupOpen && (popupTarget === undefined ||
+            this.state.previousPopupElement !== undefined && this.state.previousPopupElement.id !== popupTarget.id)) {
             result.push(this.startMouseOutTimer())
         } else {
             this.stopMouseOverTimer()
             this.stopMouseOutTimer()
         }
         if (popupTarget !== undefined &&
-            (state.previousPopupElement === undefined || state.previousPopupElement.id !== popupTarget.id)) {
+            (this.state.previousPopupElement === undefined || this.state.previousPopupElement.id !== popupTarget.id)) {
             result.push(this.startMouseOverTimer(popupTarget, event))
         }
 
@@ -224,8 +223,13 @@ export class HoverMouseListener extends AbstractHoverMouseListener {
     mouseOut(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
         const result: (Action | Promise<Action>)[] = []
 
-        if (!this.state.popupOpen)
-            this.stopMouseOverTimer()
+        if (this.state.popupOpen) {
+            const popupTarget = findParent(target, hasPopupFeature)
+            if (this.state.previousPopupElement !== undefined && popupTarget !== undefined
+                && this.state.previousPopupElement.id === popupTarget.id)
+                result.push(this.startMouseOutTimer())
+        }
+        this.stopMouseOverTimer()
 
         const hoverTarget = findParentByFeature(target, isHoverable)
         if (hoverTarget !== undefined)
@@ -235,9 +239,25 @@ export class HoverMouseListener extends AbstractHoverMouseListener {
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
+        const result: (Action | Promise<Action>)[] = []
+
+        if (this.state.previousPopupElement !== undefined && this.closeOnMouseMove(this.state.previousPopupElement, event)) {
+            result.push(this.startMouseOutTimer())
+        }
+
         const popupTarget = findParent(target, hasPopupFeature)
-        return this.state.popupOpen || popupTarget === undefined ? [] : [this.startMouseOverTimer(popupTarget, event)]
+        if (popupTarget !== undefined && (this.state.previousPopupElement === undefined
+            || this.state.previousPopupElement.id !== popupTarget.id)) {
+            result.push(this.startMouseOverTimer(popupTarget, event))
+        }
+
+        return result
     }
+
+    protected closeOnMouseMove(target: SModelElement, event: MouseEvent): boolean {
+        return target instanceof SModelRoot
+    }
+
 }
 
 @injectable()

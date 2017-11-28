@@ -6,7 +6,7 @@
  */
 
 import { SChildElement, SModelElementSchema, SModelRootSchema } from '../base/model/smodel'
-import { boundsFeature, layoutContainerFeature, layoutableChildFeature, Alignable, alignFeature } from '../features/bounds/model'
+import { boundsFeature, layoutContainerFeature, layoutableChildFeature, Alignable, alignFeature, ModelLayoutOptions } from '../features/bounds/model'
 import { Fadeable, fadeFeature } from '../features/fade/model'
 import { Hoverable, hoverFeedbackFeature, popupFeature } from '../features/hover/model'
 import { moveFeature } from '../features/move/model'
@@ -23,14 +23,14 @@ export interface SGraphSchema extends SModelRootSchema {
     bounds?: Bounds
     scroll?: Point
     zoom?: number
-    layoutOptions?: any
+    layoutOptions?: ModelLayoutOptions
 }
 
 /**
  * Root element for graph-like models.
  */
 export class SGraph extends ViewportRootElement {
-    layoutOptions?: any
+    layoutOptions?: ModelLayoutOptions
 }
 
 /**
@@ -38,6 +38,9 @@ export class SGraph extends ViewportRootElement {
  */
 export interface SNodeSchema extends SShapeElementSchema {
     layout?: string
+    selected?: boolean
+    hoverFeedback?: boolean
+    opacity?: number
 }
 
 /**
@@ -46,11 +49,10 @@ export interface SNodeSchema extends SShapeElementSchema {
  * the edge, or indirect through a port, i.e. it contains an SPort which is the source or target of the edge.
  */
 export class SNode extends SShapeElement implements Selectable, Fadeable, Hoverable {
-    hoverFeedback: boolean = false
     children: SChildElement[]
     layout?: string
-    layoutOptions?: {[key: string]: string | number | boolean}
     selected: boolean = false
+    hoverFeedback: boolean = false
     opacity: number = 1
 
     hasFeature(feature: symbol): boolean {
@@ -64,6 +66,8 @@ export class SNode extends SShapeElement implements Selectable, Fadeable, Hovera
  * Serializable schema for SPort.
  */
 export interface SPortSchema extends SShapeElementSchema {
+    selected?: boolean
+    opacity?: number
 }
 
 /**
@@ -87,6 +91,7 @@ export interface SEdgeSchema extends SModelElementSchema {
     sourceId: string
     targetId: string
     routingPoints?: Point[]
+    opacity?: number
 }
 
 /**

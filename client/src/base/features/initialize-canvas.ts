@@ -23,7 +23,7 @@ import { SystemCommand, CommandExecutionContext } from '../commands/command'
 @injectable()
 export class CanvasBoundsInitializer implements IVNodeDecorator {
 
-    rootAndVnode: [SModelRoot, VNode] | undefined
+    protected rootAndVnode: [SModelRoot, VNode] | undefined
 
     constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher) {}
 
