@@ -128,7 +128,7 @@ export class CommandStack implements ICommandStack {
      */
     protected offStack: SystemCommand[] = []
 
-    get currentModel(): Promise<SModelRoot> {
+    protected get currentModel(): Promise<SModelRoot> {
         return this.currentPromise.then(
             state => state.root
         )

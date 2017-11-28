@@ -11,11 +11,11 @@ import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphView, SLabelView,
     ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule,
     undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView, 
-    exportModule, expandModule, fadeModule, buttonModule
+    exportModule, expandModule, fadeModule, buttonModule, ActionHandlerRegistry
 } from "../../../src"
 import { MindmapNodeView, PopupButtonView } from "./views"
 import { MindmapFactory } from "./model-factory"
-import { popupModelFactory, PopupButtonMouseListener } from "./popup"
+import { popupModelFactory, PopupButtonMouseListener, AddElementCommand } from "./popup"
 
 const mindmapModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
@@ -39,6 +39,10 @@ export default (useWebsocket: boolean, containerId: string) => {
         baseDiv: containerId,
         popupOpenDelay: 500
     })
+
+    // Register commands
+    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
+    actionHandlerRegistry.registerCommand(AddElementCommand)
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)

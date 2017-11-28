@@ -9,7 +9,8 @@ import { inject, injectable } from "inversify"
 import {
     TYPES, SModelElementSchema, SModelRootSchema, RequestPopupModelAction, MouseListener,
     SModelElement, Action, LocalModelSource, SNodeSchema, SetPopupModelAction, EMPTY_ROOT,
-    Dimension, Point, CommandStack, SModelRoot
+    Point, Command, CommandExecutionContext, CommandResult, SChildElement, FadeAnimation,
+    isFadeable, isLocateable, isBoundsAware, subtract
 } from "../../../src"
 import { PopupButtonSchema, PopupButton } from "./model"
 import { PopupButtonView } from "./views"
@@ -35,47 +36,99 @@ export function popupModelFactory(request: RequestPopupModelAction, element?: SM
 @injectable()
 export class PopupButtonMouseListener extends MouseListener {
 
-    constructor(@inject(TYPES.ModelSource) protected modelSource: LocalModelSource,
-                @inject(TYPES.ICommandStack) protected commandStack: CommandStack) {
+    constructor(@inject(TYPES.ModelSource) protected modelSource: LocalModelSource) {
         super()
     }
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
+        let actions: Action[] = [
+            new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id})
+        ]
         if (target instanceof PopupButton) {
             switch (target.kind) {
                 case 'add-node':
-                    this.commandStack.currentModel.then(state => this.addNode(target, state.root))
+                    actions = actions.concat(this.addNode(target))
                     break;
                 case 'remove-node':
-                    this.removeNode(target)
+                    actions = actions.concat(this.removeNode(target))
                     break;
             }
         }
-        return [ new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}) ]
+        return actions
     }
     
-    protected addNode(button: PopupButton, root: SModelRoot) {
-        const elementSize: Dimension = { width: 100, height: 60 }
-        const buttonPos = root.parentToLocal({
-            x: button.canvasBounds.x + PopupButtonView.SIZE / 2 - root.canvasBounds.x,
-            y: button.canvasBounds.y + PopupButtonView.SIZE / 2 - root.canvasBounds.y
-        })
-        const elementPos: Point = {
-            x: buttonPos.x - elementSize.width / 2,
-            y: buttonPos.y - elementSize.height / 2
-        }
+    protected addNode(button: PopupButton): Action[] {
         const newElement: SNodeSchema = {
             type: 'node',
             id: 'node_' + Math.trunc(Math.random() * 0x80000000).toString(16),
-            size: elementSize,
-            position: elementPos,
+            size: { width: 100, height: 60 },
             hoverFeedback: true
-        };
-        this.modelSource.addElements([ newElement ])
+        }
+        const absolutePos = {
+            x: button.canvasBounds.x + PopupButtonView.SIZE / 2,
+            y: button.canvasBounds.y + PopupButtonView.SIZE / 2
+        }
+        const model = this.modelSource.model
+        if (model.children === undefined)
+            model.children = [ newElement ]
+        else
+            model.children.push(newElement)
+        return [ new AddElementAction(newElement, absolutePos) ]
     }
 
-    protected removeNode(button: PopupButton) {
+    protected removeNode(button: PopupButton): Action[] {
         this.modelSource.removeElements([ button.target ])
+        return []
     }
 
+}
+
+export class AddElementAction implements Action {
+    readonly kind = AddElementCommand.KIND
+
+    constructor(public readonly newElement: SModelRootSchema, public readonly absolutePos: Point) {
+    }
+}
+
+@injectable()
+export class AddElementCommand extends Command {
+    static readonly KIND = 'addElement'
+
+    constructor(public action: AddElementAction) {
+        super()
+    }
+
+    execute(context: CommandExecutionContext): CommandResult {
+        const newElement = context.modelFactory.createElement(this.action.newElement)
+        context.root.add(newElement)
+        this.initialize(newElement)
+        if (isFadeable(newElement)) {
+            newElement.opacity = 0
+            const animation = new FadeAnimation(context.root, [{ element: newElement, type: 'in' }], context)
+            return animation.start()
+        } else {
+            return context.root
+        }
+    }
+
+    protected initialize(element: SModelElement) {
+        if (isLocateable(element)) {
+            const root = element.root
+            const centerPos = root.parentToLocal(subtract(this.action.absolutePos, root.canvasBounds))
+            const elementBounds = isBoundsAware(element) ? element.bounds : { x: 0, y: 0, width: 0, height: 0 }
+            element.position = subtract(centerPos, { x: elementBounds.width / 2, y: elementBounds.height / 2 })
+        }
+    }
+
+    undo(context: CommandExecutionContext): CommandResult {
+        const element = context.root.index.getById(this.action.newElement.id)
+        if (element instanceof SChildElement) {
+            element.parent.remove(element)
+        }
+        return context.root
+    }
+
+    redo(context: CommandExecutionContext): CommandResult {
+        return this.execute(context)
+    }
 }

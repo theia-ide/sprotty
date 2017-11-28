@@ -27,6 +27,7 @@ import { ResolvedElementResize, ResizeAnimation } from '../bounds/resize'
  */
 export class UpdateModelAction implements Action {
     readonly kind = UpdateModelCommand.KIND
+    // FIXME actions should be immutable
     matches?: Match[]
     animate?: boolean = true
 
