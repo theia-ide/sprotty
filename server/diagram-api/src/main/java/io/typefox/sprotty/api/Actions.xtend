@@ -94,6 +94,7 @@ class UpdateModelAction implements Action {
 	String kind = KIND
 	
 	SModelRoot newRoot
+	Boolean animate
 	
 	new() {}
 	new(Consumer<UpdateModelAction> initializer) {

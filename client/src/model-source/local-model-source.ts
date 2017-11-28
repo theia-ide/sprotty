@@ -125,8 +125,7 @@ export class LocalModelSource extends ModelSource {
         if (this.viewerOptions.needsClientLayout) {
             this.actionDispatcher.dispatch(new RequestBoundsAction(root))
         } else {
-            const update = new UpdateModelAction()
-            update.matches = matches
+            const update = new UpdateModelAction(matches)
             this.actionDispatcher.dispatch(update)
             this.lastSubmittedModelType = root.type
             if (this.onModelSubmitted !== undefined) {

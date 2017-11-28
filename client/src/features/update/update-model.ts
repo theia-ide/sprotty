@@ -27,11 +27,16 @@ import { ResolvedElementResize, ResizeAnimation } from '../bounds/resize'
  */
 export class UpdateModelAction implements Action {
     readonly kind = UpdateModelCommand.KIND
-    // FIXME actions should be immutable
-    matches?: Match[]
-    animate?: boolean = true
 
-    constructor(public readonly newRoot?: SModelRootSchema) {
+    public readonly newRoot?: SModelRootSchema
+    public readonly matches?: Match[]
+
+    constructor(input: SModelRootSchema | Match[],
+                public readonly animate: boolean = true) {
+        if ((input as SModelRootSchema).id !== undefined)
+            this.newRoot = input as SModelRootSchema
+        else
+            this.matches = input as Match[]
     }
 }
 
@@ -50,8 +55,6 @@ export class UpdateModelCommand extends Command {
 
     constructor(public action: UpdateModelAction) {
         super()
-        if (action.animate === undefined)
-            action.animate = true
     }
 
     execute(context: CommandExecutionContext): CommandResult {
@@ -69,7 +72,7 @@ export class UpdateModelCommand extends Command {
     }
 
     protected performUpdate(oldRoot: SModelRoot, newRoot: SModelRoot, context: CommandExecutionContext): CommandResult {
-        if (this.action.animate && oldRoot.id === newRoot.id) {
+        if ((this.action.animate === undefined || this.action.animate) && oldRoot.id === newRoot.id) {
             let matchResult: MatchResult
             if (this.action.matches === undefined) {
                 const matcher = new ModelMatcher()
