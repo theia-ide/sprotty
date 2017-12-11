@@ -1,0 +1,9 @@
+version: '2'
+services:
+  sprotty:
+    build: .
+    ports:
+     - "8080:8080"
+    container_name: sprotty
+    command: /bin/bash -c "cd sprotty/server && ls && ./gradlew jettyRun"
+
