@@ -36,7 +36,7 @@ import { ExportSvgAction } from '../features/export/svg-exporter'
 @injectable()
 export abstract class ModelSource implements IActionHandler {
 
-    constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
+    constructor(@inject(TYPES.IActionDispatcher) readonly actionDispatcher: IActionDispatcher,
                 @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
                 @inject(TYPES.ViewerOptions) protected viewerOptions: ViewerOptions) {
         this.initialize(actionHandlerRegistry)
