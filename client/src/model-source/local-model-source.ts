@@ -204,6 +204,8 @@ export class LocalModelSource extends ModelSource {
     }
 
     protected handleRequestModel(action: RequestModelAction): void {
+        if (this.modelProvider)
+            this.currentRoot = this.modelProvider.getModel(this.diagramState, this.currentRoot)
         this.submitModel(this.currentRoot, false)
     }
 
