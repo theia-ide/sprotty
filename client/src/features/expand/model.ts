@@ -18,5 +18,5 @@ export interface Expandable extends SModelExtension {
 }
 
 export function isExpandable(element: SModelElement): element is SModelElement & Expandable {
-    return 'expanded' in element && element.hasFeature(expandFeature)
+    return element.hasFeature(expandFeature) && 'expanded' in element
 }

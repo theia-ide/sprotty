@@ -49,9 +49,9 @@ export function isBoundsAware(element: SModelElement): element is SModelElement 
 }
 
 export function isLayoutContainer(element: SModelElement): element is SParentElement & LayoutContainer {
-    return 'layout' in element
-        && isBoundsAware(element)
+    return isBoundsAware(element)
         && element.hasFeature(layoutContainerFeature)
+        && 'layout' in element
 }
 
 export function isLayoutableChild(element: SModelElement): element is SParentElement & LayoutableChild {
@@ -64,8 +64,8 @@ export function isSizeable(element: SModelElement): element is SModelElement & B
 }
 
 export function isAlignable(element: SModelElement): element is SModelElement & Alignable {
-    return 'alignment' in element
-        && element.hasFeature(alignFeature)
+    return element.hasFeature(alignFeature)
+        && 'alignment' in element
 }
 
 export function getAbsoluteBounds(element: SModelElement): Bounds {
