@@ -99,6 +99,7 @@ describe('UpdateModelCommand', () => {
     it('fades in new elements', () => {
         const command2 = new TestUpdateModelCommand({
             kind: UpdateModelCommand.KIND,
+            animate: true,
             newRoot: {
                 type: 'graph',
                 id: 'model',
@@ -142,6 +143,7 @@ describe('UpdateModelCommand', () => {
         })
         const command2 = new TestUpdateModelCommand({
             kind: UpdateModelCommand.KIND,
+            animate: true,
             newRoot: {
                 type: 'graph',
                 id: 'model',
@@ -173,6 +175,7 @@ describe('UpdateModelCommand', () => {
         })
         const command2 = new TestUpdateModelCommand({
             kind: UpdateModelCommand.KIND,
+            animate: true,
             newRoot: {
                 type: 'graph',
                 id: 'model',
@@ -212,6 +215,7 @@ describe('UpdateModelCommand', () => {
         })
         const command2 = new TestUpdateModelCommand({
             kind: UpdateModelCommand.KIND,
+            animate: true,
             newRoot: {
                 type: 'graph',
                 id: 'model',
