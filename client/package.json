@@ -85,7 +85,7 @@
     "webpack": "^2.2.1"
   },
   "scripts": {
-    "clean": "rimraf lib artifacts",
+    "clean": "rimraf lib \"node_modules/!(rimraf|.bin)\"",
     "build": "tsc && yarn run lint",
     "lint": "tslint -c ./tslint.json --project ./tsconfig.json",
     "watch": "tsc -w -p ./tsconfig.json",
