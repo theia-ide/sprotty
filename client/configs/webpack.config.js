@@ -1,3 +1,4 @@
+var webpack = require('webpack');
 var CircularDependencyPlugin = require('circular-dependency-plugin');
 
 module.exports = {
@@ -9,7 +10,7 @@ module.exports = {
         './examples/app.ts'],
     devtool: 'source-map',
     output: {
-        filename: 'bundle.js',
+        filename: './examples/bundle.js',
     },
     resolve: {
         // Add `.ts` and `.tsx` as a resolvable extension.
@@ -26,6 +27,10 @@ module.exports = {
         new CircularDependencyPlugin({
             exclude: /(node_modules|examples)\/./,
             failOnError: false
-        })
+        }),
+        new webpack.WatchIgnorePlugin([
+            /\.js$/,
+            /\.d\.ts$/
+        ])
     ]
 };
