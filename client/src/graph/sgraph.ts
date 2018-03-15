@@ -9,11 +9,12 @@ import { SChildElement, SModelElementSchema, SModelRootSchema } from '../base/mo
 import { boundsFeature, layoutContainerFeature, layoutableChildFeature, Alignable, alignFeature, ModelLayoutOptions } from '../features/bounds/model'
 import { Fadeable, fadeFeature } from '../features/fade/model'
 import { Hoverable, hoverFeedbackFeature, popupFeature } from '../features/hover/model'
-import { moveFeature } from '../features/move/model'
+import { moveFeature, Locateable } from '../features/move/model'
 import { Selectable, selectFeature } from '../features/select/model'
 import { ViewportRootElement } from '../features/viewport/viewport-root'
 import { Bounds, ORIGIN_POINT, Point } from '../utils/geometry'
 import { SShapeElement, SShapeElementSchema } from '../features/bounds/model'
+import { Editable, editFeature } from '../features/edit/model'
 
 /**
  * Serializable schema for graph-like models.
@@ -93,17 +94,27 @@ export interface SEdgeSchema extends SModelElementSchema {
     routingPoints?: Point[]
     opacity?: number
 }
+export interface SEdgeAnchorsSchema {
+    sourceAnchor: Point
+    targetAnchor: Point
+}
 
 /**
  * Model element class for edges, which are the connectors in a graph. An edge has a source and a target,
  * each of which can be either a node or a port. The source and target elements are referenced via their
  * ids and can be resolved with the index stored in the root element.
  */
-export class SEdge extends SChildElement implements Fadeable {
+export class SEdge extends SChildElement implements Fadeable, Selectable, Editable, Hoverable {
+    hoverFeedback: boolean = false
+    routingPointsVisible: boolean = false
+    inEditMode: boolean = false
     sourceId: string
     targetId: string
-    routingPoints: Point[] = []
+    // the source and target anchor of the edge. Get set when its segments get computed.
+    anchors: SEdgeAnchorsSchema = {sourceAnchor: ORIGIN_POINT, targetAnchor: ORIGIN_POINT}
+    routingPoints: SRoutingPoint[] = []
     opacity: number = 1
+    selected: boolean = false
 
     get source(): SNode | SPort | undefined {
         return this.index.getById(this.sourceId) as SNode | SPort
@@ -114,7 +125,19 @@ export class SEdge extends SChildElement implements Fadeable {
     }
 
     hasFeature(feature: symbol): boolean {
-        return feature === fadeFeature
+        return feature === fadeFeature || feature === selectFeature ||
+            feature === editFeature || feature === hoverFeedbackFeature
+    }
+}
+
+export class SRoutingPoint extends SChildElement implements Selectable, Locateable, Hoverable {
+    hoverFeedback: boolean = false
+    selected: boolean = false
+    position: Point = {x: 0, y: 0}
+    anchors: [SRoutingPoint, SRoutingPoint]
+
+    hasFeature(feature: symbol): boolean {
+        return feature === selectFeature || feature === moveFeature || feature === hoverFeedbackFeature
     }
 }
 

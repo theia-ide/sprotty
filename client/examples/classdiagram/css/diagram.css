@@ -81,3 +81,40 @@
     fill: #152;
     stroke-width: 0;
 }
+
+.sprotty-edge {
+    fill: none;
+    stroke: #488;
+    stroke-width: 2px;
+}
+
+.sprotty-edge.edit path {
+    stroke: #00F;
+}
+
+.sprotty-edge.mouseover path{
+    stroke-width: 6px;
+}
+
+.sprotty-edge.edit.mouseover path{
+    stroke-width: 2px;
+}
+
+.sprotty-edge.edit .routingpoint {
+    fill: #88f;
+    stroke: none;
+}
+
+.sprotty-edge .routingpoint.selected {
+    fill: #4f4;
+    stroke: none;
+}
+
+.sprotty-edge .routingpoint.volatile {
+    opacity: 0.5;
+    z-index: 1000;
+}
+
+.sprotty-edge .routingpoint.mouseover {
+    stroke: #ff7f24;
+}
