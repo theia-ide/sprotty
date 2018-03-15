@@ -11,13 +11,17 @@ import { Point } from "../../utils/geometry"
 import { SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel"
 import { findParentByFeature } from "../../base/model/smodel-utils"
 import { Action } from "../../base/actions/action"
-import { ICommand, CommandExecutionContext, MergeableCommand } from "../../base/commands/command"
+import {
+    ICommand, CommandExecutionContext, MergeableCommand, Command,
+    CommandResult
+} from "../../base/commands/command"
 import { Animation } from "../../base/animations/animation"
 import { MouseListener } from "../../base/views/mouse-tool"
 import { setAttr } from "../../base/views/vnode-utils"
 import { isViewport } from "../viewport/model"
 import { isSelectable } from "../select/model"
 import { isMoveable, Locateable, isLocateable } from "./model"
+import { SEdge } from "../../graph/sgraph"
 
 export class MoveAction implements Action {
     kind = MoveCommand.KIND
@@ -71,7 +75,7 @@ export class MoveCommand extends MergeableCommand {
     protected resolve(move: ElementMove, index: SModelIndex<SModelElement>): ResolvedElementMove | undefined {
         const element = index.getById(move.elementId) as (SModelElement & Locateable)
         if (element) {
-            const fromPosition = move.fromPosition || { x: element.position.x, y: element.position.y }
+            const fromPosition = move.fromPosition || {x: element.position.x, y: element.position.y}
             return {
                 fromPosition: fromPosition,
                 elementId: move.elementId,
@@ -108,6 +112,61 @@ export class MoveCommand extends MergeableCommand {
         }
         return false
     }
+}
+
+export class MoveEdgesAction implements Action {
+    kind: string = MoveEdgesCommand.KIND
+
+    constructor(public moveAction: MoveAction) {
+
+    }
+
+}
+
+export class MoveEdgesCommand implements Command {
+
+    static KIND: string = 'edgeMoved'
+
+    constructor(public action: MoveEdgesAction) {
+
+    }
+
+    execute(context: CommandExecutionContext): CommandResult {
+        context.root.index
+            .all()
+            .filter(m => m instanceof SEdge)
+            .forEach((e: SEdge) => {
+                const moves = this.action.moveAction.moves
+                const source = e.source
+                const target = e.target
+                const sourceIdx: number = moves.findIndex(m => m.elementId === (source ? source.id : ''))
+                const targetIdx = moves.findIndex(m => m.elementId === (target ? target.id : ''))
+                if (targetIdx >= 0 && sourceIdx >= 0) {
+                    const sourceElement = moves[sourceIdx]
+                    if(sourceElement.fromPosition !== undefined) {
+                        const dx = sourceElement.toPosition.x - sourceElement.fromPosition.x
+                        const dy = sourceElement.toPosition.y - sourceElement.fromPosition.y
+                        e.routingPoints.forEach(rp => {
+                            rp.position = {
+                                x: rp.position.x + dx,
+                                y: rp.position.y + dy
+                            }
+                        })
+                    }
+                }
+            })
+
+        return context.root
+    }
+
+    undo(context: CommandExecutionContext): CommandResult {
+        return context.root
+    }
+
+    redo(context: CommandExecutionContext): CommandResult {
+        return context.root
+    }
+
 }
 
 export class MoveAnimation extends Animation {
@@ -178,6 +237,10 @@ export class MoveMouseListener extends MouseListener {
                         if (isMoveable(element)) {
                             nodeMoves.push({
                                 elementId: element.id,
+                                fromPosition: {
+                                    x: element.position.x,
+                                    y: element.position.y
+                                },
                                 toPosition: {
                                     x: element.position.x + dx,
                                     y: element.position.y + dy
