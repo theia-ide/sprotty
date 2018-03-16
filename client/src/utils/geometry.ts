@@ -169,10 +169,10 @@ export interface Insets {
 export enum Direction { left, right, up, down }
 
 /**
- * Returns the "straight line" distance between two points
+ * Returns the "straight line" distance between two points.
  * @param {Point} a - First point
  * @param {Point} b - Second point
- * @returns {number} The eucledian distance
+ * @returns {number} The Eucledian distance
  */
 export function euclideanDistance(a: Point, b: Point): number {
     const dx = b.x - a.x
@@ -182,21 +182,20 @@ export function euclideanDistance(a: Point, b: Point): number {
 
 /**
  * Returns the distance between two points in a grid, using a
- * strictly vertical and/or horizontal path (versus straight line)
+ * strictly vertical and/or horizontal path (versus straight line).
  * @param {Point} a - First point
  * @param {Point} b - Second point
- * @returns {number} The manhattan distance
+ * @returns {number} The Manhattan distance
  */
 export function manhattanDistance(a: Point, b: Point): number {
     return Math.abs(b.x - a.x) + Math.abs(b.y - a.y)
 }
 
 /**
- * Returns the distance between two points in a grid, using a
- * strictly vertical and/or horizontal path (versus straight line)
+ * Returns the maximum of the horizontal and the vertical distance.
  * @param {Point} a - First point
  * @param {Point} b - Second point
- * @returns {number} The manhattan distance
+ * @returns {number} The maximum distance
  */
 export function maxDistance(a: Point, b: Point): number {
     return Math.max(Math.abs(b.x - a.x), Math.abs(b.y - a.y))

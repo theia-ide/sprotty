@@ -7,12 +7,14 @@
 
 import * as snabbdom from 'snabbdom-jsx'
 import { VNode } from "snabbdom/vnode"
-import { center, maxDistance, Point } from "../utils/geometry"
+import { Point, centerOfLine, maxDistance } from '../utils/geometry'
 import { setAttr } from '../base/views/vnode-utils'
 import { RenderingContext, IView } from "../base/views/view"
 import { SModelElement, SParentElement } from "../base/model/smodel"
 import { getSubType, translatePoint } from "../base/model/smodel-utils"
-import { SCompartment, SRoutingPoint, SEdge, SGraph, SLabel, SNode, SPort } from "./sgraph"
+import { SRoutingHandle, isRoutable } from '../features/edit/model'
+import { SCompartment, SEdge, SGraph, SLabel, SNode, SPort } from "./sgraph"
+import { IAnchorableView, LinearRouter, RoutedPoint } from './routing'
 
 const JSX = {createElement: snabbdom.svg}
 
@@ -31,7 +33,7 @@ export class SGraphView implements IView {
     }
 }
 
-export abstract class AnchorableView implements IView {
+export abstract class AnchorableView implements IView, IAnchorableView {
     abstract render(model: SModelElement, context: RenderingContext): VNode
 
     abstract getAnchor(model: SNode | SPort, refPoint: Point, anchorCorrection: number): Point
@@ -40,7 +42,8 @@ export abstract class AnchorableView implements IView {
         return 0
     }
 
-    getTranslatedAnchor(node: SNode | SPort, refPoint: Point, refContainer: SParentElement, anchorCorrection: number = 0, edge: SEdge): Point {
+    getTranslatedAnchor(node: SNode | SPort, refPoint: Point, refContainer: SParentElement,
+            anchorCorrection: number = 0, edge: SEdge): Point {
         const viewContainer = node.parent
         const anchor = this.getAnchor(node, translatePoint(refPoint, refContainer, viewContainer), anchorCorrection)
         const edgeContainer = edge.parent
@@ -49,7 +52,7 @@ export abstract class AnchorableView implements IView {
 }
 
 export class PolylineEdgeView implements IView {
-    minimalPointDistance: number = 2
+    router = new LinearRouter() // TODO get via dependency injection
 
     render(edge: SEdge, context: RenderingContext): VNode {
         const source = edge.source
@@ -68,66 +71,13 @@ export class PolylineEdgeView implements IView {
         if (!(targetView instanceof AnchorableView))
             return this.renderDanglingEdge("Expected target view type: AnchorableView", edge, context)
 
-        const segments = this.computeSegments(edge, source, sourceView, target, targetView)
+        const route = this.router.route(edge, source, sourceView, target, targetView)
 
-        return <g class-edge={true} class-mouseover={edge.hoverFeedback}>
-            {this.renderLine(edge, segments, context)}
-            {this.renderAdditionals(edge, segments, context)}
-            {context.renderChildren(edge)}
+        return <g class-sprotty-edge={true} class-mouseover={edge.hoverFeedback}>
+            {this.renderLine(edge, route, context)}
+            {this.renderAdditionals(edge, route, context)}
+            {context.renderChildren(edge, { route })}
         </g>
-    }
-
-    protected findPosition(p: SRoutingPoint | Point): Point {
-        if (p instanceof SRoutingPoint) {
-            return p.position
-        } else {
-            return p
-        }
-    }
-
-    protected computeSegments(edge: SEdge, source: SNode | SPort, sourceView: AnchorableView,
-                              target: SNode | SPort, targetView: AnchorableView): Point[] {
-        let sourceAnchor: Point
-        if (edge.routingPoints !== undefined && edge.routingPoints.length >= 1) {
-            // Use the first routing point as start anchor reference
-            let p0 = edge.routingPoints[0]
-            sourceAnchor = sourceView.getTranslatedAnchor(source, p0, edge.parent, this.getSourceAnchorCorrection(edge), edge)
-        } else {
-            // Use the target center as start anchor reference
-            const reference = center(target.bounds)
-            sourceAnchor = sourceView.getTranslatedAnchor(source, reference, target.parent, this.getSourceAnchorCorrection(edge), edge)
-        }
-        const result: Point[] = [sourceAnchor]
-        let previousPoint = sourceAnchor
-        edge.anchors.sourceAnchor = sourceAnchor
-
-        for (let i = 0; i < edge.routingPoints.length; i++) {
-            const p = edge.routingPoints[i]
-            const minDistance = this.minimalPointDistance + ((i === 0)
-                ? this.getSourceAnchorCorrection(edge) + sourceView.getStrokeWidth(source)
-                : 0)
-            if (maxDistance(previousPoint, p) >= minDistance) {
-                result.push(p)
-                previousPoint = p
-            }
-        }
-
-        let targetAnchor: Point
-        if (edge.routingPoints && edge.routingPoints.length >= 1) {
-            // Use the last routing point as end anchor reference
-            let pn = edge.routingPoints[edge.routingPoints.length - 1]
-            targetAnchor = targetView.getTranslatedAnchor(target, pn, edge.parent, this.getTargetAnchorCorrection(edge), edge)
-            const minDistance = this.minimalPointDistance + this.getTargetAnchorCorrection(edge) + targetView.getStrokeWidth(source)
-            if (maxDistance(previousPoint, pn) >= this.minimalPointDistance
-                    && maxDistance(pn, targetAnchor) >= minDistance) {
-                result.push(pn)
-            }
-        } else {
-            // Use the source center as end anchor reference
-            const reference = center(source.bounds)
-            targetAnchor = targetView.getTranslatedAnchor(target, reference, source.parent, this.getTargetAnchorCorrection(edge), edge)
-        }
-        return result
     }
 
     protected renderLine(edge: SEdge, segments: Point[], context: RenderingContext): VNode {
@@ -137,23 +87,79 @@ export class PolylineEdgeView implements IView {
             const p = segments[i]
             path += ` L ${p.x},${p.y}`
         }
-        return <path class-sprotty-edge={true} d={path}/>
+        return <path d={path}/>
     }
 
     protected renderAdditionals(edge: SEdge, segments: Point[], context: RenderingContext): VNode[] {
-        return context.renderChildren(edge)
+        return []
     }
 
     protected renderDanglingEdge(message: string, edge: SEdge, context: RenderingContext): VNode {
         return <text class-sprotty-edge-dangling={true} title={message}>?</text>
     }
+}
 
-    protected getSourceAnchorCorrection(edge: SEdge): number {
-        return 0
+export class SRoutingHandleView implements IView {
+    minimalPointDistance: number = 10
+
+    render(handle: SRoutingHandle, context: RenderingContext, args?: { route?: RoutedPoint[] }): VNode {
+        if (args && args.route) {
+            const position = this.getPosition(handle, args.route)
+            handle.viewPosition = position
+            if (position !== undefined) {
+                const node = <circle class-sprotty-routing-handle={true}
+                        class-selected={handle.selected} class-mouseover={handle.hoverFeedback}
+                        cx={position.x} cy={position.y}/>   // Radius must be specified via CSS
+                setAttr(node, 'data-kind', handle.kind)
+                return node
+            }
+        }
+        // Fallback: Create an empty group
+        handle.viewPosition = undefined
+        return <g/>
     }
 
-    protected getTargetAnchorCorrection(edge: SEdge): number {
-        return 0
+    protected getPosition(handle: SRoutingHandle, route: RoutedPoint[]): Point | undefined {
+        if (handle.kind === 'line') {
+            const parent = handle.parent
+            if (isRoutable(parent)) {
+                const getIndex = (rp: RoutedPoint) => {
+                    if (rp.pointIndex !== undefined)
+                        return rp.pointIndex
+                    else if (rp.kind === 'target')
+                        return parent.routingPoints.length
+                    else
+                        return -1
+                }
+                let rp1, rp2: RoutedPoint | undefined
+                for (const rp of route) {
+                    const i = getIndex(rp)
+                    if (i <= handle.pointIndex && (rp1 === undefined || i > getIndex(rp1)))
+                        rp1 = rp
+                    if (i > handle.pointIndex && (rp2 === undefined || i < getIndex(rp2)))
+                        rp2 = rp
+                }
+                if (rp1 !== undefined && rp2 !== undefined) {
+                    // Skip this handle if its related line segment is not included in the route
+                    if (getIndex(rp1) !== handle.pointIndex && handle.pointIndex >= 0) {
+                        const point = parent.routingPoints[handle.pointIndex]
+                        if (maxDistance(point, rp1) >= maxDistance(point, rp2))
+                            return undefined
+                    }
+                    if (getIndex(rp2) !== handle.pointIndex + 1 && handle.pointIndex + 1 < parent.routingPoints.length) {
+                        const point = parent.routingPoints[handle.pointIndex + 1]
+                        if (maxDistance(point, rp1) < maxDistance(point, rp2))
+                            return undefined
+                    }
+                    // Skip this handle if its related line segment is too short
+                    if (maxDistance(rp1, rp2) >= this.minimalPointDistance)
+                        return centerOfLine(rp1, rp2)
+                }
+            }
+        } else {
+            return route.find(rp => rp.pointIndex === handle.pointIndex)
+        }
+        return undefined
     }
 }
 

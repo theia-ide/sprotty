@@ -59,29 +59,6 @@ export class CircularNodeView extends AnchorableView {
     }
 }
 
-export class RoutingPointView extends AnchorableView {
-
-    render(node: SNode, context: RenderingContext): VNode {
-        const radius = this.getRadius(node)
-        return <g>
-            <circle class-routingpoint={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
-                    class-volatile={node.type === 'volatile-routing-point'}
-                    r={radius}></circle>
-        </g>
-    }
-
-    protected getRadius(node: SNode): number {
-        return 5
-    }
-
-    getAnchor(node: SNode, refPoint: Point): Point {
-        return {
-            x: node.position.x,
-            y: node.position.y
-        }
-    }
-}
-
 export class RectangularNodeView extends AnchorableView {
 
     render(node: SNode, context: RenderingContext): VNode {

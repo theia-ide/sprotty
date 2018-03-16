@@ -99,13 +99,13 @@ import selectModule from "./features/select/di.config"
 import undoRedoModule from "./features/undo-redo/di.config"
 import viewportModule from "./features/viewport/di.config"
 import hoverModule from "./features/hover/di.config"
-import editModule from "./features/edit/di.config"
+import edgeEditModule from "./features/edit/di.config"
 import exportModule from "./features/export/di.config"
 import expandModule from "./features/expand/di.config"
 import openModule from "./features/open/di.config"
 import buttonModule from "./features/button/di.config"
 
-export { moveModule, boundsModule, fadeModule, selectModule, undoRedoModule, viewportModule, hoverModule, editModule, exportModule, expandModule, openModule, buttonModule }
+export { moveModule, boundsModule, fadeModule, selectModule, undoRedoModule, viewportModule, hoverModule, edgeEditModule, exportModule, expandModule, openModule, buttonModule }
 
 
 // ------------------ Graph ------------------

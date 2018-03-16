@@ -245,7 +245,7 @@ export class UpdateModelCommand extends Command {
             for (const move of data.moves) {
                 movesMap.set(move.elementId, move)
             }
-            animations.push(new MoveAnimation(root, movesMap, context, false))
+            animations.push(new MoveAnimation(root, movesMap, new Map, context, false))
         }
         if (data.resizes !== undefined && data.resizes.length > 0) {
             const resizesMap: Map<string, ResolvedElementResize> = new Map

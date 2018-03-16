@@ -5,20 +5,21 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+import { inject, optional } from 'inversify'
 import { VNode } from "snabbdom/vnode"
 import { isCtrlOrCmd } from "../../utils/browser"
-import { SChildElement, SModelElement, SModelRoot, SParentElement } from "../../base/model/smodel"
+import { SChildElement, SModelElement, SModelRoot, SParentElement } from '../../base/model/smodel'
 import { findParentByFeature } from "../../base/model/smodel-utils"
 import { Action } from "../../base/actions/action"
 import { Command, CommandExecutionContext } from "../../base/commands/command"
-import { SEdge, SNode } from "../../graph/sgraph"
 import { MouseListener } from "../../base/views/mouse-tool"
 import { KeyListener } from "../../base/views/key-tool"
 import { setClass } from "../../base/views/vnode-utils"
-import { isSelectable } from "./model"
 import { ButtonHandlerRegistry } from '../button/button-handler'
-import { inject, optional } from 'inversify'
 import { SButton } from '../button/model'
+import { isRoutable, SRoutingHandle } from '../edit/model'
+import { SwitchEditModeAction } from '../edit/edit-routing'
+import { isSelectable } from "./model"
 
 /**
  * Triggered when the user changes the selection, e.g. by clicking on a selectable element. The resulting
@@ -63,7 +64,6 @@ export class SelectCommand extends Command {
     }
 
     execute(context: CommandExecutionContext): SModelRoot {
-        const selectedNodeIds: string[] = []
         const model = context.root
         this.action.selectedElementsIDs.forEach(id => {
             const element = model.index.getById(id)
@@ -72,25 +72,8 @@ export class SelectCommand extends Command {
                     element: element,
                     index: element.parent.children.indexOf(element)
                 })
-                if (element instanceof SNode)
-                    selectedNodeIds.push(id)
             }
         })
-        if (selectedNodeIds.length > 0) {
-            const connectedEdges: ElementSelection[] = []
-            model.index.all().forEach(
-                element => {
-                    if (element instanceof SEdge
-                        && (selectedNodeIds.indexOf(element.sourceId) >= 0
-                        || selectedNodeIds.indexOf(element.targetId) >= 0)) {
-                        connectedEdges.push({
-                            element: element,
-                            index: element.parent.children.indexOf(element)
-                        })
-                    }
-                })
-            this.selected = connectedEdges.concat(this.selected)
-        }
         this.action.deselectedElementsIDs.forEach(id => {
             const element = model.index.getById(id)
             if (element instanceof SChildElement && isSelectable(element)) {
@@ -187,6 +170,7 @@ export class SelectMouseListener extends MouseListener {
     hasDragged = false
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
+        const result: Action[] = []
         if (event.button === 0) {
             if (this.buttonHandlerRegistry !== undefined && target instanceof SButton && target.enabled) {
                 const buttonHandler = this.buttonHandlerRegistry.get(target.type)
@@ -196,33 +180,41 @@ export class SelectMouseListener extends MouseListener {
             const selectableTarget = findParentByFeature(target, isSelectable)
             if (selectableTarget !== undefined || target instanceof SModelRoot) {
                 this.hasDragged = false
-                let deselectIds: string[] = []
+                let deselect: SModelElement[] = []
                 // multi-selection?
                 if (!isCtrlOrCmd(event)) {
-                    deselectIds = target.root
+                    deselect = target.root
                         .index
                         .all()
-                        .filter(element => isSelectable(element) && element.selected)
-                        .map(element => element.id)
+                        .filter(element => isSelectable(element) && element.selected
+                            && !(selectableTarget instanceof SRoutingHandle && element === selectableTarget.parent as SModelElement))
                 }
                 if (selectableTarget !== undefined) {
                     if (!selectableTarget.selected) {
                         this.wasSelected = false
-                        return [new SelectAction([selectableTarget.id], deselectIds)]
+                        result.push(new SelectAction([selectableTarget.id], deselect.map(e => e.id)))
+                        const routableDeselect = deselect.filter(e => isRoutable(e)).map(e => e.id)
+                        if (isRoutable(selectableTarget))
+                            result.push(new SwitchEditModeAction([selectableTarget.id], routableDeselect))
+                        else if (routableDeselect.length > 0)
+                            result.push(new SwitchEditModeAction([], routableDeselect))
+                    } else if (isCtrlOrCmd(event)) {
+                        this.wasSelected = false
+                        result.push(new SelectAction([], [selectableTarget.id]))
+                        if (isRoutable(selectableTarget))
+                            result.push(new SwitchEditModeAction([], [selectableTarget.id]))
                     } else {
-                        if (isCtrlOrCmd(event)) {
-                            this.wasSelected = false
-                            return [new SelectAction([], [selectableTarget.id])]
-                        } else {
-                            this.wasSelected = true
-                        }
+                        this.wasSelected = true
                     }
                 } else {
-                    return [new SelectAction([], deselectIds)]
+                    result.push(new SelectAction([], deselect.map(e => e.id)))
+                    const routableDeselect = deselect.filter(e => isRoutable(e)).map(e => e.id)
+                    if (routableDeselect.length > 0)
+                        result.push(new SwitchEditModeAction([], routableDeselect))
                 }
             }
         }
-        return []
+        return result
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): Action[] {

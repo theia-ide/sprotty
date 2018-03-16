@@ -89,6 +89,25 @@ export class SParentElement extends SModelElement {
         this.index.remove(child)
     }
 
+    removeAll(filter?: (e: SChildElement) => boolean) {
+        const children = this.children
+        if (filter !== undefined) {
+            for (let i = children.length - 1; i >= 0; i--) {
+                if (filter(children[i])) {
+                    const child = children.splice(i, 1)[0]
+                    delete child.parent
+                    this.index.remove(child)
+                }
+            }
+        } else {
+            this.children = []
+            children.forEach(child => {
+                delete child.parent
+                this.index.remove(child)
+            })
+        }
+    }
+
     move(child: SChildElement, newIndex: number) {
         const i = this.children.indexOf(child)
         if (i === -1) {
@@ -144,14 +163,23 @@ export class SModelRoot extends SParentElement {
 
     canvasBounds: Bounds = EMPTY_BOUNDS
 
-    constructor() {
+    constructor(index = new SModelIndex<SModelElement>()) {
         super()
         // Override the index property from SModelElement, which has a getter, with a data property
         Object.defineProperty(this, 'index', {
-            value: new SModelIndex<SModelElement>(),
+            value: index,
             writable: false
         })
     }
+}
+
+const ID_CHARS = "0123456789abcdefghijklmnopqrstuvwxyz"
+export function createRandomId(length: number = 8): string {
+    let id = ""
+    for (let i = 0; i < length; i++) {
+        id += ID_CHARS.charAt(Math.floor(Math.random() * ID_CHARS.length))
+    }
+    return id
 }
 
 /**
@@ -162,7 +190,11 @@ export class SModelIndex<E extends SModelElementSchema> {
     private id2element: Map<string, E> = new Map
 
     add(element: E): void {
-        if (this.contains(element)) {
+        if (!element.id) {
+            do {
+                element.id = createRandomId()
+            } while (this.contains(element))
+        } else if (this.contains(element)) {
             throw new Error("Duplicate ID in model: " + element.id)
         }
         this.id2element.set(element.id, element)
@@ -183,15 +215,15 @@ export class SModelIndex<E extends SModelElementSchema> {
     }
 
     contains(element: E): boolean {
-        return this.id2element.get(element.id) !== undefined
-    }
-
-    removeById(elementId: string): void {
-        this.id2element.delete(elementId)
+        return this.id2element.has(element.id)
     }
 
     getById(id: string): E | undefined {
         return this.id2element.get(id)
+    }
+
+    getAttachedElements(element: E): E[] {
+        return []
     }
 
     all(): E[] {

@@ -7,19 +7,11 @@
 
 import { ContainerModule } from "inversify"
 import { TYPES } from "../../base/types"
-import {
-    ActivateEditModeCommand, EditActivationDecorator, EditKeyboardListener, MoveRoutingPointCommand,
-    ShowRoutingPointsCommand
-} from "./edit"
-import { EditActionHandlerInitializer } from "./initializer"
+import { SwitchEditModeCommand, MoveRoutingHandleCommand } from "./edit-routing"
 
-const editModule = new ContainerModule(bind => {
-    bind(TYPES.ICommand).toConstructor(ActivateEditModeCommand)
-    bind(TYPES.ICommand).toConstructor(ShowRoutingPointsCommand)
-    bind(TYPES.ICommand).toConstructor(MoveRoutingPointCommand)
-    bind(TYPES.KeyListener).to(EditKeyboardListener)
-    bind(TYPES.IVNodeDecorator).to(EditActivationDecorator).inSingletonScope()
-    bind(TYPES.IActionHandlerInitializer).to(EditActionHandlerInitializer)
+const edgeEditModule = new ContainerModule(bind => {
+    bind(TYPES.ICommand).toConstructor(SwitchEditModeCommand)
+    bind(TYPES.ICommand).toConstructor(MoveRoutingHandleCommand)
 })
 
-export default editModule
+export default edgeEditModule

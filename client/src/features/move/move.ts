@@ -6,25 +6,23 @@
  */
 
 import { injectable } from "inversify"
+import { Point } from '../../utils/geometry'
 import { SChildElement } from '../../base/model/smodel'
 import { VNode } from "snabbdom/vnode"
-import { Point } from "../../utils/geometry"
 import { SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel"
 import { findParentByFeature } from "../../base/model/smodel-utils"
 import { Action } from "../../base/actions/action"
-import {
-    ICommand, CommandExecutionContext, MergeableCommand, Command,
-    CommandResult
-} from "../../base/commands/command"
+import { ICommand, CommandExecutionContext, MergeableCommand } from "../../base/commands/command"
 import { Animation } from "../../base/animations/animation"
 import { MouseListener } from "../../base/views/mouse-tool"
 import { setAttr } from "../../base/views/vnode-utils"
 import { IVNodeDecorator } from "../../base/views/vnode-decorators"
-import { SEdge } from "../../graph/sgraph"
 import { isViewport } from "../viewport/model"
 import { isSelectable } from "../select/model"
-import { isMoveable, Locateable, isLocateable } from "./model"
 import { isAlignable } from "../bounds/model"
+import { Routable, isRoutable, SRoutingHandle } from "../edit/model"
+import { MoveRoutingHandleAction, HandleMove } from "../edit/edit-routing"
+import { isMoveable, Locateable, isLocateable } from './model'
 
 export class MoveAction implements Action {
     kind = MoveCommand.KIND
@@ -35,22 +33,30 @@ export class MoveAction implements Action {
 }
 
 export interface ElementMove {
-    fromPosition?: Point
     elementId: string
+    fromPosition?: Point
     toPosition: Point
 }
 
 export interface ResolvedElementMove {
-    fromPosition: Point
     elementId: string
     element: SModelElement & Locateable
+    fromPosition: Point
     toPosition: Point
+}
+
+export interface ResolvedElementRoute {
+    elementId: string
+    element: SModelElement & Routable
+    fromRoute: Point[]
+    toRoute: Point[]
 }
 
 export class MoveCommand extends MergeableCommand {
     static readonly KIND = 'move'
 
     resolvedMoves: Map<string, ResolvedElementMove> = new Map
+    resolvedRoutes: Map<string, ResolvedElementRoute> = new Map
 
     constructor(protected action: MoveAction) {
         super()
@@ -58,43 +64,90 @@ export class MoveCommand extends MergeableCommand {
 
     execute(context: CommandExecutionContext) {
         const model = context.root
+        const attachedElements: Set<SModelElement> = new Set
         this.action.moves.forEach(
             move => {
                 const resolvedMove = this.resolve(move, model.index)
-                if (resolvedMove) {
+                if (resolvedMove !== undefined) {
                     this.resolvedMoves.set(resolvedMove.elementId, resolvedMove)
-                    if (!this.action.animate) {
-                        resolvedMove.element.position = move.toPosition
-                    }
+                    model.index.getAttachedElements(resolvedMove.element).forEach(e => attachedElements.add(e))
                 }
             }
         )
-        if (this.action.animate)
-            return new MoveAnimation(model, this.resolvedMoves, context, false).start()
-        else
-            return model
+        attachedElements.forEach(element => this.handleAttachedElement(element))
+        if (this.action.animate) {
+            return new MoveAnimation(model, this.resolvedMoves, this.resolvedRoutes, context).start()
+        } else {
+            return this.doMove(context)
+        }
     }
 
     protected resolve(move: ElementMove, index: SModelIndex<SModelElement>): ResolvedElementMove | undefined {
-        const element = index.getById(move.elementId) as (SModelElement & Locateable)
-        if (element) {
-            const fromPosition = move.fromPosition || {x: element.position.x, y: element.position.y}
+        const element = index.getById(move.elementId)
+        if (element !== undefined && isLocateable(element)) {
+            const fromPosition = move.fromPosition || { x: element.position.x, y: element.position.y }
             return {
-                fromPosition: fromPosition,
                 elementId: move.elementId,
                 element: element,
+                fromPosition: fromPosition,
                 toPosition: move.toPosition
             }
         }
         return undefined
     }
 
+    protected handleAttachedElement(element: SModelElement): void {
+        if (isRoutable(element)) {
+            const source = element.source
+            const sourceMove = source ? this.resolvedMoves.get(source.id) : undefined
+            const target = element.target
+            const targetMove = target ? this.resolvedMoves.get(target.id) : undefined
+            if (sourceMove !== undefined && targetMove !== undefined) {
+                const deltaX = targetMove.toPosition.x - targetMove.fromPosition.x
+                const deltaY = targetMove.toPosition.y - targetMove.fromPosition.y
+                this.resolvedRoutes.set(element.id, {
+                    elementId: element.id,
+                    element,
+                    fromRoute: element.routingPoints,
+                    toRoute: element.routingPoints.map(rp => ({
+                        x: rp.x + deltaX,
+                        y: rp.y + deltaY
+                    }))
+                })
+            }
+        }
+    }
+
+    protected doMove(context: CommandExecutionContext, reverse?: boolean): SModelRoot {
+        this.resolvedMoves.forEach(res => {
+            if (reverse)
+                res.element.position = res.fromPosition
+            else
+                res.element.position = res.toPosition
+        })
+        this.resolvedRoutes.forEach(res => {
+            if (reverse)
+                res.element.routingPoints = res.fromRoute
+            else
+                res.element.routingPoints = res.toRoute
+        })
+        return context.root
+    }
+
     undo(context: CommandExecutionContext) {
-        return new MoveAnimation(context.root, this.resolvedMoves, context, true).start()
+        if (this.action.animate) {
+            return new MoveAnimation(context.root, this.resolvedMoves, this.resolvedRoutes, context, true).start()
+        } else {
+            return this.doMove(context, true)
+        }
     }
 
     redo(context: CommandExecutionContext) {
-        return new MoveAnimation(context.root, this.resolvedMoves, context, false).start()
+        if (this.action.animate) {
+            return new MoveAnimation(context.root, this.resolvedMoves, this.resolvedRoutes, context, false).start()
+        } else {
+            return this.doMove(context, false)
+        }
     }
 
     merge(command: ICommand, context: CommandExecutionContext) {
@@ -117,86 +170,49 @@ export class MoveCommand extends MergeableCommand {
     }
 }
 
-export class MoveEdgesAction implements Action {
-    kind: string = MoveEdgesCommand.KIND
-
-    constructor(public moveAction: MoveAction) {
-
-    }
-
-}
-
-export class MoveEdgesCommand implements Command {
-
-    static KIND: string = 'edgeMoved'
-
-    constructor(public action: MoveEdgesAction) {
-
-    }
-
-    execute(context: CommandExecutionContext): CommandResult {
-        context.root.index
-            .all()
-            .filter(m => m instanceof SEdge)
-            .forEach((e: SEdge) => {
-                const moves = this.action.moveAction.moves
-                const source = e.source
-                const target = e.target
-                const sourceIdx: number = moves.findIndex(m => m.elementId === (source ? source.id : ''))
-                const targetIdx = moves.findIndex(m => m.elementId === (target ? target.id : ''))
-                if (targetIdx >= 0 && sourceIdx >= 0) {
-                    const sourceElement = moves[sourceIdx]
-                    if(sourceElement.fromPosition !== undefined) {
-                        const dx = sourceElement.toPosition.x - sourceElement.fromPosition.x
-                        const dy = sourceElement.toPosition.y - sourceElement.fromPosition.y
-                        e.routingPoints.forEach(rp => {
-                            rp.position = {
-                                x: rp.position.x + dx,
-                                y: rp.position.y + dy
-                            }
-                        })
-                    }
-                }
-            })
-
-        return context.root
-    }
-
-    undo(context: CommandExecutionContext): CommandResult {
-        return context.root
-    }
-
-    redo(context: CommandExecutionContext): CommandResult {
-        return context.root
-    }
-
-}
-
 export class MoveAnimation extends Animation {
 
     constructor(protected model: SModelRoot,
                 public elementMoves: Map<string, ResolvedElementMove>,
+                public elementRoutes: Map<string, ResolvedElementRoute>,
                 context: CommandExecutionContext,
                 protected reverse: boolean = false) {
         super(context)
     }
 
     tween(t: number) {
-        this.elementMoves.forEach(
-            (elementMove) => {
-                if (this.reverse) {
-                    elementMove.element.position = {
-                        x: (1 - t) * elementMove.toPosition.x + t * elementMove.fromPosition.x,
-                        y: (1 - t) * elementMove.toPosition.y + t * elementMove.fromPosition.y
-                    }
-                } else {
-                    elementMove.element.position = {
-                        x: (1 - t) * elementMove.fromPosition.x + t * elementMove.toPosition.x,
-                        y: (1 - t) * elementMove.fromPosition.y + t * elementMove.toPosition.y
-                    }
+        this.elementMoves.forEach((elementMove) => {
+            if (this.reverse) {
+                elementMove.element.position = {
+                    x: (1 - t) * elementMove.toPosition.x + t * elementMove.fromPosition.x,
+                    y: (1 - t) * elementMove.toPosition.y + t * elementMove.fromPosition.y
+                }
+            } else {
+                elementMove.element.position = {
+                    x: (1 - t) * elementMove.fromPosition.x + t * elementMove.toPosition.x,
+                    y: (1 - t) * elementMove.fromPosition.y + t * elementMove.toPosition.y
                 }
             }
-        )
+        })
+        this.elementRoutes.forEach(elementRoute => {
+            const route: Point[] = []
+            for (let i = 0; i < elementRoute.fromRoute.length && i < elementRoute.toRoute.length; i++) {
+                const fp = elementRoute.fromRoute[i]
+                const tp = elementRoute.toRoute[i]
+                if (this.reverse) {
+                    route.push({
+                        x: (1 - t) * tp.x + t * fp.x,
+                        y: (1 - t) * tp.y + t * fp.y
+                    })
+                } else {
+                    route.push({
+                        x: (1 - t) * fp.x + t * tp.x,
+                        y: (1 - t) * fp.y + t * tp.y
+                    })
+                }
+            }
+            elementRoute.element.routingPoints = route
+        })
         return this.model
     }
 }
@@ -208,8 +224,9 @@ export class MoveMouseListener extends MouseListener {
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
         if (event.button === 0) {
-            if (isMoveable(target)) {
-                this.lastDragPosition = {x: event.pageX, y: event.pageY}
+            const moveable = findParentByFeature(target, isMoveable)
+            if (moveable !== undefined || target instanceof SRoutingHandle) {
+                this.lastDragPosition = { x: event.pageX, y: event.pageY }
             } else {
                 this.lastDragPosition = undefined
             }
@@ -219,6 +236,7 @@ export class MoveMouseListener extends MouseListener {
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): Action[] {
+        const result: Action[] = []
         if (event.buttons === 0)
             this.mouseUp(target, event)
         else if (this.lastDragPosition) {
@@ -229,8 +247,8 @@ export class MoveMouseListener extends MouseListener {
             const dy = (event.pageY - this.lastDragPosition.y) / zoom
             const root = target.root
             const nodeMoves: ElementMove[] = []
-            root
-                .index
+            const handleMoves: HandleMove[] = []
+            root.index
                 .all()
                 .filter(
                     element => isSelectable(element) && element.selected
@@ -249,13 +267,35 @@ export class MoveMouseListener extends MouseListener {
                                     y: element.position.y + dy
                                 }
                             })
+                        } else if (element instanceof SRoutingHandle) {
+                            if (element.kind === 'junction' && element.pointIndex >= 0 && isRoutable(element.parent)) {
+                                const point = element.parent.routingPoints[element.pointIndex]
+                                handleMoves.push({
+                                    elementId: element.id,
+                                    fromPosition: point,
+                                    toPosition: {
+                                        x: point.x + dx,
+                                        y: point.y + dy
+                                    }
+                                })
+                            } else if (element.viewPosition !== undefined) {
+                                handleMoves.push({
+                                    elementId: element.id,
+                                    toPosition: {
+                                        x: element.viewPosition.x + dx,
+                                        y: element.viewPosition.y + dy
+                                    }
+                                })
+                            }
                         }
                     })
-            this.lastDragPosition = {x: event.pageX, y: event.pageY}
+            this.lastDragPosition = { x: event.pageX, y: event.pageY }
             if (nodeMoves.length > 0)
-                return [new MoveAction(nodeMoves, false)]
+                result.push(new MoveAction(nodeMoves, false))
+            if (handleMoves.length > 0)
+                result.push(new MoveRoutingHandleAction(handleMoves, false))
         }
-        return []
+        return result
     }
 
     mouseEnter(target: SModelElement, event: MouseEvent): Action[] {

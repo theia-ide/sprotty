@@ -5,6 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+import "mocha"
 import { expect } from "chai"
 import { SChildElement, SModelIndex, SModelRoot } from "./smodel"
 
@@ -66,8 +67,6 @@ describe('SModelIndex', () => {
     })
     it('does not contain elements after removing them', () => {
         const ctx = setup()
-        ctx.index.removeById('child1')
-        expect(ctx.index.getById('child1')).to.be.undefined
         ctx.index.remove(ctx.child2)
         expect(ctx.index.getById('child2')).to.be.undefined
     })

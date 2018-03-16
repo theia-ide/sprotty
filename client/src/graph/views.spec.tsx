@@ -75,7 +75,7 @@ describe('graph views', () => {
         const vnode = view.render(graph.index.getById('edge0') as SEdge, context)
         const html = toHTML(vnode)
         expect(html).to.be.equal(
-            '<g><path class="sprotty-edge" d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" /></g>')
+            '<g class="sprotty-edge"><path d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" /></g>')
     })
 
     it('render a circle node', () => {
@@ -96,8 +96,8 @@ describe('graph views', () => {
             +   '<g id="sprotty_node1" class="selected" transform="translate(200, 150)">'
             +     '<circle class="sprotty-node selected" r="40" cx="40" cy="40" />'
             +   '</g>'
-            +   '<g id="sprotty_edge0">'
-            +     '<path class="sprotty-edge" d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" />'
+            +   '<g id="sprotty_edge0" class="sprotty-edge">'
+            +     '<path d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" />'
             +   '</g>'
             + '</g>'
             + '</svg>'
@@ -249,11 +249,11 @@ describe('PolylineEdgeView', () => {
 
     it('correctly translates edge source and target position', () => {
         const edge = model.index.getById('edge1') as SEdge
-        expect(toHTML(edgeView.render(edge, context))).to.equal('<g><path class="sprotty-edge" d="M 10,4 L 18,14" /></g>')
+        expect(toHTML(edgeView.render(edge, context))).to.equal('<g class="sprotty-edge"><path d="M 10,4 L 18,14" /></g>')
     })
     
     it('correctly translates edge target and source position', () => {
         const edge = model.index.getById('edge2') as SEdge
-        expect(toHTML(edgeView.render(edge, context))).to.equal('<g><path class="sprotty-edge" d="M -10,-6 L -2,4" /></g>')
+        expect(toHTML(edgeView.render(edge, context))).to.equal('<g class="sprotty-edge"><path d="M -10,-6 L -2,4" /></g>')
     })
 })
