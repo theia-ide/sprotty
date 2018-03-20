@@ -51,7 +51,7 @@
     "src"
   ],
   "dependencies": {
-    "file-saver": "^1.3.3",
+    "file-saver": "1.3.3",
     "inversify": "^4.3.0",
     "snabbdom": "^0.7.0",
     "snabbdom-jsx": "^0.4.2",
