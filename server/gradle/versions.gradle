@@ -9,7 +9,7 @@ version = '0.3.0-SNAPSHOT'
 
 ext.versions = [
     guice: '3.0',
-    xtext: '2.12.0',
+    xtext: '[2.12.0,3)',
     gson: '2.8.0',
     websocket: '1.0',
     elk: '0.4.0-SNAPSHOT',
