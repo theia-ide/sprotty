@@ -44,8 +44,10 @@ export class SvgExporter {
     protected createSvg(svgElementOrig: SVGSVGElement, root: SModelRoot): string {
         const serializer = new XMLSerializer()
         const svgCopy = serializer.serializeToString(svgElementOrig)
-        const iframe = document.createElement('iframe') as HTMLIFrameElement
+        const iframe: HTMLIFrameElement = document.createElement('iframe')
         document.body.appendChild(iframe)
+        if (!iframe.contentWindow)
+            throw new Error('IFrame has no contentWindow')
         const docCopy = iframe.contentWindow.document
         docCopy.open()
         docCopy.write(svgCopy)

@@ -26,7 +26,9 @@ export function copyClassesFromVNode(source: VNode, target: VNode) {
 export function copyClassesFromElement(element: HTMLElement, target: VNode) {
     const classList = element.classList
     for (let i = 0; i < classList.length; i++) {
-        setClass(target, classList.item(i), true)
+        const item = classList.item(i)
+        if (item)
+            setClass(target, item, true)
     }
 }
 
