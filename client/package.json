@@ -86,13 +86,13 @@
   },
   "scripts": {
     "clean": "rimraf lib artifacts",
-    "build": "tsc && yarn run lint",
-    "lint": "tslint -c ./tslint.json --project ./tsconfig.json",
+    "build": "tsc -p ./tsconfig.json && yarn run lint",
+    "lint": "tslint -c ./configs/tslint.json --project ./tsconfig.json",
     "watch": "tsc -w -p ./tsconfig.json",
-    "test": "jenkins-mocha --opts ./mocha.opts",
+    "test": "jenkins-mocha --opts ./configs/mocha.opts",
     "prepare": "yarn run clean && yarn run build",
     "prepublishOnly": "yarn run test",
-    "examples:build": "webpack --progress",
-    "examples:watch": "webpack --progress --watch"
+    "examples:build": "webpack --progress --config ./configs/webpack.config.js",
+    "examples:watch": "webpack --watch --progress --config ./configs/webpack.config.js"
   }
 }
