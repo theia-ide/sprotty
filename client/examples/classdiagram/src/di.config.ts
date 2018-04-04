@@ -1,4 +1,3 @@
-import { } from '../../../lib/src/features/button/di.config';
 /*
  * Copyright (C) 2017 TypeFox and others.
  *
@@ -10,8 +9,8 @@ import { Container, ContainerModule } from "inversify"
 import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphView, SLabelView, SCompartmentView,
     PolylineEdgeView, ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule,
-    undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView, 
-    exportModule, expandModule, fadeModule, ExpandButtonView, buttonModule
+    undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView,
+    exportModule, expandModule, fadeModule, ExpandButtonView, buttonModule, edgeEditModule, SRoutingHandleView
 } from "../../../src"
 import { ClassNodeView, IconView} from "./views"
 import { ClassDiagramFactory } from "./model-factory"
@@ -28,9 +27,9 @@ const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) =
 
 export default (useWebsocket: boolean, containerId: string) => {
     const container = new Container()
-    container.load(defaultModule, selectModule, moveModule, boundsModule, 
-        undoRedoModule, viewportModule, fadeModule, hoverModule, 
-        exportModule, expandModule, buttonModule, classDiagramModule)
+    container.load(defaultModule, selectModule, moveModule, boundsModule,
+        undoRedoModule, viewportModule, fadeModule, hoverModule, exportModule,
+        expandModule, buttonModule, classDiagramModule, edgeEditModule)
     if (useWebsocket)
         container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
     else
@@ -54,6 +53,8 @@ export default (useWebsocket: boolean, containerId: string) => {
     viewRegistry.register('html', HtmlRootView)
     viewRegistry.register('pre-rendered', PreRenderedView)
     viewRegistry.register('button:expand', ExpandButtonView)
-    
+    viewRegistry.register('volatile-routing-point', SRoutingHandleView)
+    viewRegistry.register('routing-point', SRoutingHandleView)
+
     return container
 }

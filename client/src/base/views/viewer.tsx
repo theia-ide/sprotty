@@ -50,13 +50,13 @@ export class ModelRenderer implements RenderingContext {
             vnode)
     }
 
-    renderElement(element: SModelElement): VNode {
-        const vNode = this.viewRegistry.get(element.type, element).render(element, this)
+    renderElement(element: SModelElement, args?: object): VNode {
+        const vNode = this.viewRegistry.get(element.type, element).render(element, this, args)
         return this.decorate(vNode, element)
     }
 
-    renderChildren(element: SParentElement): VNode[] {
-        return element.children.map((child) => this.renderElement(child))
+    renderChildren(element: SParentElement, args?: object): VNode[] {
+        return element.children.map((child) => this.renderElement(child, args))
     }
 
     postUpdate() {

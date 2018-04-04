@@ -20,7 +20,7 @@ const JSX = {createElement: snabbdom.svg}
  * Base interface for the components that turn GModelElements into virtual DOM elements.
  */
 export interface IView {
-    render(model: SModelElement, context: RenderingContext): VNode
+    render(model: SModelElement, context: RenderingContext, args?: object): VNode
 }
 
 /**
@@ -31,9 +31,9 @@ export interface RenderingContext {
 
     decorate(vnode: VNode, element: SModelElement): VNode
 
-    renderElement(element: SModelElement): VNode
+    renderElement(element: SModelElement, args?: object): VNode
 
-    renderChildren(element: SParentElement): VNode[]
+    renderChildren(element: SParentElement, args?: object): VNode[]
 }
 
 /**

@@ -136,6 +136,16 @@ export function center(b: Bounds): Point {
     }
 }
 
+export function centerOfLine(s: Point, e: Point): Point {
+    const b: Bounds = {
+        x: s.x > e.x ? e.x : s.x,
+        y: s.y > e.y ? e.y : s.y,
+        width: Math.abs(e.x - s.x),
+        height: Math.abs(e.y - s.y)
+    }
+    return center(b)
+}
+
 /**
  * Checks whether the point p is included in the bounds b.
  */
@@ -159,10 +169,10 @@ export interface Insets {
 export enum Direction { left, right, up, down }
 
 /**
- * Returns the "straight line" distance between two points
+ * Returns the "straight line" distance between two points.
  * @param {Point} a - First point
  * @param {Point} b - Second point
- * @returns {number} The eucledian distance
+ * @returns {number} The Eucledian distance
  */
 export function euclideanDistance(a: Point, b: Point): number {
     const dx = b.x - a.x
@@ -172,21 +182,20 @@ export function euclideanDistance(a: Point, b: Point): number {
 
 /**
  * Returns the distance between two points in a grid, using a
- * strictly vertical and/or horizontal path (versus straight line)
+ * strictly vertical and/or horizontal path (versus straight line).
  * @param {Point} a - First point
  * @param {Point} b - Second point
- * @returns {number} The manhattan distance
+ * @returns {number} The Manhattan distance
  */
 export function manhattanDistance(a: Point, b: Point): number {
     return Math.abs(b.x - a.x) + Math.abs(b.y - a.y)
 }
 
 /**
- * Returns the distance between two points in a grid, using a
- * strictly vertical and/or horizontal path (versus straight line)
+ * Returns the maximum of the horizontal and the vertical distance.
  * @param {Point} a - First point
  * @param {Point} b - Second point
- * @returns {number} The manhattan distance
+ * @returns {number} The maximum distance
  */
 export function maxDistance(a: Point, b: Point): number {
     return Math.max(Math.abs(b.x - a.x), Math.abs(b.y - a.y))
@@ -194,7 +203,7 @@ export function maxDistance(a: Point, b: Point): number {
 
 // range (-PI, PI]
 export function angle(a: Point, b: Point): number {
-  return Math.atan2(b.y - a.y, b.x - a.x)
+    return Math.atan2(b.y - a.y, b.x - a.x)
 }
 
 /**
