@@ -5,69 +5,69 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { injectable } from "inversify"
-import { SModelFactory } from "../base/model/smodel-factory"
+import { injectable } from "inversify";
+import { SModelFactory } from "../base/model/smodel-factory";
 import {
     SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement
-} from "../base/model/smodel"
-import { getBasicType } from "../base/model/smodel-utils"
+} from "../base/model/smodel";
+import { getBasicType } from "../base/model/smodel-utils";
 import {
     SCompartment, SEdge, SEdgeSchema, SGraph, SGraphSchema, SLabel, SLabelSchema, SNode, SNodeSchema, SPortSchema, SPort
-} from "./sgraph"
-import { SButton, SButtonSchema } from '../features/button/model'
+} from "./sgraph";
+import { SButton, SButtonSchema } from '../features/button/model';
 
 @injectable()
 export class SGraphFactory extends SModelFactory {
 
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
         if (this.isNodeSchema(schema))
-            return this.initializeChild(new SNode(), schema, parent)
+            return this.initializeChild(new SNode(), schema, parent);
         else if (this.isPortSchema(schema))
-            return this.initializeChild(new SPort(), schema, parent)
+            return this.initializeChild(new SPort(), schema, parent);
         else if (this.isEdgeSchema(schema))
-            return this.initializeChild(new SEdge(), schema, parent)
+            return this.initializeChild(new SEdge(), schema, parent);
         else if (this.isLabelSchema(schema))
-            return this.initializeChild(new SLabel(), schema, parent)
+            return this.initializeChild(new SLabel(), schema, parent);
         else if (this.isCompartmentSchema(schema))
-            return this.initializeChild(new SCompartment(), schema, parent)
+            return this.initializeChild(new SCompartment(), schema, parent);
         if (this.isButtonSchema(schema))
-            return this.initializeChild(new SButton(), schema, parent)
+            return this.initializeChild(new SButton(), schema, parent);
         else
-            return super.createElement(schema, parent)
+            return super.createElement(schema, parent);
     }
 
     createRoot(schema: SModelRootSchema): SModelRoot {
         if (this.isGraphSchema(schema))
-            return this.initializeRoot(new SGraph(), schema)
+            return this.initializeRoot(new SGraph(), schema);
         else
-            return super.createRoot(schema)
+            return super.createRoot(schema);
     }
 
     isGraphSchema(schema: SModelElementSchema): schema is SGraphSchema {
-        return getBasicType(schema) === 'graph'
+        return getBasicType(schema) === 'graph';
     }
 
     isNodeSchema(schema: SModelElementSchema): schema is SNodeSchema {
-        return getBasicType(schema) === 'node'
+        return getBasicType(schema) === 'node';
     }
 
     isPortSchema(schema: SModelElementSchema): schema is SPortSchema {
-        return getBasicType(schema) === 'port'
+        return getBasicType(schema) === 'port';
     }
 
     isEdgeSchema(schema: SModelElementSchema): schema is SEdgeSchema {
-        return getBasicType(schema) === 'edge'
+        return getBasicType(schema) === 'edge';
     }
 
     isLabelSchema(schema: SModelElementSchema): schema is SLabelSchema {
-        return getBasicType(schema) === 'label'
+        return getBasicType(schema) === 'label';
     }
 
     isCompartmentSchema(schema: SModelElementSchema): schema is SLabelSchema {
-        return getBasicType(schema) === 'comp'
+        return getBasicType(schema) === 'comp';
     }
 
     isButtonSchema(schema: SModelElementSchema): schema is SButtonSchema {
-        return getBasicType(schema) === 'button'
+        return getBasicType(schema) === 'button';
     }
 }

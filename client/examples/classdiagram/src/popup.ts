@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SModelElementSchema, SModelRootSchema, RequestPopupModelAction, PreRenderedElementSchema } from "../../../src"
+import { SModelElementSchema, SModelRootSchema, RequestPopupModelAction, PreRenderedElementSchema } from "../../../src";
 
 export function popupModelFactory(request: RequestPopupModelAction, element?: SModelElementSchema): SModelRootSchema | undefined {
     if (element !== undefined && element.type === 'node:class') {
@@ -24,7 +24,7 @@ export function popupModelFactory(request: RequestPopupModelAction, element?: SM
                     code: '<div class="sprotty-popup-body">But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness.</div>'
                 }
             ]
-        }
+        };
     }
-    return undefined
+    return undefined;
 }

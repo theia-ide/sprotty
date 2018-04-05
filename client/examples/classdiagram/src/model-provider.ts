@@ -1,12 +1,12 @@
 /*
-* Copyright (C) 2017 TypeFox and others.
-*
-* Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
-* You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
-*/
+ * Copyright (C) 2017 TypeFox and others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ */
 
-import { injectable } from 'inversify'
-import { DiagramState, SModelRootSchema, SEdge, SGraphSchema, IStateAwareModelProvider } from "../../../src"
+import { injectable } from 'inversify';
+import { DiagramState, SModelRootSchema, SEdge, SGraphSchema, IStateAwareModelProvider } from "../../../src";
 
 @injectable()
 export class ModelProvider implements IStateAwareModelProvider {
@@ -31,7 +31,7 @@ export class ModelProvider implements IStateAwareModelProvider {
                         {
                             id: 'node0_icon',
                             type: 'icon',
-                            layout: 'stack', 
+                            layout: 'stack',
                             layoutOptions: {
                                 hAlign: 'center',
                                 resizeContainer: false
@@ -55,9 +55,9 @@ export class ModelProvider implements IStateAwareModelProvider {
                     ]
                 }
             ]
-        }
+        };
         if (state !== undefined && state.expansionState.expandedElementIds.indexOf('node0') !== -1) {
-            node0.expanded = true
+            node0.expanded = true;
             node0.children.push({
                 id: 'node0_attrs',
                 type: 'comp:comp',
@@ -69,7 +69,7 @@ export class ModelProvider implements IStateAwareModelProvider {
                         text: 'name: string'
                     }
                 ],
-            })
+            });
             node0.children.push({
                 id: 'node0_ops',
                 type: 'comp:comp',
@@ -85,7 +85,7 @@ export class ModelProvider implements IStateAwareModelProvider {
                         text: '# bar(x: string): void'
                     }
                 ],
-            })
+            });
         }
         const node1 = {
             id: 'node1',
@@ -115,7 +115,7 @@ export class ModelProvider implements IStateAwareModelProvider {
                                     id: 'node1_ticon',
                                     type: 'label:icon',
                                     text: 'C'
-                                }, 
+                                },
                             ]
                         }, {
                         id: 'node1_classname',
@@ -127,9 +127,9 @@ export class ModelProvider implements IStateAwareModelProvider {
                     }]
                 }
             ]
-        }
+        };
         if (state !== undefined && state.expansionState.expandedElementIds.indexOf('node1') !== -1) {
-            node1.expanded = true
+            node1.expanded = true;
             node1.children.push({
                 id: 'node1_attrs',
                 type: 'comp:comp',
@@ -141,7 +141,7 @@ export class ModelProvider implements IStateAwareModelProvider {
                         text: 'name: string'
                     }
                 ],
-            })
+            });
             node1.children.push({
                 id: 'node1_ops',
                 type: 'comp:comp',
@@ -154,14 +154,14 @@ export class ModelProvider implements IStateAwareModelProvider {
                     }
 
                 ]
-            })
+            });
         }
         const edge = {
             id: 'edge',
             type: 'edge:straight',
             sourceId: node0.id,
             targetId: node1.id
-        } as SEdge
+        } as SEdge;
         const graph: SGraphSchema = {
             id: 'graph',
             type: 'graph',
@@ -174,7 +174,7 @@ export class ModelProvider implements IStateAwareModelProvider {
                 paddingTop: 7,
                 paddingBottom: 7
             }
-        }
-        return graph
+        };
+        return graph;
     }
 }

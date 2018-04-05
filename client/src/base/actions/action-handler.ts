@@ -5,11 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { injectable, multiInject, optional } from "inversify"
-import { TYPES } from "../types"
-import { MultiInstanceRegistry } from "../../utils/registry"
-import { CommandActionHandler, ICommand, ICommandFactory } from "../commands/command"
-import { Action } from "./action"
+import { injectable, multiInject, optional } from "inversify";
+import { TYPES } from "../types";
+import { MultiInstanceRegistry } from "../../utils/registry";
+import { CommandActionHandler, ICommand, ICommandFactory } from "../commands/command";
+import { Action } from "./action";
 
 /**
  * An action handler accepts an action and reacts to it by returning either a command to be
@@ -33,18 +33,18 @@ export interface IActionHandlerInitializer {
 export class ActionHandlerRegistry extends MultiInstanceRegistry<IActionHandler> {
 
     constructor(@multiInject(TYPES.IActionHandlerInitializer) @optional() initializers: (IActionHandlerInitializer)[]) {
-        super()
+        super();
 
         initializers.forEach(
             initializer => this.initializeActionHandler(initializer)
-        )
+        );
     }
 
     registerCommand(commandType: ICommandFactory): void {
-        this.register(commandType.KIND, new CommandActionHandler(commandType))
+        this.register(commandType.KIND, new CommandActionHandler(commandType));
     }
 
     initializeActionHandler(initializer: IActionHandlerInitializer): void {
-        initializer.initialize(this)
+        initializer.initialize(this);
     }
 }

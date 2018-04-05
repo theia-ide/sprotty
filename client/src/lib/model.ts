@@ -5,11 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SModelRoot, SModelRootSchema, SChildElement, SModelElementSchema } from "../base/model/smodel"
-import { Point, Dimension, ORIGIN_POINT, EMPTY_DIMENSION, Bounds } from "../utils/geometry"
-import { BoundsAware, boundsFeature, Alignable, alignFeature } from "../features/bounds/model"
-import { Locateable, moveFeature } from "../features/move/model"
-import { Selectable, selectFeature } from "../features/select/model"
+import { SModelRoot, SModelRootSchema, SChildElement, SModelElementSchema } from "../base/model/smodel";
+import { Point, Dimension, ORIGIN_POINT, EMPTY_DIMENSION, Bounds } from "../utils/geometry";
+import { BoundsAware, boundsFeature, Alignable, alignFeature } from "../features/bounds/model";
+import { Locateable, moveFeature } from "../features/move/model";
+import { Selectable, selectFeature } from "../features/select/model";
 
 /**
  * Serializable schema for HtmlRoot.
@@ -22,7 +22,7 @@ export interface HtmlRootSchema extends SModelRootSchema {
  * Root model element class for HTML content. Usually this is rendered with a `div` DOM element.
  */
 export class HtmlRoot extends SModelRoot {
-    classes: string[] = []
+    classes: string[] = [];
 }
 
 /**
@@ -37,7 +37,7 @@ export interface PreRenderedElementSchema extends SModelElementSchema {
  * render complex figures or to compute the view on the server instead of the client code.
  */
 export class PreRenderedElement extends SChildElement {
-    code: string
+    code: string;
 }
 
 /**
@@ -52,10 +52,10 @@ export interface ShapedPreRenderedElementSchema extends PreRenderedElementSchema
  * Same as PreRenderedElement, but with a position and a size.
  */
 export class ShapedPreRenderedElement extends PreRenderedElement implements BoundsAware, Locateable, Selectable, Alignable {
-    position: Point = ORIGIN_POINT
-    size: Dimension = EMPTY_DIMENSION
-    selected: boolean = false
-    alignment: Point = ORIGIN_POINT
+    position: Point = ORIGIN_POINT;
+    size: Dimension = EMPTY_DIMENSION;
+    selected: boolean = false;
+    alignment: Point = ORIGIN_POINT;
 
     get bounds(): Bounds {
         return {
@@ -63,21 +63,21 @@ export class ShapedPreRenderedElement extends PreRenderedElement implements Boun
             y: this.position.y,
             width: this.size.width,
             height: this.size.height
-        }
+        };
     }
 
     set bounds(newBounds: Bounds) {
         this.position = {
             x: newBounds.x,
             y: newBounds.y
-        }
+        };
         this.size = {
             width: newBounds.width,
             height: newBounds.height
-        }
+        };
     }
 
     hasFeature(feature: symbol): boolean {
-        return feature === moveFeature || feature === boundsFeature || feature === selectFeature || feature === alignFeature
+        return feature === moveFeature || feature === boundsFeature || feature === selectFeature || feature === alignFeature;
     }
 }

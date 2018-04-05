@@ -5,11 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SModelElement, SModelRoot } from "../../base/model/smodel"
-import { Scrollable } from "./scroll"
-import { Zoomable } from "./zoom"
+import { SModelElement, SModelRoot } from "../../base/model/smodel";
+import { Scrollable } from "./scroll";
+import { Zoomable } from "./zoom";
 
-export const viewportFeature = Symbol('viewportFeature')
+export const viewportFeature = Symbol('viewportFeature');
 
 export interface Viewport extends Scrollable, Zoomable {
 }
@@ -18,5 +18,5 @@ export function isViewport(element: SModelElement): element is SModelRoot & View
     return element instanceof SModelRoot
         && element.hasFeature(viewportFeature)
         && 'zoom' in element
-        && 'scroll' in element
+        && 'scroll' in element;
 }

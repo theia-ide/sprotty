@@ -5,13 +5,13 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds, Point, isValidDimension } from '../../utils/geometry'
-import { SParentElement, SChildElement } from "../../base/model/smodel"
-import { AbstractLayout } from './abstract-layout'
-import { AbstractLayoutOptions, HAlignment } from './layout-options'
-import { BoundsData } from './hidden-bounds-updater'
-import { LayoutContainer } from './model'
-import { StatefulLayouter } from './layout'
+import { Bounds, Point, isValidDimension } from '../../utils/geometry';
+import { SParentElement, SChildElement } from "../../base/model/smodel";
+import { AbstractLayout } from './abstract-layout';
+import { AbstractLayoutOptions, HAlignment } from './layout-options';
+import { BoundsData } from './hidden-bounds-updater';
+import { LayoutContainer } from './model';
+import { StatefulLayouter } from './layout';
 
 export interface VBoxLayoutOptions extends AbstractLayoutOptions {
     vGap: number
@@ -23,31 +23,31 @@ export interface VBoxLayoutOptions extends AbstractLayoutOptions {
  */
 export class VBoxLayouter extends AbstractLayout<VBoxLayoutOptions> {
 
-    static KIND = 'vbox'
+    static KIND = 'vbox';
 
     protected getChildrenSize(container: SParentElement & LayoutContainer,
                                containerOptions: VBoxLayoutOptions,
                                layouter: StatefulLayouter) {
-        let maxWidth = -1
-        let maxHeight = 0
-        let isFirst = true
+        let maxWidth = -1;
+        let maxHeight = 0;
+        let isFirst = true;
         container.children.forEach(
             child => {
-                const bounds = layouter.getBoundsData(child).bounds
+                const bounds = layouter.getBoundsData(child).bounds;
                 if (bounds !== undefined && isValidDimension(bounds)) {
-                    maxHeight += bounds.height
+                    maxHeight += bounds.height;
                     if (isFirst)
-                        isFirst = false
+                        isFirst = false;
                     else
-                        maxHeight += containerOptions.vGap
-                    maxWidth = Math.max(maxWidth, bounds.width)
+                        maxHeight += containerOptions.vGap;
+                    maxWidth = Math.max(maxWidth, bounds.width);
                 }
             }
-        )
+        );
         return {
             width: maxWidth,
             height: maxHeight
-        }
+        };
     }
 
     protected layoutChild(child: SChildElement,
@@ -58,18 +58,18 @@ export class VBoxLayouter extends AbstractLayout<VBoxLayoutOptions> {
                         currentOffset: Point,
                         maxWidth: number,
                         maxHeight: number) {
-        const dx = this.getDx(childOptions.hAlign, bounds, maxWidth)
+        const dx = this.getDx(childOptions.hAlign, bounds, maxWidth);
         boundsData.bounds = {
             x: containerOptions.paddingLeft + (child as any).bounds.x - bounds.x + dx,
             y: currentOffset.y + (child as any).bounds.y - bounds.y,
             width: bounds.width,
             height: bounds.height
-        }
-        boundsData.boundsChanged = true
+        };
+        boundsData.boundsChanged = true;
         return {
             x: currentOffset.x,
             y: currentOffset.y + bounds.height + containerOptions.vGap
-        }
+        };
     }
 
     protected getDefaultLayoutOptions(): VBoxLayoutOptions {
@@ -82,10 +82,10 @@ export class VBoxLayouter extends AbstractLayout<VBoxLayoutOptions> {
             paddingFactor: 1,
             vGap: 1,
             hAlign: 'center'
-        }
+        };
     }
 
     protected spread(a: VBoxLayoutOptions, b: VBoxLayoutOptions): VBoxLayoutOptions {
-        return { ...a, ...b }
+        return { ...a, ...b };
     }
 }

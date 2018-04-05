@@ -5,16 +5,16 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { TYPES, LocalModelSource } from "../../../src"
-import createContainer from "./di.config"
+import { TYPES, LocalModelSource } from "../../../src";
+import createContainer from "./di.config";
 
 export default function runMindmap() {
-    const container = createContainer(false, 'sprotty')
+    const container = createContainer(false, 'sprotty');
 
     // Start with empty model
-    const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
+    const modelSource = container.get<LocalModelSource>(TYPES.ModelSource);
     modelSource.setModel({
         type: 'mindmap',
         id: 'root'
-    })
+    });
 }

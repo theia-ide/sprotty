@@ -5,21 +5,21 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { inject, optional } from 'inversify'
-import { VNode } from "snabbdom/vnode"
-import { isCtrlOrCmd } from "../../utils/browser"
-import { SChildElement, SModelElement, SModelRoot, SParentElement } from '../../base/model/smodel'
-import { findParentByFeature } from "../../base/model/smodel-utils"
-import { Action } from "../../base/actions/action"
-import { Command, CommandExecutionContext } from "../../base/commands/command"
-import { MouseListener } from "../../base/views/mouse-tool"
-import { KeyListener } from "../../base/views/key-tool"
-import { setClass } from "../../base/views/vnode-utils"
-import { ButtonHandlerRegistry } from '../button/button-handler'
-import { SButton } from '../button/model'
-import { isRoutable, SRoutingHandle } from '../edit/model'
-import { SwitchEditModeAction } from '../edit/edit-routing'
-import { isSelectable } from "./model"
+import { inject, optional } from 'inversify';
+import { VNode } from "snabbdom/vnode";
+import { isCtrlOrCmd } from "../../utils/browser";
+import { SChildElement, SModelElement, SModelRoot, SParentElement } from '../../base/model/smodel';
+import { findParentByFeature } from "../../base/model/smodel-utils";
+import { Action } from "../../base/actions/action";
+import { Command, CommandExecutionContext } from "../../base/commands/command";
+import { MouseListener } from "../../base/views/mouse-tool";
+import { KeyListener } from "../../base/views/key-tool";
+import { setClass } from "../../base/views/vnode-utils";
+import { ButtonHandlerRegistry } from '../button/button-handler';
+import { SButton } from '../button/model';
+import { isRoutable, SRoutingHandle } from '../edit/model';
+import { SwitchEditModeAction } from '../edit/edit-routing';
+import { isSelectable } from "./model";
 
 /**
  * Triggered when the user changes the selection, e.g. by clicking on a selectable element. The resulting
@@ -28,7 +28,7 @@ import { isSelectable } from "./model"
  * Furthermore, the server can send such an action to the client in order to change the selection programmatically.
  */
 export class SelectAction implements Action {
-    kind = SelectCommand.KIND
+    kind = SelectCommand.KIND;
 
     constructor(public readonly selectedElementsIDs: string[] = [],
                 public readonly deselectedElementsIDs: string[] = []) {
@@ -39,7 +39,7 @@ export class SelectAction implements Action {
  * Programmatic action for selecting or deselecting all elements.
  */
 export class SelectAllAction implements Action {
-    kind = SelectAllCommand.KIND
+    kind = SelectAllCommand.KIND;
 
     /**
      * If `select` is true, all elements are selected, othewise they are deselected.
@@ -51,195 +51,197 @@ export class SelectAllAction implements Action {
 export type ElementSelection = {
     element: SChildElement
     index: number
-}
+};
 
 export class SelectCommand extends Command {
-    static readonly KIND = 'elementSelected'
+    static readonly KIND = 'elementSelected';
 
-    protected selected: ElementSelection[] = []
-    protected deselected: ElementSelection[] = []
+    protected selected: ElementSelection[] = [];
+    protected deselected: ElementSelection[] = [];
 
     constructor(public action: SelectAction) {
-        super()
+        super();
     }
 
     execute(context: CommandExecutionContext): SModelRoot {
-        const model = context.root
+        const model = context.root;
         this.action.selectedElementsIDs.forEach(id => {
-            const element = model.index.getById(id)
+            const element = model.index.getById(id);
             if (element instanceof SChildElement && isSelectable(element)) {
                 this.selected.push({
                     element: element,
                     index: element.parent.children.indexOf(element)
-                })
+                });
             }
-        })
+        });
         this.action.deselectedElementsIDs.forEach(id => {
-            const element = model.index.getById(id)
+            const element = model.index.getById(id);
             if (element instanceof SChildElement && isSelectable(element)) {
                 this.deselected.push({
                     element: element,
                     index: element.parent.children.indexOf(element)
-                })
+                });
             }
-        })
-        return this.redo(context)
+        });
+        return this.redo(context);
     }
 
     undo(context: CommandExecutionContext): SModelRoot {
         for (let i = this.selected.length - 1; i >= 0; --i) {
-            const selection = this.selected[i]
-            const element = selection.element
+            const selection = this.selected[i];
+            const element = selection.element;
             if (isSelectable(element))
-                element.selected = false
-            element.parent.move(element, selection.index)
+                element.selected = false;
+            element.parent.move(element, selection.index);
         }
         this.deselected.reverse().forEach(selection => {
             if (isSelectable(selection.element))
-                selection.element.selected = true
-        })
-        return context.root
+                selection.element.selected = true;
+        });
+        return context.root;
     }
 
     redo(context: CommandExecutionContext): SModelRoot {
         for (let i = 0; i < this.selected.length; ++i) {
-            const selection = this.selected[i]
-            const element = selection.element
-            const childrenLength = element.parent.children.length
-            element.parent.move(element, childrenLength - 1)
+            const selection = this.selected[i];
+            const element = selection.element;
+            const childrenLength = element.parent.children.length;
+            element.parent.move(element, childrenLength - 1);
         }
         this.deselected.forEach(selection => {
             if (isSelectable(selection.element))
-                selection.element.selected = false
-        })
+                selection.element.selected = false;
+        });
         this.selected.forEach(selection => {
             if (isSelectable(selection.element))
-                selection.element.selected = true
-        })
-        return context.root
+                selection.element.selected = true;
+        });
+        return context.root;
     }
 }
 
 export class SelectAllCommand extends Command {
-    static readonly KIND = 'allSelected'
+    static readonly KIND = 'allSelected';
 
-    protected previousSelection: { [key: string]: boolean } = {}
+    protected previousSelection: Record<string, boolean> = {};
 
     constructor(public action: SelectAllAction) {
-        super()
+        super();
     }
 
     execute(context: CommandExecutionContext): SModelRoot {
-        this.selectAll(context.root, this.action.select)
-        return context.root
+        this.selectAll(context.root, this.action.select);
+        return context.root;
     }
 
     protected selectAll(element: SParentElement, newState: boolean): void {
         if (isSelectable(element)) {
-            this.previousSelection[element.id] = element.selected
-            element.selected = newState
+            this.previousSelection[element.id] = element.selected;
+            element.selected = newState;
         }
         for (const child of element.children) {
-            this.selectAll(child, newState)
+            this.selectAll(child, newState);
         }
     }
 
     undo(context: CommandExecutionContext): SModelRoot {
-        const index = context.root.index
+        const index = context.root.index;
         for (const id in this.previousSelection) {
-            const element = index.getById(id)
-            if (element !== undefined && isSelectable(element))
-                element.selected = this.previousSelection[id]
+            if (this.previousSelection.hasOwnProperty(id)) {
+                const element = index.getById(id);
+                if (element !== undefined && isSelectable(element))
+                    element.selected = this.previousSelection[id];
+            }
         }
-        return context.root
+        return context.root;
     }
 
     redo(context: CommandExecutionContext): SModelRoot {
-        this.selectAll(context.root, this.action.select)
-        return context.root
+        this.selectAll(context.root, this.action.select);
+        return context.root;
     }
 }
 
 export class SelectMouseListener extends MouseListener {
 
     constructor(@inject(ButtonHandlerRegistry)@optional() protected buttonHandlerRegistry: ButtonHandlerRegistry) {
-        super()
+        super();
     }
 
-    wasSelected = false
-    hasDragged = false
+    wasSelected = false;
+    hasDragged = false;
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
-        const result: Action[] = []
+        const result: Action[] = [];
         if (event.button === 0) {
             if (this.buttonHandlerRegistry !== undefined && target instanceof SButton && target.enabled) {
-                const buttonHandler = this.buttonHandlerRegistry.get(target.type)
+                const buttonHandler = this.buttonHandlerRegistry.get(target.type);
                 if (buttonHandler !== undefined)
-                    return buttonHandler.buttonPressed(target)
+                    return buttonHandler.buttonPressed(target);
             }
-            const selectableTarget = findParentByFeature(target, isSelectable)
+            const selectableTarget = findParentByFeature(target, isSelectable);
             if (selectableTarget !== undefined || target instanceof SModelRoot) {
-                this.hasDragged = false
-                let deselect: SModelElement[] = []
+                this.hasDragged = false;
+                let deselect: SModelElement[] = [];
                 // multi-selection?
                 if (!isCtrlOrCmd(event)) {
                     deselect = target.root
                         .index
                         .all()
                         .filter(element => isSelectable(element) && element.selected
-                            && !(selectableTarget instanceof SRoutingHandle && element === selectableTarget.parent as SModelElement))
+                            && !(selectableTarget instanceof SRoutingHandle && element === selectableTarget.parent as SModelElement));
                 }
                 if (selectableTarget !== undefined) {
                     if (!selectableTarget.selected) {
-                        this.wasSelected = false
-                        result.push(new SelectAction([selectableTarget.id], deselect.map(e => e.id)))
-                        const routableDeselect = deselect.filter(e => isRoutable(e)).map(e => e.id)
+                        this.wasSelected = false;
+                        result.push(new SelectAction([selectableTarget.id], deselect.map(e => e.id)));
+                        const routableDeselect = deselect.filter(e => isRoutable(e)).map(e => e.id);
                         if (isRoutable(selectableTarget))
-                            result.push(new SwitchEditModeAction([selectableTarget.id], routableDeselect))
+                            result.push(new SwitchEditModeAction([selectableTarget.id], routableDeselect));
                         else if (routableDeselect.length > 0)
-                            result.push(new SwitchEditModeAction([], routableDeselect))
+                            result.push(new SwitchEditModeAction([], routableDeselect));
                     } else if (isCtrlOrCmd(event)) {
-                        this.wasSelected = false
-                        result.push(new SelectAction([], [selectableTarget.id]))
+                        this.wasSelected = false;
+                        result.push(new SelectAction([], [selectableTarget.id]));
                         if (isRoutable(selectableTarget))
-                            result.push(new SwitchEditModeAction([], [selectableTarget.id]))
+                            result.push(new SwitchEditModeAction([], [selectableTarget.id]));
                     } else {
-                        this.wasSelected = true
+                        this.wasSelected = true;
                     }
                 } else {
-                    result.push(new SelectAction([], deselect.map(e => e.id)))
-                    const routableDeselect = deselect.filter(e => isRoutable(e)).map(e => e.id)
+                    result.push(new SelectAction([], deselect.map(e => e.id)));
+                    const routableDeselect = deselect.filter(e => isRoutable(e)).map(e => e.id);
                     if (routableDeselect.length > 0)
-                        result.push(new SwitchEditModeAction([], routableDeselect))
+                        result.push(new SwitchEditModeAction([], routableDeselect));
                 }
             }
         }
-        return result
+        return result;
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): Action[] {
-        this.hasDragged = true
-        return []
+        this.hasDragged = true;
+        return [];
     }
 
     mouseUp(target: SModelElement, event: MouseEvent): Action[] {
         if (event.button === 0) {
             if (!this.hasDragged) {
-                const selectableTarget = findParentByFeature(target, isSelectable)
+                const selectableTarget = findParentByFeature(target, isSelectable);
                 if (selectableTarget !== undefined && this.wasSelected) {
-                    return [new SelectAction([selectableTarget.id], [])]
+                    return [new SelectAction([selectableTarget.id], [])];
                 }
             }
         }
-        this.hasDragged = false
-        return []
+        this.hasDragged = false;
+        return [];
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        const selectableTarget = findParentByFeature(element, isSelectable)
+        const selectableTarget = findParentByFeature(element, isSelectable);
         if (selectableTarget !== undefined)
-            setClass(vnode, 'selected', selectableTarget.selected)
-        return vnode
+            setClass(vnode, 'selected', selectableTarget.selected);
+        return vnode;
     }
 }
 
@@ -247,8 +249,8 @@ export class SelectKeyboardListener extends KeyListener {
     keyDown(element: SModelElement, event: KeyboardEvent): Action[] {
         if (isCtrlOrCmd(event) && event.keyCode === 65) {
             return [new SelectAction(
-                element.root.index.all().filter(e => isSelectable(e)).map(e => e.id), [])]
+                element.root.index.all().filter(e => isSelectable(e)).map(e => e.id), [])];
         }
-        return []
+        return [];
     }
 }

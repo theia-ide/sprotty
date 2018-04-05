@@ -40,4 +40,4 @@ export const TYPES = {
     IViewerProvider: Symbol('IViewerProvider'),
     ViewRegistry: Symbol('ViewRegistry'),
     IVNodeDecorator: Symbol('IVNodeDecorator')
-}
+};

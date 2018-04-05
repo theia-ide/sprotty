@@ -8,17 +8,17 @@
 import {
     TYPES, IActionDispatcher, SModelElementSchema, SEdgeSchema, SNodeSchema, SGraphSchema, SGraphFactory,
     ElementMove, MoveAction, LocalModelSource
-} from "../../../src"
-import createContainer from "./di.config"
+} from "../../../src";
+import createContainer from "./di.config";
 
 export default function runStandalone() {
-    const container = createContainer(false)
+    const container = createContainer(false);
 
     // Initialize gmodel
-    const node0 = { id: 'node0', type: 'node:circle', position: { x: 100, y: 100 }, size: { width: 80, height: 80 } }
-    const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0] }
+    const node0 = { id: 'node0', type: 'node:circle', position: { x: 100, y: 100 }, size: { width: 80, height: 80 } };
+    const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0] };
 
-    let count = 2
+    let count = 2;
     function addNode(): SModelElementSchema[] {
         const newNode: SNodeSchema = {
             id: 'node' + count,
@@ -31,40 +31,40 @@ export default function runStandalone() {
                 width: 80,
                 height: 80
             }
-        }
+        };
         const newEdge: SEdgeSchema = {
             id: 'edge' + count,
             type: 'edge:straight',
             sourceId: 'node0',
             targetId: 'node' + count++
-        }
-        return [newNode, newEdge]
+        };
+        return [newNode, newEdge];
     }
 
     for (let i = 0; i < 200; ++i) {
-        const newElements = addNode()
+        const newElements = addNode();
         for (const e of newElements) {
-            graph.children.splice(0, 0, e)
+            graph.children.splice(0, 0, e);
         }
     }
 
     // Run
-    const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
-    modelSource.setModel(graph)
+    const modelSource = container.get<LocalModelSource>(TYPES.ModelSource);
+    modelSource.setModel(graph);
 
     // Button features
     document.getElementById('addNode')!.addEventListener('click', () => {
-        const newElements = addNode()
-        modelSource.addElements(newElements)
-        const graphElement = document.getElementById('graph')
+        const newElements = addNode();
+        modelSource.addElements(newElements);
+        const graphElement = document.getElementById('graph');
         if (graphElement !== null && typeof graphElement.focus === 'function')
-            graphElement.focus()
-    })
+            graphElement.focus();
+    });
 
-    const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher)
-    const factory = container.get<SGraphFactory>(TYPES.IModelFactory)
+    const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher);
+    const factory = container.get<SGraphFactory>(TYPES.IModelFactory);
     document.getElementById('scrambleNodes')!.addEventListener('click', function (e) {
-        const nodeMoves: ElementMove[] = []
+        const nodeMoves: ElementMove[] = [];
         graph.children.forEach(shape => {
             if (factory.isNodeSchema(shape)) {
                 nodeMoves.push({
@@ -73,13 +73,13 @@ export default function runStandalone() {
                         x: Math.random() * 1024,
                         y: Math.random() * 768
                     }
-                })
+                });
             }
-        })
-        dispatcher.dispatch(new MoveAction(nodeMoves, true))
-        const graphElement = document.getElementById('graph')
+        });
+        dispatcher.dispatch(new MoveAction(nodeMoves, true));
+        const graphElement = document.getElementById('graph');
         if (graphElement !== null && typeof graphElement.focus === 'function')
-            graphElement.focus()
-    })
+            graphElement.focus();
+    });
 
 }

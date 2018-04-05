@@ -5,16 +5,16 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds, EMPTY_BOUNDS, EMPTY_DIMENSION, Dimension, isBounds, ORIGIN_POINT, Point } from "../../utils/geometry"
-import { SModelElement, SModelElementSchema, SParentElement, SChildElement, SModelRoot } from "../../base/model/smodel"
-import { SModelExtension } from "../../base/model/smodel-extension"
-import { findParentByFeature } from '../../base/model/smodel-utils'
-import { Locateable } from '../move/model'
+import { Bounds, EMPTY_BOUNDS, EMPTY_DIMENSION, Dimension, isBounds, ORIGIN_POINT, Point } from "../../utils/geometry";
+import { SModelElement, SModelElementSchema, SParentElement, SChildElement, SModelRoot } from "../../base/model/smodel";
+import { SModelExtension } from "../../base/model/smodel-extension";
+import { findParentByFeature } from '../../base/model/smodel-utils';
+import { Locateable } from '../move/model';
 
-export const boundsFeature = Symbol('boundsFeature')
-export const layoutContainerFeature = Symbol('layoutContainerFeature')
-export const layoutableChildFeature = Symbol('layoutableChildFeature')
-export const alignFeature = Symbol('alignFeature')
+export const boundsFeature = Symbol('boundsFeature');
+export const layoutContainerFeature = Symbol('layoutContainerFeature');
+export const layoutableChildFeature = Symbol('layoutableChildFeature');
+export const alignFeature = Symbol('alignFeature');
 
 /**
  * Model elements that implement this interface have a position and a size.
@@ -30,7 +30,7 @@ export interface LayoutContainer extends LayoutableChild {
     layout: string
 }
 
-export type ModelLayoutOptions = {[key: string]: string | number | boolean}
+export type ModelLayoutOptions = {[key: string]: string | number | boolean};
 
 export interface LayoutableChild extends SModelExtension, BoundsAware {
     layoutOptions?: ModelLayoutOptions
@@ -45,45 +45,45 @@ export interface Alignable extends SModelExtension {
 }
 
 export function isBoundsAware(element: SModelElement): element is SModelElement & BoundsAware {
-    return 'bounds' in element
+    return 'bounds' in element;
 }
 
 export function isLayoutContainer(element: SModelElement): element is SParentElement & LayoutContainer {
     return isBoundsAware(element)
         && element.hasFeature(layoutContainerFeature)
-        && 'layout' in element
+        && 'layout' in element;
 }
 
 export function isLayoutableChild(element: SModelElement): element is SParentElement & LayoutableChild {
     return isBoundsAware(element)
-        && element.hasFeature(layoutableChildFeature)
+        && element.hasFeature(layoutableChildFeature);
 }
 
 export function isSizeable(element: SModelElement): element is SModelElement & BoundsAware {
-    return element.hasFeature(boundsFeature) && isBoundsAware(element)
+    return element.hasFeature(boundsFeature) && isBoundsAware(element);
 }
 
 export function isAlignable(element: SModelElement): element is SModelElement & Alignable {
     return element.hasFeature(alignFeature)
-        && 'alignment' in element
+        && 'alignment' in element;
 }
 
 export function getAbsoluteBounds(element: SModelElement): Bounds {
-    const boundsAware = findParentByFeature(element, isBoundsAware)
+    const boundsAware = findParentByFeature(element, isBoundsAware);
     if (boundsAware !== undefined) {
-        let bounds = boundsAware.bounds
-        let current: SModelElement = boundsAware
+        let bounds = boundsAware.bounds;
+        let current: SModelElement = boundsAware;
         while (current instanceof SChildElement) {
-            const parent = current.parent
-            bounds = parent.localToParent(bounds)
-            current = parent
+            const parent = current.parent;
+            bounds = parent.localToParent(bounds);
+            current = parent;
         }
-        return bounds
+        return bounds;
     } else if (element instanceof SModelRoot) {
-        const canvasBounds = element.canvasBounds
-        return { x: 0, y: 0, width: canvasBounds.width, height: canvasBounds.height }
+        const canvasBounds = element.canvasBounds;
+        return { x: 0, y: 0, width: canvasBounds.width, height: canvasBounds.height };
     } else {
-        return EMPTY_BOUNDS
+        return EMPTY_BOUNDS;
     }
 }
 
@@ -101,9 +101,9 @@ export interface SShapeElementSchema extends SModelElementSchema {
  * Abstract class for elements with a position and a size.
  */
 export abstract class SShapeElement extends SChildElement implements BoundsAware, Locateable, LayoutableChild {
-    position: Point = ORIGIN_POINT
-    size: Dimension = EMPTY_DIMENSION
-    layoutOptions?: ModelLayoutOptions
+    position: Point = ORIGIN_POINT;
+    size: Dimension = EMPTY_DIMENSION;
+    layoutOptions?: ModelLayoutOptions;
 
     get bounds(): Bounds {
         return {
@@ -111,18 +111,18 @@ export abstract class SShapeElement extends SChildElement implements BoundsAware
             y: this.position.y,
             width: this.size.width,
             height: this.size.height
-        }
+        };
     }
 
     set bounds(newBounds: Bounds) {
         this.position = {
             x: newBounds.x,
             y: newBounds.y
-        }
+        };
         this.size = {
             width: newBounds.width,
             height: newBounds.height
-        }
+        };
     }
 
     localToParent(point: Point | Bounds): Bounds {
@@ -131,12 +131,12 @@ export abstract class SShapeElement extends SChildElement implements BoundsAware
             y: point.y + this.position.y,
             width: -1,
             height: -1
-        }
+        };
         if (isBounds(point)) {
-            result.width = point.width
-            result.height = point.height
+            result.width = point.width;
+            result.height = point.height;
         }
-        return result
+        return result;
     }
 
     parentToLocal(point: Point | Bounds): Bounds {
@@ -145,11 +145,11 @@ export abstract class SShapeElement extends SChildElement implements BoundsAware
             y: point.y - this.position.y,
             width: -1,
             height: -1
-        }
+        };
         if (isBounds(point)) {
-            result.width = point.width
-            result.height = point.height
+            result.width = point.width;
+            result.height = point.height;
         }
-        return result
+        return result;
     }
 }

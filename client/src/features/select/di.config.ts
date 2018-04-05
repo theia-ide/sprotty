@@ -5,15 +5,15 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { ContainerModule } from "inversify"
-import { TYPES } from "../../base/types"
-import { SelectCommand, SelectAllCommand, SelectKeyboardListener, SelectMouseListener } from "./select"
+import { ContainerModule } from "inversify";
+import { TYPES } from "../../base/types";
+import { SelectCommand, SelectAllCommand, SelectKeyboardListener, SelectMouseListener } from "./select";
 
 const selectModule = new ContainerModule(bind => {
-    bind(TYPES.ICommand).toConstructor(SelectCommand)
-    bind(TYPES.ICommand).toConstructor(SelectAllCommand)
-    bind(TYPES.KeyListener).to(SelectKeyboardListener)
-    bind(TYPES.MouseListener).to(SelectMouseListener)
-})
+    bind(TYPES.ICommand).toConstructor(SelectCommand);
+    bind(TYPES.ICommand).toConstructor(SelectAllCommand);
+    bind(TYPES.KeyListener).to(SelectKeyboardListener);
+    bind(TYPES.MouseListener).to(SelectMouseListener);
+});
 
-export default selectModule
+export default selectModule;

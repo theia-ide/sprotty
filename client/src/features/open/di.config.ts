@@ -5,12 +5,12 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { ContainerModule } from "inversify"
-import { TYPES } from "../../base/types"
-import { OpenMouseListener } from "./open"
+import { ContainerModule } from "inversify";
+import { TYPES } from "../../base/types";
+import { OpenMouseListener } from "./open";
 
 const openModule = new ContainerModule(bind => {
-    bind(TYPES.MouseListener).to(OpenMouseListener)
-})
+    bind(TYPES.MouseListener).to(OpenMouseListener);
+});
 
-export default openModule
+export default openModule;

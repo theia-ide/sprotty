@@ -5,13 +5,13 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import "reflect-metadata"
-import "mocha"
-import { expect } from "chai"
-import { Bounds, EMPTY_BOUNDS } from '../../utils/geometry'
-import { SModelRoot } from "../model/smodel"
-import { CommandExecutionContext } from '../commands/command'
-import { InitializeCanvasBoundsAction, InitializeCanvasBoundsCommand } from './initialize-canvas'
+import "reflect-metadata";
+import "mocha";
+import { expect } from "chai";
+import { Bounds, EMPTY_BOUNDS } from '../../utils/geometry';
+import { SModelRoot } from "../model/smodel";
+import { CommandExecutionContext } from '../commands/command';
+import { InitializeCanvasBoundsAction, InitializeCanvasBoundsCommand } from './initialize-canvas';
 
 describe('InitializeCanvasBoundsCommand', () => {
 
@@ -20,10 +20,10 @@ describe('InitializeCanvasBoundsCommand', () => {
         y: 20,
         width: 10,
         height: 10
-    }
+    };
 
-    const root = new SModelRoot()
-    const command = new InitializeCanvasBoundsCommand(new InitializeCanvasBoundsAction(bounds))
+    const root = new SModelRoot();
+    const command = new InitializeCanvasBoundsCommand(new InitializeCanvasBoundsAction(bounds));
 
     const context: CommandExecutionContext = {
         root: root,
@@ -32,22 +32,22 @@ describe('InitializeCanvasBoundsCommand', () => {
         modelChanged: undefined!,
         duration: 100,
         syncer: undefined!
-    }
+    };
 
     it('execute() works as expected', () => {
         // sanity check for initial bounds values
-        expect(EMPTY_BOUNDS).deep.equals(root.canvasBounds)
-        command.execute(context)
-        expect(bounds).deep.equals(root.canvasBounds)
-    })
+        expect(EMPTY_BOUNDS).deep.equals(root.canvasBounds);
+        command.execute(context);
+        expect(bounds).deep.equals(root.canvasBounds);
+    });
 
     it('undo() works as expected', () => {
-        command.undo(context)
-        expect(bounds).deep.equals(root.canvasBounds)
-    })
+        command.undo(context);
+        expect(bounds).deep.equals(root.canvasBounds);
+    });
 
     it('redo() works as expected', () => {
-        command.redo(context)
-        expect(bounds).deep.equals(root.canvasBounds)
-    })
-})
+        command.redo(context);
+        expect(bounds).deep.equals(root.canvasBounds);
+    });
+});

@@ -7,10 +7,10 @@
 
 import {
     SShapeElement, SChildElement, SModelElementSchema, SModelRootSchema,
-    Bounds, Direction, BoundsAware, boundsFeature, Fadeable, fadeFeature, 
+    Bounds, Direction, BoundsAware, boundsFeature, Fadeable, fadeFeature,
     layoutContainerFeature, LayoutContainer, Selectable, selectFeature, ViewportRootElement, hoverFeedbackFeature, Hoverable, popupFeature
-} from '../../../src'
-import { CORE_DISTANCE, CORE_WIDTH } from "./views"
+} from '../../../src';
+import { CORE_DISTANCE, CORE_WIDTH } from "./views";
 
 export interface ProcessorSchema extends SModelRootSchema {
     rows: number
@@ -18,17 +18,17 @@ export interface ProcessorSchema extends SModelRootSchema {
 }
 
 export class Processor extends ViewportRootElement implements BoundsAware {
-    rows: number = 0
-    columns: number = 0
-    layoutOptions: any
+    rows: number = 0;
+    columns: number = 0;
+    layoutOptions: any;
 
     get bounds(): Bounds {
         return {
             x: -3 * CORE_DISTANCE,
-            y: -3 * CORE_DISTANCE, 
+            y: -3 * CORE_DISTANCE,
             width: this.columns * (CORE_WIDTH + CORE_DISTANCE) + 5 * CORE_DISTANCE,
             height: this.rows * (CORE_WIDTH + CORE_DISTANCE) + 5 * CORE_DISTANCE
-        }
+        };
     }
 
     set bounds(newBounds: Bounds) {
@@ -36,7 +36,7 @@ export class Processor extends ViewportRootElement implements BoundsAware {
     }
 
     hasFeature(feature: symbol): boolean {
-        return feature === boundsFeature || super.hasFeature(feature)
+        return feature === boundsFeature || super.hasFeature(feature);
     }
 }
 
@@ -51,21 +51,21 @@ export interface CoreSchema extends SModelElementSchema {
 }
 
 export class Core extends SShapeElement implements Selectable, Fadeable, Hoverable, LayoutContainer {
-    hoverFeedback: boolean = false
-    column: number = 0
-    row: number = 0
-    kernelNr: number = -1
-    selected: boolean = false
-    opacity: number = 1
-    layout: string = 'vbox'
-    resizeContainer: boolean = false
+    hoverFeedback: boolean = false;
+    column: number = 0;
+    row: number = 0;
+    kernelNr: number = -1;
+    selected: boolean = false;
+    opacity: number = 1;
+    layout: string = 'vbox';
+    resizeContainer: boolean = false;
 
     hasFeature(feature: symbol): boolean {
         return feature === selectFeature
             || feature === fadeFeature
             || feature === layoutContainerFeature
             || feature === hoverFeedbackFeature
-            || feature === popupFeature
+            || feature === popupFeature;
     }
 }
 
@@ -76,8 +76,8 @@ export interface CrossbarSchema extends SModelElementSchema {
 }
 
 export class Crossbar extends SChildElement {
-    direction: Direction
-    load: number = 0
+    direction: Direction;
+    load: number = 0;
 }
 
 export interface ChannelSchema extends SModelElementSchema {
@@ -89,14 +89,14 @@ export interface ChannelSchema extends SModelElementSchema {
 }
 
 export class Channel extends SChildElement implements Selectable {
-    column: number = 0
-    row: number = 0
-    direction: Direction
-    load: number = 0
-    selected: boolean = false
+    column: number = 0;
+    row: number = 0;
+    direction: Direction;
+    load: number = 0;
+    selected: boolean = false;
 
     hasFeature(feature: symbol): boolean {
-        return feature === selectFeature
+        return feature === selectFeature;
     }
 }
 

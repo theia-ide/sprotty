@@ -5,15 +5,15 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import * as snabbdom from "snabbdom-jsx"
-import { injectable } from "inversify"
-import { VNode } from "snabbdom/vnode"
-import { SModelElement, SModelRoot, SParentElement } from "../model/smodel"
-import { EMPTY_ROOT } from "../model/smodel-factory"
-import { ProviderRegistry } from "../../utils/registry"
-import { Point, ORIGIN_POINT } from "../../utils/geometry"
+import * as snabbdom from "snabbdom-jsx";
+import { injectable } from "inversify";
+import { VNode } from "snabbdom/vnode";
+import { SModelElement, SModelRoot, SParentElement } from "../model/smodel";
+import { EMPTY_ROOT } from "../model/smodel-factory";
+import { ProviderRegistry } from "../../utils/registry";
+import { Point, ORIGIN_POINT } from "../../utils/geometry";
 
-const JSX = {createElement: snabbdom.svg}
+const JSX = {createElement: snabbdom.svg};
 
 
 /**
@@ -42,28 +42,28 @@ export interface RenderingContext {
 @injectable()
 export class ViewRegistry extends ProviderRegistry<IView, SModelElement> {
     constructor() {
-        super()
-        this.registerDefaults()
+        super();
+        this.registerDefaults();
     }
 
     protected registerDefaults() {
-        this.register(EMPTY_ROOT.type, EmptyView)
+        this.register(EMPTY_ROOT.type, EmptyView);
     }
 
     missing(key: string, element: SModelElement): IView {
-        return new MissingView()
+        return new MissingView();
     }
 }
 
 export class EmptyView implements IView {
     render(model: SModelRoot, context: RenderingContext): VNode {
-        return <svg class-sprotty-empty={true} />
+        return <svg class-sprotty-empty={true} />;
     }
 }
 
 export class MissingView implements IView {
     render(model: SModelElement, context: RenderingContext): VNode {
-        const position: Point = (model as any).position || ORIGIN_POINT
-        return <text class-sprotty-missing={true} x={position.x} y={position.y}>?{model.id}?</text>
+        const position: Point = (model as any).position || ORIGIN_POINT;
+        return <text class-sprotty-missing={true} x={position.x} y={position.y}>?{model.id}?</text>;
     }
 }

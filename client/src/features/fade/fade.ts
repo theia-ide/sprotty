@@ -5,14 +5,14 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { injectable } from "inversify"
-import { VNode } from "snabbdom/vnode"
-import { Animation } from "../../base/animations/animation"
-import { CommandExecutionContext } from "../../base/commands/command"
-import { SModelRoot, SModelElement, SChildElement } from "../../base/model/smodel"
-import { IVNodeDecorator } from "../../base/views/vnode-decorators"
-import { setAttr } from "../../base/views/vnode-utils"
-import { Fadeable, isFadeable } from "./model"
+import { injectable } from "inversify";
+import { VNode } from "snabbdom/vnode";
+import { Animation } from "../../base/animations/animation";
+import { CommandExecutionContext } from "../../base/commands/command";
+import { SModelRoot, SModelElement, SChildElement } from "../../base/model/smodel";
+import { IVNodeDecorator } from "../../base/views/vnode-decorators";
+import { setAttr } from "../../base/views/vnode-utils";
+import { Fadeable, isFadeable } from "./model";
 
 export interface ResolvedElementFade {
     element: SModelElement & Fadeable
@@ -25,22 +25,22 @@ export class FadeAnimation extends Animation {
                 public elementFades: ResolvedElementFade[],
                 context: CommandExecutionContext,
                 protected removeAfterFadeOut: boolean = false) {
-        super(context)
+        super(context);
     }
 
     tween(t: number, context: CommandExecutionContext): SModelRoot {
         for (const elementFade of this.elementFades) {
-            const element = elementFade.element
+            const element = elementFade.element;
             if (elementFade.type === 'in') {
-                element.opacity = t
+                element.opacity = t;
             } else if (elementFade.type === 'out') {
-                element.opacity = 1 - t
+                element.opacity = 1 - t;
                 if (t === 1 && this.removeAfterFadeOut && element instanceof SChildElement) {
-                    element.parent.remove(element)
+                    element.parent.remove(element);
                 }
             }
         }
-        return this.model
+        return this.model;
     }
 
 }
@@ -50,9 +50,9 @@ export class ElementFader implements IVNodeDecorator {
 
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (isFadeable(element)) {
-            setAttr(vnode, 'opacity', element.opacity)
+            setAttr(vnode, 'opacity', element.opacity);
         }
-        return vnode
+        return vnode;
     }
 
     postUpdate(): void {

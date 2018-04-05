@@ -5,12 +5,12 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { ContainerModule } from "inversify"
-import { TYPES } from "../../base/types"
-import { ExpandButtonHandler } from "./expand"
+import { ContainerModule } from "inversify";
+import { TYPES } from "../../base/types";
+import { ExpandButtonHandler } from "./expand";
 
 const expandModule = new ContainerModule(bind => {
-    bind(TYPES.IButtonHandler).toConstructor(ExpandButtonHandler)
-})
+    bind(TYPES.IButtonHandler).toConstructor(ExpandButtonHandler);
+});
 
-export default expandModule
+export default expandModule;

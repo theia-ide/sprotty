@@ -5,8 +5,8 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Container } from "inversify"
-import { TYPES } from "../types"
+import { Container } from "inversify";
+import { TYPES } from "../types";
 
 export interface ViewerOptions {
     baseDiv: string
@@ -23,9 +23,10 @@ export interface ViewerOptions {
 }
 
 export function overrideViewerOptions(container: Container, options: Partial<ViewerOptions>): ViewerOptions {
-    const defaultOptions = container.get<ViewerOptions>(TYPES.ViewerOptions)
+    const defaultOptions = container.get<ViewerOptions>(TYPES.ViewerOptions);
     for (const p in options) {
-        (defaultOptions as any)[p] = (options as any)[p]
+        if (options.hasOwnProperty(p))
+            (defaultOptions as any)[p] = (options as any)[p];
     }
-    return defaultOptions
+    return defaultOptions;
 }

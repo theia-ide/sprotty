@@ -8,28 +8,28 @@
 import {
     SGraphFactory, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, SChildElement,
     getBasicType, PreRenderedElement, PreRenderedElementSchema
-} from "../../../src"
-import { PopupButton, Mindmap } from "./model"
+} from "../../../src";
+import { PopupButton, Mindmap } from "./model";
 
 export class MindmapFactory extends SGraphFactory {
 
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
         if (this.isPreRenderedSchema(schema))
-            return this.initializeChild(new PreRenderedElement(), schema, parent)
+            return this.initializeChild(new PreRenderedElement(), schema, parent);
         else
-            return super.createElement(schema, parent)
+            return super.createElement(schema, parent);
     }
 
     createRoot(schema: SModelRootSchema): SModelRoot {
         if (schema.type === 'mindmap')
-            return this.initializeRoot(new Mindmap(), schema)
+            return this.initializeRoot(new Mindmap(), schema);
         else if (schema.type === 'popup:button')
-            return this.initializeRoot(new PopupButton(), schema)
+            return this.initializeRoot(new PopupButton(), schema);
         else
-            return super.createRoot(schema)
+            return super.createRoot(schema);
     }
 
     isPreRenderedSchema(schema: SModelElementSchema): schema is PreRenderedElementSchema {
-        return getBasicType(schema) === 'pre-rendered'
+        return getBasicType(schema) === 'pre-rendered';
     }
 }

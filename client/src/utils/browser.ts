@@ -11,23 +11,23 @@
  */
 export function isCtrlOrCmd(event: KeyboardEvent | MouseEvent) {
     if (isMac())
-        return event.metaKey
+        return event.metaKey;
     else
-        return event.ctrlKey
+        return event.ctrlKey;
 }
 
 export function isMac(): boolean {
-    return window.navigator.userAgent.indexOf("Mac") !== -1
+    return window.navigator.userAgent.indexOf("Mac") !== -1;
 }
 
 export function isCrossSite(url: string): boolean {
     if (url && typeof window !== 'undefined' && window.location) {
-        let baseURL: string = ''
+        let baseURL: string = '';
         if (window.location.protocol)
-            baseURL += window.location.protocol + '//'
+            baseURL += window.location.protocol + '//';
         if (window.location.host)
-            baseURL += window.location.host
-        return baseURL.length > 0 && !url.startsWith(baseURL)
+            baseURL += window.location.host;
+        return baseURL.length > 0 && !url.startsWith(baseURL);
     }
-    return false
+    return false;
 }

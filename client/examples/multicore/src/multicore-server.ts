@@ -7,58 +7,58 @@
 
 import {
     RequestModelAction, TYPES, IActionHandler, ActionHandlerRegistry, SelectAction, SelectCommand, WebSocketDiagramServer
-} from "../../../src"
-import createContainer from "./di.config"
+} from "../../../src";
+import createContainer from "./di.config";
 
-const WebSocket = require("reconnecting-websocket")
+const WebSocket = require("reconnecting-websocket");
 
 function getXtextServices(): any {
-    return (window as any).xtextServices
+    return (window as any).xtextServices;
 }
 
 class SelectionHandler implements IActionHandler {
     handle(action: SelectAction): void {
-        const xtextService = getXtextServices()
+        const xtextService = getXtextServices();
         if (xtextService !== undefined) {
-            const selectedElement = action.selectedElementsIDs.length > 0 ? action.selectedElementsIDs[0] : 'processor'
+            const selectedElement = action.selectedElementsIDs.length > 0 ? action.selectedElementsIDs[0] : 'processor';
             xtextService.select({
                 elementId: selectedElement,
                 modelType: 'processor'
-            })
+            });
         }
     }
 }
 
 export function setupMulticore(websocket: WebSocket) {
-    const container = createContainer(true)
+    const container = createContainer(true);
 
     // Set up selection handling
-    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry)
-    actionHandlerRegistry.register(SelectCommand.KIND, new SelectionHandler())
+    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry);
+    actionHandlerRegistry.register(SelectCommand.KIND, new SelectionHandler());
 
     // Connect to the diagram server
-    const diagramServer = container.get<WebSocketDiagramServer>(TYPES.ModelSource)
-    diagramServer.listen(websocket)
+    const diagramServer = container.get<WebSocketDiagramServer>(TYPES.ModelSource);
+    diagramServer.listen(websocket);
     websocket.addEventListener('open', event => {
         // Run
         function run() {
-            const xtextServices = getXtextServices()
+            const xtextServices = getXtextServices();
             if (xtextServices !== undefined) {
-                const resourceId = xtextServices.options.resourceId
-                diagramServer.clientId = resourceId + '_processor'
+                const resourceId = xtextServices.options.resourceId;
+                diagramServer.clientId = resourceId + '_processor';
                 diagramServer.handle(new RequestModelAction({
                     resourceId: resourceId,
                     needsClientLayout: 'true'
-                }))
+                }));
             } else {
-                setTimeout(run, 50)
+                setTimeout(run, 50);
             }
         }
-        run()
-    })
+        run();
+    });
 }
 
 export default function runMulticoreServer() {
-    const websocket = new WebSocket('ws://' + window.location.host + '/diagram')
-    setupMulticore(websocket)
+    const websocket = new WebSocket('ws://' + window.location.host + '/diagram');
+    setupMulticore(websocket);
 }

@@ -14,7 +14,7 @@
  */
 export function easeInOut(x: number): number {
     if (x < 0.5)
-        return x * x * 2
+        return x * x * 2;
     else
-        return 1 - (1 - x) * (1 - x) * 2
+        return 1 - (1 - x) * (1 - x) * 2;
 }

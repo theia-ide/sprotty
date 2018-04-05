@@ -5,11 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { ContainerModule } from "inversify"
-import { ButtonHandlerRegistry } from './button-handler'
+import { ContainerModule } from "inversify";
+import { ButtonHandlerRegistry } from './button-handler';
 
 const buttonModule = new ContainerModule(bind => {
-    bind(ButtonHandlerRegistry).toSelf().inSingletonScope()
-})
+    bind(ButtonHandlerRegistry).toSelf().inSingletonScope();
+});
 
-export default buttonModule
+export default buttonModule;

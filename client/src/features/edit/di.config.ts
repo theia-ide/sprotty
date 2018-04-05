@@ -5,13 +5,13 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { ContainerModule } from "inversify"
-import { TYPES } from "../../base/types"
-import { SwitchEditModeCommand, MoveRoutingHandleCommand } from "./edit-routing"
+import { ContainerModule } from "inversify";
+import { TYPES } from "../../base/types";
+import { SwitchEditModeCommand, MoveRoutingHandleCommand } from "./edit-routing";
 
 const edgeEditModule = new ContainerModule(bind => {
-    bind(TYPES.ICommand).toConstructor(SwitchEditModeCommand)
-    bind(TYPES.ICommand).toConstructor(MoveRoutingHandleCommand)
-})
+    bind(TYPES.ICommand).toConstructor(SwitchEditModeCommand);
+    bind(TYPES.ICommand).toConstructor(MoveRoutingHandleCommand);
+});
 
-export default edgeEditModule
+export default edgeEditModule;

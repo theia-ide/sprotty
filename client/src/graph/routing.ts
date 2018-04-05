@@ -5,9 +5,9 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { center, maxDistance, Point } from "../utils/geometry"
-import { SParentElement } from "../base/model/smodel"
-import { SEdge, SNode, SPort } from "./sgraph"
+import { center, maxDistance, Point } from "../utils/geometry";
+import { SParentElement } from "../base/model/smodel";
+import { SEdge, SNode, SPort } from "./sgraph";
 
 export interface IEdgeRouter {
     route(edge: SEdge, source: SNode | SPort, sourceView: IAnchorableView,
@@ -29,62 +29,62 @@ export interface RoutedPoint extends Point {
 }
 
 export class LinearRouter implements IEdgeRouter {
-    minimalPointDistance: number = 2
+    minimalPointDistance: number = 2;
 
     route(edge: SEdge, source: SNode | SPort, sourceView: IAnchorableView,
             target: SNode | SPort, targetView: IAnchorableView): RoutedPoint[] {
-        let sourceAnchor: Point
-        const rpCount = edge.routingPoints !== undefined ? edge.routingPoints.length : 0
+        let sourceAnchor: Point;
+        const rpCount = edge.routingPoints !== undefined ? edge.routingPoints.length : 0;
         if (rpCount >= 1) {
             // Use the first routing point as start anchor reference
-            let p0 = edge.routingPoints[0]
-            sourceAnchor = sourceView.getTranslatedAnchor(source, p0, edge.parent, this.getSourceAnchorCorrection(edge), edge)
+            const p0 = edge.routingPoints[0];
+            sourceAnchor = sourceView.getTranslatedAnchor(source, p0, edge.parent, this.getSourceAnchorCorrection(edge), edge);
         } else {
             // Use the target center as start anchor reference
-            const reference = center(target.bounds)
-            sourceAnchor = sourceView.getTranslatedAnchor(source, reference, target.parent, this.getSourceAnchorCorrection(edge), edge)
+            const reference = center(target.bounds);
+            sourceAnchor = sourceView.getTranslatedAnchor(source, reference, target.parent, this.getSourceAnchorCorrection(edge), edge);
         }
-        const result: RoutedPoint[] = []
-        result.push({ kind: 'source', x: sourceAnchor.x, y: sourceAnchor.y })
-        let previousPoint = sourceAnchor
+        const result: RoutedPoint[] = [];
+        result.push({ kind: 'source', x: sourceAnchor.x, y: sourceAnchor.y });
+        let previousPoint = sourceAnchor;
 
         // Process all routing points except the last one
         for (let i = 0; i < rpCount - 1; i++) {
-            const p = edge.routingPoints[i]
-            let minDistance = this.minimalPointDistance
+            const p = edge.routingPoints[i];
+            let minDistance = this.minimalPointDistance;
             if (i === 0)
-                minDistance += this.getSourceAnchorCorrection(edge) + sourceView.getStrokeWidth(source)
+                minDistance += this.getSourceAnchorCorrection(edge) + sourceView.getStrokeWidth(source);
             if (maxDistance(previousPoint, p) >= minDistance) {
-                result.push({ kind: 'linear', x: p.x, y: p.y, pointIndex: i })
-                previousPoint = p
+                result.push({ kind: 'linear', x: p.x, y: p.y, pointIndex: i });
+                previousPoint = p;
             }
         }
 
-        let targetAnchor: Point
+        let targetAnchor: Point;
         if (rpCount >= 1) {
             // Use the last routing point as end anchor reference
-            let pn = edge.routingPoints[rpCount - 1]
-            targetAnchor = targetView.getTranslatedAnchor(target, pn, edge.parent, this.getTargetAnchorCorrection(edge), edge)
+            const pn = edge.routingPoints[rpCount - 1];
+            targetAnchor = targetView.getTranslatedAnchor(target, pn, edge.parent, this.getTargetAnchorCorrection(edge), edge);
             // Add the last routing point if it's not too close to the target anchor
-            const minDistance = this.minimalPointDistance + this.getTargetAnchorCorrection(edge) + targetView.getStrokeWidth(source)
+            const minDistance = this.minimalPointDistance + this.getTargetAnchorCorrection(edge) + targetView.getStrokeWidth(source);
             if (maxDistance(previousPoint, pn) >= this.minimalPointDistance
                     && maxDistance(pn, targetAnchor) >= minDistance) {
-                result.push({ kind: 'linear', x: pn.x, y: pn.y, pointIndex: rpCount - 1 })
+                result.push({ kind: 'linear', x: pn.x, y: pn.y, pointIndex: rpCount - 1 });
             }
         } else {
             // Use the source center as end anchor reference
-            const reference = center(source.bounds)
-            targetAnchor = targetView.getTranslatedAnchor(target, reference, source.parent, this.getTargetAnchorCorrection(edge), edge)
+            const reference = center(source.bounds);
+            targetAnchor = targetView.getTranslatedAnchor(target, reference, source.parent, this.getTargetAnchorCorrection(edge), edge);
         }
-        result.push({ kind: 'target', x: targetAnchor.x, y: targetAnchor.y})
-        return result
+        result.push({ kind: 'target', x: targetAnchor.x, y: targetAnchor.y});
+        return result;
     }
 
     protected getSourceAnchorCorrection(edge: SEdge): number {
-        return 0
+        return 0;
     }
 
     protected getTargetAnchorCorrection(edge: SEdge): number {
-        return 0
+        return 0;
     }
 }

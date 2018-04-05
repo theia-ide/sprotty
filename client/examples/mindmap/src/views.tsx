@@ -5,12 +5,12 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import * as snabbdom from 'snabbdom-jsx'
-import { RenderingContext, RectangularNodeView, IView, SNode } from "../../../src"
-import { VNode } from "snabbdom/vnode"
-import { PopupButton } from "./model"
+import * as snabbdom from 'snabbdom-jsx';
+import { RenderingContext, RectangularNodeView, IView, SNode } from "../../../src";
+import { VNode } from "snabbdom/vnode";
+import { PopupButton } from "./model";
 
-const JSX = {createElement: snabbdom.svg}
+const JSX = {createElement: snabbdom.svg};
 
 export class MindmapNodeView extends RectangularNodeView {
     render(node: SNode, context: RenderingContext): VNode {
@@ -20,13 +20,13 @@ export class MindmapNodeView extends RectangularNodeView {
                   width={Math.max(0, node.bounds.width)} height={Math.max(0, node.bounds.height)}>
             </rect>
             {context.renderChildren(node)}
-        </g>
+        </g>;
     }
 }
 
 export class PopupButtonView implements IView {
 
-    static readonly SIZE = 24
+    static readonly SIZE = 24;
 
     render(model: PopupButton, context: RenderingContext): VNode {
         switch (model.kind) {
@@ -42,7 +42,7 @@ export class PopupButtonView implements IView {
                     <rect class-add-icon={true}
                         x={6} y={10} width={PopupButtonView.SIZE - 12} height={4}>
                     </rect>
-                </svg>
+                </svg>;
             case 'remove-node':
                 return <svg>
                     <g transform={`rotate(45 ${PopupButtonView.SIZE / 2} ${PopupButtonView.SIZE / 2})`}>
@@ -53,10 +53,10 @@ export class PopupButtonView implements IView {
                             x={4} y={10} width={PopupButtonView.SIZE - 8} height={4}>
                         </rect>
                     </g>
-                </svg>
+                </svg>;
             default:
-                return <svg></svg>
+                return <svg></svg>;
         }
     }
-    
+
 }

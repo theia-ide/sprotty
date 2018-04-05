@@ -5,21 +5,21 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SModelElement } from "../../base/model/smodel"
-import { SModelExtension } from "../../base/model/smodel-extension"
+import { SModelElement } from "../../base/model/smodel";
+import { SModelExtension } from "../../base/model/smodel-extension";
 
-export const hoverFeedbackFeature = Symbol('hoverFeedbackFeature')
+export const hoverFeedbackFeature = Symbol('hoverFeedbackFeature');
 
 export interface Hoverable extends SModelExtension {
     hoverFeedback: boolean
 }
 
 export function isHoverable(element: SModelElement): element is SModelElement & Hoverable {
-    return element.hasFeature(hoverFeedbackFeature)
+    return element.hasFeature(hoverFeedbackFeature);
 }
 
-export const popupFeature = Symbol('popupFeature')
+export const popupFeature = Symbol('popupFeature');
 
 export function hasPopupFeature(element: SModelElement): boolean {
-    return element.hasFeature(popupFeature)
+    return element.hasFeature(popupFeature);
 }

@@ -5,15 +5,15 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { inject, injectable, multiInject, optional } from "inversify"
-import { VNode } from "snabbdom/vnode"
-import { TYPES } from "../types"
-import { IActionDispatcher } from "../actions/action-dispatcher"
-import { SModelElement, SModelRoot } from "../model/smodel"
-import { Action, isAction } from "../actions/action"
-import { IVNodeDecorator } from "./vnode-decorators"
-import { on } from "./vnode-utils"
-import { DOMHelper } from "./dom-helper"
+import { inject, injectable, multiInject, optional } from "inversify";
+import { VNode } from "snabbdom/vnode";
+import { TYPES } from "../types";
+import { IActionDispatcher } from "../actions/action-dispatcher";
+import { SModelElement, SModelRoot } from "../model/smodel";
+import { Action, isAction } from "../actions/action";
+import { IVNodeDecorator } from "./vnode-decorators";
+import { on } from "./vnode-utils";
+import { DOMHelper } from "./dom-helper";
 
 @injectable()
 export class MouseTool implements IVNodeDecorator {
@@ -23,46 +23,46 @@ export class MouseTool implements IVNodeDecorator {
                 @multiInject(TYPES.MouseListener)@optional() protected mouseListeners: MouseListener[] = []) {}
 
     register(mouseListener: MouseListener) {
-        this.mouseListeners.push(mouseListener)
+        this.mouseListeners.push(mouseListener);
     }
 
     deregister(mouseListener: MouseListener) {
-        const index = this.mouseListeners.indexOf(mouseListener)
+        const index = this.mouseListeners.indexOf(mouseListener);
         if (index >= 0)
-            this.mouseListeners.splice(index, 1)
+            this.mouseListeners.splice(index, 1);
     }
 
     protected getTargetElement(model: SModelRoot, event: MouseEvent): SModelElement |undefined {
-        let target = event.target as Element
-        const index = model.index
+        let target = event.target as Element;
+        const index = model.index;
         while (target) {
             if (target.id) {
-                const element = index.getById(this.domHelper.findSModelIdByDOMElement(target))
+                const element = index.getById(this.domHelper.findSModelIdByDOMElement(target));
                 if (element !== undefined)
-                    return element
+                    return element;
             }
-            target = target.parentNode as Element
+            target = target.parentNode as Element;
         }
-        return undefined
+        return undefined;
     }
 
     protected handleEvent<K extends keyof MouseListener>(methodName: K, model: SModelRoot, event: MouseEvent) {
-        this.focusOnMouseEvent(methodName, model)
-        const element = this.getTargetElement(model, event)
+        this.focusOnMouseEvent(methodName, model);
+        const element = this.getTargetElement(model, event);
         if (!element)
-            return
+            return;
         const actions = this.mouseListeners
             .map(listener => listener[methodName].apply(listener, [element, event]))
-            .reduce((a, b) => a.concat(b))
+            .reduce((a, b) => a.concat(b));
         if (actions.length > 0) {
-            event.preventDefault()
+            event.preventDefault();
             for (const actionOrPromise of actions) {
                 if (isAction(actionOrPromise)) {
-                    this.actionDispatcher.dispatch(actionOrPromise)
+                    this.actionDispatcher.dispatch(actionOrPromise);
                 } else {
                     actionOrPromise.then((action: Action) => {
-                        this.actionDispatcher.dispatch(action)
-                    })
+                        this.actionDispatcher.dispatch(action);
+                    });
                 }
             }
         }
@@ -70,67 +70,67 @@ export class MouseTool implements IVNodeDecorator {
 
     protected focusOnMouseEvent<K extends keyof MouseListener>(methodName: K, model: SModelRoot) {
         if (document) {
-            const domElement = document.getElementById(this.domHelper.createUniqueDOMElementId(model))
+            const domElement = document.getElementById(this.domHelper.createUniqueDOMElementId(model));
             if (methodName === 'mouseDown' && domElement !== null && typeof domElement.focus === 'function')
-                domElement.focus()
+                domElement.focus();
         }
     }
 
     mouseOver(model: SModelRoot, event: MouseEvent) {
-        this.handleEvent('mouseOver', model, event)
+        this.handleEvent('mouseOver', model, event);
     }
 
     mouseOut(model: SModelRoot, event: MouseEvent) {
-        this.handleEvent('mouseOut', model, event)
+        this.handleEvent('mouseOut', model, event);
     }
 
     mouseEnter(model: SModelRoot, event: MouseEvent) {
-        this.handleEvent('mouseEnter', model, event)
+        this.handleEvent('mouseEnter', model, event);
     }
 
     mouseLeave(model: SModelRoot, event: MouseEvent) {
-        this.handleEvent('mouseLeave', model, event)
+        this.handleEvent('mouseLeave', model, event);
     }
 
     mouseDown(model: SModelRoot, event: MouseEvent) {
-        this.handleEvent('mouseDown', model, event)
+        this.handleEvent('mouseDown', model, event);
     }
 
     mouseMove(model: SModelRoot, event: MouseEvent) {
-        this.handleEvent('mouseMove', model, event)
+        this.handleEvent('mouseMove', model, event);
     }
 
     mouseUp(model: SModelRoot, event: MouseEvent) {
-        this.handleEvent('mouseUp', model, event)
+        this.handleEvent('mouseUp', model, event);
     }
 
     wheel(model: SModelRoot, event: WheelEvent) {
-        this.handleEvent('wheel', model, event)
+        this.handleEvent('wheel', model, event);
     }
 
     doubleClick(model: SModelRoot, event: WheelEvent) {
-        this.handleEvent('doubleClick', model, event)
+        this.handleEvent('doubleClick', model, event);
     }
 
     decorate(vnode: VNode, element: SModelElement) {
         if (element instanceof SModelRoot) {
-            on(vnode, 'mouseover', this.mouseOver.bind(this), element)
-            on(vnode, 'mouseout', this.mouseOut.bind(this), element)
-            on(vnode, 'mouseenter', this.mouseEnter.bind(this), element)
-            on(vnode, 'mouseleave', this.mouseLeave.bind(this), element)
-            on(vnode, 'mousedown', this.mouseDown.bind(this), element)
-            on(vnode, 'mouseup', this.mouseUp.bind(this), element)
-            on(vnode, 'mousemove', this.mouseMove.bind(this), element)
-            on(vnode, 'wheel', this.wheel.bind(this), element)
+            on(vnode, 'mouseover', this.mouseOver.bind(this), element);
+            on(vnode, 'mouseout', this.mouseOut.bind(this), element);
+            on(vnode, 'mouseenter', this.mouseEnter.bind(this), element);
+            on(vnode, 'mouseleave', this.mouseLeave.bind(this), element);
+            on(vnode, 'mousedown', this.mouseDown.bind(this), element);
+            on(vnode, 'mouseup', this.mouseUp.bind(this), element);
+            on(vnode, 'mousemove', this.mouseMove.bind(this), element);
+            on(vnode, 'wheel', this.wheel.bind(this), element);
             on(vnode, 'contextmenu', (target: SModelElement, event: any) => {
-                event.preventDefault()
-            }, element)
-            on(vnode, 'dblclick', this.doubleClick.bind(this), element)
+                event.preventDefault();
+            }, element);
+            on(vnode, 'dblclick', this.doubleClick.bind(this), element);
         }
         vnode = this.mouseListeners.reduce(
-            (vnode: VNode, listener: MouseListener) => listener.decorate(vnode, element),
-            vnode)
-        return vnode
+            (n: VNode, listener: MouseListener) => listener.decorate(n, element),
+            vnode);
+        return vnode;
     }
 
     postUpdate() {
@@ -142,7 +142,7 @@ export class PopupMouseTool extends MouseTool {
     constructor(@inject(TYPES.IActionDispatcher) protected actionDispatcher: IActionDispatcher,
                 @inject(TYPES.DOMHelper) protected domHelper: DOMHelper,
                 @multiInject(TYPES.PopupMouseListener)@optional() protected mouseListeners: MouseListener[] = []) {
-        super(actionDispatcher, domHelper, mouseListeners)
+        super(actionDispatcher, domHelper, mouseListeners);
     }
 }
 
@@ -150,43 +150,43 @@ export class PopupMouseTool extends MouseTool {
 export class MouseListener {
 
     mouseOver(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        return []
+        return [];
     }
 
     mouseOut(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        return []
+        return [];
     }
 
     mouseEnter(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        return []
+        return [];
     }
 
     mouseLeave(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        return []
+        return [];
     }
 
     mouseDown(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        return []
+        return [];
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        return []
+        return [];
     }
 
     mouseUp(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        return []
+        return [];
     }
 
     wheel(target: SModelElement, event: WheelEvent): (Action | Promise<Action>)[] {
-        return []
+        return [];
     }
 
     doubleClick(target: SModelElement, event: WheelEvent): (Action | Promise<Action>)[] {
-        return []
+        return [];
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        return vnode
+        return vnode;
     }
 }
 

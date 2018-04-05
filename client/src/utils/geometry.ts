@@ -19,7 +19,7 @@ export interface Point {
 export const ORIGIN_POINT: Point = Object.freeze({
     x: 0,
     y: 0
-})
+});
 
 /**
  * Adds two points.
@@ -31,7 +31,7 @@ export function add(p1: Point, p2: Point): Point {
     return {
         x: p1.x + p2.x,
         y: p1.y + p2.y
-    }
+    };
 }
 
 /**
@@ -44,7 +44,7 @@ export function subtract(p1: Point, p2: Point): Point {
     return {
         x: p1.x - p2.x,
         y: p1.y - p2.y
-    }
+    };
 }
 
 /**
@@ -61,7 +61,7 @@ export interface Dimension {
 export const EMPTY_DIMENSION: Dimension = Object.freeze({
     width: -1,
     height: -1
-})
+});
 
 /**
  * Checks whether the given dimention is valid, i.e. the width and height are non-zero.
@@ -69,7 +69,7 @@ export const EMPTY_DIMENSION: Dimension = Object.freeze({
  * @returns {boolean}
  */
 export function isValidDimension(d: Dimension): boolean {
-    return d.width >= 0 && d.height >= 0
+    return d.width >= 0 && d.height >= 0;
 }
 
 /**
@@ -83,13 +83,13 @@ export const EMPTY_BOUNDS: Bounds = Object.freeze({
     y: 0,
     width: -1,
     height: -1
-})
+});
 
 export function isBounds(element: any): element is Bounds {
     return 'x' in element
         && 'y' in element
         && 'width' in element
-        && 'height' in element
+        && 'height' in element;
 }
 
 /**
@@ -100,13 +100,13 @@ export function isBounds(element: any): element is Bounds {
  * @returns {Bounds} The combined bounds
  */
 export function combine(b0: Bounds, b1: Bounds): Bounds {
-    const minX = Math.min(b0.x, b1.x)
-    const minY = Math.min(b0.y, b1.y)
-    const maxX = Math.max(b0.x + (b0.width >= 0 ? b0.width : 0), b1.x + (b1.width >= 0 ? b1.width : 0))
-    const maxY = Math.max(b0.y + (b0.height >= 0 ? b0.height : 0), b1.y + (b1.height >= 0 ? b1.height : 0))
+    const minX = Math.min(b0.x, b1.x);
+    const minY = Math.min(b0.y, b1.y);
+    const maxX = Math.max(b0.x + (b0.width >= 0 ? b0.width : 0), b1.x + (b1.width >= 0 ? b1.width : 0));
+    const maxY = Math.max(b0.y + (b0.height >= 0 ? b0.height : 0), b1.y + (b1.height >= 0 ? b1.height : 0));
     return {
         x: minX, y: minY, width: maxX - minX, height: maxY - minY
-    }
+    };
 }
 
 /**
@@ -121,7 +121,7 @@ export function translate(b: Bounds, p: Point): Bounds {
         y: b.y + p.y,
         width: b.width,
         height: b.height
-    }
+    };
 }
 
 /**
@@ -133,7 +133,7 @@ export function center(b: Bounds): Point {
     return {
         x: b.x + (b.width >= 0 ? 0.5 * b.width : 0),
         y: b.y + (b.height >= 0 ? 0.5 * b.height : 0)
-    }
+    };
 }
 
 export function centerOfLine(s: Point, e: Point): Point {
@@ -142,15 +142,15 @@ export function centerOfLine(s: Point, e: Point): Point {
         y: s.y > e.y ? e.y : s.y,
         width: Math.abs(e.x - s.x),
         height: Math.abs(e.y - s.y)
-    }
-    return center(b)
+    };
+    return center(b);
 }
 
 /**
  * Checks whether the point p is included in the bounds b.
  */
 export function includes(b: Bounds, p: Point): boolean {
-    return p.x >= b.x && p.x <= b.x + b.width && p.y >= b.y && p.y <= b.y + b.height
+    return p.x >= b.x && p.x <= b.x + b.width && p.y >= b.y && p.y <= b.y + b.height;
 }
 
 /**
@@ -175,9 +175,9 @@ export enum Direction { left, right, up, down }
  * @returns {number} The Eucledian distance
  */
 export function euclideanDistance(a: Point, b: Point): number {
-    const dx = b.x - a.x
-    const dy = b.y - a.y
-    return Math.sqrt(dx * dx + dy * dy)
+    const dx = b.x - a.x;
+    const dy = b.y - a.y;
+    return Math.sqrt(dx * dx + dy * dy);
 }
 
 /**
@@ -188,7 +188,7 @@ export function euclideanDistance(a: Point, b: Point): number {
  * @returns {number} The Manhattan distance
  */
 export function manhattanDistance(a: Point, b: Point): number {
-    return Math.abs(b.x - a.x) + Math.abs(b.y - a.y)
+    return Math.abs(b.x - a.x) + Math.abs(b.y - a.y);
 }
 
 /**
@@ -198,12 +198,12 @@ export function manhattanDistance(a: Point, b: Point): number {
  * @returns {number} The maximum distance
  */
 export function maxDistance(a: Point, b: Point): number {
-    return Math.max(Math.abs(b.x - a.x), Math.abs(b.y - a.y))
+    return Math.max(Math.abs(b.x - a.x), Math.abs(b.y - a.y));
 }
 
 // range (-PI, PI]
 export function angle(a: Point, b: Point): number {
-    return Math.atan2(b.y - a.y, b.x - a.x)
+    return Math.atan2(b.y - a.y, b.x - a.x);
 }
 
 /**
@@ -212,7 +212,7 @@ export function angle(a: Point, b: Point): number {
  * @returns {number} The converted value
  */
 export function toDegrees(a: number): number {
-    return a * 180 / Math.PI
+    return a * 180 / Math.PI;
 }
 
 /**
@@ -221,7 +221,7 @@ export function toDegrees(a: number): number {
  * @returns {number} The converted value
  */
 export function toRadians(a: number): number {
-    return a * Math.PI / 180
+    return a * Math.PI / 180;
 }
 
 /**
@@ -231,5 +231,5 @@ export function toRadians(a: number): number {
  * @returns {boolean} True if the two numbers are almost equal
  */
 export function almostEquals(a: number, b: number): boolean {
-    return Math.abs(a - b) < 1e-3
+    return Math.abs(a - b) < 1e-3;
 }

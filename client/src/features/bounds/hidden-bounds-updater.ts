@@ -5,24 +5,24 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { inject, injectable } from "inversify"
-import { VNode } from "snabbdom/vnode"
-import { TYPES } from "../../base/types"
-import { almostEquals, Bounds, Point } from '../../utils/geometry'
-import { SModelElement, SModelRoot } from "../../base/model/smodel"
-import { IVNodeDecorator } from "../../base/views/vnode-decorators"
-import { IActionDispatcher } from "../../base/actions/action-dispatcher"
-import { ComputedBoundsAction, ElementAndBounds, ElementAndAlignment } from './bounds-manipulation'
-import { BoundsAware, isSizeable, isLayoutContainer, isAlignable } from "./model"
-import { Layouter } from "./layout"
-import { isExportable } from "../export/model"
+import { inject, injectable } from "inversify";
+import { VNode } from "snabbdom/vnode";
+import { TYPES } from "../../base/types";
+import { almostEquals, Bounds, Point } from '../../utils/geometry';
+import { SModelElement, SModelRoot } from "../../base/model/smodel";
+import { IVNodeDecorator } from "../../base/views/vnode-decorators";
+import { IActionDispatcher } from "../../base/actions/action-dispatcher";
+import { ComputedBoundsAction, ElementAndBounds, ElementAndAlignment } from './bounds-manipulation';
+import { BoundsAware, isSizeable, isLayoutContainer, isAlignable } from "./model";
+import { Layouter } from "./layout";
+import { isExportable } from "../export/model";
 
 export class BoundsData {
-    vnode?: VNode
-    bounds?: Bounds
-    alignment?: Point
-    boundsChanged: boolean
-    alignmentChanged: boolean
+    vnode?: VNode;
+    bounds?: Bounds;
+    alignment?: Point;
+    boundsChanged: boolean;
+    alignmentChanged: boolean;
 }
 
 /**
@@ -43,9 +43,9 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
                 @inject(TYPES.Layouter) protected layouter: Layouter) {
     }
 
-    private readonly element2boundsData: Map<SModelElement, BoundsData> = new Map
+    private readonly element2boundsData: Map<SModelElement, BoundsData> = new Map;
 
-    root: SModelRoot | undefined
+    root: SModelRoot | undefined;
 
     decorate(vnode: VNode, element: SModelElement): VNode {
         if (isSizeable(element) || isLayoutContainer(element)) {
@@ -54,80 +54,80 @@ export class HiddenBoundsUpdater implements IVNodeDecorator {
                 bounds: element.bounds,
                 boundsChanged: false,
                 alignmentChanged: false
-            })
+            });
         }
         if (element instanceof SModelRoot)
-            this.root = element
-        return vnode
+            this.root = element;
+        return vnode;
     }
 
     postUpdate() {
         if (this.root !== undefined && isExportable(this.root) && this.root.export)
-            return
-        this.getBoundsFromDOM()
-        this.layouter.layout(this.element2boundsData)
-        const resizes: ElementAndBounds[] = []
-        const realignments: ElementAndAlignment[] = []
+            return;
+        this.getBoundsFromDOM();
+        this.layouter.layout(this.element2boundsData);
+        const resizes: ElementAndBounds[] = [];
+        const realignments: ElementAndAlignment[] = [];
         this.element2boundsData.forEach(
             (boundsData, element) => {
                 if (boundsData.boundsChanged && boundsData.bounds !== undefined)
                     resizes.push({
                         elementId: element.id,
                         newBounds: boundsData.bounds
-                    })
+                    });
                 if (boundsData.alignmentChanged && boundsData.alignment !== undefined)
                     realignments.push({
                         elementId: element.id,
                         newAlignment: boundsData.alignment
-                    })
-            })
-        const revision = (this.root !== undefined) ? this.root.revision : undefined
-        this.actionDispatcher.dispatch(new ComputedBoundsAction(resizes, revision, realignments))
-        this.element2boundsData.clear()
+                    });
+            });
+        const revision = (this.root !== undefined) ? this.root.revision : undefined;
+        this.actionDispatcher.dispatch(new ComputedBoundsAction(resizes, revision, realignments));
+        this.element2boundsData.clear();
     }
 
     protected getBoundsFromDOM() {
         this.element2boundsData.forEach(
             (boundsData, element) => {
                 if (boundsData.bounds && isSizeable(element)) {
-                    const vnode = boundsData.vnode
+                    const vnode = boundsData.vnode;
                     if (vnode && vnode.elm) {
-                        const boundingBox = this.getBounds(vnode.elm, element)
+                        const boundingBox = this.getBounds(vnode.elm, element);
                         if (isAlignable(element) && !(
                             almostEquals(boundingBox.x, 0) && almostEquals(boundingBox.y, 0)
                         )) {
                             boundsData.alignment = {
                                 x: -boundingBox.x,
                                 y: -boundingBox.y
-                            }
-                            boundsData.alignmentChanged = true
+                            };
+                            boundsData.alignmentChanged = true;
                         }
                         const newBounds = {
                             x: element.bounds.x,
                             y: element.bounds.y,
                             width: boundingBox.width,
                             height: boundingBox.height
-                        }
+                        };
                         if (!(almostEquals(newBounds.x, element.bounds.x)
                             && almostEquals(newBounds.y, element.bounds.y)
                             && almostEquals(newBounds.width, element.bounds.width)
                             && almostEquals(newBounds.height, element.bounds.height))) {
-                            boundsData.bounds = newBounds
-                            boundsData.boundsChanged = true
+                            boundsData.bounds = newBounds;
+                            boundsData.boundsChanged = true;
                         }
                     }
                 }
             }
-        )
+        );
     }
 
     protected getBounds(elm: any, element: BoundsAware): Bounds {
-        const bounds = elm.getBBox()
+        const bounds = elm.getBBox();
         return {
             x: bounds.x,
             y: bounds.y,
             width: bounds.width,
             height: bounds.height
-        }
+        };
     }
 }
