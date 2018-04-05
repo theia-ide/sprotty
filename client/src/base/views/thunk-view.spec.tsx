@@ -5,69 +5,69 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import "mocha"
-import { expect } from "chai"
-import * as snabbdom from "snabbdom-jsx"
-import { init } from "snabbdom"
-import { SModelElement } from "../model/smodel"
-import { ModelRenderer } from './viewer'
-import { ThunkView } from './thunk-view'
+import "mocha";
+import { expect } from "chai";
+import * as snabbdom from "snabbdom-jsx";
+import { init } from "snabbdom";
+import { SModelElement } from "../model/smodel";
+import { ModelRenderer } from './viewer';
+import { ThunkView } from './thunk-view';
 
-const toHTML = require('snabbdom-to-html')
-const JSX = {createElement: snabbdom.svg}
+const toHTML = require('snabbdom-to-html');
+const JSX = {createElement: snabbdom.svg};
 
 
 describe('ThunkView', () => {
 
     before(function () {
-        this.jsdom = require('jsdom-global')()
-    })
+        this.jsdom = require('jsdom-global')();
+    });
 
     after(function () {
-        this.jsdom()
-    })
+        this.jsdom();
+    });
 
-    let renderCount = 0
+    let renderCount = 0;
 
     class Foo extends SModelElement {
-        foo: string
+        foo: string;
     }
 
     class FooView extends ThunkView {
         doRender() {
-           return  <g id={renderCount++}></g>
+           return  <g id={renderCount++}></g>;
         }
 
         selector() {
-            return 'g'
+            return 'g';
         }
 
         watchedArgs(foo: Foo) {
-            return [foo.foo]
+            return [foo.foo];
         }
     }
 
-    const context = new ModelRenderer(undefined!, [])
+    const context = new ModelRenderer(undefined!, []);
 
-    const patcher = init([])
+    const patcher = init([]);
 
     it('renders on change', () => {
-        const element = new Foo()
-        element.foo = 'first'
-        const view = new FooView()
-        const vnode = view.render(element, context)
-        const domElement = document.createElement('div')
-        domElement.setAttribute('id', 'sprotty')
-        patcher(domElement, vnode)
-        expect(toHTML(vnode)).to.be.equal('<g id="0"></g>')
+        const element = new Foo();
+        element.foo = 'first';
+        const view = new FooView();
+        const vnode = view.render(element, context);
+        const domElement = document.createElement('div');
+        domElement.setAttribute('id', 'sprotty');
+        patcher(domElement, vnode);
+        expect(toHTML(vnode)).to.be.equal('<g id="0"></g>');
 
-        const vnode1 = view.render(element, context)
-        patcher(vnode, vnode1)
-        expect(toHTML(vnode1)).to.be.equal('<g id="0"></g>')
+        const vnode1 = view.render(element, context);
+        patcher(vnode, vnode1);
+        expect(toHTML(vnode1)).to.be.equal('<g id="0"></g>');
 
-        element.foo = 'second'
-        const vnode2 = view.render(element, context)
-        patcher(vnode1, vnode2)
-        expect(toHTML(vnode2)).to.be.equal('<g id="1"></g>')
-    })
-})
+        element.foo = 'second';
+        const vnode2 = view.render(element, context);
+        patcher(vnode1, vnode2);
+        expect(toHTML(vnode2)).to.be.equal('<g id="1"></g>');
+    });
+});

@@ -5,9 +5,9 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { CommandExecutionContext } from "../commands/command"
-import { SModelRoot } from "../model/smodel"
-import { easeInOut } from "./easing"
+import { CommandExecutionContext } from "../commands/command";
+import { SModelRoot } from "../model/smodel";
+import { easeInOut } from "./easing";
 
 /**
  * An animation uses the rendering loop of the browser to smoothly
@@ -21,34 +21,34 @@ export abstract class Animation {
     start(): Promise<SModelRoot> {
         return new Promise<SModelRoot>(
             (resolve: (model: SModelRoot) => void, reject: (model: SModelRoot) => void) => {
-                let start: number | undefined = undefined
-                let frames = 0
+                let start: number | undefined = undefined;
+                let frames = 0;
                 const lambda = (time: number) => {
-                    frames++
-                    let dtime: number
+                    frames++;
+                    let dtime: number;
                     if (start === undefined) {
-                        start = time
-                        dtime = 0
+                        start = time;
+                        dtime = 0;
                     } else {
-                        dtime = time - start
+                        dtime = time - start;
                     }
-                    const t = Math.min(1, dtime / this.context.duration)
-                    const current = this.tween(this.ease(t), this.context)
-                    this.context.modelChanged.update(current)
+                    const t = Math.min(1, dtime / this.context.duration);
+                    const current = this.tween(this.ease(t), this.context);
+                    this.context.modelChanged.update(current);
                     if (t === 1) {
-                        this.context.logger.log(this, (frames * 1000 / this.context.duration) + ' fps')
-                        resolve(current)
+                        this.context.logger.log(this, (frames * 1000 / this.context.duration) + ' fps');
+                        resolve(current);
                     } else {
-                        this.context.syncer.onNextFrame(lambda)
+                        this.context.syncer.onNextFrame(lambda);
                     }
-                }
+                };
                 if (this.context.syncer.isAvailable()) {
-                    this.context.syncer.onNextFrame(lambda)
+                    this.context.syncer.onNextFrame(lambda);
                 } else {
-                    const finalModel = this.tween(1, this.context)
-                    resolve(finalModel)
+                    const finalModel = this.tween(1, this.context);
+                    resolve(finalModel);
                 }
-            })
+            });
     }
 
     /**
@@ -58,7 +58,7 @@ export abstract class Animation {
      * @param t varies between 0 (start of animation) and 1 (end of animation)
      * @param context
      */
-    abstract tween(t: number, context: CommandExecutionContext): SModelRoot
+    abstract tween(t: number, context: CommandExecutionContext): SModelRoot;
 }
 
 export class CompoundAnimation extends Animation {
@@ -67,19 +67,19 @@ export class CompoundAnimation extends Animation {
                 protected context: CommandExecutionContext,
                 public components: Animation[] = [],
                 protected ease: (x: number) => number = easeInOut) {
-        super(context, ease)
+        super(context, ease);
     }
 
     include(animation: Animation): this {
-        this.components.push(animation)
-        return this
+        this.components.push(animation);
+        return this;
     }
 
     tween(t: number, context: CommandExecutionContext): SModelRoot {
         for (const a of this.components) {
-            a.tween(t, context)
+            a.tween(t, context);
         }
-        return this.model
+        return this.model;
     }
 
 }

@@ -5,15 +5,15 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { inject, injectable } from "inversify"
+import { inject, injectable } from "inversify";
 import {
     TYPES, SModelElementSchema, SModelRootSchema, RequestPopupModelAction, MouseListener,
     SModelElement, Action, LocalModelSource, SNodeSchema, SetPopupModelAction, EMPTY_ROOT,
     Point, Command, CommandExecutionContext, CommandResult, SChildElement, FadeAnimation,
     isFadeable, isLocateable, isBoundsAware, subtract
-} from "../../../src"
-import { PopupButtonSchema, PopupButton } from "./model"
-import { PopupButtonView } from "./views"
+} from "../../../src";
+import { PopupButtonSchema, PopupButton } from "./model";
+import { PopupButtonView } from "./views";
 
 export function popupModelFactory(request: RequestPopupModelAction, element?: SModelElementSchema): SModelRootSchema | undefined {
     if (element === undefined || element.type === 'mindmap') {
@@ -21,70 +21,70 @@ export function popupModelFactory(request: RequestPopupModelAction, element?: SM
             type: 'popup:button',
             id: 'button',
             kind: 'add-node'
-        }
+        };
     } else if (element !== undefined && element.type === 'node') {
         return <PopupButtonSchema> {
             type: 'popup:button',
             id: 'button',
             kind: 'remove-node',
             target: element.id
-        }
+        };
     }
-    return undefined
+    return undefined;
 }
 
 @injectable()
 export class PopupButtonMouseListener extends MouseListener {
 
     constructor(@inject(TYPES.ModelSource) protected modelSource: LocalModelSource) {
-        super()
+        super();
     }
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
         let actions: Action[] = [
             new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id})
-        ]
+        ];
         if (target instanceof PopupButton) {
             switch (target.kind) {
                 case 'add-node':
-                    actions = actions.concat(this.addNode(target))
+                    actions = actions.concat(this.addNode(target));
                     break;
                 case 'remove-node':
-                    actions = actions.concat(this.removeNode(target))
+                    actions = actions.concat(this.removeNode(target));
                     break;
             }
         }
-        return actions
+        return actions;
     }
-    
+
     protected addNode(button: PopupButton): Action[] {
         const newElement: SNodeSchema = {
             type: 'node',
             id: 'node_' + Math.trunc(Math.random() * 0x80000000).toString(16),
             size: { width: 100, height: 60 },
             hoverFeedback: true
-        }
+        };
         const absolutePos = {
             x: button.canvasBounds.x + PopupButtonView.SIZE / 2,
             y: button.canvasBounds.y + PopupButtonView.SIZE / 2
-        }
-        const model = this.modelSource.model
+        };
+        const model = this.modelSource.model;
         if (model.children === undefined)
-            model.children = [ newElement ]
+            model.children = [ newElement ];
         else
-            model.children.push(newElement)
-        return [ new AddElementAction(newElement, absolutePos) ]
+            model.children.push(newElement);
+        return [ new AddElementAction(newElement, absolutePos) ];
     }
 
     protected removeNode(button: PopupButton): Action[] {
-        this.modelSource.removeElements([ button.target ])
-        return []
+        this.modelSource.removeElements([ button.target ]);
+        return [];
     }
 
 }
 
 export class AddElementAction implements Action {
-    readonly kind = AddElementCommand.KIND
+    readonly kind = AddElementCommand.KIND;
 
     constructor(public readonly newElement: SModelRootSchema, public readonly absolutePos: Point) {
     }
@@ -92,43 +92,43 @@ export class AddElementAction implements Action {
 
 @injectable()
 export class AddElementCommand extends Command {
-    static readonly KIND = 'addElement'
+    static readonly KIND = 'addElement';
 
     constructor(public action: AddElementAction) {
-        super()
+        super();
     }
 
     execute(context: CommandExecutionContext): CommandResult {
-        const newElement = context.modelFactory.createElement(this.action.newElement)
-        context.root.add(newElement)
-        this.initialize(newElement)
+        const newElement = context.modelFactory.createElement(this.action.newElement);
+        context.root.add(newElement);
+        this.initialize(newElement);
         if (isFadeable(newElement)) {
-            newElement.opacity = 0
-            const animation = new FadeAnimation(context.root, [{ element: newElement, type: 'in' }], context)
-            return animation.start()
+            newElement.opacity = 0;
+            const animation = new FadeAnimation(context.root, [{ element: newElement, type: 'in' }], context);
+            return animation.start();
         } else {
-            return context.root
+            return context.root;
         }
     }
 
     protected initialize(element: SModelElement) {
         if (isLocateable(element)) {
-            const root = element.root
-            const centerPos = root.parentToLocal(subtract(this.action.absolutePos, root.canvasBounds))
-            const elementBounds = isBoundsAware(element) ? element.bounds : { x: 0, y: 0, width: 0, height: 0 }
-            element.position = subtract(centerPos, { x: elementBounds.width / 2, y: elementBounds.height / 2 })
+            const root = element.root;
+            const centerPos = root.parentToLocal(subtract(this.action.absolutePos, root.canvasBounds));
+            const elementBounds = isBoundsAware(element) ? element.bounds : { x: 0, y: 0, width: 0, height: 0 };
+            element.position = subtract(centerPos, { x: elementBounds.width / 2, y: elementBounds.height / 2 });
         }
     }
 
     undo(context: CommandExecutionContext): CommandResult {
-        const element = context.root.index.getById(this.action.newElement.id)
+        const element = context.root.index.getById(this.action.newElement.id);
         if (element instanceof SChildElement) {
-            element.parent.remove(element)
+            element.parent.remove(element);
         }
-        return context.root
+        return context.root;
     }
 
     redo(context: CommandExecutionContext): CommandResult {
-        return this.execute(context)
+        return this.execute(context);
     }
 }

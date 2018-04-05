@@ -5,12 +5,12 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { RenderingContext, RectangularNodeView, IView } from "../../../src"
-import { VNode } from "snabbdom/vnode"
-import { Icon, ClassNode } from './model'
-import * as snabbdom from 'snabbdom-jsx'
+import { RenderingContext, RectangularNodeView, IView } from "../../../src";
+import { VNode } from "snabbdom/vnode";
+import { Icon, ClassNode } from './model';
+import * as snabbdom from 'snabbdom-jsx';
 
-const JSX = {createElement: snabbdom.svg}
+const JSX = {createElement: snabbdom.svg};
 
 export class ClassNodeView extends RectangularNodeView {
     render(node: ClassNode, context: RenderingContext): VNode {
@@ -19,21 +19,21 @@ export class ClassNodeView extends RectangularNodeView {
                   x={0} y={0}
                   width={Math.max(0, node.bounds.width)} height={Math.max(0, node.bounds.height)} />
             {context.renderChildren(node)}
-        </g>
+        </g>;
     }
 }
 
 export class IconView implements IView {
 
     render(element: Icon, context: RenderingContext): VNode {
-        const radius = this.getRadius()
+        const radius = this.getRadius();
         return <g>
             <circle class-sprotty-icon={true} r={radius} cx={radius} cy={radius}></circle>
             {context.renderChildren(element)}
-        </g>
+        </g>;
     }
 
     getRadius() {
-        return 16
+        return 16;
     }
 }

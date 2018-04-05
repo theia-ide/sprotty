@@ -5,10 +5,10 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SModelElement } from "../../base/model/smodel"
+import { SModelElement } from "../../base/model/smodel";
 
-export const openFeature = Symbol('openFeature')
+export const openFeature = Symbol('openFeature');
 
 export function isOpenable(element: SModelElement): element is SModelElement  {
-    return element.hasFeature(openFeature)
+    return element.hasFeature(openFeature);
 }

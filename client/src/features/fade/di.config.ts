@@ -5,12 +5,12 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { ContainerModule } from "inversify"
-import { TYPES } from "../../base/types"
-import { ElementFader } from "./fade"
+import { ContainerModule } from "inversify";
+import { TYPES } from "../../base/types";
+import { ElementFader } from "./fade";
 
 const fadeModule = new ContainerModule(bind => {
-    bind(TYPES.IVNodeDecorator).to(ElementFader).inSingletonScope()
-})
+    bind(TYPES.IVNodeDecorator).to(ElementFader).inSingletonScope();
+});
 
-export default fadeModule
+export default fadeModule;

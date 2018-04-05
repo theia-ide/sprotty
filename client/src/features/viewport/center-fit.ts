@@ -5,17 +5,17 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds, center, combine, isValidDimension } from "../../utils/geometry"
-import { isCtrlOrCmd } from "../../utils/browser"
-import { SChildElement } from '../../base/model/smodel'
-import { Action } from "../../base/actions/action"
-import { Command, CommandExecutionContext } from "../../base/commands/command"
-import { SModelElement, SModelRoot } from "../../base/model/smodel"
-import { KeyListener } from "../../base/views/key-tool"
-import { isBoundsAware } from "../bounds/model"
-import { isSelectable } from "../select/model"
-import { ViewportAnimation } from "./viewport"
-import { isViewport, Viewport } from "./model"
+import { Bounds, center, combine, isValidDimension } from "../../utils/geometry";
+import { isCtrlOrCmd } from "../../utils/browser";
+import { SChildElement } from '../../base/model/smodel';
+import { Action } from "../../base/actions/action";
+import { Command, CommandExecutionContext } from "../../base/commands/command";
+import { SModelElement, SModelRoot } from "../../base/model/smodel";
+import { KeyListener } from "../../base/views/key-tool";
+import { isBoundsAware } from "../bounds/model";
+import { isSelectable } from "../select/model";
+import { ViewportAnimation } from "./viewport";
+import { isViewport, Viewport } from "./model";
 
 /**
  * Triggered when the user requests the viewer to center on the current model. The resulting
@@ -24,7 +24,7 @@ import { isViewport, Viewport } from "./model"
  * viewport change programmatically.
  */
 export class CenterAction implements Action {
-    readonly kind = CenterCommand.KIND
+    readonly kind = CenterCommand.KIND;
 
     constructor(public readonly elementIds: string[],
                 public readonly animate: boolean = true) {
@@ -38,7 +38,7 @@ export class CenterAction implements Action {
  * to perform such a viewport change programmatically.
  */
 export class FitToScreenAction implements Action {
-    readonly kind = FitToScreenCommand.KIND
+    readonly kind = FitToScreenCommand.KIND;
 
     constructor(public readonly elementIds: string[],
                 public readonly padding?: number,
@@ -49,11 +49,11 @@ export class FitToScreenAction implements Action {
 
 export abstract class BoundsAwareViewportCommand extends Command {
 
-    oldViewport: Viewport
-    newViewport?: Viewport
+    oldViewport: Viewport;
+    newViewport?: Viewport;
 
     constructor(protected readonly animate: boolean) {
-        super()
+        super();
     }
 
     protected initialize(model: SModelRoot) {
@@ -61,143 +61,143 @@ export abstract class BoundsAwareViewportCommand extends Command {
             this.oldViewport = {
                 scroll: model.scroll,
                 zoom: model.zoom
-            }
-            const allBounds: Bounds[] = []
+            };
+            const allBounds: Bounds[] = [];
             this.getElementIds().forEach(
                 id => {
-                    const element = model.index.getById(id)
+                    const element = model.index.getById(id);
                     if (element && isBoundsAware(element))
-                        allBounds.push(this.boundsInViewport(element, element.bounds, model))
+                        allBounds.push(this.boundsInViewport(element, element.bounds, model));
                 }
-            )
+            );
             if (allBounds.length === 0) {
                 model.index.all().forEach(
                     element => {
                         if (isSelectable(element) && element.selected && isBoundsAware(element))
-                            allBounds.push(this.boundsInViewport(element, element.bounds, model))
+                            allBounds.push(this.boundsInViewport(element, element.bounds, model));
                     }
-                )
+                );
             }
             if (allBounds.length === 0) {
                 model.index.all().forEach(
                     element => {
                         if (isBoundsAware(element))
-                            allBounds.push(this.boundsInViewport(element, element.bounds, model))
+                            allBounds.push(this.boundsInViewport(element, element.bounds, model));
                     }
-                )
+                );
             }
             if (allBounds.length !== 0) {
-                const bounds = allBounds.reduce((b0, b1) => combine(b0, b1))
+                const bounds = allBounds.reduce((b0, b1) => combine(b0, b1));
                 if (isValidDimension(bounds))
-                    this.newViewport = this.getNewViewport(bounds, model)
+                    this.newViewport = this.getNewViewport(bounds, model);
             }
         }
     }
 
     protected boundsInViewport(element: SModelElement, bounds: Bounds, viewport: SModelRoot & Viewport): Bounds {
         if (element instanceof SChildElement && element.parent !== viewport)
-            return this.boundsInViewport(element.parent, element.parent.localToParent(bounds) as Bounds, viewport)
+            return this.boundsInViewport(element.parent, element.parent.localToParent(bounds) as Bounds, viewport);
         else
-            return bounds
+            return bounds;
     }
 
-    protected abstract getNewViewport(bounds: Bounds, model: SModelRoot): Viewport | undefined
+    protected abstract getNewViewport(bounds: Bounds, model: SModelRoot): Viewport | undefined;
 
-    protected abstract getElementIds(): string[]
+    protected abstract getElementIds(): string[];
 
     execute(context: CommandExecutionContext) {
-        this.initialize(context.root)
-        return this.redo(context)
+        this.initialize(context.root);
+        return this.redo(context);
     }
 
     undo(context: CommandExecutionContext) {
-        const model = context.root
+        const model = context.root;
         if (isViewport(model) && this.newViewport !== undefined && !this.equal(this.newViewport, this.oldViewport)) {
             if (this.animate)
-                return new ViewportAnimation(model, this.newViewport, this.oldViewport, context).start()
+                return new ViewportAnimation(model, this.newViewport, this.oldViewport, context).start();
             else {
-                model.scroll = this.oldViewport.scroll
-                model.zoom = this.oldViewport.zoom
+                model.scroll = this.oldViewport.scroll;
+                model.zoom = this.oldViewport.zoom;
             }
         }
-        return model
+        return model;
     }
 
     redo(context: CommandExecutionContext) {
-        const model = context.root
+        const model = context.root;
         if (isViewport(model) && this.newViewport !== undefined && !this.equal(this.newViewport, this.oldViewport)) {
             if (this.animate) {
-               return new ViewportAnimation(model, this.oldViewport, this.newViewport, context).start()
+               return new ViewportAnimation(model, this.oldViewport, this.newViewport, context).start();
             } else {
-                model.scroll = this.newViewport.scroll
-                model.zoom = this.newViewport.zoom
+                model.scroll = this.newViewport.scroll;
+                model.zoom = this.newViewport.zoom;
             }
         }
-        return model
+        return model;
     }
 
     protected equal(vp1: Viewport, vp2: Viewport): boolean {
-        return vp1.zoom === vp2.zoom && vp1.scroll.x === vp2.scroll.x && vp1.scroll.y === vp2.scroll.y
+        return vp1.zoom === vp2.zoom && vp1.scroll.x === vp2.scroll.x && vp1.scroll.y === vp2.scroll.y;
     }
 }
 
 export class CenterCommand extends BoundsAwareViewportCommand {
-    static readonly KIND = 'center'
+    static readonly KIND = 'center';
 
     constructor(protected action: CenterAction) {
-        super(action.animate)
+        super(action.animate);
     }
 
     getElementIds() {
-        return this.action.elementIds
+        return this.action.elementIds;
     }
 
     getNewViewport(bounds: Bounds, model: SModelRoot): Viewport | undefined {
         if (!isValidDimension(model.canvasBounds)) {
-            return undefined
+            return undefined;
         }
-        const c = center(bounds)
+        const c = center(bounds);
         return {
             scroll: {
                 x: c.x - 0.5 * model.canvasBounds.width,
                 y: c.y - 0.5 * model.canvasBounds.height
             },
             zoom: 1
-        }
+        };
     }
 }
 
 export class FitToScreenCommand extends BoundsAwareViewportCommand {
-    static readonly KIND = 'fit'
+    static readonly KIND = 'fit';
 
     constructor(protected action: FitToScreenAction) {
-        super(action.animate)
+        super(action.animate);
     }
 
     getElementIds() {
-        return this.action.elementIds
+        return this.action.elementIds;
     }
 
     getNewViewport(bounds: Bounds, model: SModelRoot): Viewport | undefined {
         if (!isValidDimension(model.canvasBounds)) {
-            return undefined
+            return undefined;
         }
-        const c = center(bounds)
+        const c = center(bounds);
         const delta = this.action.padding === undefined
             ? 0
-            : 2 *  this.action.padding
+            : 2 *  this.action.padding;
         let zoom = Math.min(
             model.canvasBounds.width / (bounds.width + delta),
-            model.canvasBounds.height / bounds.height + delta)
+            model.canvasBounds.height / bounds.height + delta);
         if (this.action.maxZoom !== undefined)
-           zoom = Math.min(zoom, this.action.maxZoom)
+           zoom = Math.min(zoom, this.action.maxZoom);
         return {
             scroll: {
                 x: c.x - 0.5 * model.canvasBounds.width / zoom,
                 y: c.y - 0.5 * model.canvasBounds.height / zoom
             },
             zoom: zoom
-        }
+        };
     }
 }
 
@@ -206,11 +206,11 @@ export class CenterKeyboardListener extends KeyListener {
         if (isCtrlOrCmd(event)) {
             switch (event.keyCode) {
                 case 67:
-                    return [new CenterAction([])]
+                    return [new CenterAction([])];
                 case 70:
-                    return [new FitToScreenAction([])]
+                    return [new FitToScreenAction([])];
             }
         }
-        return []
+        return [];
     }
 }

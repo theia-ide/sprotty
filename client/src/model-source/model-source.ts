@@ -5,15 +5,15 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { inject, injectable } from "inversify"
-import { TYPES } from "../base/types"
-import { Action } from "../base/actions/action"
-import { ActionHandlerRegistry, IActionHandler } from "../base/actions/action-handler"
-import { IActionDispatcher } from "../base/actions/action-dispatcher"
-import { ViewerOptions } from "../base/views/viewer-options"
-import { RequestModelAction, SetModelCommand } from "../base/features/set-model"
-import { ICommand } from "../base/commands/command"
-import { ExportSvgAction } from '../features/export/svg-exporter'
+import { inject, injectable } from "inversify";
+import { TYPES } from "../base/types";
+import { Action } from "../base/actions/action";
+import { ActionHandlerRegistry, IActionHandler } from "../base/actions/action-handler";
+import { IActionDispatcher } from "../base/actions/action-dispatcher";
+import { ViewerOptions } from "../base/views/viewer-options";
+import { RequestModelAction, SetModelCommand } from "../base/features/set-model";
+import { ICommand } from "../base/commands/command";
+import { ExportSvgAction } from '../features/export/svg-exporter';
 
 /**
  * A model source is serving the model to the event cycle. It represents
@@ -39,17 +39,17 @@ export abstract class ModelSource implements IActionHandler {
     constructor(@inject(TYPES.IActionDispatcher) readonly actionDispatcher: IActionDispatcher,
                 @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
                 @inject(TYPES.ViewerOptions) protected viewerOptions: ViewerOptions) {
-        this.initialize(actionHandlerRegistry)
+        this.initialize(actionHandlerRegistry);
     }
 
     protected initialize(registry: ActionHandlerRegistry): void {
         // Register model manipulation commands
-        registry.registerCommand(SetModelCommand)
+        registry.registerCommand(SetModelCommand);
 
         // Register this model source
-        registry.register(RequestModelAction.KIND, this)
-        registry.register(ExportSvgAction.KIND, this)
+        registry.register(RequestModelAction.KIND, this);
+        registry.register(ExportSvgAction.KIND, this);
     }
 
-    abstract handle(action: Action): ICommand | Action | void
+    abstract handle(action: Action): ICommand | Action | void;
 }

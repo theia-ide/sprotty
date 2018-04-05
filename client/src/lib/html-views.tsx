@@ -5,22 +5,22 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import * as snabbdom from "snabbdom-jsx"
-import { VNode } from "snabbdom/vnode"
-import { IView, RenderingContext } from "../base/views/view"
-import { setClass } from "../base/views/vnode-utils"
-import { HtmlRoot } from "./model"
+import * as snabbdom from "snabbdom-jsx";
+import { VNode } from "snabbdom/vnode";
+import { IView, RenderingContext } from "../base/views/view";
+import { setClass } from "../base/views/vnode-utils";
+import { HtmlRoot } from "./model";
 
-const JSX = {createElement: snabbdom.html}
+const JSX = {createElement: snabbdom.html};
 
 export class HtmlRootView implements IView {
     render(model: HtmlRoot, context: RenderingContext): VNode {
         const root = <div>
             { context.renderChildren(model) }
-        </div>
+        </div>;
         for (const c of model.classes) {
-            setClass(root, c, true)
+            setClass(root, c, true);
         }
-        return root
+        return root;
     }
 }

@@ -5,16 +5,16 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { ContainerModule } from "inversify"
-import { TYPES } from '../../base/types'
-import { ExportSvgDecorator, ExportSvgKeyListener, ExportSvgCommand } from './export'
-import { SvgExporter } from './svg-exporter'
+import { ContainerModule } from "inversify";
+import { TYPES } from '../../base/types';
+import { ExportSvgDecorator, ExportSvgKeyListener, ExportSvgCommand } from './export';
+import { SvgExporter } from './svg-exporter';
 
 const exportSvgModule = new ContainerModule(bind => {
-    bind(TYPES.KeyListener).to(ExportSvgKeyListener).inSingletonScope()
-    bind(TYPES.HiddenVNodeDecorator).to(ExportSvgDecorator).inSingletonScope()
-    bind(TYPES.ICommand).toConstructor(ExportSvgCommand)
-    bind(TYPES.SvgExporter).to(SvgExporter).inSingletonScope()
-})
+    bind(TYPES.KeyListener).to(ExportSvgKeyListener).inSingletonScope();
+    bind(TYPES.HiddenVNodeDecorator).to(ExportSvgDecorator).inSingletonScope();
+    bind(TYPES.ICommand).toConstructor(ExportSvgCommand);
+    bind(TYPES.SvgExporter).to(SvgExporter).inSingletonScope();
+});
 
-export default exportSvgModule
+export default exportSvgModule;

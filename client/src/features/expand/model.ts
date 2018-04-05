@@ -5,10 +5,10 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SModelElement } from "../../base/model/smodel"
-import { SModelExtension } from "../../base/model/smodel-extension"
+import { SModelElement } from "../../base/model/smodel";
+import { SModelExtension } from "../../base/model/smodel-extension";
 
-export const expandFeature = Symbol('expandFeature')
+export const expandFeature = Symbol('expandFeature');
 
 /**
  * Model elements that implement this interface can be expanded/collapsed
@@ -18,5 +18,5 @@ export interface Expandable extends SModelExtension {
 }
 
 export function isExpandable(element: SModelElement): element is SModelElement & Expandable {
-    return element.hasFeature(expandFeature) && 'expanded' in element
+    return element.hasFeature(expandFeature) && 'expanded' in element;
 }

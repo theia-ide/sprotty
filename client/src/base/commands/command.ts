@@ -5,15 +5,15 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { ILogger } from "../../utils/logging"
-import { SModelRoot } from "../model/smodel"
-import { IModelFactory } from "../model/smodel-factory"
-import { IViewer } from "../views/viewer"
-import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
-import { Action } from "../actions/action"
-import { ActionHandlerRegistry, IActionHandler, IActionHandlerInitializer } from "../actions/action-handler"
-import { injectable, multiInject, optional } from "inversify"
-import { TYPES } from "../types"
+import { ILogger } from "../../utils/logging";
+import { SModelRoot } from "../model/smodel";
+import { IModelFactory } from "../model/smodel-factory";
+import { IViewer } from "../views/viewer";
+import { AnimationFrameSyncer } from "../animations/animation-frame-syncer";
+import { Action } from "../actions/action";
+import { ActionHandlerRegistry, IActionHandler, IActionHandlerInitializer } from "../actions/action-handler";
+import { injectable, multiInject, optional } from "inversify";
+import { TYPES } from "../types";
 
 /**
  * A command holds the behaviour of an action.
@@ -48,7 +48,7 @@ export interface ICommand {
  * chaining, it is essential that a command does not make any assumption
  * on the state of the model before execute() is called.
  */
-export type CommandResult = SModelRoot | Promise<SModelRoot>
+export type CommandResult = SModelRoot | Promise<SModelRoot>;
 
 export interface ICommandFactory {
     KIND: string
@@ -60,11 +60,11 @@ export interface ICommandFactory {
  */
 export abstract class Command implements ICommand {
 
-    abstract execute(context: CommandExecutionContext): CommandResult
+    abstract execute(context: CommandExecutionContext): CommandResult;
 
-    abstract undo(context: CommandExecutionContext): CommandResult
+    abstract undo(context: CommandExecutionContext): CommandResult;
 
-    abstract redo(context: CommandExecutionContext): CommandResult
+    abstract redo(context: CommandExecutionContext): CommandResult;
 }
 
 /**
@@ -83,7 +83,7 @@ export abstract class MergeableCommand extends Command {
      * @param context
      */
     merge(command: ICommand, context: CommandExecutionContext): boolean {
-        return false
+        return false;
     }
 }
 
@@ -103,16 +103,16 @@ export abstract class MergeableCommand extends Command {
  * any stack and forwards the resulting model to the invisible viewer.
  */
 export abstract class HiddenCommand extends Command {
-    abstract execute(context: CommandExecutionContext): SModelRoot
+    abstract execute(context: CommandExecutionContext): SModelRoot;
 
     undo(context: CommandExecutionContext): CommandResult {
-        context.logger.error(this, 'Cannot undo a hidden command')
-        return context.root
+        context.logger.error(this, 'Cannot undo a hidden command');
+        return context.root;
     }
 
     redo(context: CommandExecutionContext): CommandResult {
-        context.logger.error(this, 'Cannot redo a hidden command')
-        return context.root
+        context.logger.error(this, 'Cannot redo a hidden command');
+        return context.root;
     }
 }
 
@@ -163,7 +163,7 @@ export class CommandActionHandler implements IActionHandler {
     }
 
     handle(action: Action): ICommand {
-        return new this.commandType(action)
+        return new this.commandType(action);
     }
 }
 
@@ -177,6 +177,6 @@ export class CommandActionHandlerInitializer implements IActionHandlerInitialize
     initialize(registry: ActionHandlerRegistry): void {
         this.commandCtrs.forEach(
             commandCtr => registry.registerCommand(commandCtr)
-        )
+        );
     }
 }

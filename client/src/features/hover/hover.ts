@@ -5,57 +5,57 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { inject, injectable } from "inversify"
-import { TYPES } from "../../base/types"
-import { SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel"
-import { MouseListener } from "../../base/views/mouse-tool"
-import { Action } from "../../base/actions/action"
-import { Command, CommandExecutionContext, PopupCommand } from "../../base/commands/command"
-import { EMPTY_ROOT } from "../../base/model/smodel-factory"
-import { Bounds, Point, translate } from "../../utils/geometry"
-import { KeyListener } from "../../base/views/key-tool"
-import { findParentByFeature, findParent } from "../../base/model/smodel-utils"
-import { ViewerOptions } from "../../base/views/viewer-options"
-import { getAbsoluteBounds } from '../bounds/model'
-import { hasPopupFeature, isHoverable } from "./model"
+import { inject, injectable } from "inversify";
+import { TYPES } from "../../base/types";
+import { SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel";
+import { MouseListener } from "../../base/views/mouse-tool";
+import { Action } from "../../base/actions/action";
+import { Command, CommandExecutionContext, PopupCommand } from "../../base/commands/command";
+import { EMPTY_ROOT } from "../../base/model/smodel-factory";
+import { Bounds, Point, translate } from "../../utils/geometry";
+import { KeyListener } from "../../base/views/key-tool";
+import { findParentByFeature, findParent } from "../../base/model/smodel-utils";
+import { ViewerOptions } from "../../base/views/viewer-options";
+import { getAbsoluteBounds } from '../bounds/model';
+import { hasPopupFeature, isHoverable } from "./model";
 
 /**
  * Triggered when the user puts the mouse pointer over an element.
  */
 export class HoverFeedbackAction implements Action {
-    kind = HoverFeedbackCommand.KIND
+    kind = HoverFeedbackCommand.KIND;
 
     constructor(public readonly mouseoverElement: string, public readonly mouseIsOver: boolean) {
     }
 }
 
 export class HoverFeedbackCommand extends Command {
-    static readonly KIND = 'hoverFeedback'
+    static readonly KIND = 'hoverFeedback';
 
     constructor(public action: HoverFeedbackAction) {
-        super()
+        super();
     }
 
     execute(context: CommandExecutionContext): SModelRoot {
 
-        const model: SModelRoot = context.root
-        const modelElement: SModelElement | undefined = model.index.getById(this.action.mouseoverElement)
+        const model: SModelRoot = context.root;
+        const modelElement: SModelElement | undefined = model.index.getById(this.action.mouseoverElement);
 
         if (modelElement) {
             if (isHoverable(modelElement)) {
-                modelElement.hoverFeedback = this.action.mouseIsOver
+                modelElement.hoverFeedback = this.action.mouseIsOver;
             }
         }
 
-        return this.redo(context)
+        return this.redo(context);
     }
 
     undo(context: CommandExecutionContext): SModelRoot {
-        return context.root
+        return context.root;
     }
 
     redo(context: CommandExecutionContext): SModelRoot {
-        return context.root
+        return context.root;
     }
 }
 
@@ -65,8 +65,8 @@ export class HoverFeedbackCommand extends Command {
  * The response is a SetPopupModelAction.
  */
 export class RequestPopupModelAction implements Action {
-    static readonly KIND = 'requestPopupModel'
-    readonly kind = RequestPopupModelAction.KIND
+    static readonly KIND = 'requestPopupModel';
+    readonly kind = RequestPopupModelAction.KIND;
 
     constructor(public readonly elementId: string, public readonly bounds: Bounds) {
     }
@@ -77,35 +77,35 @@ export class RequestPopupModelAction implements Action {
  * This action can also be used to remove any existing popup by choosing EMPTY_ROOT as root element.
  */
 export class SetPopupModelAction implements Action {
-    readonly kind = SetPopupModelCommand.KIND
+    readonly kind = SetPopupModelCommand.KIND;
 
     constructor(public readonly newRoot: SModelRootSchema) {
     }
 }
 
 export class SetPopupModelCommand extends PopupCommand {
-    static readonly KIND = 'setPopupModel'
+    static readonly KIND = 'setPopupModel';
 
-    oldRoot: SModelRoot
-    newRoot: SModelRoot
+    oldRoot: SModelRoot;
+    newRoot: SModelRoot;
 
     constructor(public action: SetPopupModelAction) {
-        super()
+        super();
     }
 
     execute(context: CommandExecutionContext): SModelRoot {
-        this.oldRoot = context.root
-        this.newRoot = context.modelFactory.createRoot(this.action.newRoot)
+        this.oldRoot = context.root;
+        this.newRoot = context.modelFactory.createRoot(this.action.newRoot);
 
-        return this.newRoot
+        return this.newRoot;
     }
 
     undo(context: CommandExecutionContext): SModelRoot {
-        return this.oldRoot
+        return this.oldRoot;
     }
 
     redo(context: CommandExecutionContext): SModelRoot {
-        return this.newRoot
+        return this.newRoot;
     }
 }
 
@@ -119,31 +119,31 @@ export interface HoverState {
 export abstract class AbstractHoverMouseListener extends MouseListener {
     constructor(@inject(TYPES.ViewerOptions) protected options: ViewerOptions,
                 @inject(TYPES.HoverState) protected state: HoverState) {
-        super()
+        super();
     }
 
     protected stopMouseOutTimer(): void {
         if (this.state.mouseOutTimer !== undefined) {
-            window.clearTimeout(this.state.mouseOutTimer)
-            this.state.mouseOutTimer = undefined
+            window.clearTimeout(this.state.mouseOutTimer);
+            this.state.mouseOutTimer = undefined;
         }
     }
 
     protected startMouseOutTimer(): Promise<Action> {
-        this.stopMouseOutTimer()
+        this.stopMouseOutTimer();
         return new Promise((resolve) => {
             this.state.mouseOutTimer = window.setTimeout(() => {
-                this.state.popupOpen = false
-                this.state.previousPopupElement = undefined
-                resolve(new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}))
-            }, this.options.popupCloseDelay)
-        })
+                this.state.popupOpen = false;
+                this.state.previousPopupElement = undefined;
+                resolve(new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id}));
+            }, this.options.popupCloseDelay);
+        });
     }
 
     protected stopMouseOverTimer(): void {
         if (this.state.mouseOverTimer !== undefined) {
-            window.clearTimeout(this.state.mouseOverTimer)
-            this.state.mouseOverTimer = undefined
+            window.clearTimeout(this.state.mouseOverTimer);
+            this.state.mouseOverTimer = undefined;
         }
     }
 }
@@ -153,109 +153,109 @@ export class HoverMouseListener extends AbstractHoverMouseListener {
 
     protected computePopupBounds(target: SModelElement, mousePosition: Point): Bounds {
         // Default position: below the mouse cursor
-        let offset: Point = { x: -5, y: 20 }
+        let offset: Point = { x: -5, y: 20 };
 
-        const targetBounds = getAbsoluteBounds(target)
-        const canvasBounds = target.root.canvasBounds
-        const boundsInWindow = translate(targetBounds, canvasBounds)
-        const distRight = boundsInWindow.x + boundsInWindow.width - mousePosition.x
-        const distBottom = boundsInWindow.y + boundsInWindow.height - mousePosition.y
+        const targetBounds = getAbsoluteBounds(target);
+        const canvasBounds = target.root.canvasBounds;
+        const boundsInWindow = translate(targetBounds, canvasBounds);
+        const distRight = boundsInWindow.x + boundsInWindow.width - mousePosition.x;
+        const distBottom = boundsInWindow.y + boundsInWindow.height - mousePosition.y;
         if (distBottom <= distRight && this.allowSidePosition(target, 'below', distBottom)) {
             // Put the popup below the target element
-            offset = { x: -5, y: Math.round(distBottom + 5) }
+            offset = { x: -5, y: Math.round(distBottom + 5) };
         } else if (distRight <= distBottom && this.allowSidePosition(target, 'right', distRight)) {
             // Put the popup right of the target element
-            offset = { x: Math.round(distRight + 5), y: -5 }
+            offset = { x: Math.round(distRight + 5), y: -5 };
         }
-        let leftPopupPosition = mousePosition.x + offset.x
-        const canvasRightBorderPosition = canvasBounds.x + canvasBounds.width
+        let leftPopupPosition = mousePosition.x + offset.x;
+        const canvasRightBorderPosition = canvasBounds.x + canvasBounds.width;
         if (leftPopupPosition > canvasRightBorderPosition) {
-            leftPopupPosition = canvasRightBorderPosition
+            leftPopupPosition = canvasRightBorderPosition;
         }
-        let topPopupPosition = mousePosition.y + offset.y
-        const canvasBottomBorderPosition = canvasBounds.y + canvasBounds.height
+        let topPopupPosition = mousePosition.y + offset.y;
+        const canvasBottomBorderPosition = canvasBounds.y + canvasBounds.height;
         if (topPopupPosition > canvasBottomBorderPosition) {
-            topPopupPosition = canvasBottomBorderPosition
+            topPopupPosition = canvasBottomBorderPosition;
         }
-        return { x: leftPopupPosition, y: topPopupPosition, width: -1, height: -1 }
+        return { x: leftPopupPosition, y: topPopupPosition, width: -1, height: -1 };
     }
 
     protected allowSidePosition(target: SModelElement, side: 'above' | 'below' | 'left' | 'right', distance: number): boolean {
-        return !(target instanceof SModelRoot) && distance <= 150
+        return !(target instanceof SModelRoot) && distance <= 150;
     }
 
     protected startMouseOverTimer(target: SModelElement, event: MouseEvent): Promise<Action> {
-        this.stopMouseOverTimer()
+        this.stopMouseOverTimer();
         return new Promise((resolve) => {
             this.state.mouseOverTimer = window.setTimeout(() => {
-                const popupBounds = this.computePopupBounds(target, {x: event.pageX, y: event.pageY})
-                resolve(new RequestPopupModelAction(target.id, popupBounds))
+                const popupBounds = this.computePopupBounds(target, {x: event.pageX, y: event.pageY});
+                resolve(new RequestPopupModelAction(target.id, popupBounds));
 
-                this.state.popupOpen = true
-                this.state.previousPopupElement = target
-            }, this.options.popupOpenDelay)
-        })
+                this.state.popupOpen = true;
+                this.state.previousPopupElement = target;
+            }, this.options.popupOpenDelay);
+        });
     }
 
     mouseOver(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        const result: (Action | Promise<Action>)[] = []
-        const popupTarget = findParent(target, hasPopupFeature)
+        const result: (Action | Promise<Action>)[] = [];
+        const popupTarget = findParent(target, hasPopupFeature);
 
         if (this.state.popupOpen && (popupTarget === undefined ||
             this.state.previousPopupElement !== undefined && this.state.previousPopupElement.id !== popupTarget.id)) {
-            result.push(this.startMouseOutTimer())
+            result.push(this.startMouseOutTimer());
         } else {
-            this.stopMouseOverTimer()
-            this.stopMouseOutTimer()
+            this.stopMouseOverTimer();
+            this.stopMouseOutTimer();
         }
         if (popupTarget !== undefined &&
             (this.state.previousPopupElement === undefined || this.state.previousPopupElement.id !== popupTarget.id)) {
-            result.push(this.startMouseOverTimer(popupTarget, event))
+            result.push(this.startMouseOverTimer(popupTarget, event));
         }
 
-        const hoverTarget = findParentByFeature(target, isHoverable)
+        const hoverTarget = findParentByFeature(target, isHoverable);
         if (hoverTarget !== undefined)
-            result.push(new HoverFeedbackAction(hoverTarget.id, true))
+            result.push(new HoverFeedbackAction(hoverTarget.id, true));
 
-        return result
+        return result;
     }
 
     mouseOut(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        const result: (Action | Promise<Action>)[] = []
+        const result: (Action | Promise<Action>)[] = [];
 
         if (this.state.popupOpen) {
-            const popupTarget = findParent(target, hasPopupFeature)
+            const popupTarget = findParent(target, hasPopupFeature);
             if (this.state.previousPopupElement !== undefined && popupTarget !== undefined
                 && this.state.previousPopupElement.id === popupTarget.id)
-                result.push(this.startMouseOutTimer())
+                result.push(this.startMouseOutTimer());
         }
-        this.stopMouseOverTimer()
+        this.stopMouseOverTimer();
 
-        const hoverTarget = findParentByFeature(target, isHoverable)
+        const hoverTarget = findParentByFeature(target, isHoverable);
         if (hoverTarget !== undefined)
-            result.push(new HoverFeedbackAction(hoverTarget.id, false))
+            result.push(new HoverFeedbackAction(hoverTarget.id, false));
 
-        return result
+        return result;
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        const result: (Action | Promise<Action>)[] = []
+        const result: (Action | Promise<Action>)[] = [];
 
         if (this.state.previousPopupElement !== undefined && this.closeOnMouseMove(this.state.previousPopupElement, event)) {
-            result.push(this.startMouseOutTimer())
+            result.push(this.startMouseOutTimer());
         }
 
-        const popupTarget = findParent(target, hasPopupFeature)
+        const popupTarget = findParent(target, hasPopupFeature);
         if (popupTarget !== undefined && (this.state.previousPopupElement === undefined
             || this.state.previousPopupElement.id !== popupTarget.id)) {
-            result.push(this.startMouseOverTimer(popupTarget, event))
+            result.push(this.startMouseOverTimer(popupTarget, event));
         }
 
-        return result
+        return result;
     }
 
     protected closeOnMouseMove(target: SModelElement, event: MouseEvent): boolean {
-        return target instanceof SModelRoot
+        return target instanceof SModelRoot;
     }
 
 }
@@ -264,21 +264,21 @@ export class HoverMouseListener extends AbstractHoverMouseListener {
 export class PopupHoverMouseListener extends AbstractHoverMouseListener {
 
     mouseOut(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        return [this.startMouseOutTimer()]
+        return [this.startMouseOutTimer()];
     }
 
     mouseOver(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
-        this.stopMouseOutTimer()
-        this.stopMouseOverTimer()
-        return []
+        this.stopMouseOutTimer();
+        this.stopMouseOverTimer();
+        return [];
     }
 }
 
 export class HoverKeyListener extends KeyListener {
     keyDown(element: SModelElement, event: KeyboardEvent): Action[] {
         if (event.keyCode === 27) {
-            return [new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id})]
+            return [new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id})];
         }
-        return []
+        return [];
     }
 }

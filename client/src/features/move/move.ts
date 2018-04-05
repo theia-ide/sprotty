@@ -5,27 +5,27 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { injectable } from "inversify"
-import { Point } from '../../utils/geometry'
-import { SChildElement } from '../../base/model/smodel'
-import { VNode } from "snabbdom/vnode"
-import { SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel"
-import { findParentByFeature } from "../../base/model/smodel-utils"
-import { Action } from "../../base/actions/action"
-import { ICommand, CommandExecutionContext, MergeableCommand } from "../../base/commands/command"
-import { Animation } from "../../base/animations/animation"
-import { MouseListener } from "../../base/views/mouse-tool"
-import { setAttr } from "../../base/views/vnode-utils"
-import { IVNodeDecorator } from "../../base/views/vnode-decorators"
-import { isViewport } from "../viewport/model"
-import { isSelectable } from "../select/model"
-import { isAlignable } from "../bounds/model"
-import { Routable, isRoutable, SRoutingHandle } from "../edit/model"
-import { MoveRoutingHandleAction, HandleMove } from "../edit/edit-routing"
-import { isMoveable, Locateable, isLocateable } from './model'
+import { injectable } from "inversify";
+import { Point } from '../../utils/geometry';
+import { SChildElement } from '../../base/model/smodel';
+import { VNode } from "snabbdom/vnode";
+import { SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel";
+import { findParentByFeature } from "../../base/model/smodel-utils";
+import { Action } from "../../base/actions/action";
+import { ICommand, CommandExecutionContext, MergeableCommand } from "../../base/commands/command";
+import { Animation } from "../../base/animations/animation";
+import { MouseListener } from "../../base/views/mouse-tool";
+import { setAttr } from "../../base/views/vnode-utils";
+import { IVNodeDecorator } from "../../base/views/vnode-decorators";
+import { isViewport } from "../viewport/model";
+import { isSelectable } from "../select/model";
+import { isAlignable } from "../bounds/model";
+import { Routable, isRoutable, SRoutingHandle } from "../edit/model";
+import { MoveRoutingHandleAction, HandleMove } from "../edit/edit-routing";
+import { isMoveable, Locateable, isLocateable } from './model';
 
 export class MoveAction implements Action {
-    kind = MoveCommand.KIND
+    kind = MoveCommand.KIND;
 
     constructor(public readonly moves: ElementMove[],
                 public readonly animate: boolean = true) {
@@ -53,58 +53,58 @@ export interface ResolvedElementRoute {
 }
 
 export class MoveCommand extends MergeableCommand {
-    static readonly KIND = 'move'
+    static readonly KIND = 'move';
 
-    resolvedMoves: Map<string, ResolvedElementMove> = new Map
-    resolvedRoutes: Map<string, ResolvedElementRoute> = new Map
+    resolvedMoves: Map<string, ResolvedElementMove> = new Map;
+    resolvedRoutes: Map<string, ResolvedElementRoute> = new Map;
 
     constructor(protected action: MoveAction) {
-        super()
+        super();
     }
 
     execute(context: CommandExecutionContext) {
-        const model = context.root
-        const attachedElements: Set<SModelElement> = new Set
+        const model = context.root;
+        const attachedElements: Set<SModelElement> = new Set;
         this.action.moves.forEach(
             move => {
-                const resolvedMove = this.resolve(move, model.index)
+                const resolvedMove = this.resolve(move, model.index);
                 if (resolvedMove !== undefined) {
-                    this.resolvedMoves.set(resolvedMove.elementId, resolvedMove)
-                    model.index.getAttachedElements(resolvedMove.element).forEach(e => attachedElements.add(e))
+                    this.resolvedMoves.set(resolvedMove.elementId, resolvedMove);
+                    model.index.getAttachedElements(resolvedMove.element).forEach(e => attachedElements.add(e));
                 }
             }
-        )
-        attachedElements.forEach(element => this.handleAttachedElement(element))
+        );
+        attachedElements.forEach(element => this.handleAttachedElement(element));
         if (this.action.animate) {
-            return new MoveAnimation(model, this.resolvedMoves, this.resolvedRoutes, context).start()
+            return new MoveAnimation(model, this.resolvedMoves, this.resolvedRoutes, context).start();
         } else {
-            return this.doMove(context)
+            return this.doMove(context);
         }
     }
 
     protected resolve(move: ElementMove, index: SModelIndex<SModelElement>): ResolvedElementMove | undefined {
-        const element = index.getById(move.elementId)
+        const element = index.getById(move.elementId);
         if (element !== undefined && isLocateable(element)) {
-            const fromPosition = move.fromPosition || { x: element.position.x, y: element.position.y }
+            const fromPosition = move.fromPosition || { x: element.position.x, y: element.position.y };
             return {
                 elementId: move.elementId,
                 element: element,
                 fromPosition: fromPosition,
                 toPosition: move.toPosition
-            }
+            };
         }
-        return undefined
+        return undefined;
     }
 
     protected handleAttachedElement(element: SModelElement): void {
         if (isRoutable(element)) {
-            const source = element.source
-            const sourceMove = source ? this.resolvedMoves.get(source.id) : undefined
-            const target = element.target
-            const targetMove = target ? this.resolvedMoves.get(target.id) : undefined
+            const source = element.source;
+            const sourceMove = source ? this.resolvedMoves.get(source.id) : undefined;
+            const target = element.target;
+            const targetMove = target ? this.resolvedMoves.get(target.id) : undefined;
             if (sourceMove !== undefined && targetMove !== undefined) {
-                const deltaX = targetMove.toPosition.x - targetMove.fromPosition.x
-                const deltaY = targetMove.toPosition.y - targetMove.fromPosition.y
+                const deltaX = targetMove.toPosition.x - targetMove.fromPosition.x;
+                const deltaY = targetMove.toPosition.y - targetMove.fromPosition.y;
                 this.resolvedRoutes.set(element.id, {
                     elementId: element.id,
                     element,
@@ -113,7 +113,7 @@ export class MoveCommand extends MergeableCommand {
                         x: rp.x + deltaX,
                         y: rp.y + deltaY
                     }))
-                })
+                });
             }
         }
     }
@@ -121,32 +121,32 @@ export class MoveCommand extends MergeableCommand {
     protected doMove(context: CommandExecutionContext, reverse?: boolean): SModelRoot {
         this.resolvedMoves.forEach(res => {
             if (reverse)
-                res.element.position = res.fromPosition
+                res.element.position = res.fromPosition;
             else
-                res.element.position = res.toPosition
-        })
+                res.element.position = res.toPosition;
+        });
         this.resolvedRoutes.forEach(res => {
             if (reverse)
-                res.element.routingPoints = res.fromRoute
+                res.element.routingPoints = res.fromRoute;
             else
-                res.element.routingPoints = res.toRoute
-        })
-        return context.root
+                res.element.routingPoints = res.toRoute;
+        });
+        return context.root;
     }
 
     undo(context: CommandExecutionContext) {
         if (this.action.animate) {
-            return new MoveAnimation(context.root, this.resolvedMoves, this.resolvedRoutes, context, true).start()
+            return new MoveAnimation(context.root, this.resolvedMoves, this.resolvedRoutes, context, true).start();
         } else {
-            return this.doMove(context, true)
+            return this.doMove(context, true);
         }
     }
 
     redo(context: CommandExecutionContext) {
         if (this.action.animate) {
-            return new MoveAnimation(context.root, this.resolvedMoves, this.resolvedRoutes, context, false).start()
+            return new MoveAnimation(context.root, this.resolvedMoves, this.resolvedRoutes, context, false).start();
         } else {
-            return this.doMove(context, false)
+            return this.doMove(context, false);
         }
     }
 
@@ -154,19 +154,19 @@ export class MoveCommand extends MergeableCommand {
         if (!this.action.animate && command instanceof MoveCommand) {
             command.action.moves.forEach(
                 otherMove => {
-                    const existingMove = this.resolvedMoves.get(otherMove.elementId)
+                    const existingMove = this.resolvedMoves.get(otherMove.elementId);
                     if (existingMove) {
-                        existingMove.toPosition = otherMove.toPosition
+                        existingMove.toPosition = otherMove.toPosition;
                     } else {
-                        const resolvedMove = this.resolve(otherMove, context.root.index)
+                        const resolvedMove = this.resolve(otherMove, context.root.index);
                         if (resolvedMove)
-                            this.resolvedMoves.set(resolvedMove.elementId, resolvedMove)
+                            this.resolvedMoves.set(resolvedMove.elementId, resolvedMove);
                     }
                 }
-            )
-            return true
+            );
+            return true;
         }
-        return false
+        return false;
     }
 }
 
@@ -177,7 +177,7 @@ export class MoveAnimation extends Animation {
                 public elementRoutes: Map<string, ResolvedElementRoute>,
                 context: CommandExecutionContext,
                 protected reverse: boolean = false) {
-        super(context)
+        super(context);
     }
 
     tween(t: number) {
@@ -186,68 +186,68 @@ export class MoveAnimation extends Animation {
                 elementMove.element.position = {
                     x: (1 - t) * elementMove.toPosition.x + t * elementMove.fromPosition.x,
                     y: (1 - t) * elementMove.toPosition.y + t * elementMove.fromPosition.y
-                }
+                };
             } else {
                 elementMove.element.position = {
                     x: (1 - t) * elementMove.fromPosition.x + t * elementMove.toPosition.x,
                     y: (1 - t) * elementMove.fromPosition.y + t * elementMove.toPosition.y
-                }
+                };
             }
-        })
+        });
         this.elementRoutes.forEach(elementRoute => {
-            const route: Point[] = []
+            const route: Point[] = [];
             for (let i = 0; i < elementRoute.fromRoute.length && i < elementRoute.toRoute.length; i++) {
-                const fp = elementRoute.fromRoute[i]
-                const tp = elementRoute.toRoute[i]
+                const fp = elementRoute.fromRoute[i];
+                const tp = elementRoute.toRoute[i];
                 if (this.reverse) {
                     route.push({
                         x: (1 - t) * tp.x + t * fp.x,
                         y: (1 - t) * tp.y + t * fp.y
-                    })
+                    });
                 } else {
                     route.push({
                         x: (1 - t) * fp.x + t * tp.x,
                         y: (1 - t) * fp.y + t * tp.y
-                    })
+                    });
                 }
             }
-            elementRoute.element.routingPoints = route
-        })
-        return this.model
+            elementRoute.element.routingPoints = route;
+        });
+        return this.model;
     }
 }
 
 export class MoveMouseListener extends MouseListener {
 
-    hasDragged = false
-    lastDragPosition: Point | undefined
+    hasDragged = false;
+    lastDragPosition: Point | undefined;
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
         if (event.button === 0) {
-            const moveable = findParentByFeature(target, isMoveable)
+            const moveable = findParentByFeature(target, isMoveable);
             if (moveable !== undefined || target instanceof SRoutingHandle) {
-                this.lastDragPosition = { x: event.pageX, y: event.pageY }
+                this.lastDragPosition = { x: event.pageX, y: event.pageY };
             } else {
-                this.lastDragPosition = undefined
+                this.lastDragPosition = undefined;
             }
-            this.hasDragged = false
+            this.hasDragged = false;
         }
-        return []
+        return [];
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): Action[] {
-        const result: Action[] = []
+        const result: Action[] = [];
         if (event.buttons === 0)
-            this.mouseUp(target, event)
+            this.mouseUp(target, event);
         else if (this.lastDragPosition) {
-            const viewport = findParentByFeature(target, isViewport)
-            this.hasDragged = true
-            const zoom = viewport ? viewport.zoom : 1
-            const dx = (event.pageX - this.lastDragPosition.x) / zoom
-            const dy = (event.pageY - this.lastDragPosition.y) / zoom
-            const root = target.root
-            const nodeMoves: ElementMove[] = []
-            const handleMoves: HandleMove[] = []
+            const viewport = findParentByFeature(target, isViewport);
+            this.hasDragged = true;
+            const zoom = viewport ? viewport.zoom : 1;
+            const dx = (event.pageX - this.lastDragPosition.x) / zoom;
+            const dy = (event.pageY - this.lastDragPosition.y) / zoom;
+            const root = target.root;
+            const nodeMoves: ElementMove[] = [];
+            const handleMoves: HandleMove[] = [];
             root.index
                 .all()
                 .filter(
@@ -266,10 +266,10 @@ export class MoveMouseListener extends MouseListener {
                                     x: element.position.x + dx,
                                     y: element.position.y + dy
                                 }
-                            })
+                            });
                         } else if (element instanceof SRoutingHandle) {
                             if (element.kind === 'junction' && element.pointIndex >= 0 && isRoutable(element.parent)) {
-                                const point = element.parent.routingPoints[element.pointIndex]
+                                const point = element.parent.routingPoints[element.pointIndex];
                                 handleMoves.push({
                                     elementId: element.id,
                                     fromPosition: point,
@@ -277,7 +277,7 @@ export class MoveMouseListener extends MouseListener {
                                         x: point.x + dx,
                                         y: point.y + dy
                                     }
-                                })
+                                });
                             } else if (element.viewPosition !== undefined) {
                                 handleMoves.push({
                                     elementId: element.id,
@@ -285,33 +285,33 @@ export class MoveMouseListener extends MouseListener {
                                         x: element.viewPosition.x + dx,
                                         y: element.viewPosition.y + dy
                                     }
-                                })
+                                });
                             }
                         }
-                    })
-            this.lastDragPosition = { x: event.pageX, y: event.pageY }
+                    });
+            this.lastDragPosition = { x: event.pageX, y: event.pageY };
             if (nodeMoves.length > 0)
-                result.push(new MoveAction(nodeMoves, false))
+                result.push(new MoveAction(nodeMoves, false));
             if (handleMoves.length > 0)
-                result.push(new MoveRoutingHandleAction(handleMoves, false))
+                result.push(new MoveRoutingHandleAction(handleMoves, false));
         }
-        return result
+        return result;
     }
 
     mouseEnter(target: SModelElement, event: MouseEvent): Action[] {
         if (target instanceof SModelRoot && event.buttons === 0)
-            this.mouseUp(target, event)
-        return []
+            this.mouseUp(target, event);
+        return [];
     }
 
     mouseUp(target: SModelElement, event: MouseEvent): Action[] {
-        this.hasDragged = false
-        this.lastDragPosition = undefined
-        return []
+        this.hasDragged = false;
+        this.lastDragPosition = undefined;
+        return [];
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        return vnode
+        return vnode;
     }
 }
 
@@ -319,18 +319,18 @@ export class MoveMouseListener extends MouseListener {
 export class LocationDecorator implements IVNodeDecorator {
 
     decorate(vnode: VNode, element: SModelElement): VNode {
-        let translate: string  = ''
+        let translate: string  = '';
         if (isLocateable(element) && element instanceof SChildElement && element.parent !== undefined) {
-            translate = 'translate(' + element.position.x + ', ' + element.position.y + ')'
+            translate = 'translate(' + element.position.x + ', ' + element.position.y + ')';
         }
         if (isAlignable(element)) {
             if (translate.length > 0)
-                translate += ' '
-            translate += 'translate('  + element.alignment.x + ', ' + element.alignment.y + ')'
+                translate += ' ';
+            translate += 'translate('  + element.alignment.x + ', ' + element.alignment.y + ')';
         }
         if (translate.length > 0)
-            setAttr(vnode, 'transform', translate)
-        return vnode
+            setAttr(vnode, 'transform', translate);
+        return vnode;
     }
 
     postUpdate(): void {

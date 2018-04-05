@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SNode, SNodeSchema, Bounds, moveFeature } from "../../../src"
+import { SNode, SNodeSchema, Bounds, moveFeature } from "../../../src";
 
 export interface TaskNodeSchema extends SNodeSchema {
     name?: string
@@ -14,15 +14,15 @@ export interface TaskNodeSchema extends SNodeSchema {
 }
 
 export class TaskNode extends SNode implements TaskNodeSchema {
-    name: string = ''
-    status?: string
-    kernelNr: number
+    name: string = '';
+    status?: string;
+    kernelNr: number;
 
     hasFeature(feature: symbol): boolean {
         if (feature === moveFeature)
-            return false
+            return false;
         else
-            return super.hasFeature(feature)
+            return super.hasFeature(feature);
     }
 }
 
@@ -31,13 +31,13 @@ export interface BarrierNodeSchema extends SNodeSchema {
 }
 
 export class BarrierNode extends SNode implements BarrierNodeSchema {
-    name: string = ''
-    bounds: Bounds = { x: 0, y: 0, width: 50, height: 20 }
+    name: string = '';
+    bounds: Bounds = { x: 0, y: 0, width: 50, height: 20 };
 
     hasFeature(feature: symbol): boolean {
         if (feature === moveFeature)
-            return false
+            return false;
         else
-            return super.hasFeature(feature)
+            return super.hasFeature(feature);
     }
 }

@@ -8,48 +8,48 @@
 import {
     SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, getBasicType,
     SGraph, SGraphFactory, SGraphSchema, HtmlRootSchema, PreRenderedElementSchema, PreRenderedElement, HtmlRoot
-} from "../../../src"
-import { BarrierNode, BarrierNodeSchema, TaskNode, TaskNodeSchema } from "./flowmodel"
+} from "../../../src";
+import { BarrierNode, BarrierNodeSchema, TaskNode, TaskNodeSchema } from "./flowmodel";
 
 export class FlowModelFactory extends SGraphFactory {
 
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
         if (this.isTaskNodeSchema(schema))
-            return this.initializeChild(new TaskNode(), schema, parent)
+            return this.initializeChild(new TaskNode(), schema, parent);
         else if (this.isBarrierNodeSchema(schema))
-            return this.initializeChild(new BarrierNode(), schema, parent)
+            return this.initializeChild(new BarrierNode(), schema, parent);
         else if (this.isPreRenderedSchema(schema))
-            return this.initializeChild(new PreRenderedElement(), schema, parent)
+            return this.initializeChild(new PreRenderedElement(), schema, parent);
         else
-            return super.createElement(schema, parent)
+            return super.createElement(schema, parent);
     }
 
     createRoot(schema: SModelRootSchema): SModelRoot {
         if (this.isFlowSchema(schema))
-            return this.initializeRoot(new SGraph(), schema)
+            return this.initializeRoot(new SGraph(), schema);
         else if (this.isHtmlRootSchema(schema))
-            return this.initializeRoot(new HtmlRoot(), schema)
+            return this.initializeRoot(new HtmlRoot(), schema);
         else
-            return super.createRoot(schema)
+            return super.createRoot(schema);
     }
 
     isFlowSchema(schema: SModelRootSchema): schema is SGraphSchema {
-        return getBasicType(schema) === 'flow'
+        return getBasicType(schema) === 'flow';
     }
 
     isTaskNodeSchema(schema: SModelElementSchema): schema is TaskNodeSchema {
-        return getBasicType(schema) === 'task'
+        return getBasicType(schema) === 'task';
     }
 
     isBarrierNodeSchema(schema: SModelElementSchema): schema is BarrierNodeSchema {
-        return getBasicType(schema) === 'barrier'
+        return getBasicType(schema) === 'barrier';
     }
 
     isHtmlRootSchema(schema: SModelElementSchema): schema is HtmlRootSchema {
-        return getBasicType(schema) === 'html'
+        return getBasicType(schema) === 'html';
     }
 
     isPreRenderedSchema(schema: SModelElementSchema): schema is PreRenderedElementSchema {
-        return getBasicType(schema) === 'pre-rendered'
+        return getBasicType(schema) === 'pre-rendered';
     }
 }

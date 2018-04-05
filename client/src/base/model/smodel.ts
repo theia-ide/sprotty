@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds, EMPTY_BOUNDS, Point, isBounds } from "../../utils/geometry"
+import { Bounds, EMPTY_BOUNDS, Point, isBounds } from "../../utils/geometry";
 
 /**
  * The schema of an SModelElement describes its serializable form. The actual model is created from
@@ -31,24 +31,24 @@ export interface SModelRootSchema extends SModelElementSchema {
  * Each model element must have a unique ID and a type that is used to look up its view.
  */
 export class SModelElement {
-    type: string
-    id: string
+    type: string;
+    id: string;
 
     get root(): SModelRoot {
-        let current: SModelElement | undefined = this
+        let current: SModelElement | undefined = this;
         while (current) {
             if (current instanceof SModelRoot)
-                return current
+                return current;
             else if (current instanceof SChildElement)
-                current = current.parent
+                current = current.parent;
             else
-                current = undefined
+                current = undefined;
         }
-        throw new Error("Element has no root")
+        throw new Error("Element has no root");
     }
 
     get index(): SModelIndex<SModelElement> {
-        return this.root.index
+        return this.root.index;
     }
 
     /**
@@ -56,7 +56,7 @@ export class SModelElement {
      * a model element. The base implementation always returns false, so it disables all features.
      */
     hasFeature(feature: symbol): boolean {
-        return false
+        return false;
     }
 }
 
@@ -64,60 +64,60 @@ export class SModelElement {
  * A parent element may contain child elements, thus the diagram model forms a tree.
  */
 export class SParentElement extends SModelElement {
-    children: SChildElement[] = []
+    children: SChildElement[] = [];
 
     add(child: SChildElement, i?: number) {
         if (i === undefined) {
-            this.children.push(child)
+            this.children.push(child);
         } else {
             if (i < 0 || i > this.children.length) {
-                throw "Child index out of bounds " + i + " (0.." + this.children.length + ")"
+                throw new Error(`Child index ${i} out of bounds (0..${this.children.length})`);
             }
-            this.children.splice(i, 0, child)
+            this.children.splice(i, 0, child);
         }
-        child.parent = this
-        this.index.add(child)
+        child.parent = this;
+        this.index.add(child);
     }
 
     remove(child: SChildElement) {
-        const i = this.children.indexOf(child)
+        const i = this.children.indexOf(child);
         if (i < 0) {
-            throw "No such child " + child
+            throw new Error(`No such child ${child.id}`);
         }
-        this.children.splice(i, 1)
-        delete child.parent
-        this.index.remove(child)
+        this.children.splice(i, 1);
+        delete child.parent;
+        this.index.remove(child);
     }
 
     removeAll(filter?: (e: SChildElement) => boolean) {
-        const children = this.children
+        const children = this.children;
         if (filter !== undefined) {
             for (let i = children.length - 1; i >= 0; i--) {
                 if (filter(children[i])) {
-                    const child = children.splice(i, 1)[0]
-                    delete child.parent
-                    this.index.remove(child)
+                    const child = children.splice(i, 1)[0];
+                    delete child.parent;
+                    this.index.remove(child);
                 }
             }
         } else {
-            this.children = []
+            this.children = [];
             children.forEach(child => {
-                delete child.parent
-                this.index.remove(child)
-            })
+                delete child.parent;
+                this.index.remove(child);
+            });
         }
     }
 
     move(child: SChildElement, newIndex: number) {
-        const i = this.children.indexOf(child)
+        const i = this.children.indexOf(child);
         if (i === -1) {
-            throw "No such child " + child
+            throw new Error(`No such child ${child.id}`);
         } else {
             if (newIndex < 0 || newIndex > this.children.length - 1) {
-                throw "Child index out of bounds " + i + " (0.." + this.children.length + ")"
+                throw new Error(`Child index ${newIndex} out of bounds (0..${this.children.length})`);
             }
-            this.children.splice(i, 1)
-            this.children.splice(newIndex, 0, child)
+            this.children.splice(i, 1);
+            this.children.splice(newIndex, 0, child);
         }
     }
 
@@ -129,7 +129,7 @@ export class SParentElement extends SModelElement {
      * so it leaves the bounds unchanged.
      */
     localToParent(point: Point | Bounds): Bounds {
-        return isBounds(point) ? point : { x: point.x, y: point.y, width: -1, height: -1 }
+        return isBounds(point) ? point : { x: point.x, y: point.y, width: -1, height: -1 };
     }
 
     /**
@@ -140,7 +140,7 @@ export class SParentElement extends SModelElement {
      * so it leaves the bounds unchanged.
      */
     parentToLocal(point: Point | Bounds): Bounds {
-        return isBounds(point) ? point : { x: point.x, y: point.y, width: -1, height: -1 }
+        return isBounds(point) ? point : { x: point.x, y: point.y, width: -1, height: -1 };
     }
 }
 
@@ -151,35 +151,35 @@ export class SParentElement extends SModelElement {
  * leafs in the model element tree).
  */
 export class SChildElement extends SParentElement {
-    parent: SParentElement
+    parent: SParentElement;
 }
 
 /**
  * Base class for the root element of the diagram model tree.
  */
 export class SModelRoot extends SParentElement {
-    readonly index: SModelIndex<SModelElement>
-    revision?: number
+    readonly index: SModelIndex<SModelElement>;
+    revision?: number;
 
-    canvasBounds: Bounds = EMPTY_BOUNDS
+    canvasBounds: Bounds = EMPTY_BOUNDS;
 
     constructor(index = new SModelIndex<SModelElement>()) {
-        super()
+        super();
         // Override the index property from SModelElement, which has a getter, with a data property
         Object.defineProperty(this, 'index', {
             value: index,
             writable: false
-        })
+        });
     }
 }
 
-const ID_CHARS = "0123456789abcdefghijklmnopqrstuvwxyz"
+const ID_CHARS = "0123456789abcdefghijklmnopqrstuvwxyz";
 export function createRandomId(length: number = 8): string {
-    let id = ""
+    let id = "";
     for (let i = 0; i < length; i++) {
-        id += ID_CHARS.charAt(Math.floor(Math.random() * ID_CHARS.length))
+        id += ID_CHARS.charAt(Math.floor(Math.random() * ID_CHARS.length));
     }
-    return id
+    return id;
 }
 
 /**
@@ -187,50 +187,50 @@ export function createRandomId(length: number = 8): string {
  */
 export class SModelIndex<E extends SModelElementSchema> {
 
-    private id2element: Map<string, E> = new Map
+    private id2element: Map<string, E> = new Map;
 
     add(element: E): void {
         if (!element.id) {
             do {
-                element.id = createRandomId()
-            } while (this.contains(element))
+                element.id = createRandomId();
+            } while (this.contains(element));
         } else if (this.contains(element)) {
-            throw new Error("Duplicate ID in model: " + element.id)
+            throw new Error("Duplicate ID in model: " + element.id);
         }
-        this.id2element.set(element.id, element)
+        this.id2element.set(element.id, element);
         if (element.children !== undefined && element.children.constructor === Array) {
             for (const child of element.children) {
-                this.add(child as any)
+                this.add(child as any);
             }
         }
     }
 
     remove(element: E): void {
-        this.id2element.delete(element.id)
+        this.id2element.delete(element.id);
         if (element.children !== undefined && element.children.constructor === Array) {
             for (const child of element.children) {
-                this.remove(child as any)
+                this.remove(child as any);
             }
         }
     }
 
     contains(element: E): boolean {
-        return this.id2element.has(element.id)
+        return this.id2element.has(element.id);
     }
 
     getById(id: string): E | undefined {
-        return this.id2element.get(id)
+        return this.id2element.get(id);
     }
 
     getAttachedElements(element: E): E[] {
-        return []
+        return [];
     }
 
     all(): E[] {
-        const all: E[] = []
+        const all: E[] = [];
         this.id2element.forEach(
             element => all.push(element)
-        )
-        return all
+        );
+        return all;
     }
 }

@@ -5,9 +5,9 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { ContainerModule } from "inversify"
-import { TYPES } from "../base/types"
-import { ModelSource } from "./model-source"
+import { ContainerModule } from "inversify";
+import { TYPES } from "../base/types";
+import { ModelSource } from "./model-source";
 
 /**
  * This container module does NOT provide any binding for TYPES.ModelSource because that needs to be
@@ -18,10 +18,10 @@ const modelSourceModule = new ContainerModule(bind => {
     bind(TYPES.ModelSourceProvider).toProvider<ModelSource>((context) => {
         return () => {
             return new Promise<ModelSource>((resolve) => {
-                resolve(context.container.get<ModelSource>(TYPES.ModelSource))
-            })
-        }
-    })
-})
+                resolve(context.container.get<ModelSource>(TYPES.ModelSource));
+            });
+        };
+    });
+});
 
-export default modelSourceModule
+export default modelSourceModule;

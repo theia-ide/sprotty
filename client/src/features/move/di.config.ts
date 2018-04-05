@@ -5,15 +5,15 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { ContainerModule } from "inversify"
-import { TYPES } from '../../base/types'
-import { MoveCommand, MoveMouseListener, LocationDecorator } from './move'
+import { ContainerModule } from "inversify";
+import { TYPES } from '../../base/types';
+import { MoveCommand, MoveMouseListener, LocationDecorator } from './move';
 
 const moveModule = new ContainerModule(bind => {
-    bind(TYPES.MouseListener).to(MoveMouseListener)
-    bind(TYPES.ICommand).toConstructor(MoveCommand)
-    bind(TYPES.IVNodeDecorator).to(LocationDecorator)
-    bind(TYPES.HiddenVNodeDecorator).to(LocationDecorator)
-})
+    bind(TYPES.MouseListener).to(MoveMouseListener);
+    bind(TYPES.ICommand).toConstructor(MoveCommand);
+    bind(TYPES.IVNodeDecorator).to(LocationDecorator);
+    bind(TYPES.HiddenVNodeDecorator).to(LocationDecorator);
+});
 
-export default moveModule
+export default moveModule;

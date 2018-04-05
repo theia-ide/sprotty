@@ -5,16 +5,16 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { TYPES, LocalModelSource } from "../../../src"
-import createContainer from "./di.config"
-import { ModelProvider } from './model-provider'
+import { TYPES, LocalModelSource } from "../../../src";
+import createContainer from "./di.config";
+import { ModelProvider } from './model-provider';
 
 export default function runClassDiagram() {
-    const container = createContainer(false, 'sprotty')
+    const container = createContainer(false, 'sprotty');
 
     // Run
-    const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
-    const modelProvider = container.get<ModelProvider>(TYPES.StateAwareModelProvider)
-    const graph = modelProvider.getModel()
-    modelSource.setModel(graph)
+    const modelSource = container.get<LocalModelSource>(TYPES.ModelSource);
+    const modelProvider = container.get<ModelProvider>(TYPES.StateAwareModelProvider);
+    const graph = modelProvider.getModel();
+    modelSource.setModel(graph);
 }

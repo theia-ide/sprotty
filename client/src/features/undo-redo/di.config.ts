@@ -5,12 +5,12 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { ContainerModule } from "inversify"
-import { TYPES } from "../../base/types"
-import { UndoRedoKeyListener } from "./undo-redo"
+import { ContainerModule } from "inversify";
+import { TYPES } from "../../base/types";
+import { UndoRedoKeyListener } from "./undo-redo";
 
 const undoRedoModule = new ContainerModule(bind => {
-    bind(TYPES.KeyListener).to(UndoRedoKeyListener)
-})
+    bind(TYPES.KeyListener).to(UndoRedoKeyListener);
+});
 
-export default undoRedoModule
+export default undoRedoModule;

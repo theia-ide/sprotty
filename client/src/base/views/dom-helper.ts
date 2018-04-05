@@ -5,10 +5,10 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { inject, injectable } from "inversify"
-import { ViewerOptions } from "./viewer-options"
-import { TYPES } from "../types"
-import { SModelElement } from "../model/smodel"
+import { inject, injectable } from "inversify";
+import { ViewerOptions } from "./viewer-options";
+import { TYPES } from "../types";
+import { SModelElement } from "../model/smodel";
 
 @injectable()
 export class DOMHelper {
@@ -19,16 +19,16 @@ export class DOMHelper {
 
     private getPrefix() {
         const prefix = this.viewerOptions !== undefined && this.viewerOptions.baseDiv !== undefined ?
-            this.viewerOptions.baseDiv + "_" : ""
-        return prefix
+            this.viewerOptions.baseDiv + "_" : "";
+        return prefix;
     }
 
     createUniqueDOMElementId(element: SModelElement): string {
-        return this.getPrefix() + element.id
+        return this.getPrefix() + element.id;
     }
 
     findSModelIdByDOMElement(element: Element): string {
-        return element.id.replace(this.getPrefix(), '')
+        return element.id.replace(this.getPrefix(), '');
     }
 
 }

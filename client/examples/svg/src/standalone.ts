@@ -5,28 +5,28 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { LocalModelSource, TYPES, SModelRootSchema, ShapedPreRenderedElementSchema } from "../../../src"
-import createContainer from "./di.config"
+import { LocalModelSource, TYPES, SModelRootSchema, ShapedPreRenderedElementSchema } from "../../../src";
+import createContainer from "./di.config";
 
 function loadFile(path: string): Promise<string> {
     return new Promise<string>((resolve, reject) => {
-        const request = new XMLHttpRequest()
+        const request = new XMLHttpRequest();
         request.open('GET', path);
         request.addEventListener('load', () => {
-            resolve(request.responseText)
-        })
+            resolve(request.responseText);
+        });
         request.addEventListener('error', (event) => {
-            reject(event)
-        })
-        request.send()
-    })
+            reject(event);
+        });
+        request.send();
+    });
 }
 
 export default function runMulticore() {
-    const p1 = loadFile('images/SVG_logo.svg')
-    const p2 = loadFile('images/Ghostscript_Tiger.svg')
+    const p1 = loadFile('images/SVG_logo.svg');
+    const p2 = loadFile('images/Ghostscript_Tiger.svg');
     Promise.all([p1, p2]).then(([svgLogo, tiger]) => {
-        const container = createContainer()
+        const container = createContainer();
 
         // Initialize model
         const model: SModelRootSchema = {
@@ -46,10 +46,10 @@ export default function runMulticore() {
                     code: tiger
                 } as ShapedPreRenderedElementSchema
             ]
-        }
+        };
 
         // Run
-        const modelSource = container.get<LocalModelSource>(TYPES.ModelSource)
-        modelSource.setModel(model)
-    })
+        const modelSource = container.get<LocalModelSource>(TYPES.ModelSource);
+        modelSource.setModel(model);
+    });
 }

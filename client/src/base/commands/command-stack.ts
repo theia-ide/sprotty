@@ -5,17 +5,17 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { inject, injectable } from "inversify"
-import { TYPES } from "../types"
-import { ILogger } from "../../utils/logging"
-import { EMPTY_ROOT, IModelFactory } from "../model/smodel-factory"
-import { SModelRoot } from "../model/smodel"
-import { AnimationFrameSyncer } from "../animations/animation-frame-syncer"
-import { IViewer, IViewerProvider } from "../views/viewer"
-import { CommandStackOptions } from './command-stack-options'
+import { inject, injectable } from "inversify";
+import { TYPES } from "../types";
+import { ILogger } from "../../utils/logging";
+import { EMPTY_ROOT, IModelFactory } from "../model/smodel-factory";
+import { SModelRoot } from "../model/smodel";
+import { AnimationFrameSyncer } from "../animations/animation-frame-syncer";
+import { IViewer, IViewerProvider } from "../views/viewer";
+import { CommandStackOptions } from './command-stack-options';
 import {
     HiddenCommand, ICommand, CommandExecutionContext, CommandResult, SystemCommand, MergeableCommand, PopupCommand
-} from './command'
+} from './command';
 
 /**
  * The component that holds the current model and applies the commands
@@ -61,7 +61,7 @@ export interface ICommandStack {
  * As part of the event cylce, the ICommandStack should be injected
  * using a provider to avoid cyclic injection dependencies.
  */
-export type CommandStackProvider = () => Promise<ICommandStack>
+export type CommandStackProvider = () => Promise<ICommandStack>;
 
 /**
  * The implementation of the ICommandStack. Clients should not use this
@@ -92,7 +92,7 @@ export type CommandStackProvider = () => Promise<ICommandStack>
 @injectable()
 export class CommandStack implements ICommandStack {
 
-    protected currentPromise: Promise<CommandStackState>
+    protected currentPromise: Promise<CommandStackState>;
 
     constructor(@inject(TYPES.IModelFactory) protected modelFactory: IModelFactory,
                 @inject(TYPES.IViewerProvider) protected viewerProvider: IViewerProvider,
@@ -106,13 +106,13 @@ export class CommandStack implements ICommandStack {
             rootChanged: false,
             hiddenRootChanged: false,
             popupChanged: false
-        })
+        });
     }
 
-    protected viewer: IViewer
+    protected viewer: IViewer;
 
-    protected undoStack: ICommand[] = []
-    protected redoStack: ICommand[] = []
+    protected undoStack: ICommand[] = [];
+    protected redoStack: ICommand[] = [];
 
     /**
      * System commands should be transparent to the user in undo/redo
@@ -126,54 +126,54 @@ export class CommandStack implements ICommandStack {
      * On undo, all commands form this stack are undone as well as
      * system ommands should be transparent to the user.
      */
-    protected offStack: SystemCommand[] = []
+    protected offStack: SystemCommand[] = [];
 
     protected get currentModel(): Promise<SModelRoot> {
         return this.currentPromise.then(
             state => state.root
-        )
+        );
     }
 
     executeAll(commands: ICommand[]): Promise<SModelRoot> {
         commands.forEach(
             command => {
-                this.logger.log(this, 'Executing', command)
-                this.handleCommand(command, command.execute, this.mergeOrPush)
+                this.logger.log(this, 'Executing', command);
+                this.handleCommand(command, command.execute, this.mergeOrPush);
             }
-        )
-        return this.thenUpdate()
+        );
+        return this.thenUpdate();
     }
 
     execute(command: ICommand): Promise<SModelRoot> {
-        this.logger.log(this, 'Executing', command)
-        this.handleCommand(command, command.execute, this.mergeOrPush)
-        return this.thenUpdate()
+        this.logger.log(this, 'Executing', command);
+        this.handleCommand(command, command.execute, this.mergeOrPush);
+        return this.thenUpdate();
     }
 
     undo(): Promise<SModelRoot> {
-        this.undoOffStackSystemCommands()
-        this.undoPreceedingSystemCommands()
-        const command = this.undoStack.pop()
+        this.undoOffStackSystemCommands();
+        this.undoPreceedingSystemCommands();
+        const command = this.undoStack.pop();
         if (command !== undefined) {
-            this.logger.log(this, 'Undoing', command)
-            this.handleCommand(command, command.undo, (command: ICommand, context: CommandExecutionContext) => {
-                this.redoStack.push(command)
-            })
+            this.logger.log(this, 'Undoing', command);
+            this.handleCommand(command, command.undo, (c: ICommand, context: CommandExecutionContext) => {
+                this.redoStack.push(c);
+            });
         }
-        return this.thenUpdate()
+        return this.thenUpdate();
     }
 
     redo(): Promise<SModelRoot> {
-        this.undoOffStackSystemCommands()
-        const command = this.redoStack.pop()
+        this.undoOffStackSystemCommands();
+        const command = this.redoStack.pop();
         if (command !== undefined) {
-            this.logger.log(this, 'Redoing', command)
-            this.handleCommand(command, command.redo, (command: ICommand, context: CommandExecutionContext) => {
-                this.pushToUndoStack(command)
-            })
+            this.logger.log(this, 'Redoing', command);
+            this.handleCommand(command, command.redo, (c: ICommand, context: CommandExecutionContext) => {
+                this.pushToUndoStack(c);
+            });
         }
-        this.redoFollowingSystemCommands()
-        return this.thenUpdate()
+        this.redoFollowingSystemCommands();
+        return this.thenUpdate();
     }
 
     /**
@@ -191,13 +191,13 @@ export class CommandStack implements ICommandStack {
             state => {
                 const promise = new Promise(
                     (resolve: (result: CommandStackState) => void, reject: (reason?: any) => void) => {
-                        const context = this.createContext(state.root)
-                        let newResult: CommandResult
+                        const context = this.createContext(state.root);
+                        let newResult: CommandResult;
                         try {
-                            newResult = operation.call(command, context)
+                            newResult = operation.call(command, context);
                         } catch (error) {
-                            this.logger.error(this, "Failed to execute command:", error)
-                            newResult = state.root
+                            this.logger.error(this, "Failed to execute command:", error);
+                            newResult = state.root;
                         }
                         if (command instanceof HiddenCommand) {
                             resolve({
@@ -205,44 +205,44 @@ export class CommandStack implements ICommandStack {
                                     hiddenRoot: newResult as SModelRoot,
                                     hiddenRootChanged: true
                                 }
-                            })
+                            });
                         } else if (command instanceof PopupCommand) {
                             resolve({
                                 ...state, ...{
                                     popupRoot: newResult as SModelRoot,
                                     popupChanged: true
                                 }
-                            })
+                            });
                         } else if (newResult instanceof Promise) {
                             newResult.then(
                                 (newModel: SModelRoot) => {
-                                    beforeResolve.call(this, command, context)
+                                    beforeResolve.call(this, command, context);
                                     resolve({
                                         ...state, ...{
                                             root: newModel,
                                             rootChanged: true
                                         }
-                                    })
+                                    });
                                 }
-                            )
+                            );
                         } else {
-                            beforeResolve.call(this, command, context)
+                            beforeResolve.call(this, command, context);
                             resolve({
                                 ...state, ...{
                                     root: newResult,
                                     rootChanged: true
                                 }
-                            })
+                            });
                         }
-                    })
-                return promise
-            })
+                    });
+                return promise;
+            });
     }
 
     protected pushToUndoStack(command: ICommand) {
-        this.undoStack.push(command)
+        this.undoStack.push(command);
         if (this.options.undoHistoryLimit >= 0 && this.undoStack.length > this.options.undoHistoryLimit)
-            this.undoStack.splice(0, this.undoStack.length - this.options.undoHistoryLimit)
+            this.undoStack.splice(0, this.undoStack.length - this.options.undoHistoryLimit);
     }
 
     /**
@@ -253,11 +253,11 @@ export class CommandStack implements ICommandStack {
         this.currentPromise = this.currentPromise.then(
             state => {
                 if (state.hiddenRootChanged && state.hiddenRoot !== undefined)
-                    this.updateHidden(state.hiddenRoot)
+                    this.updateHidden(state.hiddenRoot);
                 if (state.rootChanged)
-                    this.update(state.root)
+                    this.update(state.root);
                 if (state.popupChanged && state.popupRoot !== undefined)
-                    this.updatePopup(state.popupRoot)
+                    this.updatePopup(state.popupRoot);
                 return {
                     root: state.root,
                     hiddenRoot: undefined,
@@ -265,10 +265,10 @@ export class CommandStack implements ICommandStack {
                     rootChanged: false,
                     hiddenRootChanged: false,
                     popupChanged: false
-                }
+                };
             }
-        )
-        return this.currentModel
+        );
+        return this.currentModel;
     }
 
     /**
@@ -276,13 +276,13 @@ export class CommandStack implements ICommandStack {
      */
     updatePopup(model: SModelRoot): void {
         if (this.viewer) {
-            this.viewer.updatePopup(model)
-            return
+            this.viewer.updatePopup(model);
+            return;
         }
         this.viewerProvider().then(viewer => {
-            this.viewer = viewer
-            this.updatePopup(model)
-        })
+            this.viewer = viewer;
+            this.updatePopup(model);
+        });
     }
 
     /**
@@ -290,13 +290,13 @@ export class CommandStack implements ICommandStack {
      */
     update(model: SModelRoot): void {
         if (this.viewer) {
-            this.viewer.update(model)
-            return
+            this.viewer.update(model);
+            return;
         }
         this.viewerProvider().then(viewer => {
-            this.viewer = viewer
-            this.update(model)
-        })
+            this.viewer = viewer;
+            this.update(model);
+        });
     }
 
     /**
@@ -304,13 +304,13 @@ export class CommandStack implements ICommandStack {
      */
     updateHidden(model: SModelRoot): void {
         if (this.viewer) {
-            this.viewer.updateHidden(model)
-            return
+            this.viewer.updateHidden(model);
+            return;
         }
         this.viewerProvider().then(viewer => {
-            this.viewer = viewer
-            this.updateHidden(model)
-        })
+            this.viewer = viewer;
+            this.updateHidden(model);
+        });
     }
 
     /**
@@ -326,19 +326,19 @@ export class CommandStack implements ICommandStack {
      */
     protected mergeOrPush(command: ICommand, context: CommandExecutionContext) {
         if (command instanceof HiddenCommand)
-            return
+            return;
         if (command instanceof SystemCommand && this.redoStack.length > 0) {
-            this.offStack.push(command)
+            this.offStack.push(command);
         } else {
-            this.offStack.forEach(command => this.undoStack.push(command))
-            this.offStack = []
-            this.redoStack = []
+            this.offStack.forEach(c => this.undoStack.push(c));
+            this.offStack = [];
+            this.redoStack = [];
             if (this.undoStack.length > 0) {
-                const lastCommand = this.undoStack[this.undoStack.length - 1]
+                const lastCommand = this.undoStack[this.undoStack.length - 1];
                 if (lastCommand instanceof MergeableCommand && lastCommand.merge(command, context))
-                    return
+                    return;
             }
-            this.pushToUndoStack(command)
+            this.pushToUndoStack(command);
         }
     }
 
@@ -346,11 +346,11 @@ export class CommandStack implements ICommandStack {
      * Reverts all system commands on the offStack.
      */
     protected undoOffStackSystemCommands() {
-        let command = this.offStack.pop()
+        let command = this.offStack.pop();
         while (command !== undefined) {
-            this.logger.log(this, 'Undoing off-stack', command)
-            this.handleCommand(command, command.undo, () => {})
-            command = this.offStack.pop()
+            this.logger.log(this, 'Undoing off-stack', command);
+            this.handleCommand(command, command.undo, () => {});
+            command = this.offStack.pop();
         }
     }
 
@@ -360,14 +360,14 @@ export class CommandStack implements ICommandStack {
      * at the top of the undoStack.
      */
     protected undoPreceedingSystemCommands() {
-        let command = this.undoStack[this.undoStack.length - 1]
+        let command = this.undoStack[this.undoStack.length - 1];
         while (command !== undefined && command instanceof SystemCommand) {
-            this.undoStack.pop()
-            this.logger.log(this, 'Undoing', command)
-            this.handleCommand(command, command.undo, (command: ICommand, context: CommandExecutionContext) => {
-                this.redoStack.push(command)
-            })
-            command = this.undoStack[this.undoStack.length - 1]
+            this.undoStack.pop();
+            this.logger.log(this, 'Undoing', command);
+            this.handleCommand(command, command.undo, (c: ICommand, context: CommandExecutionContext) => {
+                this.redoStack.push(c);
+            });
+            command = this.undoStack[this.undoStack.length - 1];
         }
     }
 
@@ -377,14 +377,14 @@ export class CommandStack implements ICommandStack {
      * at the top of the redoStack.
      */
     protected redoFollowingSystemCommands() {
-        let command = this.redoStack[this.redoStack.length - 1]
+        let command = this.redoStack[this.redoStack.length - 1];
         while (command !== undefined && command instanceof SystemCommand) {
-            this.redoStack.pop()
-            this.logger.log(this, 'Redoing ', command)
-            this.handleCommand(command, command.redo, (command: ICommand, context: CommandExecutionContext) => {
-                this.pushToUndoStack(command)
-            })
-            command = this.redoStack[this.redoStack.length - 1]
+            this.redoStack.pop();
+            this.logger.log(this, 'Redoing ', command);
+            this.handleCommand(command, command.redo, (c: ICommand, context: CommandExecutionContext) => {
+                this.pushToUndoStack(c);
+            });
+            command = this.redoStack[this.redoStack.length - 1];
         }
     }
 
@@ -399,8 +399,8 @@ export class CommandStack implements ICommandStack {
             duration: this.options.defaultDuration,
             logger: this.logger,
             syncer: this.syncer
-        }
-        return context
+        };
+        return context;
     }
 }
 

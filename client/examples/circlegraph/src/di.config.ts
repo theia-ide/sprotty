@@ -5,36 +5,36 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Container, ContainerModule } from "inversify"
+import { Container, ContainerModule } from "inversify";
 import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphFactory, SGraphView, PolylineEdgeView,
     ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule, undoRedoModule,
     viewportModule, LocalModelSource, exportModule
-} from "../../../src"
-import { CircleNodeView } from "./views"
+} from "../../../src";
+import { CircleNodeView } from "./views";
 
 const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-    rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope()
-    rebind(TYPES.LogLevel).toConstantValue(LogLevel.log)
-    rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope()
-})
+    rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
+    rebind(TYPES.LogLevel).toConstantValue(LogLevel.log);
+    rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope();
+});
 
 export default (useWebsocket: boolean) => {
-    const container = new Container()
-    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, exportModule, circlegraphModule)
+    const container = new Container();
+    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, exportModule, circlegraphModule);
     if (useWebsocket)
-        container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope()
+        container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope();
     else
-        container.bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope()
+        container.bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope();
     overrideViewerOptions(container, {
         needsClientLayout: false
-    })
+    });
 
     // Register views
-    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
-    viewRegistry.register('graph', SGraphView)
-    viewRegistry.register('node:circle', CircleNodeView)
-    viewRegistry.register('edge:straight', PolylineEdgeView)
+    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry);
+    viewRegistry.register('graph', SGraphView);
+    viewRegistry.register('node:circle', CircleNodeView);
+    viewRegistry.register('edge:straight', PolylineEdgeView);
 
-    return container
-}
+    return container;
+};

@@ -5,9 +5,9 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-export type HAlignment = 'left' | 'center' | 'right'
+export type HAlignment = 'left' | 'center' | 'right';
 
-export type VAlignment = 'top' | 'center' | 'bottom'
+export type VAlignment = 'top' | 'center' | 'bottom';
 
 export interface AbstractLayoutOptions extends Object {
     resizeContainer: boolean

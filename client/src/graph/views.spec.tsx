@@ -19,75 +19,75 @@ import { ModelRendererFactory } from "../base/views/viewer"
 import { AnchorableView, PolylineEdgeView, SGraphView } from './views';
 import { SModelElement, SParentElement } from "../base/model/smodel"
 import { SEdge, SGraph, SNode, SNodeSchema, SEdgeSchema, SPortSchema, SPort } from "./sgraph"
-import { SGraphFactory } from "./sgraph-factory"
-import defaultModule from "../base/di.config"
-import selectModule from "../features/select/di.config"
-import moveModule from "../features/move/di.config"
-import { Point } from "../utils/geometry"
+import { SGraphFactory } from "./sgraph-factory";
+import defaultModule from "../base/di.config";
+import selectModule from "../features/select/di.config";
+import moveModule from "../features/move/di.config";
+import { Point } from "../utils/geometry";
 
-const toHTML = require('snabbdom-to-html')
-const JSX = {createElement: snabbdom.svg}
+const toHTML = require('snabbdom-to-html');
+const JSX = {createElement: snabbdom.svg};
 
 describe('graph views', () => {
     class CircleNodeView extends CircularNodeView {
         render(node: SNode, context: RenderingContext): VNode {
-            const radius = this.getRadius(node)
+            const radius = this.getRadius(node);
             return <g>
                     <circle class-sprotty-node={true} class-selected={node.selected} r={radius} cx={radius} cy={radius} />
-                </g>
+                </g>;
         }
         protected getRadius(node: SNode) {
-            return 40
+            return 40;
         }
     }
 
-    const container = new Container()
-    container.load(defaultModule, selectModule, moveModule)
+    const container = new Container();
+    container.load(defaultModule, selectModule, moveModule);
 
-    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry)
-    viewRegistry.register('graph', SGraphView)
-    viewRegistry.register('node:circle', CircleNodeView)
-    viewRegistry.register('edge:straight', PolylineEdgeView)
-    const decorators = container.getAll<IVNodeDecorator>(TYPES.IVNodeDecorator)
-    const context = container.get<ModelRendererFactory>(TYPES.ModelRendererFactory)(decorators)
-    const factory = new SGraphFactory()
+    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry);
+    viewRegistry.register('graph', SGraphView);
+    viewRegistry.register('node:circle', CircleNodeView);
+    viewRegistry.register('edge:straight', PolylineEdgeView);
+    const decorators = container.getAll<IVNodeDecorator>(TYPES.IVNodeDecorator);
+    const context = container.get<ModelRendererFactory>(TYPES.ModelRendererFactory)(decorators);
+    const factory = new SGraphFactory();
 
     it('render an empty graph', () => {
         const schema = {
             type: 'graph',
             id: 'mygraph',
             children: []
-        }
-        const graph = factory.createRoot(schema) as SGraph
-        const view = new SGraphView()
-        const vnode = view.render(graph, context)
-        const html = toHTML(vnode)
-        expect(html).to.be.equal('<svg class="sprotty-graph"><g transform="scale(1) translate(0,0)"></g></svg>')
-    })
+        };
+        const graph = factory.createRoot(schema) as SGraph;
+        const view = new SGraphView();
+        const vnode = view.render(graph, context);
+        const html = toHTML(vnode);
+        expect(html).to.be.equal('<svg class="sprotty-graph"><g transform="scale(1) translate(0,0)"></g></svg>');
+    });
 
-    const node0 = {id: 'node0', type: 'node:circle', position: { x: 100, y: 100 } }
-    const node1 = {id: 'node1', type: 'node:circle', position: { x: 200, y: 150 }, selected: true}
-    const edge0 = {id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1'}
-    const graph = factory.createRoot({id: 'graph', type: 'graph', children: [node0, node1, edge0]}) as SGraph
+    const node0 = {id: 'node0', type: 'node:circle', position: { x: 100, y: 100 } };
+    const node1 = {id: 'node1', type: 'node:circle', position: { x: 200, y: 150 }, selected: true};
+    const edge0 = {id: 'edge0', type: 'edge:straight', sourceId: 'node0', targetId: 'node1'};
+    const graph = factory.createRoot({id: 'graph', type: 'graph', children: [node0, node1, edge0]}) as SGraph;
 
     it('render a straight edge', () => {
-        const view = new PolylineEdgeView()
-        const vnode = view.render(graph.index.getById('edge0') as SEdge, context)
-        const html = toHTML(vnode)
+        const view = new PolylineEdgeView();
+        const vnode = view.render(graph.index.getById('edge0') as SEdge, context);
+        const html = toHTML(vnode);
         expect(html).to.be.equal(
-            '<g class="sprotty-edge"><path d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" /></g>')
-    })
+            '<g class="sprotty-edge"><path d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" /></g>');
+    });
 
     it('render a circle node', () => {
-        const view = new CircleNodeView()
-        const vnode = view.render(graph.index.getById('node0') as SNode, context)
-        const html = toHTML(vnode)
-        expect(html).to.be.equal('<g><circle class="sprotty-node" r="40" cx="40" cy="40" /></g>')
-    })
+        const view = new CircleNodeView();
+        const vnode = view.render(graph.index.getById('node0') as SNode, context);
+        const html = toHTML(vnode);
+        expect(html).to.be.equal('<g><circle class="sprotty-node" r="40" cx="40" cy="40" /></g>');
+    });
 
     it('render a whole graph', () => {
-        const vnode = context.renderElement(graph)
-        const html: string = toHTML(vnode)
+        const vnode = context.renderElement(graph);
+        const html: string = toHTML(vnode);
         const expectation = '<svg id="sprotty_graph" class="sprotty-graph" tabindex="1002">'
             + '<g transform="scale(1) translate(0,0)">'
             +   '<g id="sprotty_node0" transform="translate(100, 100)">'
@@ -100,18 +100,18 @@ describe('graph views', () => {
             +     '<path d="M 179.45575695328574,146.57595949221428 L 206.35286098493785,168.36969634746004" />'
             +   '</g>'
             + '</g>'
-            + '</svg>'
+            + '</svg>';
         for (let i = 0; i < html.length; ++i) {
             if (html.charAt(i) !== expectation.charAt(i)) {
-                console.log('Different char at ' + i)
+                console.log('Different char at ' + i);
             }
         }
-        expect(html).to.be.equal(expectation)
-    })
-})
+        expect(html).to.be.equal(expectation);
+    });
+});
 
 describe('AnchorableView', () => {
-    const factory = new SGraphFactory()
+    const factory = new SGraphFactory();
     const model = factory.createRoot({
         type: 'graph',
         id: 'graph',
@@ -151,37 +151,37 @@ describe('AnchorableView', () => {
                 targetId: 'port2'
             } as SEdgeSchema
         ]
-    })
-    const rectView = new RectangularNodeView()
-    
+    });
+    const rectView = new RectangularNodeView();
+
     it('correctly translates edge source position', () => {
-        const edge = model.index.getById('edge1') as SEdge
-        const sourcePort = model.index.getById('port1') as SPort
-        const refPoint = { x: 30, y: 15 }
-        const translated = rectView.getTranslatedAnchor(sourcePort, refPoint, edge.parent, 0, edge)
-        expect(translated).to.deep.equal({ x: 22, y: 15, width: -1, height: -1 })
-    })
-    
+        const edge = model.index.getById('edge1') as SEdge;
+        const sourcePort = model.index.getById('port1') as SPort;
+        const refPoint = { x: 30, y: 15 };
+        const translated = rectView.getTranslatedAnchor(sourcePort, refPoint, edge.parent, 0, edge);
+        expect(translated).to.deep.equal({ x: 22, y: 15, width: -1, height: -1 });
+    });
+
     it('correctly translates edge target position', () => {
-        const edge = model.index.getById('edge1') as SEdge
-        const targetPort = model.index.getById('port2') as SPort
-        const refPoint = { x: 20, y: 15 }
-        const translated = rectView.getTranslatedAnchor(targetPort, refPoint, edge.parent, 0, edge)
-        expect(translated).to.deep.equal({ x: 28, y: 15, width: -1, height: -1 })
-    })
-    
+        const edge = model.index.getById('edge1') as SEdge;
+        const targetPort = model.index.getById('port2') as SPort;
+        const refPoint = { x: 20, y: 15 };
+        const translated = rectView.getTranslatedAnchor(targetPort, refPoint, edge.parent, 0, edge);
+        expect(translated).to.deep.equal({ x: 28, y: 15, width: -1, height: -1 });
+    });
+
     it('correctly translates edge source to target position', () => {
-        const edge = model.index.getById('edge1') as SEdge
-        const sourcePort = model.index.getById('port1') as SPort
-        const targetPort = model.index.getById('port2') as SPort
-        const refPoint = { x: 10, y: 5 }
-        const translated = rectView.getTranslatedAnchor(targetPort, refPoint, sourcePort.parent, 0, edge)
-        expect(translated).to.deep.equal({ x: 28, y: 15, width: -1, height: -1 })
-    })
-})
+        const edge = model.index.getById('edge1') as SEdge;
+        const sourcePort = model.index.getById('port1') as SPort;
+        const targetPort = model.index.getById('port2') as SPort;
+        const refPoint = { x: 10, y: 5 };
+        const translated = rectView.getTranslatedAnchor(targetPort, refPoint, sourcePort.parent, 0, edge);
+        expect(translated).to.deep.equal({ x: 28, y: 15, width: -1, height: -1 });
+    });
+});
 
 describe('PolylineEdgeView', () => {
-    const factory = new SGraphFactory()
+    const factory = new SGraphFactory();
     const model = factory.createRoot({
         type: 'graph',
         id: 'graph',
@@ -227,33 +227,33 @@ describe('PolylineEdgeView', () => {
                 ]
             } as SNodeSchema,
         ]
-    })
+    });
 
-    const edgeView = new PolylineEdgeView()
+    const edgeView = new PolylineEdgeView();
     const context = {
         viewRegistry: new ViewRegistry,
-        decorate: function(vnode: VNode, element: SModelElement): VNode { return vnode },
-        renderElement: function(element: SModelElement): VNode { return <g></g> },
-        renderChildren: function(element: SParentElement): VNode[] { return []}
-    } as RenderingContext
+        decorate: function(vnode: VNode, element: SModelElement): VNode { return vnode; },
+        renderElement: function(element: SModelElement): VNode { return <g></g>; },
+        renderChildren: function(element: SParentElement): VNode[] { return []; }
+    } as RenderingContext;
     class PortView extends AnchorableView {
         public render(model: SModelElement, context: RenderingContext): VNode {
-            return <g/>
+            return <g/>;
         }
 
         public getAnchor(model: SNode | SPort, refPoint: Point, anchorCorrection: number): Point {
-            return model.position
+            return model.position;
         }
-    } 
-    context.viewRegistry.register('port', PortView)
+    }
+    context.viewRegistry.register('port', PortView);
 
     it('correctly translates edge source and target position', () => {
-        const edge = model.index.getById('edge1') as SEdge
-        expect(toHTML(edgeView.render(edge, context))).to.equal('<g class="sprotty-edge"><path d="M 10,4 L 18,14" /></g>')
-    })
-    
+        const edge = model.index.getById('edge1') as SEdge;
+        expect(toHTML(edgeView.render(edge, context))).to.equal('<g class="sprotty-edge"><path d="M 10,4 L 18,14" /></g>');
+    });
+
     it('correctly translates edge target and source position', () => {
-        const edge = model.index.getById('edge2') as SEdge
-        expect(toHTML(edgeView.render(edge, context))).to.equal('<g class="sprotty-edge"><path d="M -10,-6 L -2,4" /></g>')
-    })
-})
+        const edge = model.index.getById('edge2') as SEdge;
+        expect(toHTML(edgeView.render(edge, context))).to.equal('<g class="sprotty-edge"><path d="M -10,-6 L -2,4" /></g>');
+    });
+});

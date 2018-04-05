@@ -5,8 +5,8 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Container } from "inversify"
-import { TYPES } from '../types'
+import { Container } from "inversify";
+import { TYPES } from '../types';
 
 /**
  * Options for the command execution
@@ -28,9 +28,10 @@ export interface CommandStackOptions {
 }
 
 export function overrideCommandStackOptions(container: Container, options: Partial<CommandStackOptions>): CommandStackOptions {
-    const defaultOptions = container.get<CommandStackOptions>(TYPES.CommandStackOptions)
+    const defaultOptions = container.get<CommandStackOptions>(TYPES.CommandStackOptions);
     for (const p in options) {
-        (defaultOptions as any)[p] = (options as any)[p]
+        if (options.hasOwnProperty(p))
+            (defaultOptions as any)[p] = (options as any)[p];
     }
-    return defaultOptions
+    return defaultOptions;
 }
