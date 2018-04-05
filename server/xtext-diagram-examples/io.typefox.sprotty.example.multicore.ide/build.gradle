@@ -7,6 +7,6 @@
 
 dependencies {
 	compile project(':xtext-diagram-examples:io.typefox.sprotty.example.multicore')
-	compile "org.eclipse.xtext:org.eclipse.xtext.ide:$versions.xtext"
-	compile "org.eclipse.xtext:org.eclipse.xtext.xbase.ide:$versions.xtext"
+	compile "org.eclipse.xtext:org.eclipse.xtext.ide:$versions.xtext_example"
+	compile "org.eclipse.xtext:org.eclipse.xtext.xbase.ide:$versions.xtext_example"
 }

@@ -6,8 +6,8 @@
  */
 
 dependencies {
-	compile "org.eclipse.xtext:org.eclipse.xtext:$versions.xtext"
-	compile "org.eclipse.xtext:org.eclipse.xtext.xbase:$versions.xtext"
+	compile "org.eclipse.xtext:org.eclipse.xtext:$versions.xtext_example"
+	compile "org.eclipse.xtext:org.eclipse.xtext.xbase:$versions.xtext_example"
 }
 
 jar {
@@ -23,8 +23,8 @@ configurations {
 }
 
 dependencies {
-	mwe2 "org.eclipse.xtext:org.eclipse.xtext.common.types:$versions.xtext"
-	mwe2 "org.eclipse.xtext:org.eclipse.xtext.xtext.generator:$versions.xtext"
+	mwe2 "org.eclipse.xtext:org.eclipse.xtext.common.types:$versions.xtext_example"
+	mwe2 "org.eclipse.xtext:org.eclipse.xtext.xtext.generator:$versions.xtext_example"
 	mwe2 "org.eclipse.emf:org.eclipse.emf.mwe2.launch:2.9.0.201605261059"
 	mwe2 "org.eclipse.xtext:xtext-antlr-generator:2.1.1"
 }

@@ -100,7 +100,11 @@ class MulticoreServerLauncher {
 				new WebInfConfiguration,
 				new MetaInfConfiguration
 			]
-			setAttribute(WebInfConfiguration.CONTAINER_JAR_PATTERN, '.*/io\\.typefox\\.sprotty\\.example\\.multicore\\.web/.*,.*\\.jar')
+			setAttribute(WebInfConfiguration.CONTAINER_JAR_PATTERN,
+				'.*/io\\.typefox\\.sprotty\\.example\\.multicore\\.web/.*,' +
+				'.*/org\\.eclipse\\.xtext/.*\\.jar,' +
+				'.*/org\\.webjars/.*\\.jar'
+			)
 			setInitParameter('org.eclipse.jetty.servlet.Default.dirAllowed', 'false')
 			setInitParameter('org.eclipse.jetty.servlet.Default.useFileMappedBuffer', 'false')
 			addEventListener(diagramService)

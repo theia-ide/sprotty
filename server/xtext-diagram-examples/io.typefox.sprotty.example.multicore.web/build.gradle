@@ -16,8 +16,8 @@ dependencies {
 	compile project(':diagram-layout-engine')
 	compile project(':xtext-diagram-examples:io.typefox.sprotty.example.multicore.ide')
     compile "org.eclipse.elk:org.eclipse.elk.alg.layered:$versions.elk"
-	compile "org.eclipse.xtext:org.eclipse.xtext.web.servlet:$versions.xtext"
-	compile "org.eclipse.xtend:org.eclipse.xtend.lib:$versions.xtext"
+	compile "org.eclipse.xtext:org.eclipse.xtext.web.servlet:$versions.xtext_example"
+	compile "org.eclipse.xtend:org.eclipse.xtend.lib:$versions.xtext_example"
 	compile "org.webjars:requirejs:$versions.requirejs"
 	compile "org.webjars:jquery:$versions.jquery"
 	compile "org.webjars:ace:$versions.ace"
