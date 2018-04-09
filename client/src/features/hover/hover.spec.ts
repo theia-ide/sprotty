@@ -32,7 +32,7 @@ describe('hover', () => {
             this.state.previousPopupElement = el;
         }
 
-        protected startMouseOverTimer(target: SModelElement, event: MouseEvent): Promise<Action> {
+        protected startMouseOverTimer(target: SModelElement, evt: MouseEvent): Promise<Action> {
             this.state.popupOpen = true;
             this.state.previousPopupElement = target;
             return new Promise<Action>(() => {

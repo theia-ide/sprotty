@@ -5,8 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import "mocha";
+import 'reflect-metadata';
+import 'mocha';
 import { expect } from "chai";
+import { Container } from 'inversify';
+import { TYPES } from '../../base/types';
 import { Point } from "../../utils/geometry";
 import { ConsoleLogger } from "../../utils/logging";
 import { CommandExecutionContext } from "../../base/commands/command";
@@ -15,10 +18,14 @@ import { SGraphFactory } from "../../graph/sgraph-factory";
 import { SNode } from "../../graph/sgraph";
 import { AnimationFrameSyncer } from "../../base/animations/animation-frame-syncer";
 import { ElementMove, MoveAction, MoveCommand } from "./move";
+import defaultModule from "../../base/di.config";
 
 describe('move', () => {
+    const container = new Container();
+    container.load(defaultModule);
+    container.rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope();
 
-    const graphFactory = new SGraphFactory();
+    const graphFactory = container.get<SGraphFactory>(TYPES.IModelFactory);
 
     const pointNW: Point = { x: 0, y: 0 };
     const pointNE: Point = { x: 300, y: 1 };
@@ -89,8 +96,8 @@ describe('move', () => {
     // from test case to test case (i,e, select, undo, redo, merge)
     let newModel: SModelRoot;
 
-    function getNode(nodeId: string, model: SModelRoot) {
-        return model.index.getById(nodeId) as SNode;
+    function getNode(nodeId: string, root: SModelRoot) {
+        return root.index.getById(nodeId) as SNode;
     }
 
     it('execute() works as expected', () => {

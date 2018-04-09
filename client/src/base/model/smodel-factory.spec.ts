@@ -5,14 +5,21 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import "mocha";
+import 'reflect-metadata';
+import 'mocha';
 import { expect } from "chai";
+import { Container } from 'inversify';
+import { TYPES } from '../types';
 import { SModelElementSchema, SModelIndex } from "./smodel";
 import { SModelFactory } from "./smodel-factory";
+import defaultModule from "../di.config";
 
 describe('model factory', () => {
     it('creates a single element from a schema', () => {
-        const factory = new SModelFactory();
+        const container = new Container();
+        container.load(defaultModule);
+
+        const factory = container.get<SModelFactory>(TYPES.IModelFactory);
         const element = factory.createElement({
             type: 'foo',
             id: 'element1'
@@ -21,7 +28,10 @@ describe('model factory', () => {
     });
 
     it('creates a root element and its chilren from a schema', () => {
-        const factory = new SModelFactory();
+        const container = new Container();
+        container.load(defaultModule);
+
+        const factory = container.get<SModelFactory>(TYPES.IModelFactory);
         const root = factory.createRoot({
             type: 'root',
             id: 'root',
@@ -51,7 +61,10 @@ describe('model factory', () => {
     });
 
     it('detects duplicate ids and throws an error', () => {
-        const factory = new SModelFactory();
+        const container = new Container();
+        container.load(defaultModule);
+
+        const factory = container.get<SModelFactory>(TYPES.IModelFactory);
         const test = () => factory.createRoot({
             type: 'root',
             id: 'root',
@@ -70,7 +83,10 @@ describe('model factory', () => {
     });
 
     it('does not overwrite reserved properties', () => {
-        const factory = new SModelFactory();
+        const container = new Container();
+        container.load(defaultModule);
+
+        const factory = container.get<SModelFactory>(TYPES.IModelFactory);
         const root = factory.createRoot({
             type: 'root',
             id: 'root',

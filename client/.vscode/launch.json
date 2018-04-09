@@ -1,22 +1,26 @@
 {
 	"version": "0.2.0",
 	"configurations": [
-        
         {
             "type": "node",
             "request": "launch",
+            "name": "Current Test File",
             "protocol": "inspector",
-            "name": "Mocha Tests",
-            "program": "${workspaceRoot}/node_modules/mocha/bin/_mocha",
+            "cwd": "${workspaceRoot}",
+            "program": "${workspaceRoot}/node_modules/.bin/_mocha",
             "args": [
-                "--opts", "${workspaceRoot}/mocha.opts",
-                "--timeout", "999999",
-                "--colors"
+                "${file}",
+                "--no-timeouts",
+                "--opts",
+                "${workspaceRoot}/configs/mocha.opts"
             ],
+            "env": {
+                "TS_NODE_PROJECT": "${workspaceRoot}/tsconfig.json"
+            },
             "sourceMaps": true,
+            "smartStep": true,
             "internalConsoleOptions": "openOnSessionStart",
-            "port": 9229,
-            "cwd": "${workspaceRoot}"
+            "outputCapture": "std"
         }
 	]
 }

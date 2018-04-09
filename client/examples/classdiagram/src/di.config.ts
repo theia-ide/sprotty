@@ -10,19 +10,36 @@ import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphView, SLabelView, SCompartmentView,
     PolylineEdgeView, ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule,
     undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView,
-    exportModule, expandModule, fadeModule, ExpandButtonView, buttonModule, edgeEditModule, SRoutingHandleView
+    exportModule, expandModule, fadeModule, ExpandButtonView, buttonModule, edgeEditModule, SRoutingHandleView,
+    SGraphFactory, SModelElementRegistration, PreRenderedElement, HtmlRoot
 } from "../../../src";
 import { ClassNodeView, IconView} from "./views";
-import { ClassDiagramFactory } from "./model-factory";
 import { popupModelFactory } from "./popup";
 import { ModelProvider } from './model-provider';
+import { Icon, ClassNode } from "./model";
 
 const classDiagramModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log);
-    rebind(TYPES.IModelFactory).to(ClassDiagramFactory).inSingletonScope();
+    rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope();
     bind(TYPES.PopupModelFactory).toConstantValue(popupModelFactory);
     bind(TYPES.StateAwareModelProvider).to(ModelProvider);
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'node:class',
+        constr: ClassNode
+    });
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'icon',
+        constr: Icon
+    });
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'pre-rendered',
+        constr: PreRenderedElement
+    });
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'html',
+        constr: HtmlRoot
+    });
 });
 
 export default (useWebsocket: boolean, containerId: string) => {

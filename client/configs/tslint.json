@@ -67,7 +67,7 @@
     "no-unsafe-finally": {
       "severity": "error"
     },
-    "no-unused-expression": true,
+    "no-unused-expression": false,
     "no-var-keyword": {
       "severity": "error"
     },

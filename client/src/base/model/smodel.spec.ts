@@ -7,7 +7,7 @@
 
 import "mocha";
 import { expect } from "chai";
-import { SChildElement, SModelIndex, SModelRoot } from "./smodel";
+import { SChildElement, SModelIndex, SModelRoot, SModelElement } from './smodel';
 
 describe('SModelRoot', () => {
     function setup() {
@@ -50,7 +50,7 @@ describe('SModelRoot', () => {
 
 describe('SModelIndex', () => {
     function setup() {
-        const index = new SModelIndex();
+        const index = new SModelIndex<SModelElement>();
         const child1 = new SChildElement();
         child1.id = 'child1';
         index.add(child1);

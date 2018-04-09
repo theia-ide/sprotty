@@ -5,19 +5,21 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { injectable } from "inversify";
+import { injectable, multiInject, optional, inject } from 'inversify';
+import { TYPES } from "../types";
+import { ProviderRegistry } from '../../utils/registry';
 import {
-    SChildElement, SModelElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement
-} from "./smodel";
+    SChildElement, SModelElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement, isParent
+} from './smodel';
 
 /**
  * A model factory transforms a serializable model schema into the model representation that is used
  * internally by sprotty.
  */
 export interface IModelFactory {
-    createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement
+    createElement(schema: SModelElementSchema | SModelElement, parent?: SParentElement): SChildElement
 
-    createRoot(schema: SModelRootSchema): SModelRoot
+    createRoot(schema: SModelRootSchema | SModelRoot): SModelRoot
 
     createSchema(element: SModelElement): SModelElementSchema
 }
@@ -29,12 +31,33 @@ export interface IModelFactory {
 @injectable()
 export class SModelFactory implements IModelFactory {
 
-    createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
-        return this.initializeChild(new SChildElement(), schema, parent);
+    constructor(@inject(TYPES.SModelRegistry) protected readonly registry: SModelRegistry) {
     }
 
-    createRoot(schema: SModelRootSchema): SModelRoot {
-        return this.initializeRoot(new SModelRoot(), schema);
+    createElement(schema: SModelElementSchema | SModelElement, parent?: SParentElement): SChildElement {
+        let child: SChildElement;
+        if (this.registry.hasKey(schema.type)) {
+            const regElement = this.registry.get(schema.type, undefined);
+            if (!(regElement instanceof SChildElement))
+                throw new Error(`Element with type ${schema.type} was expected to be an SChildElement.`);
+            child = regElement;
+        } else {
+            child = new SChildElement();
+        }
+        return this.initializeChild(child, schema, parent);
+    }
+
+    createRoot(schema: SModelRootSchema | SModelRoot): SModelRoot {
+        let root: SModelRoot;
+        if (this.registry.hasKey(schema.type)) {
+            const regElement = this.registry.get(schema.type, undefined);
+            if (!(regElement instanceof SModelRoot))
+                throw new Error(`Element with type ${schema.type} was expected to be an SModelRoot.`);
+            root = regElement;
+        } else {
+            root = new SModelRoot();
+        }
+        return this.initializeRoot(root, schema);
     }
 
     createSchema(element: SModelElement): SModelElementSchema {
@@ -51,7 +74,7 @@ export class SModelFactory implements IModelFactory {
         return schema as SModelElementSchema;
     }
 
-    protected initializeElement(element: SModelElement, schema: SModelElementSchema): SModelElement {
+    protected initializeElement(element: SModelElement, schema: SModelElementSchema | SModelElement): SModelElement {
         for (const key in schema) {
             if (!this.isReserved(element, key)) {
                 const value: any = (schema as any)[key];
@@ -75,10 +98,10 @@ export class SModelFactory implements IModelFactory {
         return false;
     }
 
-    protected initializeParent(parent: SParentElement, schema: SModelElementSchema): SParentElement {
+    protected initializeParent(parent: SParentElement, schema: SModelElementSchema | SParentElement): SParentElement {
         this.initializeElement(parent, schema);
-        if (schema.children !== undefined && schema.children.constructor === Array) {
-            parent.children = schema.children.map(childSchema => this.createElement(childSchema, parent));
+        if (isParent(schema)) {
+            (parent as any).children = schema.children.map(childSchema => this.createElement(childSchema, parent));
         }
         return parent;
     }
@@ -86,12 +109,12 @@ export class SModelFactory implements IModelFactory {
     protected initializeChild(child: SChildElement, schema: SModelElementSchema, parent?: SParentElement): SChildElement {
         this.initializeParent(child, schema);
         if (parent !== undefined) {
-            child.parent = parent;
+            (child as any).parent = parent;
         }
         return child;
     }
 
-    protected initializeRoot(root: SModelRoot, schema: SModelRootSchema): SModelRoot {
+    protected initializeRoot(root: SModelRoot, schema: SModelRootSchema | SModelRoot): SModelRoot {
         this.initializeParent(root, schema);
         root.index.add(root);
         return root;
@@ -102,3 +125,19 @@ export const EMPTY_ROOT: Readonly<SModelRootSchema> = Object.freeze({
     type: 'NONE',
     id: 'EMPTY'
 });
+
+export interface SModelElementRegistration {
+    type: string
+    constr: new () => SModelElement
+}
+
+@injectable()
+export class SModelRegistry extends ProviderRegistry<SModelElement, void> {
+    constructor(@multiInject(TYPES.SModelElementRegistration) @optional() registrations: SModelElementRegistration[]) {
+        super();
+
+        registrations.forEach(
+            registration => this.register(registration.type, registration.constr)
+        );
+    }
+}

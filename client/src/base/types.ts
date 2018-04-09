@@ -32,6 +32,8 @@ export const TYPES = {
     PopupModelFactory: Symbol('PopupModelFactory'),
     PopupMouseListener: Symbol('PopupMouseListener'),
     PopupVNodeDecorator: Symbol('PopupVNodeDecorator'),
+    SModelElementRegistration: Symbol('SModelElementRegistration'),
+    SModelRegistry: Symbol('SModelRegistry'),
     SModelStorage: Symbol('SModelStorage'),
     StateAwareModelProvider: Symbol('StateAwareModelProvider'),
     SvgExporter: Symbol('SvgExporter'),

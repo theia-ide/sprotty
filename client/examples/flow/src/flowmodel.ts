@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SNode, SNodeSchema, Bounds, moveFeature } from "../../../src";
+import { SNodeSchema, Bounds, moveFeature, CircularNode, RectangularNode } from "../../../src";
 
 export interface TaskNodeSchema extends SNodeSchema {
     name?: string
@@ -13,7 +13,7 @@ export interface TaskNodeSchema extends SNodeSchema {
     kernelNr: number
 }
 
-export class TaskNode extends SNode implements TaskNodeSchema {
+export class TaskNode extends CircularNode {
     name: string = '';
     status?: string;
     kernelNr: number;
@@ -30,7 +30,7 @@ export interface BarrierNodeSchema extends SNodeSchema {
     name: string
 }
 
-export class BarrierNode extends SNode implements BarrierNodeSchema {
+export class BarrierNode extends RectangularNode {
     name: string = '';
     bounds: Bounds = { x: 0, y: 0, width: 50, height: 20 };
 

@@ -5,18 +5,25 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+import 'reflect-metadata';
 import 'mocha';
 import { expect } from "chai";
+import { Container } from 'inversify';
+import { TYPES } from '../../base/types';
 import { ConsoleLogger } from "../../utils/logging";
 import { CommandExecutionContext } from "../../base/commands/command";
 import { SModelRoot } from "../../base/model/smodel";
 import { SGraphFactory } from "../../graph/sgraph-factory";
 import { SNode, SNodeSchema, SGraph } from "../../graph/sgraph";
 import { ExportSvgCommand } from './export';
+import defaultModule from "../../base/di.config";
 
 describe('ExportSvgCommand', () => {
+    const container = new Container();
+    container.load(defaultModule);
+    container.rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope();
 
-    const graphFactory = new SGraphFactory();
+    const graphFactory = container.get<SGraphFactory>(TYPES.IModelFactory);
 
     const myNodeSchema: SNodeSchema = {
         id: 'node', type: 'node:circle',

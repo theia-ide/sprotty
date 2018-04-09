@@ -14,7 +14,7 @@ import { ActionDispatcher, IActionDispatcher } from "./actions/action-dispatcher
 import { ActionHandlerRegistry } from "./actions/action-handler";
 import { CommandStack, ICommandStack } from "./commands/command-stack";
 import { CommandStackOptions } from "./commands/command-stack-options";
-import { SModelFactory } from "./model/smodel-factory";
+import { SModelFactory, SModelRegistry } from './model/smodel-factory';
 import { AnimationFrameSyncer } from "./animations/animation-frame-syncer";
 import { IViewer, Viewer, ModelRenderer } from "./views/viewer";
 import { ViewerOptions } from "./views/viewer-options";
@@ -33,6 +33,7 @@ const defaultContainerModule = new ContainerModule(bind => {
     bind(TYPES.LogLevel).toConstantValue(LogLevel.warn);
 
     // Registries ---------------------------------------------
+    bind(TYPES.SModelRegistry).to(SModelRegistry).inSingletonScope();
     bind(TYPES.ActionHandlerRegistry).to(ActionHandlerRegistry).inSingletonScope();
     bind(TYPES.ViewRegistry).to(ViewRegistry).inSingletonScope();
 

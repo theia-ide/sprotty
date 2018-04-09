@@ -5,38 +5,49 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import "reflect-metadata";
-import "mocha";
+import 'reflect-metadata';
+import 'mocha';
 import { expect } from "chai";
+import { Container } from 'inversify';
+import { TYPES } from '../../base/types';
 import { ConsoleLogger } from "../../utils/logging";
 import { EMPTY_ROOT } from "../../base/model/smodel-factory";
 import { SModelElement, SModelElementSchema, SModelRoot, SModelRootSchema } from "../../base/model/smodel";
 import { CommandExecutionContext } from "../../base/commands/command";
 import { AnimationFrameSyncer } from "../../base/animations/animation-frame-syncer";
 import { CompoundAnimation } from "../../base/animations/animation";
-import { SNodeSchema, SNode, SGraphSchema } from "../../graph/sgraph";
+import { SNodeSchema, SGraphSchema } from "../../graph/sgraph";
 import { SGraphFactory } from "../../graph/sgraph-factory";
 import { FadeAnimation } from "../../features/fade/fade";
 import { MoveAnimation } from "../../features/move/move";
 import { UpdateModelCommand } from "./update-model";
 import { ModelMatcher } from "./model-matching";
+import defaultModule from "../../base/di.config";
 
 function compare(expected: SModelElementSchema, actual: SModelElement) {
     for (const p in expected) {
-        const expectedProp = (expected as any)[p];
-        const actualProp = (actual as any)[p];
-        if (p === 'children') {
-            for (const i in expectedProp) {
-                compare(expectedProp[i], actualProp[i]);
+        if (expected.hasOwnProperty(p)) {
+            const expectedProp = (expected as any)[p];
+            const actualProp = (actual as any)[p];
+            if (p === 'children') {
+                for (const i in expectedProp) {
+                    if (expectedProp.hasOwnProperty(i)) {
+                        compare(expectedProp[i], actualProp[i]);
+                    }
+                }
+            } else {
+                expect(actualProp).to.deep.equal(expectedProp);
             }
-        } else {
-            expect(actualProp).to.deep.equal(expectedProp);
         }
     }
 }
 
 describe('UpdateModelCommand', () => {
-    const graphFactory = new SGraphFactory();
+    const container = new Container();
+    container.load(defaultModule);
+    container.rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope();
+
+    const graphFactory = container.get<SGraphFactory>(TYPES.IModelFactory);
 
     const emptyRoot = graphFactory.createRoot(EMPTY_ROOT);
 
@@ -87,12 +98,12 @@ describe('UpdateModelCommand', () => {
     });
 
     class TestUpdateModelCommand extends UpdateModelCommand {
-        testAnimation(root: SModelRoot, context: CommandExecutionContext) {
+        testAnimation(root: SModelRoot, execContext: CommandExecutionContext) {
             this.oldRoot = root;
-            this.newRoot = context.modelFactory.createRoot(this.action.newRoot!);
+            this.newRoot = execContext.modelFactory.createRoot(this.action.newRoot!);
             const matcher = new ModelMatcher();
             const matchResult = matcher.match(root, this.newRoot);
-            return this.computeAnimation(this.newRoot, matchResult, context);
+            return this.computeAnimation(this.newRoot, matchResult, execContext);
         }
     }
 
@@ -317,7 +328,7 @@ describe('UpdateModelCommand', () => {
                     type: 'node',
                     id: 'child1',
                     position: { x: 150, y: 200 }
-                } as SNode
+                } as SNodeSchema
             ]
         };
         compare(expected, newModel);

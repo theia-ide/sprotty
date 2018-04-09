@@ -11,14 +11,14 @@ import { almostEquals, euclideanDistance, manhattanDistance, Bounds, combine, in
 
 describe('euclideanDistance', () => {
     it('works as expected', () => {
-        expect(euclideanDistance({x: 0, y: 0}, {x: 3, y: 4})).to.equal(5)
-    })
+        expect(euclideanDistance({x: 0, y: 0}, {x: 3, y: 4})).to.equal(5);
+    });
 });
 
 describe('manhattanDistance', () => {
     it('works as expected', () => {
-        expect(manhattanDistance({x: 0, y: 0}, {x: 3, y: 4})).to.equal(7)
-    })
+        expect(manhattanDistance({x: 0, y: 0}, {x: 3, y: 4})).to.equal(7);
+    });
 });
 
 describe('almostEquals', () => {

@@ -10,11 +10,10 @@ import { VNode } from "snabbdom/vnode";
 import { Point, centerOfLine, maxDistance } from '../utils/geometry';
 import { setAttr } from '../base/views/vnode-utils';
 import { RenderingContext, IView } from "../base/views/view";
-import { SModelElement, SParentElement } from "../base/model/smodel";
-import { getSubType, translatePoint } from "../base/model/smodel-utils";
+import { getSubType } from "../base/model/smodel-utils";
 import { SRoutingHandle, isRoutable } from '../features/edit/model';
-import { SCompartment, SEdge, SGraph, SLabel, SNode, SPort } from "./sgraph";
-import { IAnchorableView, LinearRouter, RoutedPoint } from './routing';
+import { SCompartment, SEdge, SGraph, SLabel } from "./sgraph";
+import { RoutedPoint } from './routing';
 
 const JSX = {createElement: snabbdom.svg};
 
@@ -23,7 +22,7 @@ const JSX = {createElement: snabbdom.svg};
  */
 export class SGraphView implements IView {
 
-    render(model: SGraph, context: RenderingContext): VNode {
+    render(model: Readonly<SGraph>, context: RenderingContext): VNode {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`;
         return <svg class-sprotty-graph={true}>
             <g transform={transform}>
@@ -33,45 +32,12 @@ export class SGraphView implements IView {
     }
 }
 
-export abstract class AnchorableView implements IView, IAnchorableView {
-    abstract render(model: SModelElement, context: RenderingContext): VNode;
-
-    abstract getAnchor(model: SNode | SPort, refPoint: Point, anchorCorrection: number): Point;
-
-    getStrokeWidth(model: SNode | SPort): number {
-        return 0;
-    }
-
-    getTranslatedAnchor(node: SNode | SPort, refPoint: Point, refContainer: SParentElement,
-            anchorCorrection: number = 0, edge: SEdge): Point {
-        const viewContainer = node.parent;
-        const anchor = this.getAnchor(node, translatePoint(refPoint, refContainer, viewContainer), anchorCorrection);
-        const edgeContainer = edge.parent;
-        return translatePoint(anchor, viewContainer, edgeContainer);
-    }
-}
-
 export class PolylineEdgeView implements IView {
-    router = new LinearRouter(); // TODO get via dependency injection
 
-    render(edge: SEdge, context: RenderingContext): VNode {
-        const source = edge.source;
-        if (source === undefined)
-            return this.renderDanglingEdge("Cannot resolve source", edge, context);
-
-        const target = edge.target;
-        if (target === undefined)
-            return this.renderDanglingEdge("Cannot resolve target", edge, context);
-
-        const sourceView = context.viewRegistry.get(source.type, source);
-        if (!(sourceView instanceof AnchorableView))
-            return this.renderDanglingEdge("Expected source view type: AnchorableView", edge, context);
-
-        const targetView = context.viewRegistry.get(target.type, target);
-        if (!(targetView instanceof AnchorableView))
-            return this.renderDanglingEdge("Expected target view type: AnchorableView", edge, context);
-
-        const route = this.router.route(edge, source, sourceView, target, targetView);
+    render(edge: Readonly<SEdge>, context: RenderingContext): VNode {
+        const route = edge.route();
+        if (route.length === 0)
+            return this.renderDanglingEdge("Cannot compute route", edge, context);
 
         return <g class-sprotty-edge={true} class-mouseover={edge.hoverFeedback}>
             {this.renderLine(edge, route, context)}
@@ -102,10 +68,9 @@ export class PolylineEdgeView implements IView {
 export class SRoutingHandleView implements IView {
     minimalPointDistance: number = 10;
 
-    render(handle: SRoutingHandle, context: RenderingContext, args?: { route?: RoutedPoint[] }): VNode {
+    render(handle: Readonly<SRoutingHandle>, context: RenderingContext, args?: { route?: RoutedPoint[] }): VNode {
         if (args && args.route) {
             const position = this.getPosition(handle, args.route);
-            handle.viewPosition = position;
             if (position !== undefined) {
                 const node = <circle class-sprotty-routing-handle={true}
                         class-selected={handle.selected} class-mouseover={handle.hoverFeedback}
@@ -115,7 +80,6 @@ export class SRoutingHandleView implements IView {
             }
         }
         // Fallback: Create an empty group
-        handle.viewPosition = undefined;
         return <g/>;
     }
 
@@ -164,7 +128,7 @@ export class SRoutingHandleView implements IView {
 }
 
 export class SLabelView implements IView {
-    render(label: SLabel, context: RenderingContext): VNode {
+    render(label: Readonly<SLabel>, context: RenderingContext): VNode {
         const vnode = <text class-sprotty-label={true}>{label.text}</text>;
         const subType = getSubType(label);
         if (subType)
@@ -174,7 +138,7 @@ export class SLabelView implements IView {
 }
 
 export class SCompartmentView implements IView {
-    render(model: SCompartment, context: RenderingContext): VNode {
+    render(model: Readonly<SCompartment>, context: RenderingContext): VNode {
         const translate = `translate(${model.bounds.x}, ${model.bounds.y})`;
         const vnode = <g transform={translate} class-sprotty-comp="{true}">
             {context.renderChildren(model)}

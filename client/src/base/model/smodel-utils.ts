@@ -12,7 +12,7 @@ import { Point } from "../../utils/geometry";
  * Model element types can include a colon to separate the basic type and a sub-type. This function
  * extracts the basic type of a model element.
  */
-export function getBasicType(schema: SModelElementSchema): string {
+export function getBasicType(schema: SModelElementSchema | SModelElement): string {
     if (!schema.type)
         return '';
     const colonIndex = schema.type.indexOf(':');
@@ -26,7 +26,7 @@ export function getBasicType(schema: SModelElementSchema): string {
  * Model element types can include a colon to separate the basic type and a sub-type. This function
  * extracts the sub-type of a model element.
  */
-export function getSubType(schema: SModelElementSchema): string {
+export function getSubType(schema: SModelElementSchema | SModelElement): string {
     if (!schema.type)
         return '';
     const colonIndex = schema.type.indexOf(':');

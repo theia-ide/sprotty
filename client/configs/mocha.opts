@@ -1,5 +1,5 @@
 --require ts-node/register
+--require reflect-metadata/Reflect
 --reporter spec
---watch-extensions ts, tsx
-src/**/*.spec.ts
-src/**/*.spec.tsx
+--colors
+--watch-extensions ts,tsx

@@ -7,14 +7,14 @@
 
 import { VNode } from "snabbdom/vnode";
 import * as snabbdom from "snabbdom-jsx";
-import { RenderingContext, SNode, CircularNodeView } from "../../../src";
+import { RenderingContext, SNode, IView } from "../../../src";
 
 const JSX = {createElement: snabbdom.svg};
 
 /**
  * A very simple example node consisting of a plain circle.
  */
-export class CircleNodeView extends CircularNodeView {
+export class CircleNodeView implements IView {
     render(node: SNode, context: RenderingContext): VNode {
         const radius = this.getRadius(node);
         return <g>

@@ -9,7 +9,7 @@ import { Container, ContainerModule } from "inversify";
 import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphFactory, SGraphView, PolylineEdgeView,
     ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule, undoRedoModule,
-    viewportModule, LocalModelSource, exportModule
+    viewportModule, LocalModelSource, exportModule, SModelElementRegistration, CircularNode
 } from "../../../src";
 import { CircleNodeView } from "./views";
 
@@ -17,6 +17,10 @@ const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) =>
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log);
     rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope();
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'node:circle',
+        constr: CircularNode
+    });
 });
 
 export default (useWebsocket: boolean) => {
