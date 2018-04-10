@@ -138,6 +138,8 @@ export { modelSourceModule };
 
 // ------------------ Utilities ------------------
 
+export * from "./utils/anchors";
+export * from "./utils/browser";
 export * from "./utils/color";
 export * from "./utils/geometry";
 export * from "./utils/logging";

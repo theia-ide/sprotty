@@ -6,10 +6,10 @@
  */
 
 import {
-    SNode, SShapeElement, Expandable, boundsFeature, expandFeature, fadeFeature, layoutContainerFeature, layoutableChildFeature
+    SShapeElement, Expandable, boundsFeature, expandFeature, fadeFeature, layoutContainerFeature, layoutableChildFeature, RectangularNode
 } from "../../../src";
 
-export class ClassNode extends SNode implements Expandable {
+export class ClassNode extends RectangularNode implements Expandable {
     expanded: boolean = false;
 
     hasFeature(feature: symbol) {

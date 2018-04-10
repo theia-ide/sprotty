@@ -7,15 +7,17 @@
 
 import * as snabbdom from 'snabbdom-jsx';
 import { VNode } from "snabbdom/vnode";
-import { Point, center, almostEquals } from "../utils/geometry";
 import { IView, RenderingContext } from "../base/views/view";
-import { AnchorableView } from "../graph/views";
 import { SNode, SPort } from "../graph/sgraph";
 import { ViewportRootElement } from "../features/viewport/viewport-root";
+import { SShapeElement } from '../features/bounds/model';
+import { Hoverable } from '../features/hover/model';
+import { Selectable } from '../features/select/model';
+
 const JSX = {createElement: snabbdom.svg};
 
 export class SvgViewportView implements IView {
-    render(model: ViewportRootElement, context: RenderingContext): VNode {
+    render(model: Readonly<ViewportRootElement>, context: RenderingContext): VNode {
         const transform = `scale(${model.zoom}) translate(${-model.scroll.x},${-model.scroll.y})`;
         return <svg>
             <g transform={transform}>
@@ -25,108 +27,30 @@ export class SvgViewportView implements IView {
     }
 }
 
-export class CircularNodeView extends AnchorableView {
-    render(node: SNode | SPort, context: RenderingContext): VNode {
+export class CircularNodeView implements IView {
+    render(node: Readonly<SShapeElement & Hoverable & Selectable>, context: RenderingContext): VNode {
         const radius = this.getRadius(node);
         return <g>
-            <circle class-sprotty-node={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
+            <circle class-sprotty-node={node instanceof SNode} class-sprotty-port={node instanceof SPort}
+                    class-mouseover={node.hoverFeedback} class-selected={node.selected}
                     r={radius} cx={radius} cy={radius}></circle>
+            {context.renderChildren(node)}
         </g>;
     }
 
-    protected getRadius(node: SNode | SPort): number {
+    protected getRadius(node: SShapeElement): number {
         const d = Math.min(node.size.width, node.size.height);
-        if (d > 0)
-            return d / 2;
-        else
-            return 0;
-    }
-
-    getAnchor(node: SNode | SPort, refPoint: Point, anchorCorrection: number): Point {
-        const radius = this.getRadius(node);
-        const cx = node.position.x + radius;
-        const cy = node.position.y + radius;
-        const dx = cx - refPoint.x;
-        const dy = cy - refPoint.y;
-        const distance = Math.sqrt(dx * dx + dy * dy);
-        const normX = (dx / distance) || 0;
-        const normY = (dy / distance) || 0;
-        const strokeCorrection = 0.5 * this.getStrokeWidth(node);
-        return {
-            x: cx - normX * (radius + strokeCorrection + anchorCorrection),
-            y: cy - normY * (radius + strokeCorrection + anchorCorrection)
-        };
+        return d > 0 ? d / 2 : 0;
     }
 }
 
-export class RectangularNodeView extends AnchorableView {
-
-    render(node: SNode, context: RenderingContext): VNode {
+export class RectangularNodeView implements IView {
+    render(node: Readonly<SShapeElement & Hoverable & Selectable>, context: RenderingContext): VNode {
         return <g>
-            <rect class-sprotty-node={true} class-mouseover={node.hoverFeedback} class-selected={node.selected}
+            <rect class-sprotty-node={node instanceof SNode} class-sprotty-port={node instanceof SPort}
+                  class-mouseover={node.hoverFeedback} class-selected={node.selected}
                   x="0" y="0" width={node.size.width} height={node.size.height}></rect>
+            {context.renderChildren(node)}
         </g>;
-    }
-
-    getAnchor(node: SNode | SPort, refPoint: Point, anchorCorrection: number): Point {
-        const bounds = node.bounds;
-        const correction = 0.5 * this.getStrokeWidth(node) + anchorCorrection;
-        const c = center(bounds);
-        const finder = new NearestPointFinder(c, refPoint);
-        if (!almostEquals(c.y, refPoint.y)) {
-            const xTop = this.getXIntersection(bounds.y, c, refPoint);
-            if (xTop >= bounds.x && xTop <= bounds.x + bounds.width)
-                finder.addCandidate(xTop, bounds.y - correction);
-            const xBottom = this.getXIntersection(bounds.y + bounds.height, c, refPoint);
-            if (xBottom >= bounds.x && xBottom <= bounds.x + bounds.width)
-                finder.addCandidate(xBottom, bounds.y + bounds.height + correction);
-        }
-        if (!almostEquals(c.x, refPoint.x)) {
-            const yLeft = this.getYIntersection(bounds.x, c, refPoint);
-            if (yLeft >= bounds.y && yLeft <= bounds.y + bounds.height)
-                finder.addCandidate(bounds.x - correction, yLeft);
-            const yRight = this.getYIntersection(bounds.x + bounds.width, c, refPoint);
-            if (yRight >= bounds.y && yRight <= bounds.y + bounds.height)
-                finder.addCandidate(bounds.x + bounds.width + correction, yRight);
-        }
-        return finder.best;
-    }
-
-    protected getXIntersection(yIntersection: number, centerPoint: Point, point: Point): number {
-        const t = (yIntersection - centerPoint.y) / (point.y - centerPoint.y);
-        return (point.x - centerPoint.x) * t + centerPoint.x;
-    }
-
-    protected getYIntersection(xIntersection: number, centerPoint: Point, point: Point): number {
-        const t = (xIntersection - centerPoint.x) / (point.x - centerPoint.x);
-        return (point.y - centerPoint.y) * t + centerPoint.y;
-    }
-}
-
-class NearestPointFinder {
-    protected currentBest: Point | undefined;
-    protected currentDist: number = -1;
-
-    constructor(protected centerPoint: Point, protected refPoint: Point) {
-    }
-
-    addCandidate(x: number, y: number) {
-        const dx = this.refPoint.x - x;
-        const dy = this.refPoint.y - y;
-        const dist = dx * dx + dy * dy;
-        if (this.currentDist < 0 || dist < this.currentDist) {
-            this.currentBest = {
-                x: x,
-                y: y
-            };
-            this.currentDist = dist;
-        }
-    }
-
-    get best(): Point {
-        if (this.currentBest === undefined)
-            return this.centerPoint;
-        else
-            return this.currentBest;
     }
 }

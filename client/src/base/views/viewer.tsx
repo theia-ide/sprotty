@@ -42,7 +42,7 @@ export class ModelRenderer implements RenderingContext {
                 private decorators: IVNodeDecorator[]) {
     }
 
-    decorate(vnode: VNode, element: SModelElement): VNode {
+    decorate(vnode: VNode, element: Readonly<SModelElement>): VNode {
         if (isThunk(vnode))
             return vnode;
         return this.decorators.reduce(
@@ -50,12 +50,12 @@ export class ModelRenderer implements RenderingContext {
             vnode);
     }
 
-    renderElement(element: SModelElement, args?: object): VNode {
-        const vNode = this.viewRegistry.get(element.type, element).render(element, this, args);
+    renderElement(element: Readonly<SModelElement>, args?: object): VNode {
+        const vNode = this.viewRegistry.get(element.type, undefined).render(element, this, args);
         return this.decorate(vNode, element);
     }
 
-    renderChildren(element: SParentElement, args?: object): VNode[] {
+    renderChildren(element: Readonly<SParentElement>, args?: object): VNode[] {
         return element.children.map((child) => this.renderElement(child, args));
     }
 
@@ -129,7 +129,7 @@ export class Viewer implements IViewer {
         };
     }
 
-    update(model: SModelRoot): void {
+    update(model: Readonly<SModelRoot>): void {
         this.logger.log(this, 'rendering', model);
         const newVDOM = <div id={this.options.baseDiv}>
             {this.renderer.renderElement(model)}
@@ -179,7 +179,7 @@ export class Viewer implements IViewer {
         }
     }
 
-    updateHidden(hiddenModel: SModelRoot): void {
+    updateHidden(hiddenModel: Readonly<SModelRoot>): void {
         this.logger.log(this, 'rendering hidden');
 
         let newVDOM: VNode;
@@ -211,7 +211,7 @@ export class Viewer implements IViewer {
         this.hiddenRenderer.postUpdate();
     }
 
-    updatePopup(model: SModelRoot): void {
+    updatePopup(model: Readonly<SModelRoot>): void {
         this.logger.log(this, 'rendering popup', model);
 
         const popupClosed = model.type === EMPTY_ROOT.type;

@@ -6,7 +6,7 @@
  */
 
 import { injectable } from "inversify";
-import { Point } from '../../utils/geometry';
+import { Point, centerOfLine } from '../../utils/geometry';
 import { SChildElement } from '../../base/model/smodel';
 import { VNode } from "snabbdom/vnode";
 import { SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel";
@@ -20,9 +20,10 @@ import { IVNodeDecorator } from "../../base/views/vnode-decorators";
 import { isViewport } from "../viewport/model";
 import { isSelectable } from "../select/model";
 import { isAlignable } from "../bounds/model";
-import { Routable, isRoutable, SRoutingHandle } from "../edit/model";
+import { Routable, isRoutable, SRoutingHandle } from '../edit/model';
 import { MoveRoutingHandleAction, HandleMove } from "../edit/edit-routing";
 import { isMoveable, Locateable, isLocateable } from './model';
+import { RoutedPoint } from "../../graph/routing";
 
 export class MoveAction implements Action {
     kind = MoveCommand.KIND;
@@ -268,22 +269,14 @@ export class MoveMouseListener extends MouseListener {
                                 }
                             });
                         } else if (element instanceof SRoutingHandle) {
-                            if (element.kind === 'junction' && element.pointIndex >= 0 && isRoutable(element.parent)) {
-                                const point = element.parent.routingPoints[element.pointIndex];
+                            const point = this.getHandlePosition(element);
+                            if (point !== undefined) {
                                 handleMoves.push({
                                     elementId: element.id,
                                     fromPosition: point,
                                     toPosition: {
                                         x: point.x + dx,
                                         y: point.y + dy
-                                    }
-                                });
-                            } else if (element.viewPosition !== undefined) {
-                                handleMoves.push({
-                                    elementId: element.id,
-                                    toPosition: {
-                                        x: element.viewPosition.x + dx,
-                                        y: element.viewPosition.y + dy
                                     }
                                 });
                             }
@@ -296,6 +289,40 @@ export class MoveMouseListener extends MouseListener {
                 result.push(new MoveRoutingHandleAction(handleMoves, false));
         }
         return result;
+    }
+
+    protected getHandlePosition(handle: SRoutingHandle): Point | undefined {
+        const parent = handle.parent;
+        if (!isRoutable(parent)) {
+            return undefined;
+        }
+        if (handle.kind === 'line') {
+            if (isRoutable(parent)) {
+                const getIndex = (rp: RoutedPoint) => {
+                    if (rp.pointIndex !== undefined)
+                        return rp.pointIndex;
+                    else if (rp.kind === 'target')
+                        return parent.routingPoints.length;
+                    else
+                        return -1;
+                };
+                const route = parent.route();
+                let rp1, rp2: RoutedPoint | undefined;
+                for (const rp of route) {
+                    const i = getIndex(rp);
+                    if (i <= handle.pointIndex && (rp1 === undefined || i > getIndex(rp1)))
+                        rp1 = rp;
+                    if (i > handle.pointIndex && (rp2 === undefined || i < getIndex(rp2)))
+                        rp2 = rp;
+                }
+                if (rp1 !== undefined && rp2 !== undefined) {
+                    return centerOfLine(rp1, rp2);
+                }
+            }
+        } else if (handle.pointIndex >= 0) {
+            return parent.routingPoints[handle.pointIndex];
+        }
+        return undefined;
     }
 
     mouseEnter(target: SModelElement, event: MouseEvent): Action[] {

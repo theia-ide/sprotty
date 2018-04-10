@@ -5,7 +5,9 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SChildElement, SModelElementSchema, SModelRootSchema, SModelIndex, SModelElement } from '../base/model/smodel';
+import {
+    SChildElement, SModelElementSchema, SModelRootSchema, SModelIndex, SModelElement, SParentElement
+} from '../base/model/smodel';
 import {
     boundsFeature, layoutContainerFeature, layoutableChildFeature, Alignable, alignFeature, ModelLayoutOptions
 } from '../features/bounds/model';
@@ -14,9 +16,11 @@ import { Hoverable, hoverFeedbackFeature, popupFeature } from '../features/hover
 import { moveFeature } from '../features/move/model';
 import { Selectable, selectFeature } from '../features/select/model';
 import { ViewportRootElement } from '../features/viewport/viewport-root';
-import { Bounds, ORIGIN_POINT, Point } from '../utils/geometry';
+import { Bounds, ORIGIN_POINT, Point, center } from '../utils/geometry';
 import { SShapeElement, SShapeElementSchema } from '../features/bounds/model';
 import { editFeature, Routable } from '../features/edit/model';
+import { translatePoint } from '../base/model/smodel-utils';
+import { RoutedPoint, linearRoute } from './routing';
 
 /**
  * Serializable schema for graph-like models.
@@ -41,6 +45,61 @@ export class SGraph extends ViewportRootElement {
 }
 
 /**
+ * A connectable element is one that can have outgoing and incoming edges, i.e. it can be the source
+ * or target element of an edge. There are two kinds of connectable elements: nodes (`SNode`) and
+ * ports (`SPort`). A node represents a main entity, while a port is a connection point inside a node.
+ */
+export abstract class SConnectableElement extends SShapeElement {
+
+    /**
+     * The incoming edges of this connectable element. They are resolved by the index, which must
+     * be an `SGraphIndex`.
+     */
+    get incomingEdges(): Iterable<SEdge> {
+        return (this.index as SGraphIndex).getIncomingEdges(this);
+    }
+
+    /**
+     * The outgoing edges of this connectable element. They are resolved by the index, which must
+     * be an `SGraphIndex`.
+     */
+    get outgoingEdges(): Iterable<SEdge> {
+        return (this.index as SGraphIndex).getOutgoingEdges(this);
+    }
+
+    /**
+     * Compute an anchor position for routing an edge towards this element.
+     *
+     * The default implementation returns the element's center point. If edges should be connected
+     * differently, e.g. to some point on the boundary of the element's view, the according computation
+     * should be implemented in a subclass by overriding this method.
+     *
+     * @param referencePoint The point from which the edge is routed towards this element
+     * @param offset An optional offset value to be considered in the anchor computation;
+     *               positive values should shift the anchor away from this element, negative values
+     *               should shift the anchor more to the inside.
+     */
+    getAnchor(referencePoint: Point, offset?: number): Point {
+        return center(this.bounds);
+    }
+
+    /**
+     * Compute an anchor position for routing an edge towards this element and correct any mismatch
+     * of the coordinate systems.
+     *
+     * @param refPoint The point from which the edge is routed towards this element
+     * @param refContainer The parent element that defines the coordinate system for `refPoint`
+     * @param edge The edge for which the anchor is computed
+     * @param offset An optional offset value (see `getAnchor`)
+     */
+    getTranslatedAnchor(refPoint: Point, refContainer: SParentElement, edge: SEdge, offset?: number): Point {
+        const translatedRefPoint = translatePoint(refPoint, refContainer, this.parent);
+        const anchor = this.getAnchor(translatedRefPoint, offset);
+        return translatePoint(anchor, this.parent, edge.parent);
+    }
+}
+
+/**
  * Serializable schema for SNode.
  */
 export interface SNodeSchema extends SShapeElementSchema {
@@ -51,11 +110,11 @@ export interface SNodeSchema extends SShapeElementSchema {
 }
 
 /**
- * Model element class for nodes, which are connectable entities in a graph. A node can be connected to
+ * Model element class for nodes, which are the main entities in a graph. A node can be connected to
  * another node via an SEdge. Such a connection can be direct, i.e. the node is the source or target of
  * the edge, or indirect through a port, i.e. it contains an SPort which is the source or target of the edge.
  */
-export class SNode extends SShapeElement implements Selectable, Fadeable, Hoverable {
+export class SNode extends SConnectableElement implements Selectable, Fadeable, Hoverable {
     children: SChildElement[];
     layout?: string;
     selected: boolean = false;
@@ -67,14 +126,6 @@ export class SNode extends SShapeElement implements Selectable, Fadeable, Hovera
             || feature === layoutContainerFeature || feature === fadeFeature || feature === hoverFeedbackFeature
             || feature === popupFeature;
     }
-
-    get incomingEdges(): Iterable<SEdge> {
-        return (this.index as SGraphIndex).getIncomingEdges(this);
-    }
-
-    get outgoingEdges(): Iterable<SEdge> {
-        return (this.index as SGraphIndex).getOutgoingEdges(this);
-    }
 }
 
 /**
@@ -82,15 +133,16 @@ export class SNode extends SShapeElement implements Selectable, Fadeable, Hovera
  */
 export interface SPortSchema extends SShapeElementSchema {
     selected?: boolean
+    hoverFeedback?: boolean
     opacity?: number
 }
 
 /**
  * A port is a connection point for edges. It should always be contained in an SNode.
  */
-export class SPort extends SShapeElement implements Selectable, Fadeable, Hoverable {
-    hoverFeedback: boolean = false;
+export class SPort extends SConnectableElement implements Selectable, Fadeable, Hoverable {
     selected: boolean = false;
+    hoverFeedback: boolean = false;
     opacity: number = 1;
 
     hasFeature(feature: symbol): boolean {
@@ -106,11 +158,9 @@ export interface SEdgeSchema extends SModelElementSchema {
     sourceId: string
     targetId: string
     routingPoints?: Point[]
+    selected?: boolean
+    hoverFeedback?: boolean
     opacity?: number
-}
-export interface SEdgeAnchorsSchema {
-    sourceAnchor: Point
-    targetAnchor: Point
 }
 
 /**
@@ -119,19 +169,25 @@ export interface SEdgeAnchorsSchema {
  * ids and can be resolved with the index stored in the root element.
  */
 export class SEdge extends SChildElement implements Fadeable, Selectable, Routable, Hoverable {
-    hoverFeedback: boolean = false;
     sourceId: string;
     targetId: string;
     routingPoints: Point[] = [];
-    opacity: number = 1;
     selected: boolean = false;
+    hoverFeedback: boolean = false;
+    opacity: number = 1;
+    sourceAnchorCorrection?: number;
+    targetAnchorCorrection?: number;
 
-    get source(): SNode | SPort | undefined {
-        return this.index.getById(this.sourceId) as SNode | SPort;
+    get source(): SConnectableElement | undefined {
+        return this.index.getById(this.sourceId) as SConnectableElement;
     }
 
-    get target(): SNode | SPort | undefined {
-        return this.index.getById(this.targetId) as SNode | SPort;
+    get target(): SConnectableElement | undefined {
+        return this.index.getById(this.targetId) as SConnectableElement;
+    }
+
+    route(): RoutedPoint[] {
+        return linearRoute(this);
     }
 
     hasFeature(feature: symbol): boolean {
@@ -259,12 +315,12 @@ export class SGraphIndex extends SModelIndex<SModelElement> {
         return result;
     }
 
-    getIncomingEdges(node: SNode): Iterable<SEdge> {
-        return this.incoming.get(node.id) || [];
+    getIncomingEdges(element: SConnectableElement): Iterable<SEdge> {
+        return this.incoming.get(element.id) || [];
     }
 
-    getOutgoingEdges(node: SNode): Iterable<SEdge> {
-        return this.outgoing.get(node.id) || [];
+    getOutgoingEdges(element: SConnectableElement): Iterable<SEdge> {
+        return this.outgoing.get(element.id) || [];
     }
 
 }

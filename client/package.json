@@ -89,7 +89,7 @@
     "build": "tsc -p ./tsconfig.json && yarn run lint",
     "lint": "tslint -c ./configs/tslint.json --project ./tsconfig.json",
     "watch": "tsc -w -p ./tsconfig.json",
-    "test": "jenkins-mocha --opts ./configs/mocha.opts",
+    "test": "jenkins-mocha --opts ./configs/mocha.opts \"./src/**/*.spec.?(ts|tsx)\"",
     "prepare": "yarn run clean && yarn run build",
     "prepublishOnly": "yarn run test",
     "examples:build": "webpack --progress --config ./configs/webpack.config.js",

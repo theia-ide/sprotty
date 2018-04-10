@@ -20,10 +20,12 @@ const JSX = {createElement: snabbdom.svg};
 describe('ThunkView', () => {
 
     before(function () {
+        // tslint:disable-next-line:no-invalid-this
         this.jsdom = require('jsdom-global')();
     });
 
     after(function () {
+        // tslint:disable-next-line:no-invalid-this
         this.jsdom();
     });
 

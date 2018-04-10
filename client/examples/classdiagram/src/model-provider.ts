@@ -6,7 +6,7 @@
  */
 
 import { injectable } from 'inversify';
-import { DiagramState, SModelRootSchema, SEdge, SGraphSchema, IStateAwareModelProvider } from "../../../src";
+import { DiagramState, SModelRootSchema, SGraphSchema, IStateAwareModelProvider, SEdgeSchema } from "../../../src";
 
 @injectable()
 export class ModelProvider implements IStateAwareModelProvider {
@@ -161,7 +161,7 @@ export class ModelProvider implements IStateAwareModelProvider {
             type: 'edge:straight',
             sourceId: node0.id,
             targetId: node1.id
-        } as SEdge;
+        } as SEdgeSchema;
         const graph: SGraphSchema = {
             id: 'graph',
             type: 'graph',

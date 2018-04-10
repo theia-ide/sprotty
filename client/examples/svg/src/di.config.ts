@@ -9,15 +9,21 @@ import { Container, ContainerModule } from "inversify";
 import {
     defaultModule, TYPES, ViewRegistry, ConsoleLogger, LogLevel, boundsModule, moveModule, selectModule,
     undoRedoModule, viewportModule, hoverModule, LocalModelSource, PreRenderedView, SvgViewportView,
-    exportModule
+    exportModule, SModelElementRegistration, ViewportRootElement, ShapedPreRenderedElement
 } from "../../../src";
-import { SvgFactory } from "./model-factory";
 
 const svgModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log);
-    rebind(TYPES.IModelFactory).to(SvgFactory).inSingletonScope();
     bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope();
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'svg',
+        constr: ViewportRootElement
+    });
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'pre-rendered',
+        constr: ShapedPreRenderedElement
+    });
 });
 
 export default () => {

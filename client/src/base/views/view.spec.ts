@@ -5,18 +5,25 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+import 'reflect-metadata';
 import 'mocha';
 import { expect } from "chai";
+import { Container } from 'inversify';
+import { TYPES } from '../types';
 import { EMPTY_ROOT, SModelFactory } from '../model/smodel-factory';
 import { SNode } from "../../graph/sgraph";
 import { EmptyView, MissingView } from "./view";
 import { ModelRenderer } from "./viewer";
+import defaultModule from "../di.config";
 
 const toHTML = require('snabbdom-to-html');
 
 describe('base views', () => {
+    const container = new Container();
+    container.load(defaultModule);
 
-    const emptyRoot = new SModelFactory().createRoot(EMPTY_ROOT);
+    const modelFactory = container.get<SModelFactory>(TYPES.IModelFactory);
+    const emptyRoot = modelFactory.createRoot(EMPTY_ROOT);
     const context = new ModelRenderer(undefined!, []);
 
     it('empty view', () => {

@@ -20,27 +20,43 @@ import { SButton, SButtonSchema } from '../features/button/model';
 export class SGraphFactory extends SModelFactory {
 
     createElement(schema: SModelElementSchema, parent?: SParentElement): SChildElement {
-        if (this.isNodeSchema(schema))
-            return this.initializeChild(new SNode(), schema, parent);
-        else if (this.isPortSchema(schema))
-            return this.initializeChild(new SPort(), schema, parent);
-        else if (this.isEdgeSchema(schema))
-            return this.initializeChild(new SEdge(), schema, parent);
-        else if (this.isLabelSchema(schema))
-            return this.initializeChild(new SLabel(), schema, parent);
-        else if (this.isCompartmentSchema(schema))
-            return this.initializeChild(new SCompartment(), schema, parent);
-        if (this.isButtonSchema(schema))
-            return this.initializeChild(new SButton(), schema, parent);
-        else
-            return super.createElement(schema, parent);
+        let child: SChildElement;
+        if (this.registry.hasKey(schema.type)) {
+            const regElement = this.registry.get(schema.type, undefined);
+            if (!(regElement instanceof SChildElement))
+                throw new Error(`Element with type ${schema.type} was expected to be an SChildElement.`);
+            child = regElement;
+        } else if (this.isNodeSchema(schema)) {
+            child = new SNode();
+        } else if (this.isPortSchema(schema)) {
+            child = new SPort();
+        } else if (this.isEdgeSchema(schema)) {
+            child = new SEdge();
+        } else if (this.isLabelSchema(schema)) {
+            child = new SLabel();
+        } else if (this.isCompartmentSchema(schema)) {
+            child = new SCompartment();
+        } else if (this.isButtonSchema(schema)) {
+            child = new SButton();
+        } else {
+            child = new SChildElement();
+        }
+        return this.initializeChild(child, schema, parent);
     }
 
     createRoot(schema: SModelRootSchema): SModelRoot {
-        if (this.isGraphSchema(schema))
-            return this.initializeRoot(new SGraph(), schema);
-        else
-            return super.createRoot(schema);
+        let root: SModelRoot;
+        if (this.registry.hasKey(schema.type)) {
+            const regElement = this.registry.get(schema.type, undefined);
+            if (!(regElement instanceof SModelRoot))
+                throw new Error(`Element with type ${schema.type} was expected to be an SModelRoot.`);
+            root = regElement;
+        } else if (this.isGraphSchema(schema)) {
+            root = new SGraph();
+        } else {
+            root = new SModelRoot();
+        }
+        return this.initializeRoot(root, schema);
     }
 
     isGraphSchema(schema: SModelElementSchema): schema is SGraphSchema {

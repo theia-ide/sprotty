@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SModelRootSchema, SModelElementSchema, SModelRoot, SModelIndex } from "../../base/model/smodel";
+import { SModelRootSchema, SModelElementSchema, SModelRoot, SModelIndex, SModelElement, isParent } from '../../base/model/smodel';
 
 export interface Match {
     left?: SModelElementSchema
@@ -26,14 +26,14 @@ export function forEachMatch(matchResult: MatchResult, callback: (id: string, ma
 }
 
 export class ModelMatcher {
-    match(left: SModelRootSchema, right: SModelRootSchema): MatchResult {
+    match(left: SModelRootSchema | SModelRoot, right: SModelRootSchema | SModelRoot): MatchResult {
         const result: MatchResult = {};
         this.matchLeft(left, result);
         this.matchRight(right, result);
         return result;
     }
 
-    protected matchLeft(element: SModelElementSchema, result: MatchResult, parentId?: string): void {
+    protected matchLeft(element: SModelElementSchema | SModelElement, result: MatchResult, parentId?: string): void {
         let match = result[element.id];
         if (match !== undefined) {
             match.left = element;
@@ -45,14 +45,14 @@ export class ModelMatcher {
             };
             result[element.id] = match;
         }
-        if (element.children !== undefined) {
+        if (isParent(element)) {
             for (const child of element.children) {
                 this.matchLeft(child, result, element.id);
             }
         }
     }
 
-    protected matchRight(element: SModelElementSchema, result: MatchResult, parentId?: string) {
+    protected matchRight(element: SModelElementSchema | SModelElement, result: MatchResult, parentId?: string) {
         let match = result[element.id];
         if (match !== undefined) {
             match.right = element;
@@ -64,7 +64,7 @@ export class ModelMatcher {
             };
             result[element.id] = match;
         }
-        if (element.children !== undefined) {
+        if (isParent(element)) {
             for (const child of element.children) {
                 this.matchRight(child, result, element.id);
             }

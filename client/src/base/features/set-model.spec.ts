@@ -8,32 +8,42 @@
 import 'reflect-metadata';
 import 'mocha';
 import { expect } from "chai";
+import { Container } from 'inversify';
+import { TYPES } from '../types';
 import { SModelElement, SModelElementSchema, SModelRootSchema } from "../model/smodel";
-import { EMPTY_ROOT, SModelFactory } from '../model/smodel-factory';
+import { EMPTY_ROOT } from '../model/smodel-factory';
 import { SGraphFactory } from "../../graph/sgraph-factory";
 import { CommandExecutionContext } from "../commands/command";
 import { ConsoleLogger } from "../../utils/logging";
 import { AnimationFrameSyncer } from "../animations/animation-frame-syncer";
 import { SetModelAction, SetModelCommand } from "./set-model";
+import defaultModule from "../di.config";
 
 function compare(expected: SModelElementSchema, actual: SModelElement) {
     for (const p in expected) {
-        const expectedProp = (expected as any)[p];
-        const actualProp = (actual as any)[p];
-        if (p === 'children') {
-            for (const i in expectedProp) {
-                compare(expectedProp[i], actualProp[i]);
+        if (expected.hasOwnProperty(p)) {
+            const expectedProp = (expected as any)[p];
+            const actualProp = (actual as any)[p];
+            if (p === 'children') {
+                for (const i in expectedProp) {
+                    if (expectedProp.hasOwnProperty(i))
+                        compare(expectedProp[i], actualProp[i]);
+                }
+            } else {
+                expect(actualProp).to.deep.equal(expectedProp);
             }
-        } else {
-            expect(actualProp).to.deep.equal(expectedProp);
         }
     }
 }
 
 describe('SetModelCommand', () => {
-    const graphFactory = new SGraphFactory();
+    const container = new Container();
+    container.load(defaultModule);
+    container.rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope();
 
-    const emptyRoot = new SModelFactory().createRoot(EMPTY_ROOT);
+    const graphFactory = container.get<SGraphFactory>(TYPES.IModelFactory);
+
+    const emptyRoot = graphFactory.createRoot(EMPTY_ROOT);
 
     const context: CommandExecutionContext = {
         root: emptyRoot,

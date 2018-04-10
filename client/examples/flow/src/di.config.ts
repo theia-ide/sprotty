@@ -9,10 +9,11 @@ import { Container, ContainerModule } from "inversify";
 import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, ConsoleLogger, LogLevel, WebSocketDiagramServer,
     boundsModule, moveModule, fadeModule, hoverModule, viewportModule, selectModule, SGraphView, LocalModelSource,
-    HtmlRootView, PreRenderedView, exportModule, SvgExporter
+    HtmlRootView, PreRenderedView, exportModule, SvgExporter, SModelElementRegistration, PreRenderedElement,
+    SGraphFactory, SGraph, HtmlRoot
 } from "../../../src";
-import { FlowModelFactory } from "./flowmodel-factory";
 import { TaskNodeView, BarrierNodeView, FlowEdgeView } from "./views";
+import { TaskNode, BarrierNode } from "./flowmodel";
 
 class FilteringSvgExporter extends SvgExporter {
     isExported(styleSheet: CSSStyleSheet): boolean {
@@ -27,8 +28,28 @@ class FilteringSvgExporter extends SvgExporter {
 const flowModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log);
-    rebind(TYPES.IModelFactory).to(FlowModelFactory).inSingletonScope();
+    rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope();
     rebind(TYPES.SvgExporter).to(FilteringSvgExporter).inSingletonScope();
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'task',
+        constr: TaskNode
+    });
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'barrier',
+        constr: BarrierNode
+    });
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'pre-rendered',
+        constr: PreRenderedElement
+    });
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'flow',
+        constr: SGraph
+    });
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'html',
+        constr: HtmlRoot
+    });
 });
 
 export default (useWebsocket: boolean) => {

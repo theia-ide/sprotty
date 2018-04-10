@@ -10,18 +10,31 @@ import {
     defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphView, SLabelView,
     ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule,
     undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView,
-    exportModule, expandModule, fadeModule, buttonModule, ActionHandlerRegistry
+    exportModule, expandModule, fadeModule, buttonModule, ActionHandlerRegistry, SGraphFactory,
+    SModelElementRegistration, PreRenderedElement
 } from "../../../src";
 import { MindmapNodeView, PopupButtonView } from "./views";
-import { MindmapFactory } from "./model-factory";
 import { popupModelFactory, PopupButtonMouseListener, AddElementCommand } from "./popup";
+import { Mindmap, PopupButton } from "./model";
 
 const mindmapModule = new ContainerModule((bind, unbind, isBound, rebind) => {
     rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
     rebind(TYPES.LogLevel).toConstantValue(LogLevel.log);
-    rebind(TYPES.IModelFactory).to(MindmapFactory).inSingletonScope();
+    rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope();
     bind(TYPES.PopupModelFactory).toConstantValue(popupModelFactory);
     bind(TYPES.PopupMouseListener).to(PopupButtonMouseListener);
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'mindmap',
+        constr: Mindmap
+    });
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'popup:button',
+        constr: PopupButton
+    });
+    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type: 'pre-rendered',
+        constr: PreRenderedElement
+    });
 });
 
 export default (useWebsocket: boolean, containerId: string) => {

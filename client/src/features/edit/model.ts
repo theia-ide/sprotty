@@ -11,6 +11,7 @@ import { SModelExtension } from '../../base/model/smodel-extension';
 import { Selectable, selectFeature } from '../select/model';
 import { moveFeature } from '../move/model';
 import { Hoverable, hoverFeedbackFeature } from '../hover/model';
+import { RoutedPoint } from '../../graph/routing';
 
 export const editFeature = Symbol('editFeature');
 
@@ -18,10 +19,11 @@ export interface Routable extends SModelExtension {
     routingPoints: Point[]
     readonly source?: SModelElement
     readonly target?: SModelElement
+    route(): RoutedPoint[]
 }
 
 export function isRoutable(element: SModelElement): element is SModelElement & Routable {
-    return (element as any)['routingPoints'] !== undefined;
+    return (element as any).routingPoints !== undefined && typeof((element as any).route) === 'function';
 }
 
 export function canEditRouting(element: SModelElement): element is SModelElement & Routable {
@@ -33,11 +35,6 @@ export class SRoutingHandle extends SChildElement implements Selectable, Hoverab
     kind: 'junction' | 'line';
     /** The actual routing point index (junction) or the previous point index (line). */
     pointIndex: number;
-    /**
-     * The position computed by the view of this handle during rendering.
-     * TODO find a better solution
-     */
-    viewPosition?: Point;
 
     hoverFeedback: boolean = false;
     selected: boolean = false;

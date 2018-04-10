@@ -60,64 +60,73 @@ export class SModelElement {
     }
 }
 
+export function isParent(element: SModelElementSchema | SModelElement):
+        element is SModelElementSchema & { children: SModelElementSchema[] } {
+    const children = (element as any).children;
+    return children !== undefined && children.constructor === Array;
+}
+
 /**
  * A parent element may contain child elements, thus the diagram model forms a tree.
  */
 export class SParentElement extends SModelElement {
-    children: SChildElement[] = [];
+    readonly children: ReadonlyArray<SChildElement> = [];
 
     add(child: SChildElement, i?: number) {
+        const children = this.children as SChildElement[];
         if (i === undefined) {
-            this.children.push(child);
+            children.push(child);
         } else {
             if (i < 0 || i > this.children.length) {
-                throw new Error(`Child index ${i} out of bounds (0..${this.children.length})`);
+                throw new Error(`Child index ${i} out of bounds (0..${children.length})`);
             }
-            this.children.splice(i, 0, child);
+            children.splice(i, 0, child);
         }
-        child.parent = this;
+        (child as {parent: SParentElement}).parent = this;
         this.index.add(child);
     }
 
     remove(child: SChildElement) {
-        const i = this.children.indexOf(child);
+        const children = this.children as SChildElement[];
+        const i = children.indexOf(child);
         if (i < 0) {
             throw new Error(`No such child ${child.id}`);
         }
-        this.children.splice(i, 1);
-        delete child.parent;
+        children.splice(i, 1);
+        delete (child as {parent: SParentElement}).parent;
         this.index.remove(child);
     }
 
     removeAll(filter?: (e: SChildElement) => boolean) {
-        const children = this.children;
+        const children = this.children as SChildElement[];
         if (filter !== undefined) {
             for (let i = children.length - 1; i >= 0; i--) {
                 if (filter(children[i])) {
                     const child = children.splice(i, 1)[0];
-                    delete child.parent;
+                    delete (child as {parent: SParentElement}).parent;
                     this.index.remove(child);
                 }
             }
         } else {
-            this.children = [];
             children.forEach(child => {
-                delete child.parent;
+                delete (child as {parent: SParentElement}).parent;
                 this.index.remove(child);
             });
+            children.splice(0, children.length);
         }
     }
 
     move(child: SChildElement, newIndex: number) {
-        const i = this.children.indexOf(child);
+        const children = this.children as SChildElement[];
+        const i = children.indexOf(child);
         if (i === -1) {
             throw new Error(`No such child ${child.id}`);
         } else {
-            if (newIndex < 0 || newIndex > this.children.length - 1) {
-                throw new Error(`Child index ${newIndex} out of bounds (0..${this.children.length})`);
+            if (newIndex < 0 || newIndex > children.length - 1) {
+                throw new Error(`Child index ${newIndex} out of bounds (0..${children.length})`);
             }
-            this.children.splice(i, 1);
-            this.children.splice(newIndex, 0, child);
+            children.splice(i, 1);
+            children.splice(newIndex, 0, child);
         }
     }
 
@@ -151,7 +160,7 @@ export class SParentElement extends SModelElement {
  * leafs in the model element tree).
  */
 export class SChildElement extends SParentElement {
-    parent: SParentElement;
+    readonly parent: SParentElement;
 }
 
 /**

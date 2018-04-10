@@ -19,5 +19,5 @@ describe('easing', () => {
             expect(newValue).to.be.at.least(lastValue);
             lastValue = newValue;
         }
-    })
+    });
 });

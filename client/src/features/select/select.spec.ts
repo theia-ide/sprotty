@@ -5,8 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import "mocha";
+import 'reflect-metadata';
+import 'mocha';
 import { expect } from "chai";
+import { Container } from 'inversify';
+import { TYPES } from '../../base/types';
 import { ConsoleLogger } from "../../utils/logging";
 import { SModelRoot } from "../../base/model/smodel";
 import { EMPTY_ROOT } from "../../base/model/smodel-factory";
@@ -15,6 +18,7 @@ import { AnimationFrameSyncer } from "../../base/animations/animation-frame-sync
 import { SGraphFactory } from "../../graph/sgraph-factory";
 import { SNode } from "../../graph/sgraph";
 import { SelectAction, SelectCommand, SelectAllAction, SelectAllCommand } from "./select";
+import defaultModule from "../../base/di.config";
 
 function getNode(nodeId: string, model: SModelRoot) {
     return <SNode>model.index.getById(nodeId);
@@ -29,11 +33,15 @@ function getNodeIndex(nodeId: string, model: SModelRoot) {
 }
 
 describe('SelectCommand', () => {
-    // Setup the GModel
-    const modelFactory = new SGraphFactory();
+    const container = new Container();
+    container.load(defaultModule);
+    container.rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope();
+
+    const graphFactory = container.get<SGraphFactory>(TYPES.IModelFactory);
+
     const myNode0 = {id: 'node0', type: 'node:circle', x: 100, y: 100, selected: true};
     const myNode1 = {id: 'node1', type: 'node:circle', x: 200, y: 200, selected: false};
-    const initialModel = modelFactory.createRoot({
+    const initialModel = graphFactory.createRoot({
         id: 'graph',
         type: 'graph',
         children: [myNode1, myNode0]  // myNode0 is selected, so put at the end
@@ -54,8 +62,8 @@ describe('SelectCommand', () => {
     let newModel: SModelRoot;
 
     const context: CommandExecutionContext = {
-        root: modelFactory.createRoot(EMPTY_ROOT),
-        modelFactory: modelFactory,
+        root: graphFactory.createRoot(EMPTY_ROOT),
+        modelFactory: graphFactory,
         duration: 0,
         modelChanged: undefined!,
         logger: new ConsoleLogger(),
@@ -106,11 +114,15 @@ describe('SelectCommand', () => {
 });
 
 describe('SelectAllCommand', () => {
-    // Setup the GModel
-    const modelFactory = new SGraphFactory();
+    const container = new Container();
+    container.load(defaultModule);
+    container.rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope();
+
+    const graphFactory = container.get<SGraphFactory>(TYPES.IModelFactory);
+
     const myNode0 = {id: 'node0', type: 'node:circle', x: 100, y: 100, selected: true};
     const myNode1 = {id: 'node1', type: 'node:circle', x: 200, y: 200, selected: false};
-    const initialModel = modelFactory.createRoot({
+    const initialModel = graphFactory.createRoot({
         id: 'graph',
         type: 'graph',
         children: [myNode1, myNode0]
@@ -125,8 +137,8 @@ describe('SelectAllCommand', () => {
     let newModel: SModelRoot;
 
     const context: CommandExecutionContext = {
-        root: modelFactory.createRoot(EMPTY_ROOT),
-        modelFactory: modelFactory,
+        root: graphFactory.createRoot(EMPTY_ROOT),
+        modelFactory: graphFactory,
         duration: 0,
         modelChanged: undefined!,
         logger: new ConsoleLogger(),

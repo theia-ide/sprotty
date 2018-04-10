@@ -20,7 +20,7 @@ const JSX = {createElement: snabbdom.svg};
  * Base interface for the components that turn GModelElements into virtual DOM elements.
  */
 export interface IView {
-    render(model: SModelElement, context: RenderingContext, args?: object): VNode
+    render(model: Readonly<SModelElement>, context: RenderingContext, args?: object): VNode
 }
 
 /**
@@ -29,18 +29,18 @@ export interface IView {
 export interface RenderingContext {
     viewRegistry: ViewRegistry
 
-    decorate(vnode: VNode, element: SModelElement): VNode
+    decorate(vnode: VNode, element: Readonly<SModelElement>): VNode
 
-    renderElement(element: SModelElement, args?: object): VNode
+    renderElement(element: Readonly<SModelElement>, args?: object): VNode
 
-    renderChildren(element: SParentElement, args?: object): VNode[]
+    renderChildren(element: Readonly<SParentElement>, args?: object): VNode[]
 }
 
 /**
  * Allows to look up the IView for a given SModelElement based on its type.
  */
 @injectable()
-export class ViewRegistry extends ProviderRegistry<IView, SModelElement> {
+export class ViewRegistry extends ProviderRegistry<IView, void> {
     constructor() {
         super();
         this.registerDefaults();
@@ -50,7 +50,7 @@ export class ViewRegistry extends ProviderRegistry<IView, SModelElement> {
         this.register(EMPTY_ROOT.type, EmptyView);
     }
 
-    missing(key: string, element: SModelElement): IView {
+    missing(key: string): IView {
         return new MissingView();
     }
 }
@@ -62,7 +62,7 @@ export class EmptyView implements IView {
 }
 
 export class MissingView implements IView {
-    render(model: SModelElement, context: RenderingContext): VNode {
+    render(model: Readonly<SModelElement>, context: RenderingContext): VNode {
         const position: Point = (model as any).position || ORIGIN_POINT;
         return <text class-sprotty-missing={true} x={position.x} y={position.y}>?{model.id}?</text>;
     }
