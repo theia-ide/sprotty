@@ -136,6 +136,46 @@ describe('HBoxLayouter', () => {
         expect(map.get(model.children[1])!.bounds).to.deep.equal({x: 11, y: 7.5, width: 2, height: 1});
         expect(map.get(model.children[2])!.bounds).to.deep.equal({x: 14, y: 6.5, width: 3, height: 3});
     });
+
+    it('issue-189', () => {
+        const model = snode(EMPTY_DIMENSION);
+        model.layout = 'vbox';
+        const comp0 = snode(EMPTY_DIMENSION);
+        comp0.layout = 'hbox';
+        model.children = [
+            slabel({width: 50, height: 10}),
+            slabel({width: 50, height: 10}),
+            comp0
+        ];
+        const compLeft = snode(EMPTY_DIMENSION);
+        compLeft.layout = 'vbox';
+        compLeft.layoutOptions = {
+            vGap: 15
+        }
+        compLeft.children = [
+            slabel({width: 50, height: 10}),
+            slabel({width: 50, height: 10}),
+            slabel({width: 50, height: 10})
+        ];
+        const compRight = snode(EMPTY_DIMENSION);
+        compRight.layout = 'vbox';
+        model.layoutOptions = {
+            vGap: 15
+        }
+        compRight.children = [
+            slabel({width: 50, height: 10}),
+            slabel({width: 50, height: 10}),
+            slabel({width: 50, height: 10})
+        ];
+        comp0.children = [ compLeft, compRight ];
+        layout(model);
+        expect(map.get(comp0)!.bounds).to.deep.equal({
+            "height": 80,
+            "width": 131, // 50 + 50 + 1 [hGap] + 3 * (5 + 5) [padding compLeft, compRight, comp0]
+            "x": 0,
+            "y": 0
+        });
+    });
 });
 
 
