@@ -5,6 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+import { FluentIterable, FluentIterableImpl } from '../utils/iterable';
 import {
     SChildElement, SModelElementSchema, SModelRootSchema, SModelIndex, SModelElement, SParentElement
 } from '../base/model/smodel';
@@ -55,7 +56,7 @@ export abstract class SConnectableElement extends SShapeElement {
      * The incoming edges of this connectable element. They are resolved by the index, which must
      * be an `SGraphIndex`.
      */
-    get incomingEdges(): Iterable<SEdge> {
+    get incomingEdges(): FluentIterable<SEdge> {
         return (this.index as SGraphIndex).getIncomingEdges(this);
     }
 
@@ -63,7 +64,7 @@ export abstract class SConnectableElement extends SShapeElement {
      * The outgoing edges of this connectable element. They are resolved by the index, which must
      * be an `SGraphIndex`.
      */
-    get outgoingEdges(): Iterable<SEdge> {
+    get outgoingEdges(): FluentIterable<SEdge> {
         return (this.index as SGraphIndex).getOutgoingEdges(this);
     }
 
@@ -298,28 +299,42 @@ export class SGraphIndex extends SModelIndex<SModelElement> {
         }
     }
 
-    getAttachedElements(element: SModelElement): SModelElement[] {
-        const result: SModelElement[] = [];
-        const outgoing = this.outgoing.get(element.id);
-        if (outgoing !== undefined) {
-            outgoing.forEach(e => result.push(e));
-        }
-        const incoming = this.incoming.get(element.id);
-        if (incoming !== undefined) {
-            incoming.forEach(e => {
-                if (outgoing === undefined || outgoing.indexOf(e) < 0) {
-                    result.push(e);
+    getAttachedElements(element: SModelElement): FluentIterable<SModelElement> {
+        return new FluentIterableImpl(
+            () => ({
+                outgoing: this.outgoing.get(element.id),
+                incoming: this.incoming.get(element.id),
+                nextOutgoingIndex: 0,
+                nextIncomingIndex: 0
+            }),
+            (state) => {
+                let index = state.nextOutgoingIndex;
+                if (state.outgoing !== undefined && index < state.outgoing.length) {
+                    state.nextOutgoingIndex = index + 1;
+                    return { done: false, value: state.outgoing[index] };
                 }
-            });
-        }
-        return result;
+                index = state.nextIncomingIndex;
+                if (state.incoming !== undefined) {
+                    // Filter out self-loops: edges that are both outgoing and incoming
+                    while (index < state.incoming.length) {
+                        const edge = state.incoming[index];
+                        if (edge.sourceId !== edge.targetId) {
+                            state.nextIncomingIndex = index + 1;
+                            return { done: false, value: edge };
+                        }
+                        index++;
+                    }
+                }
+                return { done: true, value: undefined as any };
+            }
+        );
     }
 
-    getIncomingEdges(element: SConnectableElement): Iterable<SEdge> {
+    getIncomingEdges(element: SConnectableElement): FluentIterable<SEdge> {
         return this.incoming.get(element.id) || [];
     }
 
-    getOutgoingEdges(element: SConnectableElement): Iterable<SEdge> {
+    getOutgoingEdges(element: SConnectableElement): FluentIterable<SEdge> {
         return this.outgoing.get(element.id) || [];
     }
 

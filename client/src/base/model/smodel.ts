@@ -6,6 +6,7 @@
  */
 
 import { Bounds, EMPTY_BOUNDS, Point, isBounds } from "../../utils/geometry";
+import { mapIterable, FluentIterable } from "../../utils/iterable";
 
 /**
  * The schema of an SModelElement describes its serializable form. The actual model is created from
@@ -231,15 +232,11 @@ export class SModelIndex<E extends SModelElementSchema> {
         return this.id2element.get(id);
     }
 
-    getAttachedElements(element: E): E[] {
+    getAttachedElements(element: E): FluentIterable<E> {
         return [];
     }
 
-    all(): E[] {
-        const all: E[] = [];
-        this.id2element.forEach(
-            element => all.push(element)
-        );
-        return all;
+    all(): FluentIterable<E> {
+        return mapIterable(this.id2element, ([key, value]: [string, E]) => value);
     }
 }
