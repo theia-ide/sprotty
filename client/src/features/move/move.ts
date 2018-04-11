@@ -66,15 +66,13 @@ export class MoveCommand extends MergeableCommand {
     execute(context: CommandExecutionContext) {
         const model = context.root;
         const attachedElements: Set<SModelElement> = new Set;
-        this.action.moves.forEach(
-            move => {
-                const resolvedMove = this.resolve(move, model.index);
-                if (resolvedMove !== undefined) {
-                    this.resolvedMoves.set(resolvedMove.elementId, resolvedMove);
-                    model.index.getAttachedElements(resolvedMove.element).forEach(e => attachedElements.add(e));
-                }
+        this.action.moves.forEach(move => {
+            const resolvedMove = this.resolve(move, model.index);
+            if (resolvedMove !== undefined) {
+                this.resolvedMoves.set(resolvedMove.elementId, resolvedMove);
+                model.index.getAttachedElements(resolvedMove.element).forEach(e => attachedElements.add(e));
             }
-        );
+        });
         attachedElements.forEach(element => this.handleAttachedElement(element));
         if (this.action.animate) {
             return new MoveAnimation(model, this.resolvedMoves, this.resolvedRoutes, context).start();

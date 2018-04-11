@@ -8,6 +8,7 @@
 import { inject, optional } from 'inversify';
 import { VNode } from "snabbdom/vnode";
 import { isCtrlOrCmd } from "../../utils/browser";
+import { toArray } from '../../utils/iterable';
 import { SChildElement, SModelElement, SModelRoot, SParentElement } from '../../base/model/smodel';
 import { findParentByFeature } from "../../base/model/smodel-utils";
 import { Action } from "../../base/actions/action";
@@ -185,11 +186,9 @@ export class SelectMouseListener extends MouseListener {
                 let deselect: SModelElement[] = [];
                 // multi-selection?
                 if (!isCtrlOrCmd(event)) {
-                    deselect = target.root
-                        .index
-                        .all()
+                    deselect = toArray(target.root.index.all()
                         .filter(element => isSelectable(element) && element.selected
-                            && !(selectableTarget instanceof SRoutingHandle && element === selectableTarget.parent as SModelElement));
+                            && !(selectableTarget instanceof SRoutingHandle && element === selectableTarget.parent as SModelElement)));
                 }
                 if (selectableTarget !== undefined) {
                     if (!selectableTarget.selected) {
@@ -248,8 +247,8 @@ export class SelectMouseListener extends MouseListener {
 export class SelectKeyboardListener extends KeyListener {
     keyDown(element: SModelElement, event: KeyboardEvent): Action[] {
         if (isCtrlOrCmd(event) && event.keyCode === 65) {
-            return [new SelectAction(
-                element.root.index.all().filter(e => isSelectable(e)).map(e => e.id), [])];
+            const selected = toArray(element.root.index.all().filter(e => isSelectable(e)).map(e => e.id));
+            return [new SelectAction(selected, [])];
         }
         return [];
     }
