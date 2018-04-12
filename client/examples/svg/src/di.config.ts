@@ -7,33 +7,23 @@
 
 import { Container, ContainerModule } from "inversify";
 import {
-    defaultModule, TYPES, ViewRegistry, ConsoleLogger, LogLevel, boundsModule, moveModule, selectModule,
+    defaultModule, TYPES, ConsoleLogger, LogLevel, boundsModule, moveModule, selectModule,
     undoRedoModule, viewportModule, hoverModule, LocalModelSource, PreRenderedView, SvgViewportView,
-    exportModule, SModelElementRegistration, ViewportRootElement, ShapedPreRenderedElement
+    exportModule, ViewportRootElement, ShapedPreRenderedElement, configureModelElement
 } from "../../../src";
 
-const svgModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-    rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
-    rebind(TYPES.LogLevel).toConstantValue(LogLevel.log);
-    bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope();
-    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
-        type: 'svg',
-        constr: ViewportRootElement
-    });
-    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
-        type: 'pre-rendered',
-        constr: ShapedPreRenderedElement
-    });
-});
-
 export default () => {
+    const svgModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+        rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
+        rebind(TYPES.LogLevel).toConstantValue(LogLevel.log);
+        bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope();
+        const context = { bind, unbind, isBound, rebind };
+        configureModelElement(context, 'svg', ViewportRootElement, SvgViewportView);
+        configureModelElement(context, 'pre-rendered', ShapedPreRenderedElement, PreRenderedView);
+    });
+
     const container = new Container();
-    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule, hoverModule, exportModule, svgModule);
-
-    // Register views
-    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry);
-    viewRegistry.register('svg', SvgViewportView);
-    viewRegistry.register('pre-rendered', PreRenderedView);
-
+    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule, viewportModule,
+        hoverModule, exportModule, svgModule);
     return container;
 };

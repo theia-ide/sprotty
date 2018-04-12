@@ -6,10 +6,11 @@
  */
 
 import * as snabbdom from "snabbdom-jsx";
-import { injectable } from "inversify";
+import { injectable, multiInject, optional, interfaces } from "inversify";
 import { VNode } from "snabbdom/vnode";
+import { TYPES } from "../types";
 import { SModelElement, SModelRoot, SParentElement } from "../model/smodel";
-import { EMPTY_ROOT } from "../model/smodel-factory";
+import { EMPTY_ROOT, SModelElementRegistration } from "../model/smodel-factory";
 import { ProviderRegistry } from "../../utils/registry";
 import { Point, ORIGIN_POINT } from "../../utils/geometry";
 
@@ -37,13 +38,25 @@ export interface RenderingContext {
 }
 
 /**
+ * Used to bind a model element type to a view constructor in the ViewRegistry.
+ */
+export interface ViewRegistration {
+    type: string
+    constr: new () => IView
+}
+
+/**
  * Allows to look up the IView for a given SModelElement based on its type.
  */
 @injectable()
 export class ViewRegistry extends ProviderRegistry<IView, void> {
-    constructor() {
+    constructor(@multiInject(TYPES.ViewRegistration) @optional() registrations: ViewRegistration[]) {
         super();
+
         this.registerDefaults();
+        registrations.forEach(
+            registration => this.register(registration.type, registration.constr)
+        );
     }
 
     protected registerDefaults() {
@@ -55,12 +68,33 @@ export class ViewRegistry extends ProviderRegistry<IView, void> {
     }
 }
 
+/**
+ * Utility function to register model and view constructors for a model element type.
+ */
+export function configureModelElement(context: { bind: interfaces.Bind }, type: string,
+        modelConstr: new () => SModelElement, viewConstr: new () => IView): void {
+    context.bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
+        type,
+        constr: modelConstr
+    });
+    context.bind<ViewRegistration>(TYPES.ViewRegistration).toConstantValue({
+        type,
+        constr: viewConstr
+    });
+}
+
+/**
+ * This view is used when the model is the EMPTY_ROOT.
+ */
 export class EmptyView implements IView {
     render(model: SModelRoot, context: RenderingContext): VNode {
         return <svg class-sprotty-empty={true} />;
     }
 }
 
+/**
+ * This view is used when no view has been registered for a model element type.
+ */
 export class MissingView implements IView {
     render(model: Readonly<SModelElement>, context: RenderingContext): VNode {
         const position: Point = (model as any).position || ORIGIN_POINT;

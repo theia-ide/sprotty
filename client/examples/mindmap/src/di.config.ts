@@ -7,63 +7,45 @@
 
 import { Container, ContainerModule } from "inversify";
 import {
-    defaultModule, TYPES, ViewRegistry, overrideViewerOptions, SGraphView, SLabelView,
-    ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule,
-    undoRedoModule, viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView,
-    exportModule, expandModule, fadeModule, buttonModule, ActionHandlerRegistry, SGraphFactory,
-    SModelElementRegistration, PreRenderedElement
+    defaultModule, TYPES, configureViewerOptions, SGraphView, SLabelView, ConsoleLogger,
+    LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule, undoRedoModule,
+    viewportModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView, exportModule,
+    expandModule, fadeModule, buttonModule, SGraphFactory, PreRenderedElement, SNode, SLabel,
+    HtmlRoot, configureModelElement
 } from "../../../src";
 import { MindmapNodeView, PopupButtonView } from "./views";
 import { popupModelFactory, PopupButtonMouseListener, AddElementCommand } from "./popup";
 import { Mindmap, PopupButton } from "./model";
 
-const mindmapModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-    rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
-    rebind(TYPES.LogLevel).toConstantValue(LogLevel.log);
-    rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope();
-    bind(TYPES.PopupModelFactory).toConstantValue(popupModelFactory);
-    bind(TYPES.PopupMouseListener).to(PopupButtonMouseListener);
-    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
-        type: 'mindmap',
-        constr: Mindmap
-    });
-    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
-        type: 'popup:button',
-        constr: PopupButton
-    });
-    bind<SModelElementRegistration>(TYPES.SModelElementRegistration).toConstantValue({
-        type: 'pre-rendered',
-        constr: PreRenderedElement
-    });
-});
-
 export default (useWebsocket: boolean, containerId: string) => {
-    const container = new Container();
-    container.load(defaultModule, selectModule, moveModule, boundsModule,
-        undoRedoModule, viewportModule, fadeModule, hoverModule,
-        exportModule, expandModule, buttonModule, mindmapModule);
-    if (useWebsocket)
-        container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope();
-    else
-        container.bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope();
-    overrideViewerOptions(container, {
-        needsClientLayout: false,
-        baseDiv: containerId,
-        popupOpenDelay: 500
+    const mindmapModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+        if (useWebsocket)
+            bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope();
+        else
+            bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope();
+        rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
+        rebind(TYPES.LogLevel).toConstantValue(LogLevel.log);
+        rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope();
+        bind(TYPES.PopupModelFactory).toConstantValue(popupModelFactory);
+        bind(TYPES.PopupMouseListener).to(PopupButtonMouseListener);
+        bind(TYPES.ICommand).toConstructor(AddElementCommand);
+        const context = { bind, unbind, isBound, rebind };
+        configureModelElement(container, 'mindmap', Mindmap, SGraphView);
+        configureModelElement(container, 'node', SNode, MindmapNodeView);
+        configureModelElement(container, 'label', SLabel, SLabelView);
+        configureModelElement(container, 'html', HtmlRoot, HtmlRootView);
+        configureModelElement(container, 'pre-rendered', PreRenderedElement, PreRenderedView);
+        configureModelElement(container, 'popup:button', PopupButton, PopupButtonView);
+        configureViewerOptions(context, {
+            needsClientLayout: false,
+            baseDiv: containerId,
+            popupOpenDelay: 500
+        });
     });
 
-    // Register commands
-    const actionHandlerRegistry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry);
-    actionHandlerRegistry.registerCommand(AddElementCommand);
-
-    // Register views
-    const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry);
-    viewRegistry.register('mindmap', SGraphView);
-    viewRegistry.register('node', MindmapNodeView);
-    viewRegistry.register('label', SLabelView);
-    viewRegistry.register('html', HtmlRootView);
-    viewRegistry.register('pre-rendered', PreRenderedView);
-    viewRegistry.register('popup:button', PopupButtonView);
-
+    const container = new Container();
+    container.load(defaultModule, selectModule, moveModule, boundsModule, undoRedoModule,
+        viewportModule, fadeModule, hoverModule, exportModule, expandModule, buttonModule,
+        mindmapModule);
     return container;
 };

@@ -126,11 +126,17 @@ export const EMPTY_ROOT: Readonly<SModelRootSchema> = Object.freeze({
     id: 'EMPTY'
 });
 
+/**
+ * Used to bind a model element type to a class constructor in the SModelRegistry.
+ */
 export interface SModelElementRegistration {
     type: string
     constr: new () => SModelElement
 }
 
+/**
+ * Model element classes registered here are considered automatically when constructring a model from its schema.
+ */
 @injectable()
 export class SModelRegistry extends ProviderRegistry<SModelElement, void> {
     constructor(@multiInject(TYPES.SModelElementRegistration) @optional() registrations: SModelElementRegistration[]) {
