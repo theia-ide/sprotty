@@ -17,7 +17,7 @@ import { CommandStackOptions } from "./commands/command-stack-options";
 import { SModelFactory, SModelRegistry } from './model/smodel-factory';
 import { AnimationFrameSyncer } from "./animations/animation-frame-syncer";
 import { IViewer, Viewer, ModelRenderer } from "./views/viewer";
-import { ViewerOptions } from "./views/viewer-options";
+import { ViewerOptions, defaultViewerOptions } from "./views/viewer-options";
 import { MouseTool, PopupMouseTool } from "./views/mouse-tool";
 import { KeyTool } from "./views/key-tool";
 import { FocusFixDecorator, IVNodeDecorator } from "./views/vnode-decorators";
@@ -81,19 +81,7 @@ const defaultContainerModule = new ContainerModule(bind => {
             });
         };
     });
-    bind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue({
-        baseDiv: 'sprotty',
-        baseClass: 'sprotty',
-        hiddenDiv: 'sprotty-hidden',
-        hiddenClass: 'sprotty-hidden',
-        popupDiv: 'sprotty-popup',
-        popupClass: 'sprotty-popup',
-        popupClosedClass: 'sprotty-popup-closed',
-        needsClientLayout: true,
-        needsServerLayout: false,
-        popupOpenDelay: 1000,
-        popupCloseDelay: 300
-    });
+    bind<ViewerOptions>(TYPES.ViewerOptions).toConstantValue(defaultViewerOptions());
     bind(TYPES.DOMHelper).to(DOMHelper).inSingletonScope();
     bind(TYPES.ModelRendererFactory).toFactory<ModelRenderer>((context: interfaces.Context) => {
         return (decorators: IVNodeDecorator[]) => {

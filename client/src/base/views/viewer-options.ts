@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Container } from "inversify";
+import { Container, interfaces } from "inversify";
 import { TYPES } from "../types";
 
 export interface ViewerOptions {
@@ -22,11 +22,44 @@ export interface ViewerOptions {
     popupCloseDelay: number
 }
 
+export const defaultViewerOptions = () => (<ViewerOptions>{
+    baseDiv: 'sprotty',
+    baseClass: 'sprotty',
+    hiddenDiv: 'sprotty-hidden',
+    hiddenClass: 'sprotty-hidden',
+    popupDiv: 'sprotty-popup',
+    popupClass: 'sprotty-popup',
+    popupClosedClass: 'sprotty-popup-closed',
+    needsClientLayout: true,
+    needsServerLayout: false,
+    popupOpenDelay: 1000,
+    popupCloseDelay: 300
+});
+
+/**
+ * Utility function to partially set viewer options. Default values (from `defaultViewerOptions`) are used for
+ * options that are not specified.
+ */
+export function configureViewerOptions(context: { bind: interfaces.Bind, isBound: interfaces.IsBound, rebind: interfaces.Rebind },
+        options: Partial<ViewerOptions>): void {
+    const opt: ViewerOptions = {
+        ...defaultViewerOptions(),
+        ...options
+    };
+    if (context.isBound(TYPES.ViewerOptions))
+        context.rebind(TYPES.ViewerOptions).toConstantValue(opt);
+    else
+        context.bind(TYPES.ViewerOptions).toConstantValue(opt);
+}
+
+/**
+ * Utility function to partially override the currently configured viewer options in a DI container.
+ */
 export function overrideViewerOptions(container: Container, options: Partial<ViewerOptions>): ViewerOptions {
-    const defaultOptions = container.get<ViewerOptions>(TYPES.ViewerOptions);
+    const opt = container.get<ViewerOptions>(TYPES.ViewerOptions);
     for (const p in options) {
         if (options.hasOwnProperty(p))
-            (defaultOptions as any)[p] = (options as any)[p];
+            (opt as any)[p] = (options as any)[p];
     }
-    return defaultOptions;
+    return opt;
 }

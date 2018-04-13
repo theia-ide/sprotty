@@ -7,7 +7,7 @@
 
 import { Container, ContainerModule } from "inversify";
 import {
-    SCompartmentView, SLabelView, defaultModule, TYPES, ViewRegistry, overrideViewerOptions,
+    SCompartmentView, SLabelView, defaultModule, TYPES, ViewRegistry, configureViewerOptions,
     ConsoleLogger, LogLevel, WebSocketDiagramServer, boundsModule, selectModule, viewportModule,
     moveModule, fadeModule, hoverModule, LocalModelSource, HtmlRootView, PreRenderedView,
     exportModule, SvgExporter
@@ -25,27 +25,29 @@ class FilteringSvgExporter extends SvgExporter {
     }
 }
 
-const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
-    rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
-    rebind(TYPES.LogLevel).toConstantValue(LogLevel.log);
-    rebind(TYPES.IModelFactory).to(ChipModelFactory).inSingletonScope();
-    rebind(TYPES.SvgExporter).to(FilteringSvgExporter).inSingletonScope();
-});
-
 export default (useWebsocket: boolean) => {
-    const container = new Container();
-    container.load(defaultModule, boundsModule, selectModule, moveModule, viewportModule, fadeModule, exportModule, hoverModule, multicoreModule);
-    if (useWebsocket)
-        container.bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope();
-    else
-        container.bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope();
-    overrideViewerOptions(container, {
-        baseDiv: 'sprotty-cores',
-        hiddenDiv: 'sprotty-hidden-cores',
-        popupDiv: 'sprotty-popup-cores',
-        needsClientLayout: true,
-        needsServerLayout: false
+    const multicoreModule = new ContainerModule((bind, unbind, isBound, rebind) => {
+        if (useWebsocket)
+            bind(TYPES.ModelSource).to(WebSocketDiagramServer).inSingletonScope();
+        else
+            bind(TYPES.ModelSource).to(LocalModelSource).inSingletonScope();
+        rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
+        rebind(TYPES.LogLevel).toConstantValue(LogLevel.log);
+        rebind(TYPES.IModelFactory).to(ChipModelFactory).inSingletonScope();
+        rebind(TYPES.SvgExporter).to(FilteringSvgExporter).inSingletonScope();
+        const context = { bind, unbind, isBound, rebind };
+        configureViewerOptions(context, {
+            baseDiv: 'sprotty-cores',
+            hiddenDiv: 'sprotty-hidden-cores',
+            popupDiv: 'sprotty-popup-cores',
+            needsClientLayout: true,
+            needsServerLayout: false
+        });
     });
+
+    const container = new Container();
+    container.load(defaultModule, boundsModule, selectModule, moveModule, viewportModule, fadeModule,
+        exportModule, hoverModule, multicoreModule);
 
     // Register views
     const viewRegistry = container.get<ViewRegistry>(TYPES.ViewRegistry);
