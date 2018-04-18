@@ -85,43 +85,51 @@ export class SRoutingHandleView implements IView {
 
     protected getPosition(handle: SRoutingHandle, route: RoutedPoint[]): Point | undefined {
         if (handle.kind === 'line') {
-            const parent = handle.parent;
-            if (isRoutable(parent)) {
-                const getIndex = (rp: RoutedPoint) => {
-                    if (rp.pointIndex !== undefined)
-                        return rp.pointIndex;
-                    else if (rp.kind === 'target')
-                        return parent.routingPoints.length;
-                    else
-                        return -1;
-                };
-                let rp1, rp2: RoutedPoint | undefined;
-                for (const rp of route) {
-                    const i = getIndex(rp);
-                    if (i <= handle.pointIndex && (rp1 === undefined || i > getIndex(rp1)))
-                        rp1 = rp;
-                    if (i > handle.pointIndex && (rp2 === undefined || i < getIndex(rp2)))
-                        rp2 = rp;
-                }
-                if (rp1 !== undefined && rp2 !== undefined) {
-                    // Skip this handle if its related line segment is not included in the route
-                    if (getIndex(rp1) !== handle.pointIndex && handle.pointIndex >= 0) {
-                        const point = parent.routingPoints[handle.pointIndex];
-                        if (maxDistance(point, rp1) >= maxDistance(point, rp2))
-                            return undefined;
-                    }
-                    if (getIndex(rp2) !== handle.pointIndex + 1 && handle.pointIndex + 1 < parent.routingPoints.length) {
-                        const point = parent.routingPoints[handle.pointIndex + 1];
-                        if (maxDistance(point, rp1) < maxDistance(point, rp2))
-                            return undefined;
-                    }
-                    // Skip this handle if its related line segment is too short
-                    if (maxDistance(rp1, rp2) >= this.minimalPointDistance)
-                        return centerOfLine(rp1, rp2);
-                }
-            }
+            return this.getLinePosition(handle, route);
         } else {
-            return route.find(rp => rp.pointIndex === handle.pointIndex);
+            return this.getJunctionPosition(handle, route);
+        }
+    }
+
+    protected getJunctionPosition(handle: SRoutingHandle, route: RoutedPoint[]): Point | undefined {
+        return route.find(rp => rp.pointIndex === handle.pointIndex);
+    }
+
+    protected getLinePosition(handle: SRoutingHandle, route: RoutedPoint[]): Point | undefined {
+        const parent = handle.parent;
+        if (isRoutable(parent)) {
+            const getIndex = (rp: RoutedPoint) => {
+                if (rp.pointIndex !== undefined)
+                    return rp.pointIndex;
+                else if (rp.kind === 'target')
+                    return parent.routingPoints.length;
+                else
+                    return -1;
+            };
+            let rp1, rp2: RoutedPoint | undefined;
+            for (const rp of route) {
+                const i = getIndex(rp);
+                if (i <= handle.pointIndex && (rp1 === undefined || i > getIndex(rp1)))
+                    rp1 = rp;
+                if (i > handle.pointIndex && (rp2 === undefined || i < getIndex(rp2)))
+                    rp2 = rp;
+            }
+            if (rp1 !== undefined && rp2 !== undefined) {
+                // Skip this handle if its related line segment is not included in the route
+                if (getIndex(rp1) !== handle.pointIndex && handle.pointIndex >= 0) {
+                    const point = parent.routingPoints[handle.pointIndex];
+                    if (maxDistance(point, rp1) >= maxDistance(point, rp2))
+                        return undefined;
+                }
+                if (getIndex(rp2) !== handle.pointIndex + 1 && handle.pointIndex + 1 < parent.routingPoints.length) {
+                    const point = parent.routingPoints[handle.pointIndex + 1];
+                    if (maxDistance(point, rp1) < maxDistance(point, rp2))
+                        return undefined;
+                }
+                // Skip this handle if its related line segment is too short
+                if (maxDistance(rp1, rp2) >= this.minimalPointDistance)
+                    return centerOfLine(rp1, rp2);
+            }
         }
         return undefined;
     }

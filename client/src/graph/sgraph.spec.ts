@@ -7,8 +7,63 @@
 
 import "mocha";
 import { expect } from "chai";
-import { SNode, SEdge, SGraph, SPort } from './sgraph';
+import { createRoutingHandles } from '../features/edit/edit-routing';
+import { SRoutingHandle } from '../features/edit/model';
 import { RectangularNode, RectangularPort } from '../lib/model';
+import { SNode, SEdge, SGraph, SPort } from './sgraph';
+import { RoutedPoint } from "./routing";
+
+describe('SEdge', () => {
+    const graph = new SGraph();
+    const source = new SNode();
+    source.id = 'node0';
+    source.position = { x: 10, y: 10 };
+    source.size = { width: 0, height: 0 };
+    graph.add(source);
+    const target = new SNode();
+    target.id = 'node1';
+    target.position = { x: 20, y: 20 };
+    target.size = { width: 0, height: 0 };
+    graph.add(target);
+    const edge = new SEdge();
+    edge.id = 'edge0';
+    edge.sourceId = 'node0';
+    edge.targetId = 'node1';
+    graph.add(edge);
+
+    it('computes a simple route', () => {
+        edge.routingPoints = [{ x: 14, y: 12 }, { x: 16, y: 18 }];
+        const route = edge.route();
+        expect(route).to.deep.equal(<RoutedPoint[]>[
+            { x: 10, y: 10, kind: 'source' },
+            { x: 14, y: 12, kind: 'linear', pointIndex: 0 },
+            { x: 16, y: 18, kind: 'linear', pointIndex: 1 },
+            { x: 20, y: 20, kind: 'target' }
+        ]);
+    });
+
+    it('skips a routing handle that is dragged for removal', () => {
+        edge.routingPoints = [{ x: 12, y: 15 }, { x: 15, y: 15 }, { x: 18, y: 15 }];
+        createRoutingHandles(edge);
+        const route1 = edge.route();
+        expect(route1).to.deep.equal(<RoutedPoint[]>[
+            { x: 10, y: 10, kind: 'source' },
+            { x: 12, y: 15, kind: 'linear', pointIndex: 0 },
+            { x: 15, y: 15, kind: 'linear', pointIndex: 1 },
+            { x: 18, y: 15, kind: 'linear', pointIndex: 2 },
+            { x: 20, y: 20, kind: 'target' }
+        ]);
+        const handle1 = edge.children.find(child => (child as SRoutingHandle).pointIndex === 1) as SRoutingHandle;
+        handle1.editMode = true;
+        const route2 = edge.route();
+        expect(route2).to.deep.equal(<RoutedPoint[]>[
+            { x: 10, y: 10, kind: 'source' },
+            { x: 12, y: 15, kind: 'linear', pointIndex: 0 },
+            { x: 18, y: 15, kind: 'linear', pointIndex: 2 },
+            { x: 20, y: 20, kind: 'target' }
+        ]);
+    });
+});
 
 describe('SGraphIndex', () => {
     function setup() {

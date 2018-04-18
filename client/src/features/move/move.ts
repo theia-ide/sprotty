@@ -21,7 +21,7 @@ import { isViewport } from "../viewport/model";
 import { isSelectable } from "../select/model";
 import { isAlignable } from "../bounds/model";
 import { Routable, isRoutable, SRoutingHandle } from '../edit/model';
-import { MoveRoutingHandleAction, HandleMove } from "../edit/edit-routing";
+import { MoveRoutingHandleAction, HandleMove, SwitchEditModeAction } from "../edit/edit-routing";
 import { isMoveable, Locateable, isLocateable } from './model';
 import { RoutedPoint } from "../../graph/routing";
 
@@ -222,16 +222,21 @@ export class MoveMouseListener extends MouseListener {
     lastDragPosition: Point | undefined;
 
     mouseDown(target: SModelElement, event: MouseEvent): Action[] {
+        const result: Action[] = [];
         if (event.button === 0) {
             const moveable = findParentByFeature(target, isMoveable);
-            if (moveable !== undefined || target instanceof SRoutingHandle) {
+            const isRoutingHandle = target instanceof SRoutingHandle;
+            if (moveable !== undefined || isRoutingHandle) {
                 this.lastDragPosition = { x: event.pageX, y: event.pageY };
             } else {
                 this.lastDragPosition = undefined;
             }
             this.hasDragged = false;
+            if (isRoutingHandle) {
+                result.push(new SwitchEditModeAction([target.id], []));
+            }
         }
-        return [];
+        return result;
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): Action[] {
@@ -244,42 +249,37 @@ export class MoveMouseListener extends MouseListener {
             const zoom = viewport ? viewport.zoom : 1;
             const dx = (event.pageX - this.lastDragPosition.x) / zoom;
             const dy = (event.pageY - this.lastDragPosition.y) / zoom;
-            const root = target.root;
             const nodeMoves: ElementMove[] = [];
             const handleMoves: HandleMove[] = [];
-            root.index
-                .all()
-                .filter(
-                    element => isSelectable(element) && element.selected
-                )
-                .forEach(
-                    element => {
-                        if (isMoveable(element)) {
-                            nodeMoves.push({
+            target.root.index.all()
+                .filter(element => isSelectable(element) && element.selected)
+                .forEach(element => {
+                    if (isMoveable(element)) {
+                        nodeMoves.push({
+                            elementId: element.id,
+                            fromPosition: {
+                                x: element.position.x,
+                                y: element.position.y
+                            },
+                            toPosition: {
+                                x: element.position.x + dx,
+                                y: element.position.y + dy
+                            }
+                        });
+                    } else if (element instanceof SRoutingHandle) {
+                        const point = this.getHandlePosition(element);
+                        if (point !== undefined) {
+                            handleMoves.push({
                                 elementId: element.id,
-                                fromPosition: {
-                                    x: element.position.x,
-                                    y: element.position.y
-                                },
+                                fromPosition: point,
                                 toPosition: {
-                                    x: element.position.x + dx,
-                                    y: element.position.y + dy
+                                    x: point.x + dx,
+                                    y: point.y + dy
                                 }
                             });
-                        } else if (element instanceof SRoutingHandle) {
-                            const point = this.getHandlePosition(element);
-                            if (point !== undefined) {
-                                handleMoves.push({
-                                    elementId: element.id,
-                                    fromPosition: point,
-                                    toPosition: {
-                                        x: point.x + dx,
-                                        y: point.y + dy
-                                    }
-                                });
-                            }
                         }
-                    });
+                    }
+                });
             this.lastDragPosition = { x: event.pageX, y: event.pageY };
             if (nodeMoves.length > 0)
                 result.push(new MoveAction(nodeMoves, false));
@@ -295,27 +295,25 @@ export class MoveMouseListener extends MouseListener {
             return undefined;
         }
         if (handle.kind === 'line') {
-            if (isRoutable(parent)) {
-                const getIndex = (rp: RoutedPoint) => {
-                    if (rp.pointIndex !== undefined)
-                        return rp.pointIndex;
-                    else if (rp.kind === 'target')
-                        return parent.routingPoints.length;
-                    else
-                        return -1;
-                };
-                const route = parent.route();
-                let rp1, rp2: RoutedPoint | undefined;
-                for (const rp of route) {
-                    const i = getIndex(rp);
-                    if (i <= handle.pointIndex && (rp1 === undefined || i > getIndex(rp1)))
-                        rp1 = rp;
-                    if (i > handle.pointIndex && (rp2 === undefined || i < getIndex(rp2)))
-                        rp2 = rp;
-                }
-                if (rp1 !== undefined && rp2 !== undefined) {
-                    return centerOfLine(rp1, rp2);
-                }
+            const getIndex = (rp: RoutedPoint) => {
+                if (rp.pointIndex !== undefined)
+                    return rp.pointIndex;
+                else if (rp.kind === 'target')
+                    return parent.routingPoints.length;
+                else
+                    return -1;
+            };
+            const route = parent.route();
+            let rp1, rp2: RoutedPoint | undefined;
+            for (const rp of route) {
+                const i = getIndex(rp);
+                if (i <= handle.pointIndex && (rp1 === undefined || i > getIndex(rp1)))
+                    rp1 = rp;
+                if (i > handle.pointIndex && (rp2 === undefined || i < getIndex(rp2)))
+                    rp2 = rp;
+            }
+            if (rp1 !== undefined && rp2 !== undefined) {
+                return centerOfLine(rp1, rp2);
             }
         } else if (handle.pointIndex >= 0) {
             return parent.routingPoints[handle.pointIndex];
@@ -330,9 +328,17 @@ export class MoveMouseListener extends MouseListener {
     }
 
     mouseUp(target: SModelElement, event: MouseEvent): Action[] {
+        const result: Action[] = [];
+        if (this.lastDragPosition) {
+            target.root.index.all()
+                .forEach(element => {
+                    if (element instanceof SRoutingHandle && element.editMode)
+                        result.push(new SwitchEditModeAction([], [element.id]));
+                });
+        }
         this.hasDragged = false;
         this.lastDragPosition = undefined;
-        return [];
+        return result;
     }
 
     decorate(vnode: VNode, element: SModelElement): VNode {

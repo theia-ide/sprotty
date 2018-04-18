@@ -25,47 +25,33 @@ export function linearRoute(edge: SEdge): RoutedPoint[] {
     }
 
     let sourceAnchor: Point;
+    let targetAnchor: Point;
     const rpCount = edge.routingPoints !== undefined ? edge.routingPoints.length : 0;
     if (rpCount >= 1) {
         // Use the first routing point as start anchor reference
         const p0 = edge.routingPoints[0];
         sourceAnchor = source.getTranslatedAnchor(p0, edge.parent, edge, edge.sourceAnchorCorrection);
-    } else {
-        // Use the target center as start anchor reference
-        const reference = center(target.bounds);
-        sourceAnchor = source.getTranslatedAnchor(reference, target.parent, edge, edge.sourceAnchorCorrection);
-    }
-    const result: RoutedPoint[] = [];
-    result.push({ kind: 'source', x: sourceAnchor.x, y: sourceAnchor.y });
-    let previousPoint = sourceAnchor;
-
-    // Process all routing points except the last one
-    for (let i = 0; i < rpCount - 1; i++) {
-        const p = edge.routingPoints[i];
-        let minDistance = minimalPointDistance;
-        if (i === 0 && edge.sourceAnchorCorrection)
-            minDistance += edge.sourceAnchorCorrection;
-        if (maxDistance(previousPoint, p) >= minDistance) {
-            result.push({ kind: 'linear', x: p.x, y: p.y, pointIndex: i });
-            previousPoint = p;
-        }
-    }
-
-    let targetAnchor: Point;
-    if (rpCount >= 1) {
         // Use the last routing point as end anchor reference
         const pn = edge.routingPoints[rpCount - 1];
         targetAnchor = target.getTranslatedAnchor(pn, edge.parent, edge, edge.targetAnchorCorrection);
-        // Add the last routing point if it's not too close to the target anchor
-        const minDistance = minimalPointDistance + (edge.targetAnchorCorrection || 0);
-        if (maxDistance(previousPoint, pn) >= minimalPointDistance
-                && maxDistance(pn, targetAnchor) >= minDistance) {
-            result.push({ kind: 'linear', x: pn.x, y: pn.y, pointIndex: rpCount - 1 });
-        }
     } else {
+        // Use the target center as start anchor reference
+        const startRef = center(target.bounds);
+        sourceAnchor = source.getTranslatedAnchor(startRef, target.parent, edge, edge.sourceAnchorCorrection);
         // Use the source center as end anchor reference
-        const reference = center(source.bounds);
-        targetAnchor = target.getTranslatedAnchor(reference, source.parent, edge, edge.targetAnchorCorrection);
+        const endRef = center(source.bounds);
+        targetAnchor = target.getTranslatedAnchor(endRef, source.parent, edge, edge.targetAnchorCorrection);
+    }
+
+    const result: RoutedPoint[] = [];
+    result.push({ kind: 'source', x: sourceAnchor.x, y: sourceAnchor.y });
+    for (let i = 0; i < rpCount; i++) {
+        const p = edge.routingPoints[i];
+        if (i > 0 && i < rpCount - 1
+            || i === 0 && maxDistance(sourceAnchor, p) >= minimalPointDistance + (edge.sourceAnchorCorrection || 0)
+            || i === rpCount - 1 && maxDistance(p, targetAnchor) >= minimalPointDistance + (edge.targetAnchorCorrection || 0)) {
+            result.push({ kind: 'linear', x: p.x, y: p.y, pointIndex: i });
+        }
     }
     result.push({ kind: 'target', x: targetAnchor.x, y: targetAnchor.y});
     return result;

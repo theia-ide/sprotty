@@ -201,9 +201,27 @@ export function maxDistance(a: Point, b: Point): number {
     return Math.max(Math.abs(b.x - a.x), Math.abs(b.y - a.y));
 }
 
-// range (-PI, PI]
-export function angle(a: Point, b: Point): number {
-    return Math.atan2(b.y - a.y, b.x - a.x);
+/**
+ * Computes the angle in radians of the given point to the x-axis of the coordinate system.
+ * The result is in the range [-pi, pi].
+ * @param {Point} p - A point in the Eucledian plane
+ */
+export function angleOfPoint(p: Point): number {
+    return Math.atan2(p.y, p.x);
+}
+
+/**
+ * Computes the angle in radians between the two given points (relative to the origin of the coordinate system).
+ * The result is in the range [0, pi]. Returns NaN if the points are equal.
+ * @param {Point} a - First point
+ * @param {Point} b - Second point
+ */
+export function angleBetweenPoints(a: Point, b: Point): number {
+    const lengthProduct = Math.sqrt((a.x * a.x + a.y * a.y) * (b.x * b.x + b.y * b.y));
+    if (isNaN(lengthProduct) || lengthProduct === 0)
+        return NaN;
+    const dotProduct = a.x * b.x + a.y * b.y;
+    return Math.acos(dotProduct / lengthProduct);
 }
 
 /**
