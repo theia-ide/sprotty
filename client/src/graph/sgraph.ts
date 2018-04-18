@@ -19,7 +19,7 @@ import { Selectable, selectFeature } from '../features/select/model';
 import { ViewportRootElement } from '../features/viewport/viewport-root';
 import { Bounds, ORIGIN_POINT, Point, center } from '../utils/geometry';
 import { SShapeElement, SShapeElementSchema } from '../features/bounds/model';
-import { editFeature, Routable } from '../features/edit/model';
+import { editFeature, Routable, filterEditModeHandles } from '../features/edit/model';
 import { translatePoint } from '../base/model/smodel-utils';
 import { RoutedPoint, linearRoute } from './routing';
 
@@ -188,7 +188,8 @@ export class SEdge extends SChildElement implements Fadeable, Selectable, Routab
     }
 
     route(): RoutedPoint[] {
-        return linearRoute(this);
+        const route = linearRoute(this);
+        return filterEditModeHandles(route, this);
     }
 
     hasFeature(feature: symbol): boolean {

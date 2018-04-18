@@ -7,7 +7,7 @@
 
 import { VNode } from "snabbdom/vnode";
 import {
-    RenderingContext, SEdge, PolylineEdgeView, CircularNodeView, RectangularNodeView, angle, Point, toDegrees,
+    RenderingContext, SEdge, PolylineEdgeView, CircularNodeView, RectangularNodeView, angleOfPoint, Point, toDegrees,
     RGBColor, toSVG, rgb
 } from "../../../src";
 import * as snabbdom from "snabbdom-jsx";
@@ -48,7 +48,7 @@ export class FlowEdgeView extends PolylineEdgeView {
         const p2 = segments[segments.length - 1];
         return [
             <path class-sprotty-edge={true} class-arrow={true} d="M 0,0 L 10,-4 L 10,4 Z"
-                  transform={`rotate(${toDegrees(angle(p2, p1))} ${p2.x} ${p2.y}) translate(${p2.x} ${p2.y})`}/>
+                  transform={`rotate(${toDegrees(angleOfPoint({ x: p1.x - p2.x, y: p1.y - p2.y }))} ${p2.x} ${p2.y}) translate(${p2.x} ${p2.y})`}/>
         ];
     }
 }

@@ -51,6 +51,7 @@ export class SelectAllAction implements Action {
 
 export type ElementSelection = {
     element: SChildElement
+    parent: SParentElement
     index: number
 };
 
@@ -70,7 +71,8 @@ export class SelectCommand extends Command {
             const element = model.index.getById(id);
             if (element instanceof SChildElement && isSelectable(element)) {
                 this.selected.push({
-                    element: element,
+                    element,
+                    parent: element.parent,
                     index: element.parent.children.indexOf(element)
                 });
             }
@@ -79,7 +81,8 @@ export class SelectCommand extends Command {
             const element = model.index.getById(id);
             if (element instanceof SChildElement && isSelectable(element)) {
                 this.deselected.push({
-                    element: element,
+                    element,
+                    parent: element.parent,
                     index: element.parent.children.indexOf(element)
                 });
             }
@@ -93,7 +96,7 @@ export class SelectCommand extends Command {
             const element = selection.element;
             if (isSelectable(element))
                 element.selected = false;
-            element.parent.move(element, selection.index);
+            selection.parent.move(element, selection.index);
         }
         this.deselected.reverse().forEach(selection => {
             if (isSelectable(selection.element))
@@ -106,8 +109,8 @@ export class SelectCommand extends Command {
         for (let i = 0; i < this.selected.length; ++i) {
             const selection = this.selected[i];
             const element = selection.element;
-            const childrenLength = element.parent.children.length;
-            element.parent.move(element, childrenLength - 1);
+            const childrenLength = selection.parent.children.length;
+            selection.parent.move(element, childrenLength - 1);
         }
         this.deselected.forEach(selection => {
             if (isSelectable(selection.element))

@@ -6,11 +6,11 @@
  */
 
 import { injectable } from "inversify";
+import { Point } from "../../utils/geometry";
+import { Routable, isRoutable, canEditRouting, SRoutingHandle } from './model';
 import { Action } from "../../base/actions/action";
 import { Command, CommandExecutionContext, CommandResult } from "../../base/commands/command";
 import { SModelElement, SModelRoot, SParentElement, SModelIndex } from '../../base/model/smodel';
-import { Point } from "../../utils/geometry";
-import { Routable, isRoutable, canEditRouting, SRoutingHandle } from './model';
 import { Animation } from '../../base/animations/animation';
 
 export function createRoutingHandle(kind: 'junction' | 'line', parentId: string, index: number): SRoutingHandle {
@@ -43,33 +43,86 @@ export class SwitchEditModeAction implements Action {
 export class SwitchEditModeCommand extends Command {
     static KIND: string = "switchEditMode";
 
+    protected elementsToActivate: SModelElement[] = [];
+    protected elementsToDeactivate: SModelElement[] = [];
+    protected handlesToRemove: { handle: SRoutingHandle, parent: SParentElement & Routable, point?: Point }[] = [];
+
     constructor(public action: SwitchEditModeAction) {
         super();
     }
 
-    execute(context: CommandExecutionContext): CommandResult {
+    execute(context: CommandExecutionContext): SModelRoot {
         const index = context.root.index;
         this.action.elementsToActivate.forEach(id => {
             const element = index.getById(id);
-            if (element !== undefined && canEditRouting(element) && element instanceof SParentElement) {
-                createRoutingHandles(element);
-            }
+            if (element !== undefined )
+                this.elementsToActivate.push(element);
         });
         this.action.elementsToDeactivate.forEach(id => {
             const element = index.getById(id);
-            if (element !== undefined && isRoutable(element) && element instanceof SParentElement) {
-                element.removeAll(child => child instanceof SRoutingHandle);
+            if (element !== undefined)
+                this.elementsToDeactivate.push(element);
+            if (element instanceof SRoutingHandle && isRoutable(element.parent)) {
+                const parent = element.parent;
+                if (this.shouldRemoveHandle(element, parent)) {
+                    this.handlesToRemove.push({ handle: element, parent });
+                    this.elementsToDeactivate.push(parent);
+                    this.elementsToActivate.push(parent);
+                }
             }
+        });
+        return this.doExecute(context);
+    }
+
+    protected doExecute(context: CommandExecutionContext): SModelRoot {
+        this.handlesToRemove.forEach(entry => {
+            entry.point = entry.parent.routingPoints.splice(entry.handle.pointIndex, 1)[0];
+        });
+        this.elementsToDeactivate.forEach(element => {
+            if (isRoutable(element) && element instanceof SParentElement)
+                element.removeAll(child => child instanceof SRoutingHandle);
+            else if (element instanceof SRoutingHandle)
+                element.editMode = false;
+        });
+        this.elementsToActivate.forEach(element => {
+            if (canEditRouting(element) && element instanceof SParentElement)
+                createRoutingHandles(element);
+            else if (element instanceof SRoutingHandle)
+                element.editMode = true;
         });
         return context.root;
     }
 
+    protected shouldRemoveHandle(handle: SRoutingHandle, parent: Routable): boolean {
+        if (handle.kind === 'junction') {
+            const route = parent.route();
+            return route.find(rp => rp.pointIndex === handle.pointIndex) === undefined;
+        }
+        return false;
+    }
+
     undo(context: CommandExecutionContext): CommandResult {
-        return context.root; // TODO
+        this.handlesToRemove.forEach(entry => {
+            if (entry.point !== undefined)
+                entry.parent.routingPoints.splice(entry.handle.pointIndex, 0, entry.point);
+        });
+        this.elementsToActivate.forEach(element => {
+            if (isRoutable(element) && element instanceof SParentElement)
+                element.removeAll(child => child instanceof SRoutingHandle);
+            else if (element instanceof SRoutingHandle)
+                element.editMode = false;
+        });
+        this.elementsToDeactivate.forEach(element => {
+            if (canEditRouting(element) && element instanceof SParentElement)
+                createRoutingHandles(element);
+            else if (element instanceof SRoutingHandle)
+                element.editMode = true;
+        });
+        return context.root;
     }
 
     redo(context: CommandExecutionContext): CommandResult {
-        return this.execute(context);
+        return this.doExecute(context);
     }
 }
 
@@ -82,6 +135,7 @@ export interface HandleMove {
 export interface ResolvedHandleMove {
     elementId: string
     element: SRoutingHandle
+    parent: SParentElement
     fromPosition?: Point
     toPosition: Point
 }
@@ -113,7 +167,7 @@ export class MoveRoutingHandleCommand extends Command {
                 const resolvedMove = this.resolve(move, model.index);
                 if (resolvedMove !== undefined) {
                     this.resolvedMoves.set(resolvedMove.elementId, resolvedMove);
-                    const parent = resolvedMove.element.parent;
+                    const parent = resolvedMove.parent;
                     if (isRoutable(parent))
                         this.originalRoutingPoints.set(parent.id, parent.routingPoints.slice());
                 }
@@ -132,6 +186,7 @@ export class MoveRoutingHandleCommand extends Command {
             return {
                 elementId: move.elementId,
                 element: element,
+                parent: element.parent,
                 fromPosition: move.fromPosition,
                 toPosition: move.toPosition
             };
@@ -142,7 +197,7 @@ export class MoveRoutingHandleCommand extends Command {
     protected doMove(context: CommandExecutionContext): SModelRoot {
         this.resolvedMoves.forEach(res => {
             const handle = res.element;
-            const parent = handle.parent;
+            const parent = res.parent;
             if (isRoutable(parent)) {
                 const points = parent.routingPoints;
                 let index = handle.pointIndex;
@@ -172,8 +227,7 @@ export class MoveRoutingHandleCommand extends Command {
             return new MoveHandlesAnimation(context.root, this.resolvedMoves, this.originalRoutingPoints, context, true).start();
         } else {
             this.resolvedMoves.forEach(res => {
-                const handle = res.element;
-                const parent = handle.parent;
+                const parent = res.parent;
                 const points = this.originalRoutingPoints.get(parent.id);
                 if (points !== undefined && isRoutable(parent)) {
                     parent.routingPoints = points;
@@ -206,8 +260,8 @@ export class MoveHandlesAnimation extends Animation {
     }
 
     tween(t: number) {
-        this.handleMoves.forEach((handleMove) => {
-            const parent = handleMove.element.parent;
+        this.handleMoves.forEach(handleMove => {
+            const parent = handleMove.parent;
             if (isRoutable(parent) && handleMove.fromPosition !== undefined) {
                 if (this.reverse && t === 1) {
                     const revPoints = this.originalRoutingPoints.get(parent.id);
