@@ -9,7 +9,7 @@ sprotty is a next-generation, open-source, web-based diagramming framework. Some
 * configuration via dependency injection,
 * integration with [Xtext, the Language Server Protocol and Theia](https://github.com/theia-ide/theia-sprotty-example) that can be run as rich-client as well as in the browser..
 
-[![sprotty demo](./sprotty_demo_screenshot.png)](http://www.youtube.com/watch?v=IydM4l7WFKk "sprotty demo")
+[![sprotty demo](https://raw.githubusercontent.com/theia-ide/sprotty/master/sprotty_demo_screenshot.png)](http://www.youtube.com/watch?v=IydM4l7WFKk "sprotty demo")
 
 ## Getting started
 
