@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { isCtrlOrCmd } from "../../utils/browser";
+import { matchesKeystroke } from "../../utils/keyboard";
 import { Action } from "../../base/actions/action";
 import { KeyListener } from "../../base/views/key-tool";
 import { SModelElement } from "../../base/model/smodel";
@@ -22,12 +22,10 @@ export class RedoAction implements Action {
 
 export class UndoRedoKeyListener extends KeyListener {
     keyDown(element: SModelElement, event: KeyboardEvent): Action[] {
-        if (isCtrlOrCmd(event) && event.keyCode === 90) {
-            if (event.shiftKey)
-                return [new RedoAction];
-            else
-                return [new UndoAction];
-        }
+        if (matchesKeystroke(event, 'KeyZ', 'ctrlCmd'))
+            return [new UndoAction];
+        if (matchesKeystroke(event, 'KeyZ', 'ctrlCmd', 'shift'))
+            return [new RedoAction];
         return [];
     }
 }

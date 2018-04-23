@@ -6,7 +6,7 @@
  */
 
 import { Bounds, center, combine, isValidDimension } from "../../utils/geometry";
-import { isCtrlOrCmd } from "../../utils/browser";
+import { matchesKeystroke } from "../../utils/keyboard";
 import { SChildElement } from '../../base/model/smodel';
 import { Action } from "../../base/actions/action";
 import { Command, CommandExecutionContext } from "../../base/commands/command";
@@ -203,14 +203,10 @@ export class FitToScreenCommand extends BoundsAwareViewportCommand {
 
 export class CenterKeyboardListener extends KeyListener {
     keyDown(element: SModelElement, event: KeyboardEvent): Action[] {
-        if (isCtrlOrCmd(event)) {
-            switch (event.keyCode) {
-                case 67:
-                    return [new CenterAction([])];
-                case 70:
-                    return [new FitToScreenAction([])];
-            }
-        }
+        if (matchesKeystroke(event, 'KeyC', 'ctrlCmd', 'shift'))
+            return [new CenterAction([])];
+        if (matchesKeystroke(event, 'KeyF', 'ctrlCmd', 'shift'))
+            return [new FitToScreenAction([])];
         return [];
     }
 }
