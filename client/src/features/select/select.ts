@@ -8,6 +8,7 @@
 import { inject, optional } from 'inversify';
 import { VNode } from "snabbdom/vnode";
 import { isCtrlOrCmd } from "../../utils/browser";
+import { matchesKeystroke } from "../../utils/keyboard";
 import { toArray } from '../../utils/iterable';
 import { SChildElement, SModelElement, SModelRoot, SParentElement } from '../../base/model/smodel';
 import { findParentByFeature } from "../../base/model/smodel-utils";
@@ -249,7 +250,7 @@ export class SelectMouseListener extends MouseListener {
 
 export class SelectKeyboardListener extends KeyListener {
     keyDown(element: SModelElement, event: KeyboardEvent): Action[] {
-        if (isCtrlOrCmd(event) && event.keyCode === 65) {
+        if (matchesKeystroke(event, 'KeyA', 'ctrlCmd')) {
             const selected = toArray(element.root.index.all().filter(e => isSelectable(e)).map(e => e.id));
             return [new SelectAction(selected, [])];
         }

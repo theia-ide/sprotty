@@ -7,7 +7,7 @@
 
 /**
  * Returns whether the mouse or keyboard event includes the CMD key
- * on Mac or CTRL key on Linux / others
+ * on Mac or CTRL key on Linux / others.
  */
 export function isCtrlOrCmd(event: KeyboardEvent | MouseEvent) {
     if (isMac())

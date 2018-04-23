@@ -13,7 +13,7 @@ import { isSelectable } from '../select/model';
 import { Action } from '../../base/actions/action';
 import { SModelElement, SModelRoot } from '../../base/model/smodel';
 import { KeyListener } from '../../base/views/key-tool';
-import { isCtrlOrCmd } from '../../utils/browser';
+import { matchesKeystroke } from '../../utils/keyboard';
 import { isExportable } from './model';
 import { SvgExporter } from './svg-exporter';
 import { EMPTY_ROOT } from '../../base/model/smodel-factory';
@@ -24,7 +24,7 @@ import { TYPES } from '../../base/types';
 @injectable()
 export class ExportSvgKeyListener extends KeyListener {
     keyDown(element: SModelElement, event: KeyboardEvent): Action[] {
-        if (isCtrlOrCmd(event) && event.keyCode === 69)
+        if (matchesKeystroke(event, 'KeyE', 'ctrlCmd', 'shift'))
             return [ new RequestExportSvgAction() ];
         else
             return [];

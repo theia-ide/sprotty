@@ -6,13 +6,14 @@
  */
 
 import { inject, injectable } from "inversify";
+import { matchesKeystroke } from '../../utils/keyboard';
+import { Bounds, Point, translate } from "../../utils/geometry";
 import { TYPES } from "../../base/types";
 import { SModelElement, SModelRoot, SModelRootSchema } from "../../base/model/smodel";
 import { MouseListener } from "../../base/views/mouse-tool";
 import { Action } from "../../base/actions/action";
 import { Command, CommandExecutionContext, PopupCommand } from "../../base/commands/command";
 import { EMPTY_ROOT } from "../../base/model/smodel-factory";
-import { Bounds, Point, translate } from "../../utils/geometry";
 import { KeyListener } from "../../base/views/key-tool";
 import { findParentByFeature, findParent } from "../../base/model/smodel-utils";
 import { ViewerOptions } from "../../base/views/viewer-options";
@@ -276,7 +277,7 @@ export class PopupHoverMouseListener extends AbstractHoverMouseListener {
 
 export class HoverKeyListener extends KeyListener {
     keyDown(element: SModelElement, event: KeyboardEvent): Action[] {
-        if (event.keyCode === 27) {
+        if (matchesKeystroke(event, 'Escape')) {
             return [new SetPopupModelAction({type: EMPTY_ROOT.type, id: EMPTY_ROOT.id})];
         }
         return [];
