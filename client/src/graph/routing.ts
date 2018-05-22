@@ -15,9 +15,13 @@ export interface RoutedPoint extends Point {
 
 export type EdgeRouter = (edge: SEdge) => RoutedPoint[];
 
-const minimalPointDistance: number = 2;
 
-export function linearRoute(edge: SEdge): RoutedPoint[] {
+export interface LinearRouteOptions {
+    minimalPointDistance: number;
+}
+
+export function linearRoute(edge: SEdge,
+        options: LinearRouteOptions = { minimalPointDistance: 2 }): RoutedPoint[] {
     const source = edge.source;
     const target = edge.target;
     if (source === undefined || target === undefined) {
@@ -48,8 +52,8 @@ export function linearRoute(edge: SEdge): RoutedPoint[] {
     for (let i = 0; i < rpCount; i++) {
         const p = edge.routingPoints[i];
         if (i > 0 && i < rpCount - 1
-            || i === 0 && maxDistance(sourceAnchor, p) >= minimalPointDistance + (edge.sourceAnchorCorrection || 0)
-            || i === rpCount - 1 && maxDistance(p, targetAnchor) >= minimalPointDistance + (edge.targetAnchorCorrection || 0)) {
+            || i === 0 && maxDistance(sourceAnchor, p) >= options.minimalPointDistance + (edge.sourceAnchorCorrection || 0)
+            || i === rpCount - 1 && maxDistance(p, targetAnchor) >= options.minimalPointDistance + (edge.targetAnchorCorrection || 0)) {
             result.push({ kind: 'linear', x: p.x, y: p.y, pointIndex: i });
         }
     }

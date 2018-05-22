@@ -114,7 +114,9 @@ export abstract class DiagramServer extends ModelSource {
             if (!object.clientId || object.clientId === this.clientId) {
                 (object.action as any)[receivedFromServerProperty] = true;
                 this.logger.log(this, 'receiving', object);
-                this.actionDispatcher.dispatch(object.action, this.storeNewModel.bind(this));
+                this.actionDispatcher.dispatch(object.action).then(() => {
+                    this.storeNewModel(object.action);
+                });
             }
         } else {
             this.logger.error(this, 'received data is not an action message', object);

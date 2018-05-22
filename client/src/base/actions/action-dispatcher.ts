@@ -17,8 +17,8 @@ import { Action, isAction } from "./action";
 import { ActionHandlerRegistry } from "./action-handler";
 
 export interface IActionDispatcher {
-    dispatch(action: Action, onExecute?: (action: Action) => void): void
-    dispatchAll(actions: Action[]): void
+    dispatch(action: Action): Promise<void>
+    dispatchAll(actions: Action[]): Promise<void>
 }
 
 /**
@@ -28,8 +28,8 @@ export interface IActionDispatcher {
 @injectable()
 export class ActionDispatcher implements IActionDispatcher {
 
-    protected blockUntilActionKind: string | undefined;
-    protected postponedActions: ActionAndHook[];
+    protected blockUntil?: (action: Action) => boolean;
+    protected postponedActions: PostponedAction[] = [];
 
     constructor(@inject(TYPES.ActionHandlerRegistry) protected actionHandlerRegistry: ActionHandlerRegistry,
                 @inject(TYPES.ICommandStack) protected commandStack: ICommandStack,
@@ -37,64 +37,68 @@ export class ActionDispatcher implements IActionDispatcher {
                 @inject(TYPES.AnimationFrameSyncer) protected syncer: AnimationFrameSyncer) {
         this.postponedActions = [];
         const initialCommand = new SetModelCommand(new SetModelAction(EMPTY_ROOT));
-        this.blockUntilActionKind = initialCommand.blockUntilActionKind;
+        this.blockUntil = initialCommand.blockUntil;
         this.commandStack.execute(initialCommand);
     }
 
-    dispatchAll(actions: Action[]): void {
-        actions.forEach(action => this.dispatch(action));
+    dispatchAll(actions: Action[]): Promise<void> {
+        return Promise.all(actions.map(action => this.dispatch(action))) as Promise<any>;
     }
 
-    dispatch(action: Action, onExecute?: (action: Action) => void): void {
-        if (action.kind === this.blockUntilActionKind) {
-            this.blockUntilActionKind = undefined;
-            this.handleAction(action);
-            const actions = this.postponedActions;
-            this.postponedActions = [];
-            actions.forEach(
-                a => this.dispatch(a.action, a.onExecute)
-            );
-            return;
-        }
-        if (this.blockUntilActionKind !== undefined) {
-            this.logger.log(this, 'waiting for ' + this.blockUntilActionKind + '. postponing', action);
-            this.postponedActions.push({
-                action: action,
-                onExecute: onExecute
-            });
-            return;
-        }
-        if (onExecute !== undefined)
-            onExecute.call(null, action);
-        if (action.kind === UndoAction.KIND) {
-            this.commandStack.undo();
+    dispatch(action: Action): Promise<void> {
+        if (this.blockUntil !== undefined) {
+            return this.handleBlocked(action, this.blockUntil);
+        } else if (action.kind === UndoAction.KIND) {
+            return this.commandStack.undo().then(() => {});
         } else if (action.kind === RedoAction.KIND) {
-            this.commandStack.redo();
+            return this.commandStack.redo().then(() => {});
         } else {
-            this.handleAction(action);
+            return this.handleAction(action);
         }
     }
 
-    protected handleAction(action: Action): void {
+    protected handleAction(action: Action): Promise<void> {
         this.logger.log(this, 'handle', action);
         const handlers = this.actionHandlerRegistry.get(action.kind);
         if (handlers.length > 0) {
+            const promises: Promise<any>[] = [];
             for (const handler of handlers) {
                 const result = handler.handle(action);
-                if (isAction(result))
-                    this.dispatch(result);
-                else if (result !== undefined) {
-                    this.commandStack.execute(result);
-                    this.blockUntilActionKind = result.blockUntilActionKind;
+                if (isAction(result)) {
+                    promises.push(this.dispatch(result));
+                } else if (result !== undefined) {
+                    promises.push(this.commandStack.execute(result));
+                    this.blockUntil = result.blockUntil;
                 }
             }
+            return Promise.all(promises) as Promise<any>;
         } else {
-            this.logger.warn(this, 'missing handler for action', action);
+            this.logger.warn(this, 'Missing handler for action', action);
+            return Promise.reject(`Missing handler for action '${action.kind}'`);
+        }
+    }
+
+    protected handleBlocked(action: Action, predicate: (action: Action) => boolean): Promise<void> {
+        if (predicate(action)) {
+            this.blockUntil = undefined;
+            const result = this.handleAction(action);
+            const actions = this.postponedActions;
+            this.postponedActions = [];
+            for (const a of actions) {
+                this.dispatch(a.action).then(a.resolve, a.reject);
+            }
+            return result;
+        } else {
+            this.logger.log(this, 'Action is postponed due to block condition', action);
+            return new Promise((resolve, reject) => {
+                this.postponedActions.push({ action, resolve, reject });
+            });
         }
     }
 }
 
-export interface ActionAndHook {
+export interface PostponedAction {
     action: Action
-    onExecute?: (action: Action) => void
+    resolve: () => void
+    reject: (reason: any) => void
 }

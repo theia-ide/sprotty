@@ -59,7 +59,7 @@ export class SetModelCommand extends Command {
         return this.newRoot;
     }
 
-    get blockUntilActionKind() {
-        return InitializeCanvasBoundsCommand.KIND;
+    get blockUntil(): (action: Action) => boolean {
+        return action => action.kind === InitializeCanvasBoundsCommand.KIND;
     }
 }
