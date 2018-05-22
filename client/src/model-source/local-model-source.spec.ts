@@ -26,14 +26,16 @@ describe('LocalModelSource', () => {
     class MockActionDispatcher implements IActionDispatcher {
         readonly actions: Action[] = [];
 
-        dispatchAll(actions: Action[]): void {
+        dispatchAll(actions: Action[]): Promise<void> {
             for (const action of actions) {
                 this.dispatch(action);
             }
+            return Promise.resolve();
         }
 
-        dispatch(action: Action): void {
+        dispatch(action: Action): Promise<void> {
             this.actions.push(action);
+            return Promise.resolve();
         }
     }
 
@@ -147,6 +149,7 @@ describe('LocalModelSource', () => {
         const modelSource = container.get<LocalModelSource>(TYPES.ModelSource);
         const dispatcher = container.get<MockActionDispatcher>(TYPES.IActionDispatcher);
 
+        modelSource.setModel({ type: 'root', id: 'root' });
         modelSource.addElements([
             {
                 type: 'node',
@@ -158,8 +161,8 @@ describe('LocalModelSource', () => {
             }
         ]);
         expect(modelSource.model).to.deep.equal({
-            type: 'NONE',
-            id: 'ROOT',
+            type: 'root',
+            id: 'root',
             children: [
                 {
                 type: 'node',
@@ -173,8 +176,8 @@ describe('LocalModelSource', () => {
         });
         modelSource.removeElements(['child1']);
         expect(modelSource.model).to.deep.equal({
-            type: 'NONE',
-            id: 'ROOT',
+            type: 'root',
+            id: 'root',
             children: [
                 {
                     type: 'node',
@@ -183,33 +186,84 @@ describe('LocalModelSource', () => {
             ]
         });
 
-        expect(dispatcher.actions).to.have.lengthOf(2);
-        const action0 = dispatcher.actions[0] as UpdateModelAction;
-        expect(action0.matches).to.deep.equal([
+        expect(dispatcher.actions).to.have.lengthOf(3);
+        const action1 = dispatcher.actions[1] as UpdateModelAction;
+        expect(action1.matches).to.deep.equal([
             {
                 right: {
                     type: 'node',
                     id: 'child1'
                 },
-                rightParentId: 'ROOT'
+                rightParentId: 'root'
             },
             {
                 right: {
                     type: 'node',
                     id: 'child2'
                 },
-                rightParentId: 'ROOT'
+                rightParentId: 'root'
             }
         ]);
-        const action1 = dispatcher.actions[1] as UpdateModelAction;
-        expect(action1.matches).to.deep.equal([
+        const action2 = dispatcher.actions[2] as UpdateModelAction;
+        expect(action2.matches).to.deep.equal([
             {
                 left: {
                     type: 'node',
                     id: 'child1'
                 },
-                leftParentId: 'ROOT'
+                leftParentId: 'root'
             }
         ]);
+    });
+
+    it('resolves promises in fixed mode', async () => {
+        const container = setup({ needsClientLayout: false });
+        const modelSource = container.get<LocalModelSource>(TYPES.ModelSource);
+        const dispatcher = container.get<MockActionDispatcher>(TYPES.IActionDispatcher);
+
+        const root1: SModelRootSchema = {
+            type: 'root',
+            id: 'root'
+        };
+        await modelSource.setModel(root1);
+
+        const root2: SModelRootSchema = {
+            type: 'root',
+            id: 'root',
+            children: [{ type: 'blob', id: 'foo' }]
+        };
+        await modelSource.updateModel(root2);
+
+        expect(dispatcher.actions).to.have.lengthOf(2);
+    });
+
+    it('resolves promises in dynamic mode', async () => {
+        const container = setup({ needsClientLayout: true });
+        const modelSource = container.get<LocalModelSource>(TYPES.ModelSource);
+        const dispatcher = container.get<MockActionDispatcher>(TYPES.IActionDispatcher);
+
+        const root1: SModelRootSchema = {
+            type: 'root',
+            id: 'root',
+            children: [{ type: 'node', id: 'child1' }]
+        };
+        const promise1 = modelSource.setModel(root1);
+        modelSource.handle(new ComputedBoundsAction([
+            { elementId: 'child1', newBounds: { x: 10, y: 10, width: 20, height: 20 } }
+        ]));
+        await promise1;
+
+        const root2: SModelRootSchema = {
+            type: 'root',
+            id: 'root',
+            children: [{ type: 'node', id: 'bar' }]
+        };
+        const promise2 = modelSource.updateModel(root2);
+        modelSource.handle(new ComputedBoundsAction([
+            { elementId: 'bar', newBounds: { x: 10, y: 10, width: 20, height: 20 } }
+        ]));
+        await promise2;
+
+        expect(dispatcher.actions).to.have.lengthOf(4);
     });
 });

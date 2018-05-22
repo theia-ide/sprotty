@@ -22,35 +22,6 @@ import defaultModule from "../di.config";
 
 describe('ActionDispatcher', () => {
 
-    let execCount = 0;
-    let undoCount = 0;
-    let redoCount = 0;
-
-    const mockCommandStack: ICommandStack = {
-        execute(command: ICommand) {
-            ++execCount;
-            return null!;
-        },
-        executeAll(commands: ICommand[]) {
-            ++execCount;
-            return null!;
-        },
-        undo() {
-            ++undoCount;
-            return null!;
-        },
-        redo() {
-            ++redoCount;
-            return null!;
-        }
-    };
-
-    const container = new Container();
-    container.load(defaultModule);
-    container.rebind(TYPES.ICommandStack).toConstantValue(mockCommandStack);
-
-    const actionDispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher);
-
     class MockCommand extends Command {
         static KIND = 'mock';
 
@@ -71,46 +42,97 @@ describe('ActionDispatcher', () => {
         kind = MockCommand.KIND;
     }
 
-    it('undo/redo/execute', () => {
+    function setup() {
+        const state = {
+            execCount: 0,
+            undoCount: 0,
+            redoCount: 0
+        }
+
+        const mockCommandStack: ICommandStack = {
+            execute(command: ICommand): Promise<any> {
+                ++state.execCount;
+                return Promise.resolve();
+            },
+            executeAll(commands: ICommand[]): Promise<any> {
+                ++state.execCount;
+                return Promise.resolve();
+            },
+            undo(): Promise<any> {
+                ++state.undoCount;
+                return Promise.resolve();
+            },
+            redo(): Promise<any> {
+                ++state.redoCount;
+                return Promise.resolve();
+            }
+        };
+
+        const container = new Container();
+        container.load(defaultModule);
+        container.rebind(TYPES.ICommandStack).toConstantValue(mockCommandStack);
+
+        const actionDispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher);
+        const registry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry);
+        return { actionDispatcher, registry, state };
+    }
+
+    it('should execute/undo/redo', () => {
+        const { actionDispatcher, registry, state } = setup();
+
         // an initial SetModelAction is fired automatically
-        expect(execCount).to.be.equal(1);
-        expect(undoCount).to.be.equal(0);
-        expect(redoCount).to.be.equal(0);
+        expect(state.execCount).to.be.equal(1);
+        expect(state.undoCount).to.be.equal(0);
+        expect(state.redoCount).to.be.equal(0);
 
         // actions are postponed until InitializeCanvasBoundsAction comes in
         actionDispatcher.dispatch(new UndoAction);
-        expect(execCount).to.be.equal(1);
-        expect(undoCount).to.be.equal(0);
-        expect(redoCount).to.be.equal(0);
+        expect(state.execCount).to.be.equal(1);
+        expect(state.undoCount).to.be.equal(0);
+        expect(state.redoCount).to.be.equal(0);
 
         actionDispatcher.dispatch(new InitializeCanvasBoundsAction(EMPTY_BOUNDS));
         // postponed actions are fired as well
-        expect(execCount).to.be.equal(2);
-        expect(undoCount).to.be.equal(1);
-        expect(redoCount).to.be.equal(0);
+        expect(state.execCount).to.be.equal(2);
+        expect(state.undoCount).to.be.equal(1);
+        expect(state.redoCount).to.be.equal(0);
 
         actionDispatcher.dispatch(new RedoAction);
-        expect(execCount).to.be.equal(2);
-        expect(undoCount).to.be.equal(1);
-        expect(redoCount).to.be.equal(1);
+        expect(state.execCount).to.be.equal(2);
+        expect(state.undoCount).to.be.equal(1);
+        expect(state.redoCount).to.be.equal(1);
 
-        actionDispatcher.dispatch({kind: 'unknown'});
-        expect(execCount).to.be.equal(2);
-        expect(undoCount).to.be.equal(1);
-        expect(redoCount).to.be.equal(1);
+        actionDispatcher.dispatch({ kind: 'unknown' }).catch(() => {});
+        expect(state.execCount).to.be.equal(2);
+        expect(state.undoCount).to.be.equal(1);
+        expect(state.redoCount).to.be.equal(1);
 
-        // MoveAction is not registered by default
-        actionDispatcher.dispatch(new MockAction());
-        expect(execCount).to.be.equal(2);
-        expect(undoCount).to.be.equal(1);
-        expect(redoCount).to.be.equal(1);
+        // MockAction is not registered by default
+        actionDispatcher.dispatch(new MockAction()).catch(() => {});
+        expect(state.execCount).to.be.equal(2);
+        expect(state.undoCount).to.be.equal(1);
+        expect(state.redoCount).to.be.equal(1);
 
-        const registry = container.get<ActionHandlerRegistry>(TYPES.ActionHandlerRegistry);
         registry.registerCommand(MockCommand);
-
         actionDispatcher.dispatch(new MockAction());
-        expect(execCount).to.be.equal(3);
-        expect(undoCount).to.be.equal(1);
-        expect(redoCount).to.be.equal(1);
+        expect(state.execCount).to.be.equal(3);
+        expect(state.undoCount).to.be.equal(1);
+        expect(state.redoCount).to.be.equal(1);
+    });
+
+    it('should resolve/reject promises', async () => {
+        const { actionDispatcher, registry } = setup();
+        actionDispatcher.dispatch(new InitializeCanvasBoundsAction(EMPTY_BOUNDS));
+        registry.registerCommand(MockCommand);
+        
+        await actionDispatcher.dispatch(new MockAction());
+        // We expect this promis to be resolved
+
+        try {
+            await actionDispatcher.dispatch({ kind: 'unknown' });
+            expect.fail();
+        } catch {
+            // We expect this promise to be rejected
+        }
     });
 });

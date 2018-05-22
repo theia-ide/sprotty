@@ -7,6 +7,7 @@
 
 import { injectable, inject, optional } from "inversify";
 import { Bounds, Point } from "../utils/geometry";
+import { Deferred } from "../utils/async";
 import { TYPES } from "../base/types";
 import { Action } from "../base/actions/action";
 import { ActionHandlerRegistry } from "../base/actions/action-handler";
@@ -33,8 +34,9 @@ export interface IStateAwareModelProvider  {
 }
 
 /**
- * A model source that handles actions for bounds calculation and model
- * updates.
+ * A model source that allows to set and modify the model through function calls.
+ * This class can be used as a facade over the action-based API of sprotty. It handles
+ * actions for bounds calculation and model updates.
  */
 @injectable()
 export class LocalModelSource extends ModelSource {
@@ -44,7 +46,23 @@ export class LocalModelSource extends ModelSource {
         id: 'ROOT'
     };
 
+    protected diagramState: DiagramState = {
+        expansionState: new ExpansionState(this.currentRoot)
+    };
+
+    /**
+     * The `type` property of the model root is used to determine whether a model update
+     * is a change of the previous model or a totally new one.
+     */
     protected lastSubmittedModelType: string;
+
+    /**
+     * When client layout is active, model updates are not applied immediately. Instead the
+     * model is rendered on a hidden canvas first to derive actual bounds. The promises listed
+     * here are resolved after the new bounds have been applied and the new model state has
+     * been actually applied to the visible canvas.
+     */
+    protected pendingUpdates: Deferred<void>[] = [];
 
     get model(): SModelRootSchema {
         return this.currentRoot;
@@ -53,12 +71,6 @@ export class LocalModelSource extends ModelSource {
     set model(root: SModelRootSchema) {
         this.setModel(root);
     }
-
-    protected onModelSubmitted: (newRoot: SModelRootSchema) => void;
-
-    protected diagramState: DiagramState = {
-        expansionState: new ExpansionState(this.currentRoot)
-    };
 
     constructor(@inject(TYPES.IActionDispatcher) actionDispatcher: IActionDispatcher,
                 @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
@@ -82,59 +94,82 @@ export class LocalModelSource extends ModelSource {
         registry.register(CollapseExpandAllAction.KIND, this);
     }
 
-    setModel(newRoot: SModelRootSchema): void {
+    /**
+     * Set the model without incremental update.
+     */
+    setModel(newRoot: SModelRootSchema): Promise<void> {
         this.currentRoot = newRoot;
         this.diagramState = {
             expansionState: new ExpansionState(newRoot)
         };
-        this.submitModel(newRoot, false);
+        return this.submitModel(newRoot, false);
     }
 
-    updateModel(newRoot?: SModelRootSchema): void {
+    /**
+     * Apply an incremental update to the model with an animation showing the transition to
+     * the new state. If `newRoot` is undefined, the current root is submitted; in that case
+     * it is assumed that it has been modified before.
+     */
+    updateModel(newRoot?: SModelRootSchema): Promise<void> {
         if (newRoot === undefined) {
-            this.submitModel(this.currentRoot, true);
+            return this.submitModel(this.currentRoot, true);
         } else {
             this.currentRoot = newRoot;
-            this.submitModel(newRoot, true);
+            return this.submitModel(newRoot, true);
         }
     }
 
-    protected submitModel(newRoot: SModelRootSchema, update: boolean): void {
+    /**
+     * If client layout is active, run a `RequestBoundsAction` and wait for the resulting
+     * `ComputedBoundsAction`, otherwise call `doSubmitModel(…)` directly.
+     */
+    protected submitModel(newRoot: SModelRootSchema, update: boolean | Match[]): Promise<void> {
         if (this.viewerOptions.needsClientLayout) {
+            const deferred = new Deferred<void>();
+            this.pendingUpdates.push(deferred);
             this.actionDispatcher.dispatch(new RequestBoundsAction(newRoot));
+            return deferred.promise;
         } else {
-            this.doSubmitModel(newRoot, update);
+            return this.doSubmitModel(newRoot, update);
         }
     }
 
-    protected doSubmitModel(newRoot: SModelRootSchema, update: boolean): void {
+    /**
+     * Submit the given model with an `UpdateModelAction` or a `SetModelAction` depending on the
+     * `update` argument.
+     */
+    protected doSubmitModel(newRoot: SModelRootSchema, update: boolean | Match[]): Promise<void> {
+        let result: Promise<void>;
         if (update && newRoot.type === this.lastSubmittedModelType) {
-            this.actionDispatcher.dispatch(new UpdateModelAction(newRoot));
+            const input = Array.isArray(update) ? update : newRoot;
+            result = this.actionDispatcher.dispatch(new UpdateModelAction(input));
         } else {
-            this.actionDispatcher.dispatch(new SetModelAction(newRoot));
+            result = this.actionDispatcher.dispatch(new SetModelAction(newRoot));
         }
         this.lastSubmittedModelType = newRoot.type;
-        if (this.onModelSubmitted !== undefined) {
-            this.onModelSubmitted(newRoot);
+
+        // Resolve all pending updates when this action has been processed
+        const updates = this.pendingUpdates;
+        if (updates.length > 0) {
+            result.then(() => updates.forEach(d => d.resolve()));
+            this.pendingUpdates = [];
         }
+        return result;
     }
 
-    applyMatches(matches: Match[]): void {
+    /**
+     * Modify the current model with an array of matches.
+     */
+    applyMatches(matches: Match[]): Promise<void> {
         const root = this.currentRoot;
         applyMatches(root, matches);
-        if (this.viewerOptions.needsClientLayout) {
-            this.actionDispatcher.dispatch(new RequestBoundsAction(root));
-        } else {
-            const update = new UpdateModelAction(matches);
-            this.actionDispatcher.dispatch(update);
-            this.lastSubmittedModelType = root.type;
-            if (this.onModelSubmitted !== undefined) {
-                this.onModelSubmitted(root);
-            }
-        }
+        return this.submitModel(root, matches);
     }
 
-    addElements(elements: (SModelElementSchema | { element: SModelElementSchema, parentId: string })[]): void {
+    /**
+     * Modify the current model by adding new elements.
+     */
+    addElements(elements: (SModelElementSchema | { element: SModelElementSchema, parentId: string })[]): Promise<void> {
         const matches: Match[] = [];
         for (const e of elements) {
             const anye: any = e;
@@ -150,10 +185,13 @@ export class LocalModelSource extends ModelSource {
                 });
             }
         }
-        this.applyMatches(matches);
+        return this.applyMatches(matches);
     }
 
-    removeElements(elements: (string | { elementId: string, parentId: string })[]) {
+    /**
+     * Modify the current model by removing elements.
+     */
+    removeElements(elements: (string | { elementId: string, parentId: string })[]): Promise<void> {
         const matches: Match[] = [];
         const index = new SModelIndex();
         index.add(this.currentRoot);
@@ -177,8 +215,11 @@ export class LocalModelSource extends ModelSource {
                 }
             }
         }
-        this.applyMatches(matches);
+        return this.applyMatches(matches);
     }
+
+
+    // ----- Methods for handling incoming actions ----------------------------
 
     handle(action: Action): void {
         switch (action.kind) {
