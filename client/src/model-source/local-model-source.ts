@@ -8,6 +8,7 @@
 import { injectable, inject, optional } from "inversify";
 import { Bounds, Point } from "../utils/geometry";
 import { Deferred } from "../utils/async";
+import { ILogger } from "../utils/logging";
 import { TYPES } from "../base/types";
 import { Action } from "../base/actions/action";
 import { ActionHandlerRegistry } from "../base/actions/action-handler";
@@ -25,13 +26,6 @@ import { ExportSvgAction } from '../features/export/svg-exporter';
 import { saveAs } from 'file-saver';
 import { CollapseExpandAction, CollapseExpandAllAction } from '../features/expand/expand';
 import { DiagramState, ExpansionState } from './diagram-state';
-
-export type PopupModelFactory = (request: RequestPopupModelAction, element?: SModelElementSchema)
-    => SModelRootSchema | undefined;
-
-export interface IStateAwareModelProvider  {
-    getModel(diagramState: DiagramState, currentRoot?: SModelRootSchema): SModelRootSchema
-}
 
 /**
  * A model source that allows to set and modify the model through function calls.
@@ -75,8 +69,10 @@ export class LocalModelSource extends ModelSource {
     constructor(@inject(TYPES.IActionDispatcher) actionDispatcher: IActionDispatcher,
                 @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
                 @inject(TYPES.ViewerOptions) viewerOptions: ViewerOptions,
+                @inject(TYPES.ILogger) protected readonly logger: ILogger,
                 @inject(TYPES.PopupModelFactory)@optional() protected popupModelFactory?: PopupModelFactory,
                 @inject(TYPES.StateAwareModelProvider)@optional() protected modelProvider?: IStateAwareModelProvider,
+                @inject(TYPES.IModelLayoutEngine)@optional() protected layoutEngine?: IModelLayoutEngine
             ) {
         super(actionDispatcher, actionHandlerRegistry, viewerOptions);
     }
@@ -136,25 +132,32 @@ export class LocalModelSource extends ModelSource {
 
     /**
      * Submit the given model with an `UpdateModelAction` or a `SetModelAction` depending on the
-     * `update` argument.
+     * `update` argument. If available, the model layout engine is invoked first.
      */
-    protected doSubmitModel(newRoot: SModelRootSchema, update: boolean | Match[]): Promise<void> {
-        let result: Promise<void>;
-        if (update && newRoot.type === this.lastSubmittedModelType) {
-            const input = Array.isArray(update) ? update : newRoot;
-            result = this.actionDispatcher.dispatch(new UpdateModelAction(input));
-        } else {
-            result = this.actionDispatcher.dispatch(new SetModelAction(newRoot));
+    protected async doSubmitModel(newRoot: SModelRootSchema, update: boolean | Match[], index?: SModelIndex<SModelElementSchema>): Promise<void> {
+        if (this.layoutEngine !== undefined) {
+            try {
+                const layoutResult = this.layoutEngine.layout(newRoot, index);
+                if (layoutResult instanceof Promise)
+                    newRoot = await layoutResult;
+                else if (layoutResult !== undefined)
+                    newRoot = layoutResult;
+            } catch (error) {
+                this.logger.error(this, error.toString(), error.stack);
+            }
         }
-        this.lastSubmittedModelType = newRoot.type;
 
-        // Resolve all pending updates when this action has been processed
+        const lastSubmittedModelType = this.lastSubmittedModelType;
+        this.lastSubmittedModelType = newRoot.type;
         const updates = this.pendingUpdates;
-        if (updates.length > 0) {
-            result.then(() => updates.forEach(d => d.resolve()));
-            this.pendingUpdates = [];
+        this.pendingUpdates = [];
+        if (update && newRoot.type === lastSubmittedModelType) {
+            const input = Array.isArray(update) ? update : newRoot;
+            await this.actionDispatcher.dispatch(new UpdateModelAction(input));
+        } else {
+            await this.actionDispatcher.dispatch(new SetModelAction(newRoot));
         }
-        return result;
+        updates.forEach(d => d.resolve());
     }
 
     /**
@@ -266,7 +269,7 @@ export class LocalModelSource extends ModelSource {
                     this.applyAlignment(element, a.newAlignment);
             }
         }
-        this.doSubmitModel(root, true);
+        this.doSubmitModel(root, true, index);
     }
 
     protected applyBounds(element: SModelElementSchema, newBounds: Bounds) {
@@ -315,4 +318,15 @@ export class LocalModelSource extends ModelSource {
             this.updateModel(expandedModel);
         }
     }
+}
+
+export type PopupModelFactory = (request: RequestPopupModelAction, element?: SModelElementSchema)
+    => SModelRootSchema | undefined;
+
+export interface IStateAwareModelProvider  {
+    getModel(diagramState: DiagramState, currentRoot?: SModelRootSchema): SModelRootSchema
+}
+
+export interface IModelLayoutEngine {
+    layout(model: SModelRootSchema, index?: SModelIndex<SModelElementSchema>): SModelRootSchema | Promise<SModelRootSchema>
 }
