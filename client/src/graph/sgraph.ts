@@ -21,7 +21,7 @@ import { Bounds, ORIGIN_POINT, Point, center } from '../utils/geometry';
 import { SShapeElement, SShapeElementSchema } from '../features/bounds/model';
 import { editFeature, Routable, filterEditModeHandles } from '../features/edit/model';
 import { translatePoint } from '../base/model/smodel-utils';
-import { RoutedPoint, linearRoute } from './routing';
+import { RoutedPoint, LinearEdgeRouter, IEdgeRouter } from './routing';
 
 /**
  * Serializable schema for graph-like models.
@@ -178,6 +178,7 @@ export class SEdge extends SChildElement implements Fadeable, Selectable, Routab
     opacity: number = 1;
     sourceAnchorCorrection?: number;
     targetAnchorCorrection?: number;
+    router?: IEdgeRouter;
 
     get source(): SConnectableElement | undefined {
         return this.index.getById(this.sourceId) as SConnectableElement;
@@ -188,7 +189,9 @@ export class SEdge extends SChildElement implements Fadeable, Selectable, Routab
     }
 
     route(): RoutedPoint[] {
-        const route = linearRoute(this);
+        if (this.router === undefined)
+            this.router = new LinearEdgeRouter();
+        const route = this.router.route(this);
         return filterEditModeHandles(route, this);
     }
 

@@ -30,7 +30,11 @@ export const TYPES = {
     ModelSource: Symbol('ModelSource'),
     ModelSourceProvider: Symbol('ModelSourceProvider'),
     MouseListener: Symbol('MouseListener'),
+    /**
+     * @deprecated Use IPopupModelProvider instead.
+     */
     PopupModelFactory: Symbol('PopupModelFactory'),
+    IPopupModelProvider: Symbol('IPopupModelProvider'),
     PopupMouseListener: Symbol('PopupMouseListener'),
     PopupVNodeDecorator: Symbol('PopupVNodeDecorator'),
     SModelElementRegistration: Symbol('SModelElementRegistration'),

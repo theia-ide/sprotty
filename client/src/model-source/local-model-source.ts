@@ -70,8 +70,8 @@ export class LocalModelSource extends ModelSource {
                 @inject(TYPES.ActionHandlerRegistry) actionHandlerRegistry: ActionHandlerRegistry,
                 @inject(TYPES.ViewerOptions) viewerOptions: ViewerOptions,
                 @inject(TYPES.ILogger) protected readonly logger: ILogger,
-                @inject(TYPES.PopupModelFactory)@optional() protected popupModelFactory?: PopupModelFactory,
                 @inject(TYPES.StateAwareModelProvider)@optional() protected modelProvider?: IStateAwareModelProvider,
+                @inject(TYPES.IPopupModelProvider)@optional() protected popupModelProvider?: IPopupModelProvider,
                 @inject(TYPES.IModelLayoutEngine)@optional() protected layoutEngine?: IModelLayoutEngine
             ) {
         super(actionDispatcher, actionHandlerRegistry, viewerOptions);
@@ -284,9 +284,9 @@ export class LocalModelSource extends ModelSource {
     }
 
     protected handleRequestPopupModel(action: RequestPopupModelAction): void {
-        if (this.popupModelFactory !== undefined) {
+        if (this.popupModelProvider !== undefined) {
             const element = findElement(this.currentRoot, action.elementId);
-            const popupRoot = this.popupModelFactory(action, element);
+            const popupRoot = this.popupModelProvider.getPopupModel(action, element);
             if (popupRoot !== undefined) {
                 popupRoot.canvasBounds = action.bounds;
                 this.actionDispatcher.dispatch(new SetPopupModelAction(popupRoot));
@@ -320,8 +320,15 @@ export class LocalModelSource extends ModelSource {
     }
 }
 
+/**
+ * @deprecated Use IPopupModelProvider instead.
+ */
 export type PopupModelFactory = (request: RequestPopupModelAction, element?: SModelElementSchema)
     => SModelRootSchema | undefined;
+
+export interface IPopupModelProvider {
+    getPopupModel(request: RequestPopupModelAction, element?: SModelElementSchema): SModelRootSchema | undefined;
+}
 
 export interface IStateAwareModelProvider  {
     getModel(diagramState: DiagramState, currentRoot?: SModelRootSchema): SModelRootSchema
