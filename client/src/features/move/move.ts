@@ -134,19 +134,11 @@ export class MoveCommand extends MergeableCommand {
     }
 
     undo(context: CommandExecutionContext) {
-        if (this.action.animate) {
-            return new MoveAnimation(context.root, this.resolvedMoves, this.resolvedRoutes, context, true).start();
-        } else {
-            return this.doMove(context, true);
-        }
+        return new MoveAnimation(context.root, this.resolvedMoves, this.resolvedRoutes, context, true).start();
     }
 
     redo(context: CommandExecutionContext) {
-        if (this.action.animate) {
-            return new MoveAnimation(context.root, this.resolvedMoves, this.resolvedRoutes, context, false).start();
-        } else {
-            return this.doMove(context, false);
-        }
+        return new MoveAnimation(context.root, this.resolvedMoves, this.resolvedRoutes, context, false).start();
     }
 
     merge(command: ICommand, context: CommandExecutionContext) {
