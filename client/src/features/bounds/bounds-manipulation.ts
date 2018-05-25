@@ -132,7 +132,7 @@ export class RequestBoundsCommand extends HiddenCommand {
         return context.modelFactory.createRoot(this.action.newRoot);
     }
 
-    get blockUntilActionKind() {
-        return ComputedBoundsAction.KIND;
+    get blockUntil(): (action: Action) => boolean {
+        return action => action.kind === ComputedBoundsAction.KIND;
     }
 }
