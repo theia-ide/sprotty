@@ -14,7 +14,7 @@ import {
     PreRenderedElement, HtmlRoot, SGraph, configureModelElement, SLabel, SCompartment, SEdge, SButton, SRoutingHandle
 } from "../../../src";
 import { ClassNodeView, IconView} from "./views";
-import { popupModelFactory } from "./popup";
+import { PopupModelProvider } from "./popup";
 import { ModelProvider } from './model-provider';
 import { Icon, ClassNode } from "./model";
 
@@ -27,7 +27,7 @@ export default (useWebsocket: boolean, containerId: string) => {
         rebind(TYPES.ILogger).to(ConsoleLogger).inSingletonScope();
         rebind(TYPES.LogLevel).toConstantValue(LogLevel.log);
         rebind(TYPES.IModelFactory).to(SGraphFactory).inSingletonScope();
-        bind(TYPES.PopupModelFactory).toConstantValue(popupModelFactory);
+        bind(TYPES.IPopupModelProvider).to(PopupModelProvider);
         bind(TYPES.StateAwareModelProvider).to(ModelProvider);
         const context = { bind, unbind, isBound, rebind };
         configureModelElement(context, 'graph', SGraph, SGraphView);
