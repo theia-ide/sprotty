@@ -8,12 +8,12 @@
 version = '0.4.0-SNAPSHOT'
 
 ext.versions = [
-    guice: '3.0',
     xtext: '[2.12.0,3)',
     xtext_example: '2.13.0',
+    elk: '[0.3.0,1)',
+    guice: '3.0',
     gson: '2.8.0',
     websocket: '1.0',
-    elk: '0.4.0-SNAPSHOT',
     slf4j: '1.7.24',
     log4j: '1.2.16',
     junit: '4.12',

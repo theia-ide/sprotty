@@ -16,10 +16,9 @@ apply from: "${rootDir}/gradle/versions.gradle"
 
 configure(subprojects.findAll {it.file('src').exists()}) {
 	repositories {
-		jcenter()
 		maven {
-			name 'sonatype-snapshots'
-			url 'https://oss.sonatype.org/content/repositories/snapshots/'
+			name 'maven-repo'
+			url 'https://repo.maven.apache.org/maven2/'
 		}
 	}
 	
