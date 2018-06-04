@@ -7,14 +7,14 @@ node {
         checkout scm
     }
     
-    stage('npm Build') {
+    stage('Yarn Build') {
         try {
             dir('client') {
-                sh "npm install"
-                sh "npm run clean"
-                sh "npm run build"
-                sh "npm run examples:build"
-                sh "npm test || true" // Ignore test failures
+                sh "yarn install"
+                sh "yarn run clean"
+                sh "yarn run build"
+                sh "yarn run examples:build"
+                sh "yarn test || true" // Ignore test failures
             }
         } finally {
             step([$class: 'JUnitResultArchiver', testResults: 'client/artifacts/test/xunit.xml'])
