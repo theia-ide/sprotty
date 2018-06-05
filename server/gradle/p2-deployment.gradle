@@ -24,7 +24,7 @@ p2gen {
 		bundle 'com.google.guava'
 	}
 	dependencies {
-		repositoryUrl 'http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.14.0/'
+		repositoryUrl 'http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.13.0/'
 		bundle 'org.eclipse.xtext.ide'
 	}
 	dependencies {
