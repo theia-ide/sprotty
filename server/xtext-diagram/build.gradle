@@ -16,6 +16,11 @@ dependencies {
 	testCompile "junit:junit:${versions.junit}"
 }
 
+jar.manifest {
+	symbolicName = 'io.typefox.sprotty.server.xtext'
+	name = title
+}
+
 sourceSets.test.java.srcDir 'src/test/xtext-gen'
 sourceSets.test.resources.srcDir 'src/test/xtext-gen'
 

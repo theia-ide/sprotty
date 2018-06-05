@@ -5,14 +5,21 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+import java.time.format.DateTimeFormatter
+import java.time.LocalDateTime
+
 buildscript {
 	repositories.jcenter()
 	dependencies {
-		classpath 'org.xtext:xtext-gradle-plugin:1.0.19'
+		classpath 'org.xtext:xtext-gradle-plugin:1.0.21'
+		classpath 'io.typefox.gradle:gradle-p2gen:0.1.0'
 	}
 }
 
+ext.buildTime = DateTimeFormatter.ofPattern('yyyyMMdd-HHmm').format(LocalDateTime.now())
+
 apply from: "${rootDir}/gradle/versions.gradle"
+apply from: "${rootDir}/gradle/p2-deployment.gradle"
 
 configure(subprojects.findAll {it.file('src').exists()}) {
 	repositories {
@@ -37,6 +44,7 @@ configure(subprojects.findAll {it.file('src').exists()}) {
 	} else {
 		apply plugin: 'maven'
 		apply from: "${rootDir}/gradle/maven-deployment.gradle"
+		apply from: "${rootDir}/gradle/manifest-gen.gradle"
 	}
 }
 

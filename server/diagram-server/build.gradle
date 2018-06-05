@@ -13,3 +13,8 @@ dependencies {
     compile "com.google.code.gson:gson:${versions.gson}"
     compile "javax.websocket:javax.websocket-api:${versions.websocket}"
 }
+
+jar.manifest {
+	symbolicName = 'io.typefox.sprotty.server'
+	name = title
+}

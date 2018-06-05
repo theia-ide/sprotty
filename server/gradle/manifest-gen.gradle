@@ -1,0 +1,65 @@
+/*
+ * Copyright (C) 2018 TypeFox and others.
+ *
+ * Licensed under the Apache License, Version 2.0 (the "License"); you may not use this file except in compliance with the License.
+ * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
+ */
+
+apply plugin: 'osgi'
+
+def baseVersion = project.version
+if (baseVersion.endsWith('-SNAPSHOT'))
+	baseVersion = baseVersion.substring(0, baseVersion.length() - 9)
+else if (baseVersion.split('\\.').length == 4)
+	baseVersion = baseVersion.substring(0, baseVersion.lastIndexOf('.'))
+def qualifiedVersion = baseVersion + '.v' + buildTime
+
+jar.manifest {
+	version = qualifiedVersion
+	vendor = 'TypeFox'
+	instruction 'Bundle-RequiredExecutionEnvironment', 'JavaSE-1.8'
+}
+
+//------------------------------------------------------
+// Generate a manifest for the source bundle
+
+def sourcesManifestFile = "$buildDir/tmp/sourcesJar/MANIFEST.MF"
+
+task genSourcesManifest {
+	outputs.file(sourcesManifestFile)
+	doLast {
+		def f = new File(sourcesManifestFile)
+		f.parentFile.mkdirs()
+		def writer = new PrintWriter(f)
+		writer.println("Manifest-Version: 1.0")
+		writer.println("Bundle-ManifestVersion: 2")
+		writer.println("Bundle-SymbolicName: ${jar.manifest.symbolicName}.source")
+		writer.println("Bundle-Version: ${qualifiedVersion}")
+		if (project.hasProperty('title'))
+			writer.println("Bundle-Name: ${jar.manifest.name} Sources")
+		else
+			writer.println("Bundle-Name: Sources")
+		writer.println("Bundle-Vendor: TypeFox")
+		writer.println("Eclipse-SourceBundle: ${jar.manifest.symbolicName};version=\"${qualifiedVersion}\"")
+		writer.close()
+	}
+}
+
+sourcesJar {
+	dependsOn genSourcesManifest
+	inputs.file(sourcesManifestFile)
+	manifest {
+		from sourcesManifestFile
+	}
+}
+
+//------------------------------------------------------
+// Task to copy the generated manifest into the project
+
+task eclipseManifest(type: Copy) {
+	dependsOn(jar)
+    from "$buildDir/tmp/jar/MANIFEST.MF"
+    into 'META-INF'
+}
+
+tasks['eclipse'].dependsOn(eclipseManifest)

@@ -14,3 +14,8 @@ dependencies {
     testCompile "org.eclipse.elk:org.eclipse.elk.graph.text:${versions.elk}"
     testCompile "junit:junit:${versions.junit}"
 }
+
+jar.manifest {
+	symbolicName = 'io.typefox.sprotty.layout'
+	name = title
+}

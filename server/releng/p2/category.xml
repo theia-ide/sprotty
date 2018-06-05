@@ -1,0 +1,31 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<site>
+	<feature id="io.typefox.sprotty" version="0.5.0.qualifier">
+		<category name="sprotty-server"/>
+	</feature>
+	<bundle id="io.typefox.sprotty.api" version="0.5.0.qualifier">
+		<category name="sprotty-server"/>
+	</bundle>
+	<bundle id="io.typefox.sprotty.api.source" version="0.5.0.qualifier">
+		<category name="sprotty-server"/>
+	</bundle>
+	<bundle id="io.typefox.sprotty.layout" version="0.5.0.qualifier">
+		<category name="sprotty-server"/>
+	</bundle>
+	<bundle id="io.typefox.sprotty.layout.source" version="0.5.0.qualifier">
+		<category name="sprotty-server"/>
+	</bundle>
+	<bundle id="io.typefox.sprotty.server" version="0.5.0.qualifier">
+		<category name="sprotty-server"/>
+	</bundle>
+	<bundle id="io.typefox.sprotty.server.source" version="0.5.0.qualifier">
+		<category name="sprotty-server"/>
+	</bundle>
+	<bundle id="io.typefox.sprotty.server.xtext" version="0.5.0.qualifier">
+		<category name="sprotty-server"/>
+	</bundle>
+	<bundle id="io.typefox.sprotty.server.xtext.source" version="0.5.0.qualifier">
+		<category name="sprotty-server"/>
+	</bundle>
+   <category-def name="sprotty-server" label="Sprotty-server"/>
+</site>
