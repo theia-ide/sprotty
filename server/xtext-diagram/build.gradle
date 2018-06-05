@@ -18,6 +18,7 @@ dependencies {
 
 jar.manifest {
 	symbolicName = 'io.typefox.sprotty.server.xtext'
+	instruction 'Import-Package', "org.eclipse.xtext.*;version=\"2.13.0\""
 	name = title
 }
 
