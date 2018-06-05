@@ -32,4 +32,13 @@ node {
             archive 'server/build/maven-repository/**'
         }
     }
+
+    stage('Tycho Build') {
+        dir('server') {
+            def mvnHome = tool 'M3'
+            env.M2_HOME = "${mvnHome}"
+            dir('.m2/repository/io/typefox/sprotty') { deleteDir() }
+            sh "${mvnHome}/bin/mvn -f releng --batch-mode --update-snapshots -Dmaven.repo.local=.m2/repository clean install"
+        }
+	}
 }
