@@ -29,7 +29,6 @@ node {
             }
         } finally {
             step([$class: 'JUnitResultArchiver', testResults: 'server/**/build/test-results/test/*.xml'])
-            archive 'server/build/maven-repository/**'
         }
     }
 
@@ -41,4 +40,6 @@ node {
             sh "${mvnHome}/bin/mvn -f releng --batch-mode --update-snapshots -Dmaven.repo.local=.m2/repository clean install"
         }
 	}
+
+    archive 'server/build/**'
 }
