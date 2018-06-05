@@ -19,4 +19,17 @@ p2gen {
 	exclude 'io.typefox.sprotty.example.multicore.ide'
 	exclude 'io.typefox.sprotty.example.multicore.web'
 	
+	dependencies {
+		repositoryUrl 'http://download.eclipse.org/releases/oxygen/201804111000/'
+		bundle 'com.google.guava'
+	}
+	dependencies {
+		repositoryUrl 'http://download.eclipse.org/modeling/tmf/xtext/updates/releases/2.14.0/'
+		bundle 'org.eclipse.xtext.ide'
+	}
+	dependencies {
+		repositoryUrl 'http://download.eclipse.org/tools/orbit/downloads/drops/R20180531190352/repository/'
+		bundle 'com.google.gson'
+	}
+	
 }

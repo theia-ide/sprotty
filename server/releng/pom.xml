@@ -71,6 +71,7 @@
 	</dependencies>
 
 	<modules>
+		<module>releng-target</module>
 		<module>p2</module>
 		<module>sprotty-feature</module>
 	</modules>
@@ -89,6 +90,13 @@
 				<version>${tycho-version}</version>
 				<configuration>
 					<pomDependencies>consider</pomDependencies>
+					<target>
+						<artifact>
+							<groupId>io.typefox.sprotty</groupId>
+							<artifactId>sprotty-server.target</artifactId>
+							<version>0.5.0-SNAPSHOT</version>
+						</artifact>
+					</target>
 					<environments>
 						<environment>
 							<os>macosx</os>

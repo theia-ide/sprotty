@@ -1,5 +1,7 @@
 /.gradle/
+/.m2/
 build/
+target/
 bin/
 xtend-gen/
 .project
