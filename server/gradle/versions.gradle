@@ -8,7 +8,7 @@
 version = '0.5.0-SNAPSHOT'
 
 ext.versions = [
-    xtext: '[2.12.0,3)',
+    xtext: '2.13.0',
     xtext_example: '2.13.0',
     elk: '[0.3.0,1)',
     guice: '3.0',
