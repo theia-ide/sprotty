@@ -17,5 +17,6 @@ dependencies {
 
 jar.manifest {
 	symbolicName = 'io.typefox.sprotty.layout'
+    instruction 'Import-Package', "com.google.common.*"
 	name = title
 }
