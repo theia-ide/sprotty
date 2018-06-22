@@ -59,6 +59,9 @@ export function setupMulticore(websocket: WebSocket) {
 }
 
 export default function runMulticoreServer() {
-    const websocket = new WebSocket('ws://' + window.location.host + '/diagram');
+    const protocol = document.location.protocol === 'https'
+        ? 'wss'
+        : 'ws';
+    const websocket = new WebSocket(protocol + '://' + window.location.host + '/diagram');
     setupMulticore(websocket);
 }
