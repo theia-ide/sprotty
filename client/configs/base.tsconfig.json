@@ -13,6 +13,7 @@
         ],
         "sourceMap": true,
         "declaration": true,
+        "declarationMap": true,
         "noImplicitAny": true,
         "noImplicitThis": true,
         "noImplicitReturns": true,
