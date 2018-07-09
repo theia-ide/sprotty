@@ -5,7 +5,9 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import * as snabbdom from "snabbdom-jsx";
+/** @jsx svg */
+import { svg } from 'snabbdom-jsx';
+
 import { injectable, multiInject, optional, interfaces } from "inversify";
 import { VNode } from "snabbdom/vnode";
 import { TYPES } from "../types";
@@ -13,9 +15,6 @@ import { SModelElement, SModelRoot, SParentElement } from "../model/smodel";
 import { EMPTY_ROOT, SModelElementRegistration } from "../model/smodel-factory";
 import { ProviderRegistry } from "../../utils/registry";
 import { Point, ORIGIN_POINT } from "../../utils/geometry";
-
-const JSX = {createElement: snabbdom.svg};
-
 
 /**
  * Base interface for the components that turn GModelElements into virtual DOM elements.

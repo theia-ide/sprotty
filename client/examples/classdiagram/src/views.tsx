@@ -5,12 +5,12 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+/** @jsx svg */
+import { svg } from 'snabbdom-jsx';
+
 import { RenderingContext, RectangularNodeView, IView } from "../../../src";
 import { VNode } from "snabbdom/vnode";
 import { Icon, ClassNode } from './model';
-import * as snabbdom from 'snabbdom-jsx';
-
-const JSX = {createElement: snabbdom.svg};
 
 export class ClassNodeView extends RectangularNodeView {
     render(node: ClassNode, context: RenderingContext): VNode {

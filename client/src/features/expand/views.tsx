@@ -5,14 +5,14 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import * as snabbdom from "snabbdom-jsx";
+ /** @jsx svg */
+import { svg } from 'snabbdom-jsx';
+
 import { VNode } from 'snabbdom/vnode';
 import { IView, RenderingContext } from '../../base/views/view';
 import { isExpandable } from './model';
 import { findParentByFeature } from '../../base/model/smodel-utils';
 import { SButton } from '../button/model';
-
-const JSX = {createElement: snabbdom.svg};
 
 export class ExpandButtonView implements IView {
     render(button: SButton, context: RenderingContext): VNode {

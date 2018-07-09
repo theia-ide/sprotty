@@ -5,12 +5,12 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import * as snabbdom from 'snabbdom-jsx';
+/** @jsx svg */
+import { svg } from 'snabbdom-jsx';
+
 import { VNode } from "snabbdom/vnode";
 import { IView, RenderingContext, setAttr, ThunkView, Direction, RGBColor, toSVG, rgb } from '../../../src';
 import { Channel, Core, Crossbar, Processor } from './chipmodel';
-
-const JSX = {createElement: snabbdom.svg};
 
 export class ProcessorView implements IView {
     render(model: Processor, context: RenderingContext): VNode {

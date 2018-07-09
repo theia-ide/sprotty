@@ -21,7 +21,6 @@
         "strictNullChecks": true,
         "experimentalDecorators": true,
         "emitDecoratorMetadata": true,
-        "jsx": "react",
-        "reactNamespace": "JSX"
+        "jsx": "react"
     }
 }

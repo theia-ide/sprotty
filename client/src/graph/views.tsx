@@ -5,7 +5,9 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import * as snabbdom from 'snabbdom-jsx';
+ /** @jsx svg */
+import { svg } from 'snabbdom-jsx';
+
 import { VNode } from "snabbdom/vnode";
 import { Point, centerOfLine, maxDistance } from '../utils/geometry';
 import { setAttr } from '../base/views/vnode-utils';
@@ -14,8 +16,6 @@ import { getSubType } from "../base/model/smodel-utils";
 import { SRoutingHandle, isRoutable } from '../features/edit/model';
 import { SCompartment, SEdge, SGraph, SLabel } from "./sgraph";
 import { RoutedPoint } from './routing';
-
-const JSX = {createElement: snabbdom.svg};
 
 /**
  * IView component that turns an SGraph element and its children into a tree of virtual DOM elements.

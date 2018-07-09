@@ -5,7 +5,9 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import * as snabbdom from 'snabbdom-jsx';
+/** @jsx svg */
+import { svg } from 'snabbdom-jsx';
+
 import { VNode } from "snabbdom/vnode";
 import { IView, RenderingContext } from "../base/views/view";
 import { SNode, SPort } from "../graph/sgraph";
@@ -13,8 +15,6 @@ import { ViewportRootElement } from "../features/viewport/viewport-root";
 import { SShapeElement } from '../features/bounds/model';
 import { Hoverable } from '../features/hover/model';
 import { Selectable } from '../features/select/model';
-
-const JSX = {createElement: snabbdom.svg};
 
 export class SvgViewportView implements IView {
     render(model: Readonly<ViewportRootElement>, context: RenderingContext): VNode {

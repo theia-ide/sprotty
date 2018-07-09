@@ -5,11 +5,11 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { VNode } from "snabbdom/vnode";
-import * as snabbdom from "snabbdom-jsx";
-import { RenderingContext, SNode, IView } from "../../../src";
+/** @jsx svg */
+import { svg } from 'snabbdom-jsx';
 
-const JSX = {createElement: snabbdom.svg};
+import { VNode } from "snabbdom/vnode";
+import { RenderingContext, SNode, IView } from "../../../src";
 
 /**
  * A very simple example node consisting of a plain circle.

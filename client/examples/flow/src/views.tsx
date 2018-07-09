@@ -5,15 +5,15 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+/** @jsx svg */
+import { svg } from 'snabbdom-jsx';
+
 import { VNode } from "snabbdom/vnode";
 import {
     RenderingContext, SEdge, PolylineEdgeView, CircularNodeView, RectangularNodeView, angleOfPoint, Point, toDegrees,
     RGBColor, toSVG, rgb
 } from "../../../src";
-import * as snabbdom from "snabbdom-jsx";
 import { BarrierNode, TaskNode } from "./flowmodel";
-
-const JSX = {createElement: snabbdom.svg};
 
 export class TaskNodeView extends CircularNodeView {
     render(node: TaskNode, context: RenderingContext): VNode {

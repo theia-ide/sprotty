@@ -5,7 +5,9 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import * as snabbdom from "snabbdom-jsx";
+/** @jsx html */
+import { html } from 'snabbdom-jsx'; // must be html here, as we're creating a div
+
 import { init } from "snabbdom";
 import { VNode } from "snabbdom/vnode";
 import { Module } from "snabbdom/modules/module";
@@ -27,8 +29,6 @@ import { setClass, setAttr, copyClassesFromElement, copyClassesFromVNode } from 
 import { ViewerOptions } from "./viewer-options";
 import { isThunk } from "./thunk-view";
 import { EMPTY_ROOT } from "../model/smodel-factory";
-
-const JSX = {createElement: snabbdom.html};  // must be html here, as we're creating a div
 
 export interface IViewer {
     update(model: SModelRoot): void
