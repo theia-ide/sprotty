@@ -5,10 +5,12 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+ /** @jsx svg */
+import { svg } from 'snabbdom-jsx';
+
 import 'reflect-metadata';
 import 'mocha';
 import { expect } from "chai";
-import * as snabbdom from 'snabbdom-jsx';
 import { Container } from "inversify";
 import { VNode } from "snabbdom/vnode";
 import { TYPES } from "../base/types";
@@ -27,7 +29,6 @@ import moveModule from "../features/move/di.config";
 import { SEdge, SGraph, SNode, SPortSchema, SEdgeSchema, SNodeSchema } from "./sgraph";
 
 const toHTML = require('snabbdom-to-html');
-const JSX = {createElement: snabbdom.svg};
 
 describe('graph views', () => {
     class CircleNodeView extends CircularNodeView {

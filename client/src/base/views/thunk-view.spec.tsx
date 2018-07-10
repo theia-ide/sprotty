@@ -5,16 +5,17 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
+ /** @jsx svg */
+import { svg } from 'snabbdom-jsx';
+
 import "mocha";
 import { expect } from "chai";
-import * as snabbdom from "snabbdom-jsx";
 import { init } from "snabbdom";
 import { SModelElement } from "../model/smodel";
 import { ModelRenderer } from './viewer';
 import { ThunkView } from './thunk-view';
 
 const toHTML = require('snabbdom-to-html');
-const JSX = {createElement: snabbdom.svg};
 
 
 describe('ThunkView', () => {
