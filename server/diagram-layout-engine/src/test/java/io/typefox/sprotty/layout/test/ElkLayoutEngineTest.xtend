@@ -77,26 +77,26 @@ class ElkLayoutEngineTest extends AbstractElkTest {
 		]
 		engine.getTransformedGraph(model).assertSerializedTo('''
 			graph g
-			type: ^graph
+			io.typefox.sprotty.^layout.type: ^graph
 			node g_node0 {
-				type: ^node
+				io.typefox.sprotty.^layout.type: ^node
 				label g_node0_label0: "Foo" {
-					type: ^label
+					io.typefox.sprotty.^layout.type: ^label
 				}
 				port g_node0_port1 {
-					type: ^port
+					io.typefox.sprotty.^layout.type: ^port
 					label g_node0_port1_label0: "Bar" {
-						type: ^label
+						io.typefox.sprotty.^layout.type: ^label
 					}
 				}
 			}
 			node g_node1 {
-				type: ^node
+				io.typefox.sprotty.^layout.type: ^node
 			}
 			edge g_edge2: g_node0.g_node0_port1 -> g_node1 {
-				type: ^edge
+				io.typefox.sprotty.^layout.type: ^edge
 				label g_edge2_label0: "Baz" {
-					type: ^label
+					io.typefox.sprotty.^layout.type: ^label
 				}
 			}
 		''')
@@ -125,16 +125,16 @@ class ElkLayoutEngineTest extends AbstractElkTest {
 		]
 		engine.getTransformedGraph(model).assertSerializedTo('''
 			graph g
-			type: ^graph
+			io.typefox.sprotty.^layout.type: ^graph
 			node g_node0 {
 				layout [
 					position: 100, 100
 					size: 35, 35
 				]
-				type: ^node
+				io.typefox.sprotty.^layout.type: ^node
 				elk.padding: "[top=10.0,left=10.0,bottom=10.0,right=10.0]"
 				label g_node0_comp2_label0: "Foo" {
-					type: ^label
+					io.typefox.sprotty.^layout.type: ^label
 				}
 			}
 		''')
@@ -161,16 +161,16 @@ class ElkLayoutEngineTest extends AbstractElkTest {
 		]
 		engine.getTransformedGraph(model).assertSerializedTo('''
 			graph g
-			type: ^graph
+			io.typefox.sprotty.^layout.type: ^graph
 			node g_node0 {
 				layout [
 					position: 100, 100
 					size: 55, 55
 				]
-				type: ^node
+				io.typefox.sprotty.^layout.type: ^node
 				elk.padding: "[top=20.0,left=20.0,bottom=20.0,right=20.0]"
 				node g_node0_comp0_comp0_node0 {
-					type: ^node
+					io.typefox.sprotty.^layout.type: ^node
 				}
 			}
 		''')
