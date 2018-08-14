@@ -39,7 +39,7 @@
     "no-arg": {
       "severity": "error"
     },
-    "no-console": true,
+    "no-console": false,
     "no-construct": true,
     "no-debugger": true,
     "no-duplicate-super": {
