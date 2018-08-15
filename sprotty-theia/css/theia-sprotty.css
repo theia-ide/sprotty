@@ -1,0 +1,68 @@
+/********************************************************************************
+ * Copyright (c) 2017-2018 TypeFox and others.
+ *
+ * This program and the accompanying materials are made available under the
+ * terms of the Eclipse Public License v. 2.0 which is available at
+ * http://www.eclipse.org/legal/epl-2.0.
+ *
+ * This Source Code may also be made available under the following Secondary
+ * Licenses when the conditions for such availability set forth in the Eclipse
+ * Public License v. 2.0 are satisfied: GNU General Public License, version 2
+ * with the GNU Classpath Exception which is available at
+ * https://www.gnu.org/software/classpath/license.html.
+ *
+ * SPDX-License-Identifier: EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0
+ ********************************************************************************/
+
+.copyright {
+    margin-top: 10px;
+    text-align: right;
+    font-size: 10px;
+    color: #888;
+}
+
+.sprotty {
+    display: flex;
+    height:100%;
+}
+
+svg {
+    width: 100%;
+    flex: 1;
+    border-style: solid;
+    border-width: 0px;
+    border-color: #bbb;
+}
+
+.sprotty-status {
+    position: absolute;
+    top: 5px;
+    left: 10px;
+    display: flex;
+    align-items: center;
+}
+
+.sprotty-status .error {
+    color: #ff0000
+}
+
+.sprotty-status .warning {
+    color: #ffff00
+}
+
+.sprotty-status .info {
+    color: #bbbbbb
+}
+
+.sprotty-status .ok {
+    visibility: hidden;
+}
+
+.sprotty-status-message {
+    visibility: hidden;
+    padding-left: 10px;
+}
+
+.sprotty-status:hover .sprotty-status-message {
+    visibility: visible;
+}
