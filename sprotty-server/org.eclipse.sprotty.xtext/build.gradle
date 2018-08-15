@@ -42,8 +42,8 @@ dependencies {
 task generateTestLanguage(type: JavaExec) {
 	main = 'org.eclipse.emf.mwe2.launch.runtime.Mwe2Launcher'
 	classpath = configurations.mwe2
-	def workflowFile = 'src/test/java/io/typefox/sprotty/server/xtext/testlanguage/GenerateTestLanguage.mwe2'
-	def grammarFile = 'src/test/java/io/typefox/sprotty/server/xtext/testlanguage/TestLanguage.xtext'
+	def workflowFile = 'src/test/java/org/eclipse/sprotty/xtext/testlanguage/GenerateTestLanguage.mwe2'
+	def grammarFile = 'src/test/java/org/eclipse/sprotty/xtext/testlanguage/TestLanguage.xtext'
 	inputs.file workflowFile
 	inputs.file grammarFile
 	outputs.dir 'src/test/xtext-gen'
