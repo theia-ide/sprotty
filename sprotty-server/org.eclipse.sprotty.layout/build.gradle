@@ -9,7 +9,7 @@ ext.title = "Sprotty Layout Engine"
 description = "Bridge to automatic layout libraries such as ELK"
 
 dependencies {
-    compile project(':diagram-api')
+    compile project(':org.eclipse.sprotty')
     compile "org.eclipse.elk:org.eclipse.elk.core:${versions.elk}"
     testCompile "org.eclipse.elk:org.eclipse.elk.graph.text:${versions.elk}"
     testCompile "junit:junit:${versions.junit}"

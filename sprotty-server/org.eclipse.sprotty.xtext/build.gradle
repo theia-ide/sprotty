@@ -9,7 +9,7 @@ ext.title = "Sprotty for Xtext"
 description = "Integration of sprotty with Xtext language servers"
 
 dependencies {
-	compile project(':diagram-server')
+	compile project(':org.eclipse.sprotty.server')
 	compile "org.eclipse.xtext:org.eclipse.xtext.ide:${versions.xtext}"
 	compile "org.eclipse.lsp4j:org.eclipse.lsp4j:${versions.lsp4j}"
 	testCompile "org.eclipse.xtext:org.eclipse.xtext.testing:${versions.xtext}"

@@ -22,17 +22,17 @@ Workflow {
 	component = XtextGenerator {
 		configuration = {
 			project = StandardProjectConfig {
-				baseName = "xtext-diagram"
+				baseName = "org.eclipse.sprotty.xtext"
 				rootPath = rootPath
 				runtime = {
-					root = "${rootPath}/xtext-diagram"
+					root = "${rootPath}/org.eclipse.sprotty.xtext"
 					src = "src/test/java"
 					srcGen = "src/test/xtext-gen"
-					ecoreModel = "${rootPath}/xtext-diagram/src/test/xtext-gen/io/typefox/sprotty/server/xtext/testlanguage"
+					ecoreModel = "${rootPath}/org.eclipse.sprotty.xtext/src/test/xtext-gen/io/typefox/sprotty/server/xtext/testlanguage"
 				}
 				genericIde = {
 					enabled = true
-					root = "${rootPath}/xtext-diagram"
+					root = "${rootPath}/org.eclipse.sprotty.xtext"
 					src = "src/test/java"
 					srcGen = "src/test/xtext-gen"
 				}
@@ -49,7 +49,7 @@ Workflow {
 
 			fragment = grammarAccess.GrammarAccessFragment2 {}
 			fragment = ecore.EMFGeneratorFragment2 {
-				javaModelDirectory = "/xtext-diagram/src/test/xtext-gen"
+				javaModelDirectory = "/org.eclipse.sprotty.xtext/src/test/xtext-gen"
 			}
 			fragment = serializer.SerializerFragment2 {
 				generateStub = false
