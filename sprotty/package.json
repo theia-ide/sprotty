@@ -2,17 +2,18 @@
   "name": "sprotty",
   "version": "0.4.1",
   "description": "A next-gen framework for graphical views",
-  "license": "Apache-2.0",
+  "license": "(EPL-2.0 OR GPL-2.0 WITH Classpath-exception-2.0)",
   "keywords": [
+    "eclipse",
     "graphics",
     "modeling",
     "visualization",
     "svg"
   ],
-  "homepage": "https://github.com/theia-ide/sprotty",
-  "bugs": "https://github.com/theia-ide/sprotty/issues",
+  "homepage": "https://github.com/eclipse/sprotty",
+  "bugs": "https://github.com/eclipse/sprotty/issues",
   "author": {
-    "name": "TypeFox"
+    "name": "Eclipse Sprotty"
   },
   "contributors": [
     {
@@ -43,7 +44,7 @@
   ],
   "repository": {
     "type": "git",
-    "url": "https://github.com/theia-ide/sprotty.git"
+    "url": "https://github.com/eclipse/sprotty.git"
   },
   "files": [
     "lib",
