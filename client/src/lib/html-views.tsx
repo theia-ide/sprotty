@@ -5,8 +5,8 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
- /** @jsx svg */
-import { svg } from 'snabbdom-jsx';
+ /** @jsx html */
+import { html } from 'snabbdom-jsx';
 
 import { VNode } from "snabbdom/vnode";
 import { IView, RenderingContext } from "../base/views/view";
