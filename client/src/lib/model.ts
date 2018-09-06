@@ -5,13 +5,15 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { SModelRoot, SModelRootSchema, SChildElement, SModelElementSchema } from "../base/model/smodel";
-import { Point, Dimension, ORIGIN_POINT, EMPTY_DIMENSION, Bounds } from "../utils/geometry";
-import { computeCircleAnchor, computeRectangleAnchor } from '../utils/anchors';
-import { BoundsAware, boundsFeature, Alignable, alignFeature } from "../features/bounds/model";
+import { SChildElement, SModelElementSchema, SModelRoot, SModelRootSchema, SParentElement } from "../base/model/smodel";
+import { Alignable, alignFeature, BoundsAware, boundsFeature } from "../features/bounds/model";
 import { Locateable, moveFeature } from "../features/move/model";
 import { Selectable, selectFeature } from "../features/select/model";
-import { SNode, SPort } from '../graph/sgraph';
+import { SEdge, SNode, SPort } from '../graph/sgraph';
+import { computeCircleAnchor, computeRectangleAnchor } from '../utils/anchors';
+import { center, rotatePoint } from '../utils/geometry';
+import { Bounds, Dimension, EMPTY_DIMENSION, ORIGIN_POINT, Point } from "../utils/geometry";
+import { Rotatable } from "../features/rotation/model";
 
 /**
  * A node that is represented by a circle.
@@ -39,6 +41,21 @@ export class RectangularNode extends SNode {
     getAnchor(refPoint: Point, offset: number = 0): Point {
         const strokeCorrection = 0.5 * this.strokeWidth;
         return computeRectangleAnchor(this.bounds, refPoint, offset + strokeCorrection);
+    }
+}
+
+/**
+ * A node that is represented by a rotated rectangle.
+ */
+export class RotatedRectangularNode extends RectangularNode implements Rotatable {
+
+    rotationInDegrees: number = 0;
+
+    getTranslatedAnchor(refPoint: Point, refContainer: SParentElement, edge: SEdge, offset?: number): Point {
+        const centerPoint = center(this.bounds);
+        const translatedRefPoint = rotatePoint(centerPoint, -this.rotationInDegrees, refPoint);
+        const originalAnchor = super.getTranslatedAnchor(translatedRefPoint, refContainer, edge, offset);
+        return rotatePoint(centerPoint, this.rotationInDegrees, originalAnchor);
     }
 }
 
