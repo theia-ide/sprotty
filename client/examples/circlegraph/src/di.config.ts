@@ -9,9 +9,10 @@ import { Container, ContainerModule } from "inversify";
 import {
     defaultModule, TYPES, configureViewerOptions, SGraphFactory, SGraphView, PolylineEdgeView, ConsoleLogger,
     LogLevel, WebSocketDiagramServer, boundsModule, moveModule, selectModule, undoRedoModule, viewportModule,
-    LocalModelSource, exportModule, CircularNode, configureModelElement, SGraph, SEdge
+    LocalModelSource, exportModule, CircularNode, configureModelElement, SGraph, SEdge, RotatedRectangularNodeView
 } from "../../../src";
 import { CircleNodeView } from "./views";
+import { RhombusNode } from "./model";
 
 export default (useWebsocket: boolean) => {
     const circlegraphModule = new ContainerModule((bind, unbind, isBound, rebind) => {
@@ -25,6 +26,7 @@ export default (useWebsocket: boolean) => {
         const context = { bind, unbind, isBound, rebind };
         configureModelElement(context, 'graph', SGraph, SGraphView);
         configureModelElement(context, 'node:circle', CircularNode, CircleNodeView);
+        configureModelElement(context, 'node:rectangle', RhombusNode, RotatedRectangularNodeView);
         configureModelElement(context, 'edge:straight', SEdge, PolylineEdgeView);
         configureViewerOptions(context, {
             needsClientLayout: false
