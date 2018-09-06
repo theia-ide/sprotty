@@ -15,6 +15,7 @@ import { ViewportRootElement } from "../features/viewport/viewport-root";
 import { SShapeElement } from '../features/bounds/model';
 import { Hoverable } from '../features/hover/model';
 import { Selectable } from '../features/select/model';
+import { Rotatable } from '../features/rotation/model';
 
 export class SvgViewportView implements IView {
     render(model: Readonly<ViewportRootElement>, context: RenderingContext): VNode {
@@ -50,6 +51,20 @@ export class RectangularNodeView implements IView {
             <rect class-sprotty-node={node instanceof SNode} class-sprotty-port={node instanceof SPort}
                   class-mouseover={node.hoverFeedback} class-selected={node.selected}
                   x="0" y="0" width={Math.max(node.size.width, 0)} height={Math.max(node.size.height, 0)}></rect>
+            {context.renderChildren(node)}
+        </g>;
+    }
+}
+
+export class RotatedRectangularNodeView extends RectangularNodeView {
+    render(node: Readonly<SShapeElement & Hoverable & Selectable & Rotatable>, context: RenderingContext): VNode {
+        const hw = node.bounds.width / 2;
+        const hh = node.bounds.height / 2;
+        return <g>
+            <rect class-sprotty-node={node instanceof SNode} class-sprotty-port={node instanceof SPort}
+                  class-mouseover={node.hoverFeedback} class-selected={node.selected}
+                  x="0" y="0" width={Math.max(node.size.width, 0)} height={Math.max(node.size.height, 0)}
+                  transform={`rotate(${node.rotationInDegrees},${hw},${hh})`}></rect>
             {context.renderChildren(node)}
         </g>;
     }

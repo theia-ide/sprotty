@@ -19,10 +19,10 @@ export default function runStandalone() {
     const graph: SGraphSchema = { id: 'graph', type: 'graph', children: [node0] };
 
     let count = 2;
-    function addNode(): SModelElementSchema[] {
+    function createConnectedNode(nodeType: string): SModelElementSchema[] {
         const newNode: SNodeSchema = {
             id: 'node' + count,
-            type: 'node:circle',
+            type: nodeType,
             position: {
                 x: Math.random() * 1024,
                 y: Math.random() * 768
@@ -42,7 +42,7 @@ export default function runStandalone() {
     }
 
     for (let i = 0; i < 200; ++i) {
-        const newElements = addNode();
+        const newElements = createConnectedNode('node:circle');
         for (const e of newElements) {
             graph.children.splice(0, 0, e);
         }
@@ -52,13 +52,21 @@ export default function runStandalone() {
     const modelSource = container.get<LocalModelSource>(TYPES.ModelSource);
     modelSource.setModel(graph);
 
-    // Button features
-    document.getElementById('addNode')!.addEventListener('click', () => {
-        const newElements = addNode();
-        modelSource.addElements(newElements);
+
+    function addElements(elements: SModelElementSchema[]) {
+        modelSource.addElements(elements);
         const graphElement = document.getElementById('graph');
         if (graphElement !== null && typeof graphElement.focus === 'function')
             graphElement.focus();
+    }
+
+    // Button features
+    document.getElementById('addCircularNode')!.addEventListener('click', () => {
+        addElements(createConnectedNode('node:circle'));
+    });
+
+    document.getElementById('addRectangularNode')!.addEventListener('click', () => {
+        addElements(createConnectedNode('node:rectangle'));
     });
 
     const dispatcher = container.get<IActionDispatcher>(TYPES.IActionDispatcher);

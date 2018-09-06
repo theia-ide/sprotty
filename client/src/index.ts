@@ -95,6 +95,8 @@ export * from "./features/viewport/viewport-root";
 export * from "./features/viewport/viewport";
 export * from "./features/viewport/zoom";
 
+export * from "./features/rotation/model";
+
 import moveModule from "./features/move/di.config";
 import boundsModule from "./features/bounds/di.config";
 import fadeModule from "./features/fade/di.config";

@@ -251,3 +251,24 @@ export function toRadians(a: number): number {
 export function almostEquals(a: number, b: number): boolean {
     return Math.abs(a - b) < 1e-3;
 }
+
+/**
+ * Rotates a `point` around a `centerPoint` for the specified `angle`
+ * @param {Point} centerPoint Center around to rotate
+ * @param {number} angle - Angle in degree
+ * @param {Point} point - Point to rotate around `centerPoint`
+ */
+export function rotatePoint(centerPoint: Point, angle: number, point: Point): Point {
+    const x = point.x - centerPoint.x;
+    const y = point.y - centerPoint.y;
+    const rad = toRadians(angle);
+    const s = Math.sin(rad);
+    const c = Math.cos(rad);
+    const xnew = x * c - y * s;
+    const ynew = x * s + y * c;
+
+    return {
+        x: xnew + centerPoint.x,
+        y: ynew + centerPoint.y
+    };
+}
