@@ -46,7 +46,7 @@ class IdeDiagramSelectionListener implements IDiagramSelectionListener {
 							val traceRegion = element.significantRegion
 							val start = context.document.getPosition(traceRegion.offset)
 					 		val end = context.document.getPosition(traceRegion.offset + traceRegion.length)
-					 		val uri = context.resource.URI.toPath
+					 		val uri = context.resource.URI.toUriString
 							languageServerExtension.client.openInTextEditor(
 								new OpenInTextEditorMessage(new Location(uri, new Range(start, end)), false)
 							)

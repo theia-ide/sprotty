@@ -138,7 +138,7 @@ class DiagramLanguageServerExtension implements DiagramServerEndpoint, ILanguage
 
 	protected def doUpdateDiagrams(Collection<? extends URI> uris) {
 		for (uri : uris) {
-			val path = uri.toPath
+			val path = uri.toUriString
 			val diagramServers = findDiagramServersByUri(path)
 			doUpdateDiagrams(path, diagramServers)
 		}		

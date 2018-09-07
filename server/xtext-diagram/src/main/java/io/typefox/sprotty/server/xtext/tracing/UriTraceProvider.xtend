@@ -25,7 +25,7 @@ class UriTraceProvider implements ITraceProvider {
 	override <T> withSource(Traceable traceable, ILanguageAwareDiagramServer callingServer, BiFunction<EObject, Context, T> readOperation) {
 		if (traceable.trace !== null) {
 			val uri = traceable.trace.toURI
-			val path = uriExtensions.toPath(uri.trimFragment)
+			val path = uriExtensions.toUriString(uri.trimFragment)
 			return callingServer.languageServerExtension.languageServerAccess.doRead(path) [ context |
 				val element = context.resource.resourceSet.getEObject(uri, true)
 				return readOperation.apply(element, context)
@@ -64,7 +64,7 @@ class UriTraceProvider implements ITraceProvider {
 	}
 	
 	protected def toPath(URI uri) {
-		uriExtensions.toPath(uri.trimFragment) + '#' + uri.fragment
+		uriExtensions.toUriString(uri.trimFragment) + '#' + uri.fragment
 	}
 	
 	protected def toURI(String path) {
