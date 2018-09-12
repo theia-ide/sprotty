@@ -225,6 +225,24 @@ export function angleBetweenPoints(a: Point, b: Point): number {
 }
 
 /**
+ * Computes a point that is the original `point` shifted towards `refPoint` by the given `distance`.
+ * @param {Point} point - Point to shift
+ * @param refPoint - Point to shift towards
+ * @param distance - Distance to shift
+ */
+export function shiftTowards(point: Point, refPoint: Point, distance: number) {
+    const xDistance = refPoint.x - point.x;
+    const yDistance = refPoint.y - point.y;
+    const angle = Math.atan2(yDistance, xDistance);
+    const xShift = distance * Math.cos(angle);
+    const yShift = distance * Math.sin(angle);
+    return {
+        x: point.x + xShift,
+        y: point.y + yShift
+    };
+}
+
+/**
  * Converts from radians to degrees
  * @param {number} a - A value in radians
  * @returns {number} The converted value
@@ -250,4 +268,120 @@ export function toRadians(a: number): number {
  */
 export function almostEquals(a: number, b: number): boolean {
     return Math.abs(a - b) < 1e-3;
+}
+
+/**
+ * A diamond or rhombus is a quadrilateral whose four sides all have the same length.
+ * It consinsts of four points, a `topPoint`, `rightPoint`, `bottomPoint`, and a `leftPoint`,
+ * which are connected by four lines -- the `topRightSideLight`, `topLeftSideLine`, `bottomRightSideLine`,
+ * and the `bottomLeftSideLine`.
+ */
+export class Diamond {
+
+    constructor(protected bounds: Bounds) { }
+
+    get topPoint(): Point {
+        return {
+            x: this.bounds.x + this.bounds.width / 2,
+            y: this.bounds.y
+        };
+    }
+
+    get rightPoint(): Point {
+        return {
+            x: this.bounds.x + this.bounds.width,
+            y: this.bounds.y + this.bounds.height / 2
+        };
+    }
+
+    get bottomPoint(): Point {
+        return {
+            x: this.bounds.x + this.bounds.width / 2,
+            y: this.bounds.y + this.bounds.height
+        };
+    }
+
+    get leftPoint(): Point {
+        return {
+            x: this.bounds.x,
+            y: this.bounds.y + this.bounds.height / 2
+        };
+    }
+
+    get topRightSideLine(): Line {
+        return new PointToPointLine(this.topPoint, this.rightPoint);
+    }
+
+    get topLeftSideLine(): Line {
+        return new PointToPointLine(this.topPoint, this.leftPoint);
+    }
+
+    get bottomRightSideLine(): Line {
+        return new PointToPointLine(this.bottomPoint, this.rightPoint);
+    }
+
+    get bottomLeftSideLine(): Line {
+        return new PointToPointLine(this.bottomPoint, this.leftPoint);
+    }
+
+    /**
+     * Return the closest side of this diamond to the specified `refPoint`.
+     * @param {Point} refPoint a reference point
+     * @returns {Line} a line representing the closest side
+     */
+    closestSideLine(refPoint: Point): Line {
+        const c = center(this.bounds);
+        if (refPoint.x > c.x) {
+            if (refPoint.y > c.y) {
+                return this.bottomRightSideLine;
+            } else {
+                return this.topRightSideLine;
+            }
+        } else {
+            if (refPoint.y > c.y) {
+                return this.bottomLeftSideLine;
+            } else {
+                return this.topLeftSideLine;
+            }
+        }
+    }
+}
+
+/**
+ * A line represented as a Cartesian equation.
+ */
+export interface Line {
+
+    readonly a: number
+    readonly b: number
+    readonly c: number
+
+    intersection(otherLine: Line): Point
+}
+
+/**
+ * A line made up from two points.
+ */
+export class PointToPointLine implements Line {
+
+    constructor(protected p1: Point, protected p2: Point) { }
+
+    get a(): number {
+        return this.p1.y - this.p2.y;
+    }
+
+    get b(): number {
+        return this.p2.x - this.p1.x;
+    }
+
+    get c(): number {
+        return this.p2.x * this.p1.y - this.p1.x * this.p2.y;
+    }
+
+    intersection(other: Line): Point {
+        return {
+            x: (this.c * other.b - other.c * this.b) / (this.a * other.b - other.a * this.b),
+            y: (this.a * other.c - other.a * this.c) / (this.a * other.b - other.a * this.b)
+        };
+    }
 }

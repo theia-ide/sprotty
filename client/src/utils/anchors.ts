@@ -5,7 +5,7 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Point, Bounds, center, almostEquals } from './geometry';
+import { Point, Bounds, center, almostEquals, PointToPointLine, Diamond, shiftTowards } from './geometry';
 
 export function computeCircleAnchor(position: Point, radius: number, refPoint: Point, offset: number = 0): Point {
     const cx = position.x + radius;
@@ -79,4 +79,11 @@ export function computeRectangleAnchor(bounds: Bounds, refPoint: Point, offset: 
             finder.addCandidate(bounds.x + bounds.width + offset, yRight);
     }
     return finder.best;
+}
+
+export function computeDiamondAnchor(bounds: Bounds, refPoint: Point, offset: number): Point {
+    const referenceLine = new PointToPointLine(center(bounds), refPoint);
+    const closestDiamondSide = new Diamond(bounds).closestSideLine(refPoint);
+    const anchorPoint = closestDiamondSide.intersection(referenceLine);
+    return shiftTowards(anchorPoint, refPoint, offset);
 }
