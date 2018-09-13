@@ -227,19 +227,39 @@ export function angleBetweenPoints(a: Point, b: Point): number {
 /**
  * Computes a point that is the original `point` shifted towards `refPoint` by the given `distance`.
  * @param {Point} point - Point to shift
- * @param refPoint - Point to shift towards
- * @param distance - Distance to shift
+ * @param {Point} refPoint - Point to shift towards
+ * @param {Point} distance - Distance to shift
  */
-export function shiftTowards(point: Point, refPoint: Point, distance: number) {
-    const xDistance = refPoint.x - point.x;
-    const yDistance = refPoint.y - point.y;
-    const angle = Math.atan2(yDistance, xDistance);
-    const xShift = distance * Math.cos(angle);
-    const yShift = distance * Math.sin(angle);
+export function shiftTowards(point: Point, refPoint: Point, distance: number): Point {
+    const diff = subtract(refPoint, point);
+    const normalized = normalize(diff);
+    const shift = {x: normalized.x * distance, y: normalized.y * distance};
+    return add(point, shift);
+}
+
+/**
+ * Computes the normalized vector from the vector given in `point`; that is, computing its unit vector.
+ * @param {Point} point - Point representing the vector to be normalized
+ * @returns {Point} The normalized point
+ */
+export function normalize(point: Point): Point {
+    const mag = magnitude(point);
+    if (mag === 0 || mag === 1) {
+        return ORIGIN_POINT;
+    }
     return {
-        x: point.x + xShift,
-        y: point.y + yShift
+        x: point.x / mag,
+        y: point.y / mag
     };
+}
+
+/**
+ * Computes the magnitude of the vector given in `point`.
+ * @param {Point} point - Point representing the vector to compute the magnitude for
+ * @returns {number} The magnitude or also known as length of the `point`
+ */
+export function magnitude(point: Point): number {
+    return Math.sqrt(Math.pow(point.x, 2) + Math.pow(point.y, 2));
 }
 
 /**
@@ -348,7 +368,7 @@ export class Diamond {
 }
 
 /**
- * A line represented as a Cartesian equation.
+ * A line represented in its standard form `a*x + b*y = c`.
  */
 export interface Line {
 
