@@ -22,6 +22,7 @@ import { SShapeElement, SShapeElementSchema } from '../features/bounds/model';
 import { editFeature, Routable, filterEditModeHandles } from '../features/edit/model';
 import { translatePoint } from '../base/model/smodel-utils';
 import { RoutedPoint, LinearEdgeRouter, IEdgeRouter } from './routing';
+import { connectableFeature, Connectable } from '../features/edit/reconnect';
 
 /**
  * Serializable schema for graph-like models.
@@ -50,7 +51,7 @@ export class SGraph extends ViewportRootElement {
  * or target element of an edge. There are two kinds of connectable elements: nodes (`SNode`) and
  * ports (`SPort`). A node represents a main entity, while a port is a connection point inside a node.
  */
-export abstract class SConnectableElement extends SShapeElement {
+export abstract class SConnectableElement extends SShapeElement implements Connectable {
 
     /**
      * The incoming edges of this connectable element. They are resolved by the index, which must
@@ -98,6 +99,10 @@ export abstract class SConnectableElement extends SShapeElement {
         const anchor = this.getAnchor(translatedRefPoint, offset);
         return translatePoint(anchor, this.parent, edge.parent);
     }
+
+    canConnect(routable: Routable, role: string) {
+        return true;
+    }
 }
 
 /**
@@ -122,10 +127,14 @@ export class SNode extends SConnectableElement implements Selectable, Fadeable, 
     hoverFeedback: boolean = false;
     opacity: number = 1;
 
+    canConnect(routable: Routable, role: string) {
+        return this.children.find(c => c instanceof SPort) === undefined;
+    }
+
     hasFeature(feature: symbol): boolean {
         return feature === selectFeature || feature === moveFeature || feature === boundsFeature
             || feature === layoutContainerFeature || feature === fadeFeature || feature === hoverFeedbackFeature
-            || feature === popupFeature;
+            || feature === popupFeature || feature === connectableFeature;
     }
 }
 
@@ -148,7 +157,7 @@ export class SPort extends SConnectableElement implements Selectable, Fadeable, 
 
     hasFeature(feature: symbol): boolean {
         return feature === selectFeature || feature === boundsFeature || feature === fadeFeature
-            || feature === hoverFeedbackFeature;
+            || feature === hoverFeedbackFeature || feature === connectableFeature;
     }
 }
 
@@ -341,5 +350,9 @@ export class SGraphIndex extends SModelIndex<SModelElement> {
     getOutgoingEdges(element: SConnectableElement): FluentIterable<SEdge> {
         return this.outgoing.get(element.id) || [];
     }
+}
 
+export class SDanglingAnchor extends SConnectableElement {
+    original?: SModelElement;
+    type = 'dangling-anchor';
 }
