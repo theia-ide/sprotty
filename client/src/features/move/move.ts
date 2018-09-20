@@ -25,8 +25,6 @@ import { isConnectable, ReconnectAction } from "../edit/reconnect";
 import { isSelectable } from "../select/model";
 import { isViewport } from "../viewport/model";
 import { isLocateable, isMoveable, Locateable } from './model';
-import { isCreatingOnDrag } from "../edit/create-edge";
-import { SelectAction, SelectAllAction } from "../select/select";
 
 export class MoveAction implements Action {
     kind = MoveCommand.KIND;
@@ -221,20 +219,13 @@ export class MoveMouseListener extends MouseListener {
         if (event.button === 0) {
             const moveable = findParentByFeature(target, isMoveable);
             const isRoutingHandle = target instanceof SRoutingHandle;
-            if (moveable !== undefined || isRoutingHandle || isCreatingOnDrag(target)) {
+            if (moveable !== undefined || isRoutingHandle) {
                 this.lastDragPosition = { x: event.pageX, y: event.pageY };
             } else {
                 this.lastDragPosition = undefined;
             }
             this.hasDragged = false;
-            if (isCreatingOnDrag(target)) {
-                result.push(new SelectAllAction(false));
-                result.push(target.createAction('volatile-edge'));
-                result.push(new SelectAction(['volatile-edge'], []));
-                result.push(new SwitchEditModeAction(['volatile-edge'], []));
-                result.push(new SelectAction(['volatile-edge-target-anchor'], []));
-                result.push(new SwitchEditModeAction(['volatile-edge-target-anchor'], []));
-            } else if (isRoutingHandle) {
+            if (isRoutingHandle) {
                 result.push(new SwitchEditModeAction([target.id], []));
             }
         }
@@ -359,8 +350,8 @@ export class MoveMouseListener extends MouseListener {
                                     .find(e => isConnectable(e) && e.canConnect(parent, element.kind as ('source' | 'target')));
                                 if (newEnd) {
                                     result.push(new ReconnectAction(element.parent.id,
-                                        element.kind === 'source' ? newEnd.id : parent.sourceId,
-                                        element.kind === 'target' ? newEnd.id : parent.targetId));
+                                        element.kind === 'source' ? newEnd.id : undefined,
+                                        element.kind === 'target' ? newEnd.id : undefined));
                                 }
                             }
                         }
