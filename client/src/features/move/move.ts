@@ -25,8 +25,9 @@ import { isConnectable, ReconnectAction } from "../edit/reconnect";
 import { isSelectable } from "../select/model";
 import { isViewport } from "../viewport/model";
 import { isLocateable, isMoveable, Locateable } from './model';
-import { isCreatingOnDrag } from "../edit/create-edge";
+import { isCreatingOnDrag } from "../edit/create-on-drag";
 import { SelectAction, SelectAllAction } from "../select/select";
+import { DeleteElementAction } from "../edit/delete";
 
 export class MoveAction implements Action {
     kind = MoveCommand.KIND;
@@ -211,6 +212,8 @@ export class MoveAnimation extends Animation {
     }
 }
 
+export const edgeInProgressID = 'edge-in-progress';
+
 export class MoveMouseListener extends MouseListener {
 
     hasDragged = false;
@@ -229,11 +232,11 @@ export class MoveMouseListener extends MouseListener {
             this.hasDragged = false;
             if (isCreatingOnDrag(target)) {
                 result.push(new SelectAllAction(false));
-                result.push(target.createAction('volatile-edge'));
-                result.push(new SelectAction(['volatile-edge'], []));
-                result.push(new SwitchEditModeAction(['volatile-edge'], []));
-                result.push(new SelectAction(['volatile-edge-target-anchor'], []));
-                result.push(new SwitchEditModeAction(['volatile-edge-target-anchor'], []));
+                result.push(target.createAction(edgeInProgressID));
+                result.push(new SelectAction([edgeInProgressID], []));
+                result.push(new SwitchEditModeAction([edgeInProgressID], []));
+                result.push(new SelectAction([edgeInProgressID + '-target-anchor'], []));
+                result.push(new SwitchEditModeAction([edgeInProgressID + '-target-anchor'], []));
             } else if (isRoutingHandle) {
                 result.push(new SwitchEditModeAction([target.id], []));
             }
@@ -361,6 +364,8 @@ export class MoveMouseListener extends MouseListener {
                                     result.push(new ReconnectAction(element.parent.id,
                                         element.kind === 'source' ? newEnd.id : parent.sourceId,
                                         element.kind === 'target' ? newEnd.id : parent.targetId));
+                                } else if (parent.id === edgeInProgressID) {
+                                    result.push(new DeleteElementAction([edgeInProgressID, element.danglingAnchor.id]));
                                 }
                             }
                         }

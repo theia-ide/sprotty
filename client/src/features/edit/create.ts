@@ -7,18 +7,8 @@
 
 import { Action } from "../../base/actions/action";
 import { Command, CommandExecutionContext, CommandResult } from "../../base/commands/command";
-import { SParentElement, SChildElement, SModelElement } from "../../base/model/smodel";
+import { SParentElement, SChildElement } from "../../base/model/smodel";
 import { SEdgeSchema } from "../../graph/sgraph";
-
-export const creatingOnDragFeature = Symbol('creatingOnDragFeature');
-
-export interface CreatingOnDrag {
-    createAction(id: string): Action;
-}
-
-export function isCreatingOnDrag<T extends SModelElement>(element: T): element is T & CreatingOnDrag {
-    return element.hasFeature(creatingOnDragFeature) && (element as any).createAction !== undefined;
-}
 
 export class CreateElementAction implements Action {
     readonly kind = CreateElementCommand.KIND;
