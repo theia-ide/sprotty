@@ -19,6 +19,8 @@ export function createRoutingHandle(kind: RoutingHandleKind, parentId: string, i
     handle.type = kind === 'line' ? 'volatile-routing-point' : 'routing-point';
     handle.kind = kind;
     handle.pointIndex = index;
+    if (kind === 'target')
+        handle.id = parentId + '-target-anchor';
     return handle;
 }
 
