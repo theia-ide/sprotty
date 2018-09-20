@@ -84,11 +84,10 @@ export class SRoutingHandleView implements IView {
     }
 
     protected getPosition(handle: SRoutingHandle, route: RoutedPoint[]): Point | undefined {
-        switch (handle.kind) {
-            case 'line': return this.getLinePosition(handle, route);
-            case 'junction': return this.getJunctionPosition(handle, route);
-            case 'source': return route[0];
-            case 'target': return route[route.length - 1];
+        if (handle.kind === 'line') {
+            return this.getLinePosition(handle, route);
+        } else {
+            return this.getJunctionPosition(handle, route);
         }
     }
 

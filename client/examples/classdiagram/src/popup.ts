@@ -13,9 +13,9 @@ import {
 @injectable()
 export class PopupModelProvider implements IPopupModelProvider {
 
-    getPopupModel(request: RequestPopupModelAction, element?: SModelElementSchema): Promise<SModelRootSchema | undefined> {
+    getPopupModel(request: RequestPopupModelAction, element?: SModelElementSchema): SModelRootSchema | undefined {
         if (element !== undefined && element.type === 'node:class') {
-            return Promise.resolve({
+            return {
                 type: 'html',
                 id: 'popup',
                 children: [
@@ -27,15 +27,12 @@ export class PopupModelProvider implements IPopupModelProvider {
                     <PreRenderedElementSchema> {
                         type: 'pre-rendered',
                         id: 'popup-body',
-                        code: `<div class="sprotty-popup-body">But I must explain to you how all this mistaken idea of
-                            denouncing pleasure and praising pain was born and I will give you a complete account of
-                            the system, and expound the actual teachings of the great explorer of the truth, the
-                            master-builder of human happiness.</div>`
+                        code: '<div class="sprotty-popup-body">But I must explain to you how all this mistaken idea of denouncing pleasure and praising pain was born and I will give you a complete account of the system, and expound the actual teachings of the great explorer of the truth, the master-builder of human happiness.</div>'
                     }
                 ]
-            });
+            };
         }
-        return Promise.resolve(undefined);
+        return undefined;
     }
 
 }

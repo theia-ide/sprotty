@@ -6,25 +6,24 @@
  */
 
 import { injectable } from "inversify";
+import { Point, centerOfLine } from '../../utils/geometry';
+import { SChildElement } from '../../base/model/smodel';
 import { VNode } from "snabbdom/vnode";
+import { SModelElement, SModelIndex, SModelRoot } from "../../base/model/smodel";
+import { findParentByFeature } from "../../base/model/smodel-utils";
 import { Action } from "../../base/actions/action";
+import { ICommand, CommandExecutionContext, MergeableCommand } from "../../base/commands/command";
 import { Animation } from "../../base/animations/animation";
-import { CommandExecutionContext, ICommand, MergeableCommand } from "../../base/commands/command";
-import { SChildElement, SModelElement, SModelIndex, SModelRoot } from '../../base/model/smodel';
-import { findParentByFeature, translatePoint } from "../../base/model/smodel-utils";
 import { MouseListener } from "../../base/views/mouse-tool";
-import { IVNodeDecorator } from "../../base/views/vnode-decorators";
 import { setAttr } from "../../base/views/vnode-utils";
-import { RoutedPoint } from "../../graph/routing";
-import { SDanglingAnchor } from "../../graph/sgraph";
-import { centerOfLine, Point } from '../../utils/geometry';
-import { isAlignable, findChildrenAtPosition } from "../bounds/model";
-import { HandleMove, MoveRoutingHandleAction, SwitchEditModeAction } from "../edit/edit-routing";
-import { isRoutable, Routable, SRoutingHandle } from '../edit/model';
-import { isConnectable, ReconnectAction } from "../edit/reconnect";
-import { isSelectable } from "../select/model";
+import { IVNodeDecorator } from "../../base/views/vnode-decorators";
 import { isViewport } from "../viewport/model";
-import { isLocateable, isMoveable, Locateable } from './model';
+import { isSelectable } from "../select/model";
+import { isAlignable } from "../bounds/model";
+import { Routable, isRoutable, SRoutingHandle } from '../edit/model';
+import { MoveRoutingHandleAction, HandleMove, SwitchEditModeAction } from "../edit/edit-routing";
+import { isMoveable, Locateable, isLocateable } from './model';
+import { RoutedPoint } from "../../graph/routing";
 
 export class MoveAction implements Action {
     kind = MoveCommand.KIND;
@@ -287,46 +286,31 @@ export class MoveMouseListener extends MouseListener {
         if (!isRoutable(parent)) {
             return undefined;
         }
-        switch (handle.kind) {
-            case 'source':
-                if (parent.source instanceof SDanglingAnchor)
-                    return parent.source.position;
+        if (handle.kind === 'line') {
+            const getIndex = (rp: RoutedPoint) => {
+                if (rp.pointIndex !== undefined)
+                    return rp.pointIndex;
+                else if (rp.kind === 'target')
+                    return parent.routingPoints.length;
                 else
-                    return parent.route()[0];
-            case 'target':
-                if (parent.target instanceof SDanglingAnchor)
-                    return parent.target.position;
-                else {
-                    const route = parent.route();
-                    return route[route.length - 1];
-                }
-            case 'line':
-                const getIndex = (rp: RoutedPoint) => {
-                    if (rp.pointIndex !== undefined)
-                        return rp.pointIndex;
-                    else if (rp.kind === 'target')
-                        return parent.routingPoints.length;
-                    else
-                        return -1;
-                };
-                const route = parent.route();
-                let rp1, rp2: RoutedPoint | undefined;
-                for (const rp of route) {
-                    const i = getIndex(rp);
-                    if (i <= handle.pointIndex && (rp1 === undefined || i > getIndex(rp1)))
-                        rp1 = rp;
-                    if (i > handle.pointIndex && (rp2 === undefined || i < getIndex(rp2)))
-                        rp2 = rp;
-                }
-                if (rp1 !== undefined && rp2 !== undefined) {
-                    return centerOfLine(rp1, rp2);
-                }
-                return undefined;
-            default:
-                if (handle.pointIndex >= 0)
-                    return parent.routingPoints[handle.pointIndex];
-                return undefined;
+                    return -1;
+            };
+            const route = parent.route();
+            let rp1, rp2: RoutedPoint | undefined;
+            for (const rp of route) {
+                const i = getIndex(rp);
+                if (i <= handle.pointIndex && (rp1 === undefined || i > getIndex(rp1)))
+                    rp1 = rp;
+                if (i > handle.pointIndex && (rp2 === undefined || i < getIndex(rp2)))
+                    rp2 = rp;
+            }
+            if (rp1 !== undefined && rp2 !== undefined) {
+                return centerOfLine(rp1, rp2);
+            }
+        } else if (handle.pointIndex >= 0) {
+            return parent.routingPoints[handle.pointIndex];
         }
+        return undefined;
     }
 
     mouseEnter(target: SModelElement, event: MouseEvent): Action[] {
@@ -340,24 +324,8 @@ export class MoveMouseListener extends MouseListener {
         if (this.lastDragPosition) {
             target.root.index.all()
                 .forEach(element => {
-                    if (element instanceof SRoutingHandle) {
-                        const parent = element.parent;
-                        if (isRoutable(parent) && element.danglingAnchor) {
-                            const handlePos = this.getHandlePosition(element);
-                            if (handlePos) {
-                                const handlePosAbs = translatePoint(handlePos, element.parent, element.root);
-                                const newEnd = findChildrenAtPosition(target.root, handlePosAbs)
-                                    .find(e => isConnectable(e) && e.canConnect(parent, element.kind as ('source' | 'target')));
-                                if (newEnd) {
-                                    result.push(new ReconnectAction(element.parent.id,
-                                        element.kind === 'source' ? newEnd.id : undefined,
-                                        element.kind === 'target' ? newEnd.id : undefined));
-                                }
-                            }
-                        }
-                        if (element.editMode)
-                            result.push(new SwitchEditModeAction([], [element.id]));
-                    }
+                    if (element instanceof SRoutingHandle && element.editMode)
+                        result.push(new SwitchEditModeAction([], [element.id]));
                 });
         }
         this.hasDragged = false;
