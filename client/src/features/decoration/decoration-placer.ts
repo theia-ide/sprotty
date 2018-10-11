@@ -13,7 +13,7 @@ import { isDecoration, Decoration } from "./model";
 import { setAttr } from "../../base/views/vnode-utils";
 import { Point, ORIGIN_POINT } from "../../utils/geometry";
 import { SEdge } from "../../graph/sgraph";
-import { isSizeable } from "../..";
+import { isSizeable } from "../bounds/model";
 
 @injectable()
 export class DecorationPlacer implements IVNodeDecorator {
