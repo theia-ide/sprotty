@@ -40,7 +40,7 @@ export class DeleteElementCommand extends Command {
 
     execute(context: CommandExecutionContext): CommandResult {
         const index = context.root.index;
-        for (let id of this.action.elementIds) {
+        for (const id of this.action.elementIds) {
             const element = index.getById(id);
             if (element && isDeletable(element)) {
                 this.resolvedDeletes.push({ child: element, parent: element.parent });
@@ -51,13 +51,13 @@ export class DeleteElementCommand extends Command {
     }
 
     undo(context: CommandExecutionContext): CommandResult {
-        for (let resolvedDelete of this.resolvedDeletes)
+        for (const resolvedDelete of this.resolvedDeletes)
             resolvedDelete.parent.add(resolvedDelete.child);
         return context.root;
     }
 
     redo(context: CommandExecutionContext): CommandResult {
-        for (let resolvedDelete of this.resolvedDeletes)
+        for (const resolvedDelete of this.resolvedDeletes)
             resolvedDelete.parent.add(resolvedDelete.child);
         return context.root;
     }

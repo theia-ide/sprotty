@@ -305,14 +305,15 @@ export class MoveMouseListener extends MouseListener {
                     return parent.source.position;
                 else
                     return parent.route()[0];
-            case 'target':
+            case 'target': {
                 if (parent.target instanceof SDanglingAnchor)
                     return parent.target.position;
                 else {
                     const route = parent.route();
                     return route[route.length - 1];
                 }
-            case 'line':
+            }
+            case 'line': {
                 const getIndex = (rp: RoutedPoint) => {
                     if (rp.pointIndex !== undefined)
                         return rp.pointIndex;
@@ -334,6 +335,7 @@ export class MoveMouseListener extends MouseListener {
                     return centerOfLine(rp1, rp2);
                 }
                 return undefined;
+            }
             default:
                 if (handle.pointIndex >= 0)
                     return parent.routingPoints[handle.pointIndex];
