@@ -5,13 +5,13 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds, Point, isValidDimension } from '../../utils/geometry';
-import { SParentElement, SChildElement } from "../../base/model/smodel";
+import { SChildElement, SParentElement } from "../../base/model/smodel";
+import { Bounds, isValidDimension, Point } from '../../utils/geometry';
 import { AbstractLayout } from './abstract-layout';
+import { BoundsData } from './hidden-bounds-updater';
+import { StatefulLayouter } from './layout';
 import { AbstractLayoutOptions, HAlignment, VAlignment } from './layout-options';
-import { BoundsData } from './hidden-bounds-updater';
-import { LayoutContainer } from './model';
-import { StatefulLayouter } from './layout';
+import { isLayoutableChild, LayoutContainer } from './model';
 
 export interface StackLayoutOptions extends AbstractLayoutOptions {
     paddingFactor: number
@@ -30,10 +30,12 @@ export class StackLayouter extends AbstractLayout<StackLayoutOptions> {
         let maxHeight = -1;
         container.children.forEach(
             child => {
-                const bounds = layouter.getBoundsData(child).bounds;
-                if (bounds !== undefined && isValidDimension(bounds)) {
-                    maxWidth = Math.max(maxWidth, bounds.width);
-                    maxHeight = Math.max(maxHeight, bounds.height);
+                if (isLayoutableChild(child)) {
+                    const bounds = layouter.getBoundsData(child).bounds;
+                    if (bounds !== undefined && isValidDimension(bounds)) {
+                        maxWidth = Math.max(maxWidth, bounds.width);
+                        maxHeight = Math.max(maxHeight, bounds.height);
+                    }
                 }
             }
         );

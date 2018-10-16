@@ -5,13 +5,13 @@
  * You may obtain a copy of the License at http://www.apache.org/licenses/LICENSE-2.0
  */
 
-import { Bounds, Point, isValidDimension } from '../../utils/geometry';
-import { SParentElement, SChildElement } from "../../base/model/smodel";
+import { SChildElement, SParentElement } from "../../base/model/smodel";
+import { Bounds, isValidDimension, Point } from '../../utils/geometry';
 import { AbstractLayout } from './abstract-layout';
+import { BoundsData } from './hidden-bounds-updater';
+import { StatefulLayouter } from './layout';
 import { AbstractLayoutOptions, HAlignment } from './layout-options';
-import { BoundsData } from './hidden-bounds-updater';
-import { LayoutContainer } from './model';
-import { StatefulLayouter } from './layout';
+import { isLayoutableChild, LayoutContainer } from './model';
 
 export interface VBoxLayoutOptions extends AbstractLayoutOptions {
     vGap: number
@@ -33,14 +33,16 @@ export class VBoxLayouter extends AbstractLayout<VBoxLayoutOptions> {
         let isFirst = true;
         container.children.forEach(
             child => {
-                const bounds = layouter.getBoundsData(child).bounds;
-                if (bounds !== undefined && isValidDimension(bounds)) {
-                    maxHeight += bounds.height;
-                    if (isFirst)
-                        isFirst = false;
-                    else
-                        maxHeight += containerOptions.vGap;
-                    maxWidth = Math.max(maxWidth, bounds.width);
+                if (isLayoutableChild(child)) {
+                    const bounds = layouter.getBoundsData(child).bounds;
+                    if (bounds !== undefined && isValidDimension(bounds)) {
+                        maxHeight += bounds.height;
+                        if (isFirst)
+                            isFirst = false;
+                        else
+                            maxHeight += containerOptions.vGap;
+                        maxWidth = Math.max(maxWidth, bounds.width);
+                    }
                 }
             }
         );
