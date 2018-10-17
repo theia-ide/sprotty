@@ -241,8 +241,8 @@ export class HoverMouseListener extends AbstractHoverMouseListener {
     }
 
     protected isSprottyPopup(element: Element): boolean {
-        return element.id === 'sprotty-popup'
-            || (!!element.parentElement && this.isSprottyPopup(element.parentElement));
+        return element && (element.id === 'sprotty-popup'
+            || (!!element.parentElement && this.isSprottyPopup(element.parentElement)));
     }
 
     mouseMove(target: SModelElement, event: MouseEvent): (Action | Promise<Action>)[] {
