@@ -1,3 +1,5 @@
+This project has moved to [eclipse/sprotty](https://github.com/eclipse/sprotty) and will be maintained there. 
+
 # sprotty
 sprotty is a next-generation, open-source, web-based diagramming framework. Some selected features:
 
